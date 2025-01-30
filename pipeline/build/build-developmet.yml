@@ -1,0 +1,6 @@
+stages:
+- stage: 'build_developmet'
+  displayName: 'Build Developmet'
+  dependsOn: [] 
+
+  

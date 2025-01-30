@@ -1,0 +1,33 @@
+parameters:
+  - name: language
+    type: string
+    default: default
+    values: 
+      - nodejs
+
+  - name: build
+    type: string
+    default: npm
+    values:
+    - npm
+    - yarn
+  
+  - name: typerelease
+    type: string
+    default: aws
+
+resources:
+  repositories:
+  - repository: self
+    name: $(System.TeamProject)/$(Build.Repository.Name)
+    type: git
+    ref: $(Build.SourceBranch)
+
+
+stages:
+
+  - ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature'), in(variables['Build.SourceBranch'], 'refs/heads/develop')) }}:
+    - template: build/build-developmet.yml
+      parameters:
+        language: ${{ parameters.language }}
+        typerelase: ${{ parameters.typerelase }}
