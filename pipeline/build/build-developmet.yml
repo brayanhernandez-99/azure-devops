@@ -3,4 +3,10 @@ stages:
   displayName: 'Build Developmet'
   dependsOn: [] 
 
-  
+  jobs:
+
+  - ${{ if eq(parameters.language, 'nodejs') }}:
+    - template: jobs/nodejs-jobs.yml
+
+
+

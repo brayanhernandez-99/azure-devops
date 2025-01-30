@@ -1,0 +1,12 @@
+jobs:
+  - job: 'build_nodejs'
+    displayName: 'Build nodejs'    
+    pool:
+        name: 'Azure Pipelines'
+        VmImage: latest
+
+    steps:
+      
+      - script: |
+          echo "build nodejs"
+
