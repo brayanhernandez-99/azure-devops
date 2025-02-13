@@ -3,7 +3,7 @@ jobs:
     displayName: 'Build nodejs'    
     pool:
         name: 'Azure Pipelines'
-        vmImage: latest
+        vmImage: 'ubuntu-latest'
 
     steps:
       
