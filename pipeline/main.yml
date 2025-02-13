@@ -30,4 +30,4 @@ stages:
     - template: build/build-developmet.yml
       parameters:
         language: ${{ parameters.language }}
-        typerelase: ${{ parameters.typerelase }}
+        typerelease: ${{ parameters.typerelase }}
