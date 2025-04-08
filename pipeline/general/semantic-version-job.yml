@@ -45,7 +45,6 @@ jobs:
           fi
       else
           echo -e "\e[31mCreate initial tag with value 1.0.0"
-          echo -e "\e[31mClick on the link for more information"
           error="true"
       fi
 
