@@ -3,10 +3,13 @@ jobs:
     displayName: 'Build nodejs'    
     pool:
         name: 'Azure Pipelines'
-        VmImage: latest
+        vmImage: 'ubuntu-latest'
 
     steps:
       
       - script: |
           echo "build nodejs"
+
+      - script: |
+          echo "segundo task"
 
