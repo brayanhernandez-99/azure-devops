@@ -3,7 +3,7 @@ jobs:
   displayName: 'Semantic Version'
   pool:
     name: 'Azure Pipelines'
-    VmImage: ubuntu-20.04
+    VmImage: ubuntu-latest
   steps:
   # - checkout: self
   #   fetchDepth: 0
