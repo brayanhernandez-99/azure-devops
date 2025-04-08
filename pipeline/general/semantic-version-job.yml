@@ -1,0 +1,67 @@
+jobs:
+- job: 'semantic_version'
+  displayName: 'Semantic Version'
+  pool:
+    name: 'Azure Pipelines'
+    VmImage: ubuntu-20.04
+  steps:
+  # - checkout: self
+  #   fetchDepth: 0
+  # - checkout: git://GCIT-Agile/general-files
+  
+  - script: |
+      urlRepo='$(Build.Repository.Uri)'
+      echo $urlRepo
+      projectNameRepo=$(echo "$urlRepo" | awk -F/ '{print $5}')
+      curl --request GET "$(System.CollectionUri)$projectNameRepo/_apis/git/repositories/$(Build.Repository.Name)/refs?api-version=5.1" \
+            --header 'Authorization: Bearer $(System.AccessToken)' | jq > tags.json
+      
+      tags=$(jq -r '.value | .[] | .name' tags.json )
+      error="false"
+
+      echo "list of repo $(Build.Repository.Name) tags:"
+      jq -r '.value | .[] | .name' tags.json | while read -r tag;
+      do 
+          if [[ "$tag" == @(refs/heads/master|refs/heads/release|refs/heads/develop) ]]
+          then
+              echo -e "\e[32mtag $tag. Correct"
+          elif echo "$tag" | grep -q "refs/tags/v"
+          then
+              echo -e "\e[31mTag $tag. Wrong, remove tag"
+          else
+              echo -e "\e[32mTag $tag. Correct"
+          fi
+      done
+
+      if jq -r '.value | .[] | .name' tags.json | grep -q "refs/tags"; then
+          if jq -r '.value | .[] | .name' tags.json | grep -q "refs/tags/v"; then
+              echo -e "\e[31mRemove all tags with value starting with v."
+              echo -e "\e[31mClick on the link to remove incorrectly created targets $(System.CollectionUri)$(System.TeamProject)/_git/$(Build.Repository.Name)/tags"
+              echo -e "\e[31mClick on the link for more information"
+              echo -e "\e[31mExample bad created tags: v1.0.0"
+              error="true"
+          else
+              echo -e "\e[32mCorrectly created tags"
+          fi
+      else
+          echo -e "\e[31mCreate initial tag with value 1.0.0"
+          echo -e "\e[31mClick on the link for more information"
+          error="true"
+      fi
+
+      if $error == "true"; then
+          exit 1
+      fi
+    displayName: 'Validating tags'
+    
+  # - task: gitversion/setup@0
+  #   displayName: Install GitVersion
+  #   inputs:
+  #     versionSpec: '5.10.0'
+
+  # - task: gitversion/execute@0
+  #   displayName: 'Generate Semantic Version'
+  #   inputs:
+  #     useConfigFile: true
+  #     configFilePath: '$(System.DefaultWorkingDirectory)/general-files/semantic-version/GitVersion.yml'
+  #     targetPath: '$(Build.SourcesDirectory)/$(Build.Repository.Name)'
