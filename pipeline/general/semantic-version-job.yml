@@ -8,8 +8,7 @@ jobs:
     -   checkout: self
         fetchDepth: 0
     
-    # -   checkout: git://DevOps-templates-UX/pipelines-templates@feature/Inicio-templates
-    -   checkout: templates
+    -   checkout: git://Invictus/file-version
 
   
     -   script: |
