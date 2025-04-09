@@ -57,9 +57,9 @@ jobs:
         inputs:
             versionSpec: '5.x'
 
-    # -   task: Gitversion/execute@0
-    #     displayName: 'Generate Semantic Version'
-    #     inputs:
-    #         useConfigFile: true
-    #         configFilePath: '$(System.DefaultWorkingDirectory)/pipeline/gitversion.yml'
-    #         targetPath: '$(Build.SourcesDirectory)/$(Build.Repository.Name)'
+    -   task: Gitversion/execute@3
+        displayName: 'Generate Semantic Version'
+        inputs:
+            useConfigFile: true
+            configFilePath: '$(System.DefaultWorkingDirectory)/pipeline/gitversion.yml'
+            targetPath: '$(Build.SourcesDirectory)/$(Build.Repository.Name)'
