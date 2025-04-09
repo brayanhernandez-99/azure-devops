@@ -63,3 +63,7 @@ jobs:
             useConfigFile: true
             configFilePath: '$(System.DefaultWorkingDirectory)/pipeline/gitversion.yml'
             targetPath: '$(Build.SourcesDirectory)/$(Build.Repository.Name)'
+    
+    -   script: |
+            echo "Version generada: $(GitVersion.FullSemVer)"
+        displayName: 'Mostrar versión generada'
