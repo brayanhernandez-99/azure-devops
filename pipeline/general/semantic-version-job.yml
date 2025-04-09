@@ -61,8 +61,8 @@ jobs:
             versionSpec: '5.x'
 
     -   script: |
+            cd $(Build.SourcesDirectory)/$(Build.Repository.Name)
             ls -la
-    
 
     -   task: Gitversion/execute@3
         displayName: 'Generate Semantic Version'
