@@ -7,6 +7,8 @@ jobs:
   steps:
     -   checkout: self
         fetchDepth: 0
+    
+    - checkout: git://DevOps-templates-UX/pipelines-templates
   
     -   script: |
             urlRepo='$(Build.Repository.Uri)'
