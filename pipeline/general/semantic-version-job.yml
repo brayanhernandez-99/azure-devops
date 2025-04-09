@@ -68,7 +68,7 @@ jobs:
         displayName: 'Generate Semantic Version'
         inputs:
             useConfigFile: true
-            configFilePath: '$(System.DefaultWorkingDirectory)/gitversion.yml'
+            configFilePath: '$(System.DefaultWorkingDirectory)/file-version/gitversion.yml'
             targetPath: '$(Build.SourcesDirectory)/$(Build.Repository.Name)'
     
     -   script: |
