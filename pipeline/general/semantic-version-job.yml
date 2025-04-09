@@ -8,7 +8,7 @@ jobs:
     -   checkout: self
         fetchDepth: 0
     
-    -   checkout: git://DevOps-templates-UX/pipelines-templates
+    -   checkout: git://DevOps-templates-UX/pipelines-templates@refs/heads/feature/feature/Inicio-templates
   
     -   script: |
             urlRepo='$(Build.Repository.Uri)'
