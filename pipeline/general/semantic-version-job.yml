@@ -52,7 +52,7 @@ jobs:
             fi
         displayName: 'Validating tags'
         
-    -   task: Gitversion/setup@0
+    -   task: UseGitVersion@5
         displayName: Install GitVersion
         inputs:
             versionSpec: '5.x'
