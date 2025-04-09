@@ -9,7 +9,7 @@ jobs:
         fetchDepth: 0
     
     # -   checkout: git://DevOps-templates-UX/pipelines-templates@feature/Inicio-templates
-    -   checkout: git://Invictus/Pruebas-conexion-iac@feature/IAC
+    -   checkout: templates
 
   
     -   script: |
