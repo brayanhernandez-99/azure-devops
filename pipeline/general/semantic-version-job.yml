@@ -5,9 +5,8 @@ jobs:
     name: 'Azure Pipelines'
     VmImage: ubuntu-22.04
   steps:
-  # - checkout: self
-  #   fetchDepth: 0
-  # - checkout: git://GCIT-Agile/general-files
+  - checkout: self
+    fetchDepth: 0
   
   - script: |
       urlRepo='$(Build.Repository.Uri)'
@@ -53,14 +52,14 @@ jobs:
       fi
     displayName: 'Validating tags'
     
-  # - task: gitversion/setup@0
-  #   displayName: Install GitVersion
-  #   inputs:
-  #     versionSpec: '5.10.0'
+  - task: gitversion/setup@0
+    displayName: Install GitVersion
+    inputs:
+      versionSpec: '5.10.0'
 
-  # - task: gitversion/execute@0
-  #   displayName: 'Generate Semantic Version'
-  #   inputs:
-  #     useConfigFile: true
-  #     configFilePath: '$(System.DefaultWorkingDirectory)/general-files/semantic-version/GitVersion.yml'
-  #     targetPath: '$(Build.SourcesDirectory)/$(Build.Repository.Name)'
+  - task: gitversion/execute@0
+    displayName: 'Generate Semantic Version'
+    inputs:
+      useConfigFile: true
+      configFilePath: '$(System.DefaultWorkingDirectory)/pipeline/gitversion.yml'
+      targetPath: '$(Build.SourcesDirectory)/$(Build.Repository.Name)'

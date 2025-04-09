@@ -1,0 +1,38 @@
+mode: Mainline
+next-version: 1.0.0
+
+branches:
+  master:
+    regex: ^master$
+    tag: ''
+    increment: None
+    is-release-branch: true
+
+  develop:
+    regex: ^develop$
+    increment: Patch
+    track-merge-target: false
+    prevent-increment-of-merged-branch-version: true
+    source-branches: ['feature', 'release']
+
+  feature:
+    regex: ^(feature|feat)/.*
+    tag: useBranchName
+    increment: None
+    source-branches: ['master']
+
+  release:
+    regex: ^release/.*
+    tag: rc
+    increment: Patch
+    is-release-branch: true
+    source-branches: ['develop']
+
+  pull-request:
+    tag: pr
+    increment: Inherit
+    prevent-increment-of-merged-branch-version: true
+
+ignore:
+  sha: []
+merge-message-strategy: MergeMessage
