@@ -60,6 +60,10 @@ jobs:
         inputs:
             versionSpec: '5.x'
 
+    -   script: |
+            ls -la
+    
+
     -   task: Gitversion/execute@3
         displayName: 'Generate Semantic Version'
         inputs:
