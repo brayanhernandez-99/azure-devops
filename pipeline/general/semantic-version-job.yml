@@ -7,10 +7,8 @@ jobs:
   steps:
     -   checkout: self
         fetchDepth: 0
-    
     -   checkout: git://Invictus/file-version
 
-  
     -   script: |
             urlRepo='$(Build.Repository.Uri)'
             echo $urlRepo
