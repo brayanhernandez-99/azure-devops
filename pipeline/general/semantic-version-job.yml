@@ -53,7 +53,7 @@ jobs:
             fi
         displayName: 'Validating tags'
         
-    -   task: gitversion/setup@2
+    -   task: gitversion/setup@3
         displayName: Install GitVersion
         inputs:
             versionSpec: '5.10.0'
@@ -62,7 +62,7 @@ jobs:
             cd $(Build.SourcesDirectory)/$(Build.Repository.Name)
             ls -la
 
-    -   task: Gitversion/execute@2
+    -   task: Gitversion/execute@3
         displayName: 'Generate Semantic Version'
         inputs:
             disableCache: true
