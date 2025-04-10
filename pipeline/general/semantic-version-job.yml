@@ -55,10 +55,10 @@ jobs:
             fi
         displayName: 'Validating tags'
         
-    -   task: gitversion/setup@3
+    -   task: gitversion/setup@3.2.0
         displayName: Install GitVersion
         inputs:
-            versionSpec: '5.x'
+            versionSpec: '6.0.0'
 
     -   script: |
             cd $(Build.SourcesDirectory)/$(Build.Repository.Name)
