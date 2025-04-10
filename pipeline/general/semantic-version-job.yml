@@ -61,6 +61,11 @@ jobs:
     -   script: |
             cd $(Build.SourcesDirectory)/$(Build.Repository.Name)
             ls -la
+    -    script: |
+            dotnet tool install --global GitVersion.Tool --version 5.10.0
+            export PATH="$PATH:/root/.dotnet/tools"
+            gitversion /targetpath $(Build.SourcesDirectory)/$(Build.Repository.Name) /output json
+        displayName: 'Debug GitVersion output'
 
     -   task: Gitversion/execute@3
         displayName: 'Generate Semantic Version'
