@@ -59,9 +59,6 @@ jobs:
             versionSpec: '5.10.0'
 
     -   script: |
-            cd $(Build.SourcesDirectory)/$(Build.Repository.Name)
-            ls -la
-    -   script: |
             dotnet tool install --global GitVersion.Tool --version 5.10.0
             export PATH="$PATH:/root/.dotnet/tools"
             dotnet-gitversion /targetpath $(Build.SourcesDirectory)/$(Build.Repository.Name) /output json
