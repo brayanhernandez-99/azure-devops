@@ -67,6 +67,7 @@ jobs:
         inputs:
             disableCache: true
             disableNormalization: true
+            updateAssemblyInfo: true
             # useConfigFile: true
             # configFilePath: '$(System.DefaultWorkingDirectory)/file-version/gitversion.yml'
             # targetPath: '$(Build.SourcesDirectory)/$(Build.Repository.Name)'
