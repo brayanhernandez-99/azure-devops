@@ -64,9 +64,9 @@ jobs:
 
     -   task: Gitversion/execute@3.2.0
         displayName: 'Generate Semantic Version'
-        # inputs:
-        #     overrideConfig: |
-        #         update-build-number=false
+        inputs:
+            disableCache: true
+            disableNormalization: true
             # useConfigFile: true
             # configFilePath: '$(System.DefaultWorkingDirectory)/file-version/gitversion.yml'
             # targetPath: '$(Build.SourcesDirectory)/$(Build.Repository.Name)'
