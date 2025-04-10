@@ -26,7 +26,7 @@ resources:
 
 stages:
 
-  - ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature'), in(variables['Build.SourceBranch'], 'refs/heads/develop')) }}:
+  - ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature'), in(variables['Build.SourceBranch'], 'refs/heads/develop', 'refs/heads/release' )) }}:
     - template: build/build-developmet.yml
       parameters:
         language: ${{ parameters.language }}
