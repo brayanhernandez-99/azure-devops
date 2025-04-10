@@ -64,7 +64,7 @@ jobs:
     -   script: |
             dotnet tool install --global GitVersion.Tool --version 5.10.0
             export PATH="$PATH:/root/.dotnet/tools"
-            gitversion /targetpath $(Build.SourcesDirectory)/$(Build.Repository.Name) /output json
+            dotnet-gitversion /targetpath $(Build.SourcesDirectory)/$(Build.Repository.Name) /output json
         displayName: 'Debug GitVersion output'
 
     -   task: Gitversion/execute@3
