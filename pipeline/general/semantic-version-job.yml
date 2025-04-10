@@ -67,9 +67,11 @@ jobs:
     -   task: Gitversion/execute@3
         displayName: 'Generate Semantic Version'
         inputs:
-            useConfigFile: true
-            configFilePath: '$(System.DefaultWorkingDirectory)/file-version/gitversion.yml'
-            targetPath: '$(Build.SourcesDirectory)/$(Build.Repository.Name)'
+            overrideConfig: |
+                update-build-number=false
+            # useConfigFile: true
+            # configFilePath: '$(System.DefaultWorkingDirectory)/file-version/gitversion.yml'
+            # targetPath: '$(Build.SourcesDirectory)/$(Build.Repository.Name)'
     
     -   script: |
             echo "Version generada: $(GitVersion.FullSemVer)"
