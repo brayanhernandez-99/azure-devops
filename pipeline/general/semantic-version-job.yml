@@ -64,7 +64,7 @@ jobs:
             cd $(Build.SourcesDirectory)/$(Build.Repository.Name)
             ls -la
 
-    -   task: Gitversion/execute@3
+    -   task: Gitversion/execute@3.2.0
         displayName: 'Generate Semantic Version'
         inputs:
             overrideConfig: |
