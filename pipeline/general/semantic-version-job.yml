@@ -56,7 +56,7 @@ jobs:
     -   task: gitversion/setup@3
         displayName: Install GitVersion
         inputs:
-            versionSpec: '6.0.0'
+            versionSpec: '5.10.0'
 
     -   script: |
             cd $(Build.SourcesDirectory)/$(Build.Repository.Name)
