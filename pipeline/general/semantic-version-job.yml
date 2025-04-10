@@ -53,24 +53,24 @@ jobs:
             fi
         displayName: 'Validating tags'
         
-    -   task: gitversion/setup@3.2.0
+    -   task: gitversion/setup@0
         displayName: Install GitVersion
         inputs:
-            versionSpec: '6.0.0'
+            versionSpec: '5.10.0'
 
     -   script: |
             cd $(Build.SourcesDirectory)/$(Build.Repository.Name)
             ls -la
 
-    -   task: Gitversion/execute@3.2.0
+    -   task: Gitversion/execute@0
         displayName: 'Generate Semantic Version'
         inputs:
             disableCache: true
             disableNormalization: true
             updateAssemblyInfo: true
-            # useConfigFile: true
-            # configFilePath: '$(System.DefaultWorkingDirectory)/file-version/gitversion.yml'
-            # targetPath: '$(Build.SourcesDirectory)/$(Build.Repository.Name)'
+            useConfigFile: true
+            configFilePath: '$(System.DefaultWorkingDirectory)/file-version/gitversion.yml'
+            targetPath: '$(Build.SourcesDirectory)/$(Build.Repository.Name)'
     
     -   script: |
             echo "Version generada: $(GitVersion.FullSemVer)"
