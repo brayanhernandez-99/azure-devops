@@ -11,4 +11,5 @@ jobs:
     -   script: |
             ls -l
             pwd
-            echo $(Build.SourcesDirectory)
+            echo $(Build.SourcesDirectory)/apps
+            ls -l
