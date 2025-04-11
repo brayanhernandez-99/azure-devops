@@ -18,4 +18,11 @@ jobs:
 
     - script: |
         echo $(changedMs)
+
+    - ${{ each ms in fromJson(parameters.changedMs) }}:
+      - script: |
+          echo "Procesando microservicio: ${{ ms }}"
+          VERSION=$(jq -r '.version' $(Build.SourcesDirectory)/apps/${{ ms }}/package.json)
+          echo "Versión de ${{ ms }}: $VERSION"
+        displayName: "Versión de ${{ ms }}"
             
