@@ -4,6 +4,7 @@ parameters:
 
 jobs:
   - job: 'build_nodejs'
+    dependsOn: ${{ parameters.dependsOn }}
     displayName: 'Build nodejs'    
     pool:
         name: 'Azure Pipelines'
