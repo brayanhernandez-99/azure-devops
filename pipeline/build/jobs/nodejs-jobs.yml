@@ -20,7 +20,6 @@ jobs:
     steps:
       
       - script: |
-          # echo "Compilando: ${{ matrix.msName }}"
           echo $(changedMs)
 
       - script: |
