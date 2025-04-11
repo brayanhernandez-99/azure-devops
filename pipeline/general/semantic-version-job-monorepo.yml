@@ -18,7 +18,7 @@ jobs:
 
     - script: |
         echo $(DetectChangedMS.changedMs)
-        CHANGED_MS_LIST=$(echo "$(changedMs)" | xargs -n1 | jq -R . | jq -s .)
+        CHANGED_MS_LIST=$(echo "$(DetectChangedMS.changedMs)" | xargs -n1 | jq -R . | jq -s .)
         echo $CHANGED_MS_LIST
         for ms in $(echo "$CHANGED_MS_LIST" | jq -r '.[]'); do
           echo "Procesando microservicio: $ms"
