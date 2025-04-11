@@ -18,7 +18,7 @@ jobs:
 
     - script: |
         echo $(changedMs)
-        CHANGED_MS_LIST=$(echo "$changedMs" | jq -R . | jq -s .)
+        CHANGED_MS_LIST=$(echo "$(changedMs)" | xargs -n1 | jq -R . | jq -s .)
         echo $CHANGED_MS_LIST
       displayName: "Obtener versiones de los MS cambiados"
             
