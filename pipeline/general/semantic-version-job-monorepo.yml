@@ -11,3 +11,4 @@ jobs:
     -   script: |
             ls -l
             pwd
+            echo $(Build.SourcesDirectory)
