@@ -18,8 +18,8 @@ jobs:
       name: DetectChangedMS
 
     - script: |
-        echo "Microservicios modificados: '$(changedMs)'"
-        
+        echo "Microservicios modificados: '$changedMs'"
+
         # RAW_JSON='$(changedMs)'
 
         # if echo "$RAW_JSON" | jq empty; then
