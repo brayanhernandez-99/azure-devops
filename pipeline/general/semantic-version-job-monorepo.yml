@@ -18,7 +18,7 @@ jobs:
       name: DetectChangedMS
 
     - script: |
-        echo '$(DetectChangedMS.changedMs)'
+        echo $(DetectChangedMS.changedMs)
 
         RAW_JSON='$(DetectChangedMS.changedMs)'
 
