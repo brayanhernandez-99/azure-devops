@@ -10,6 +10,7 @@ stages:
     - template: jobs/nodejs-jobs.yml
       parameters:
         dependsOn: semantic_version
+        changedMs: $[ dependencies.semantic_version.outputs['DetectChangedMS.changedMs'] ]
 
 
 
