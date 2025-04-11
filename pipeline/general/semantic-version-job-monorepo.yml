@@ -18,7 +18,7 @@ jobs:
       name: DetectChangedMS
 
     - script: |
-        echo "Microservicios modificados: '$changedMs'"
+        echo $changedMs
 
         # RAW_JSON='$(changedMs)'
 
