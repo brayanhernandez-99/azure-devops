@@ -11,10 +11,10 @@ jobs:
     - script: |
         cd $(Build.SourcesDirectory)/apps
         CHANGED_MS=$(git diff --name-only HEAD~1 HEAD | grep "^apps/" | cut -d '/' -f2 | sort | uniq | xargs)
-        echo "##vso[task.setvariable variable=changedMs]$CHANGED_MS"
+        echo "##vso[task.setvariable variable=changedMs;isOutput=true]$CHANGED_MS"
         echo "Microservicios detectados: $CHANGED_MS"
       name: DetectChangedMS
-      
+
     - script: |
         CHANGED_MS_LIST=$(echo "$(changedMs)" | xargs -n1 | jq -R . | jq -s .)
         echo $CHANGED_MS_LIST
@@ -22,7 +22,7 @@ jobs:
           echo "Procesando microservicio: $ms"
           VERSION=$(jq -r '.version' "$(Build.SourcesDirectory)/apps/$ms/package.json")
           echo "Versión de $ms: $VERSION"
-          echo "##vso[task.setvariable variable=${ms}_version]$VERSION"
+          echo "##vso[task.setvariable variable=${ms}_version;isOutput=true]$VERSION"
         done
       displayName: "Obtener versiones de los MS cambiados"
             
