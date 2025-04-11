@@ -18,20 +18,21 @@ jobs:
       name: DetectChangedMS
 
     - script: |
-        echo "Microservicios modificados: $(changedMs)"
-        RAW_JSON='$(changedMs)'
+        echo "Microservicios modificados: '$(changedMs)'"
+        
+        # RAW_JSON='$(changedMs)'
 
-        if echo "$RAW_JSON" | jq empty; then
-          echo "JSON válido detectado"
-          for ms in $(echo "$RAW_JSON" | jq -r '.[]'); do
-            echo "Procesando microservicio: $ms"
-            VERSION=$(jq -r '.version' "$(Build.SourcesDirectory)/apps/$ms/package.json")
-            echo "Versión de $ms: $VERSION"
-            echo "##vso[task.setvariable variable=${ms}_version]$VERSION"
-          done
-        else
-          echo "Error: JSON inválido en changedMs"
-          exit 1
-        fi
+        # if echo "$RAW_JSON" | jq empty; then
+        #   echo "JSON válido detectado"
+        #   for ms in $(echo "$RAW_JSON" | jq -r '.[]'); do
+        #     echo "Procesando microservicio: $ms"
+        #     VERSION=$(jq -r '.version' "$(Build.SourcesDirectory)/apps/$ms/package.json")
+        #     echo "Versión de $ms: $VERSION"
+        #     echo "##vso[task.setvariable variable=${ms}_version]$VERSION"
+        #   done
+        # else
+        #   echo "Error: JSON inválido en changedMs"
+        #   exit 1
+        # fi
       displayName: "Obtener versiones de los MS cambiados"
             
