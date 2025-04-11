@@ -9,7 +9,7 @@ stages:
   - ${{ if eq(parameters.language, 'nodejs') }}:
     - template: jobs/nodejs-jobs.yml
       parameters:
-        dependsOn: semanticVersion
+        dependsOn: semantic_version
 
 
 
