@@ -1,7 +1,7 @@
 parameters:
   dependsOn: []
-  authVersion: ''
-  
+  changedMs: ''
+
 jobs:
   - job: 'build_nodejs'
     displayName: 'Build nodejs'    
