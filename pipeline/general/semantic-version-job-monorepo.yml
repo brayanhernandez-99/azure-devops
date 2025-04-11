@@ -18,9 +18,9 @@ jobs:
       name: DetectChangedMS
 
     - script: |
-        echo $changedMs
+        echo '$(DetectChangedMS.changedMs)'
 
-        # RAW_JSON='$(changedMs)'
+        RAW_JSON='$(DetectChangedMS.changedMs)'
 
         # if echo "$RAW_JSON" | jq empty; then
         #   echo "JSON válido detectado"
