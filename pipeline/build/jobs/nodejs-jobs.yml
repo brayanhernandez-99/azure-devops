@@ -1,6 +1,6 @@
 parameters:
   dependsOn: []
-  changedMs: ''
+  changedMs: []
 
 jobs:
   - job: 'build_nodejs'
