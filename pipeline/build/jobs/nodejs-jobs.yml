@@ -16,7 +16,7 @@ jobs:
       
       - script: |
           echo "build nodejs"
-          echo ${{ parameters.changedMs }}
+          echo $(changedMs)
 
       - script: |
           echo "segundo task"
