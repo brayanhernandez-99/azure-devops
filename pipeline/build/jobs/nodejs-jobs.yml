@@ -5,7 +5,7 @@ jobs:
         name: 'Azure Pipelines'
         vmImage: 'ubuntu-22.04'
     variables:
-    authVer: $[ dependencies.detectVersions.outputs['setVersions.auth_version'] ]
+    authVer: $[ dependencies.semantic_version.outputs['setVersions.auth_version'] ]
 
     steps:
       
