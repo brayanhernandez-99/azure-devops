@@ -1,16 +1,26 @@
+parameters:
+  language: ''
+  typerelease: ''
+  changedMs: []
+
 stages:
-- stage: 'build_developmet'
-  displayName: 'Build Developmet'
+- stage: 'microservices_developmet'
+  displayName: 'microservices Developmet'
   dependsOn: [] 
 
   jobs:
   - template: ../general/semantic-version-job-monorepo.yml
   
+
+- stage: 'build_developmet'
+  displayName: 'Build Developmet'
+  dependsOn: microservices_developmet
+  variables:
+    changedMs: $[ stageDependencies.microservices_developmet.semantic_version.outputs['DetectChangedMS.changedMs'] ]
+
+  jobs:
   - ${{ if eq(parameters.language, 'nodejs') }}:
     - template: jobs/nodejs-jobs.yml
-      parameters:
-        dependsOn: semantic_version
-        changedMs: $[ dependencies.semantic_version.outputs['DetectChangedMS.changedMs'] ]
 
 
 
