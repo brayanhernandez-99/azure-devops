@@ -11,11 +11,16 @@ jobs:
         vmImage: 'ubuntu-22.04'
     variables:
       changedMs: $[ dependencies.semantic_version.outputs['DetectChangedMS.changedMs'] ]
+    strategy:
+      matrix:
+        ${{ each ms in parameters.changedMs }}:
+          ${{ ms }}:
+            msName: ${{ ms }}
 
     steps:
       
       - script: |
-          echo "build nodejs"
+          echo "Compilando: ${{ matrix.msName }}"
           echo $(changedMs)
 
       - script: |
