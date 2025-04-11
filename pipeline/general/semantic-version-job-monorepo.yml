@@ -16,5 +16,5 @@ jobs:
       name: DetectChangedMS
 
     - script: |
-        $changedMs
+        echo $changedMs
             
