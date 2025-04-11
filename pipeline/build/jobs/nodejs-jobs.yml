@@ -5,12 +5,13 @@ jobs:
         name: 'Azure Pipelines'
         vmImage: 'ubuntu-22.04'
     variables:
-    authVer: $[ dependencies.semantic_version.outputs['setVersions.DetectChangedMS'] ]
+    changedMs: $[ dependencies.semantic_version.outputs['setVersions.DetectChangedMS'] ]
 
     steps:
       
       - script: |
           echo "build nodejs"
+          echo $changedMs
 
       - script: |
           echo "segundo task"
