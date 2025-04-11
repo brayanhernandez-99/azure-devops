@@ -20,5 +20,18 @@ jobs:
         echo $(changedMs)
         CHANGED_MS_LIST=$(echo "$(changedMs)" | xargs -n1 | jq -R . | jq -s .)
         echo $CHANGED_MS_LIST
+
+        if echo "$CHANGED_MS_LIST" | jq empty; then
+          echo "JSON válido detectado"
+          for ms in $(echo "$CHANGED_MS_LIST" | jq -r '.[]'); do
+            echo "Procesando microservicio: $ms"
+            VERSION=$(jq -r '.version' "$(Build.SourcesDirectory)/apps/$ms/package.json")
+            echo "Versión de $ms: $VERSION"
+            echo "##vso[task.setvariable variable=${ms}_version]$VERSION"
+          done
+        else
+          echo "Error: JSON inválido en changedMs"
+          exit 1
+        fi
       displayName: "Obtener versiones de los MS cambiados"
             
