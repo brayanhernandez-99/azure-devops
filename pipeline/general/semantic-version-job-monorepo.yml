@@ -10,10 +10,11 @@ jobs:
   
     - script: |
         cd $(Build.SourcesDirectory)/apps
-        CHANGED_MS=$(git diff --name-only HEAD~1 HEAD | grep "^apps/" | cut -d '/' -f2 | sort | uniq | xargs)
-        echo $CHANGED_MS
-        echo "##vso[task.setvariable variable=changedMs]$CHANGED_MS"
-        echo "Microservicios detectados: $CHANGED_MS"
+        CHANGED_MS=$(git diff --name-only HEAD~1 HEAD | grep "^apps/" | cut -d '/' -f2 | sort | uniq)
+        CHANGED_MS_LIST=$(echo "$CHANGED_MS" | jq -R . | jq -s .)
+        echo $CHANGED_MS_LIST
+        echo "##vso[task.setvariable variable=changedMs]$CHANGED_MS_LIST"
+        echo "Microservicios detectados: $CHANGED_MS_LIST"
       name: DetectChangedMS
 
     - script: |
