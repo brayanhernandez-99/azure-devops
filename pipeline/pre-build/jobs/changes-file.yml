@@ -32,17 +32,17 @@ jobs:
 
         cat main-pipeline.yml
 
-
-
-        # CHANGED_MS=$(git diff --name-only HEAD~1 HEAD | grep "^apps/" | cut -d '/' -f2 | sort | uniq | xargs)
-        # CHANGED_MS_LIST=$(echo "$CHANGED_MS" | jq -R . | jq -s .)
-        # echo $CHANGED_MS
-        # echo CHANGED_MS_LIST
-        # echo "##vso[task.setvariable variable=changedMs;isOutput=true]$CHANGED_MS"
-        # echo "##vso[task.setvariable variable=changedMslist;isOutput=true]$CHANGED_MS_LIST"
-        # echo $CHANGED_MS
-        # echo $CHANGED_MS_LIST
       name: DetectChangedMS
+
+    - script: |
+          echo ${AZURE_DEVOPS_CLI_PAT} | az devops login
+          az pipelines run --name "Pruebas-consumir-template" \
+          --branch "$(Build.SourceBranchName)" \
+          --project "$(System.TeamProject)" \
+          --org "https://dev.azure.com/ux-technology"
+      env:
+        AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
+      displayName: 'Trigger pipeline'
 
     # - script: |
     #     echo $(DetectChangedMS.changedMs)
