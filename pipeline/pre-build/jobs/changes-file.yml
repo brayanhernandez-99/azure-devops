@@ -31,12 +31,12 @@ jobs:
         mv main-pipeline-updated.yml main-pipeline.yml
 
         cat main-pipeline.yml
-
-        git config user.name "pipeline"
-        git config user.email "sebastian.londono@ux.technology"
-        git add main-pipeline.yml
-        git commit -m "Auto-generated pipeline config ${BUILD_BUILDID}"
-        git push origin $[ replace(variables['Build.SourceBranch'], 'refs/heads/', '')]
+        echo $[ replace(variables['Build.SourceBranch'], 'refs/heads/', '')]
+        # git config user.name "pipeline"
+        # git config user.email "sebastian.londono@ux.technology"
+        # git add main-pipeline.yml
+        # git commit -m "Auto-generated pipeline config ${BUILD_BUILDID}"
+        # git push origin $[ replace(variables['Build.SourceBranch'], 'refs/heads/', '')]
 
       name: DetectChangedMS
     
