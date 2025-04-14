@@ -43,7 +43,7 @@ jobs:
           # --branch "$(Build.SourceBranchName)" \
           # --project "$(System.TeamProject)" \
           # --org "https://dev.azure.com/ux-technology"
-          echo $Prueba
+          echo $(Prueba)
       env:
         AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
       displayName: 'Trigger pipeline'
