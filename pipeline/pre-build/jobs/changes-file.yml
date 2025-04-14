@@ -30,6 +30,8 @@ jobs:
 
         mv main-pipeline-updated.yml main-pipeline.yml
 
+        cat main-pipeline.yml
+
 
 
         # CHANGED_MS=$(git diff --name-only HEAD~1 HEAD | grep "^apps/" | cut -d '/' -f2 | sort | uniq | xargs)
