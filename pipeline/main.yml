@@ -17,7 +17,7 @@ parameters:
     default: aws
   
   - name: apps
-    type: list
+    type: stepList
     values: []
 
 resources:
