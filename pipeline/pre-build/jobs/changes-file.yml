@@ -38,7 +38,8 @@ jobs:
       displayName: 'Set default Azure DevOps organization and project'
 
     - script: |
-          # echo ${AZURE_DEVOPS_CLI_PAT} | az devops login
+          echo ${AZURE_DEVOPS_CLI_PAT} | az devops login
+          echo ${AZURE_DEVOPS_CLI_PAT}
           # az pipelines run --name "Pruebas-consumir-template" \
           # --branch "$(Build.SourceBranchName)" \
           # --project "$(System.TeamProject)" \
