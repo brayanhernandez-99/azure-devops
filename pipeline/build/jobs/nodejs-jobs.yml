@@ -18,11 +18,16 @@ jobs:
     #         msName: ${{ ms }}
 
     steps:
-      
-      - script: |
-          echo $(changedMs)
-          echo ${{parameters.changedMs }}
 
-      - script: |
-          echo "segundo task"
+      - ${{ each ms in parameters.changedMs }}:
+        - script: |
+            echo "Compilando microservicio: ${{ ms }}"
+          displayName: "Build ${{ ms }}"
+      
+      # - script: |
+      #     echo $(changedMs)
+      #     echo ${{parameters.changedMs }}
+
+      # - script: |
+      #     echo "segundo task"
 
