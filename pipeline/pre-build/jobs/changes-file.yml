@@ -38,11 +38,12 @@ jobs:
       displayName: 'Set default Azure DevOps organization and project'
 
     - script: |
-          echo ${AZURE_DEVOPS_CLI_PAT} | az devops login
-          az pipelines run --name "Pruebas-consumir-template" \
-          --branch "$(Build.SourceBranchName)" \
-          --project "$(System.TeamProject)" \
-          --org "https://dev.azure.com/ux-technology"
+          # echo ${AZURE_DEVOPS_CLI_PAT} | az devops login
+          # az pipelines run --name "Pruebas-consumir-template" \
+          # --branch "$(Build.SourceBranchName)" \
+          # --project "$(System.TeamProject)" \
+          # --org "https://dev.azure.com/ux-technology"
+          echo $Prueba
       env:
         AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
       displayName: 'Trigger pipeline'
