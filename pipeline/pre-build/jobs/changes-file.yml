@@ -10,16 +10,25 @@ jobs:
   
     - script: |
         cd $(Build.SourcesDirectory)/apps
-        CHANGED_APPS=$(git diff --name-only HEAD~1 HEAD | grep "^apps/" | cut -d '/' -f2 | sort -u)
-        echo $CHANGED_APPS
+        apps=$(git diff --name-only HEAD~1 HEAD | grep "^apps/" | cut -d '/' -f2 | sort -u)
+        echo $apps
 
-        YAML="parameters:\n  apps:\n"
-        for app in $CHANGED_APPS; do
-          YAML+="    - $app\n"
+        cd $(Build.SourcesDirectory)/pipeline
+
+        apps_yaml="    apps:\n"
+        for app in $apps; do
+          apps_yaml+="      - $app\n"
         done
-        echo -e "$YAML" > ms-trigger.yml
 
-        cat ms-trigger.yml
+        # Reemplazar el bloque `apps:` en main-pipeline.yml
+        awk -v newapps="$apps_yaml" '
+          BEGIN {inside=0}
+          /^    apps:/ {inside=1; print newapps; next}
+          inside && /^[^ ]/ {inside=0}
+          !inside
+        ' main-pipeline.yml > main-pipeline-updated.yml
+
+        mv main-pipeline-updated.yml main-pipeline.yml
 
 
 
