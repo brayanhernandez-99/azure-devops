@@ -11,7 +11,6 @@ stages:
   jobs:
   - template: ../general/semantic-version-job-monorepo.yml
   
-
 - stage: 'build_developmet'
   displayName: 'Build Developmet'
   dependsOn: microservices_developmet
@@ -22,6 +21,7 @@ stages:
   - ${{ if eq(parameters.language, 'nodejs') }}:
     - template: jobs/nodejs-jobs.yml
       paramters:
+        changedMs: ${{ variables.changedMs }}
         
 
 
