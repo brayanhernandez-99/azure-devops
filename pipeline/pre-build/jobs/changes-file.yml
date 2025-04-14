@@ -36,7 +36,7 @@ jobs:
         git config user.email "sebastian.londono@ux.technology"
         git add main-pipeline.yml
         git commit -m "Auto-generated pipeline config ${BUILD_BUILDID}"
-        git push origin $(Build.SourceBranch)
+        git push origin $[ replace(variables['Build.SourceBranch'], 'refs/heads/', '')
 
       name: DetectChangedMS
     
