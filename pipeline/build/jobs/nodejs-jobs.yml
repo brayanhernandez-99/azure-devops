@@ -21,6 +21,7 @@ jobs:
       
       - script: |
           echo $(changedMs)
+          echo ${{parameters.changedMs }}
 
       - script: |
           echo "segundo task"
