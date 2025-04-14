@@ -1,6 +1,5 @@
 jobs:
   - job: 'build_nodejs'
-    dependsOn: semantic_version
     displayName: 'Build nodejs'    
     pool:
         name: 'Azure Pipelines'
