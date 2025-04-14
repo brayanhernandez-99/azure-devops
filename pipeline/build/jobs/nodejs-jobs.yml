@@ -1,7 +1,3 @@
-parameters:
-  dependsOn: []
-  changedMs: []
-
 jobs:
   - job: 'build_nodejs'
 
