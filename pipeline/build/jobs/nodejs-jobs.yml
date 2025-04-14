@@ -14,8 +14,8 @@ jobs:
 
     steps:
       - script: |
-        echo "Compilando microservicio: $(msName)"
-      displayName: "Build $(msName)"
+          echo "Compilando microservicio: $(msName)"
+        displayName: "Build $(msName)"
 
       # - script: |
       #     echo $(changedMs)
