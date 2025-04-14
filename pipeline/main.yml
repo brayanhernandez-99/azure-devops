@@ -18,7 +18,6 @@ parameters:
   
   - name: apps
     type: string
-    values: []
 
 resources:
   repositories:
