@@ -1,0 +1,16 @@
+parameters:
+  - name: typepeline
+    type: string
+
+resources:
+  repositories:
+  - repository: self
+    name: $(System.TeamProject)/$(Build.Repository.Name)
+    type: git
+    ref: $(Build.SourceBranch)
+
+
+stages:
+  - ${{ if eq(parameters.typepeline, 'prepipeline') }}:
+    - template: pre-build/pre-build-developmet.yml
+
