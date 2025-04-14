@@ -21,6 +21,8 @@ stages:
   jobs:
   - ${{ if eq(parameters.language, 'nodejs') }}:
     - template: jobs/nodejs-jobs.yml
+      paramters:
+        
 
 
 
