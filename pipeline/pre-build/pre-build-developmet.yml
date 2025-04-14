@@ -1,0 +1,7 @@
+stages:
+- stage: 'change_file_detected'
+  displayName: 'Change File Detected'
+  dependsOn: [] 
+
+  jobs:
+  - template: jobs/changes-file.yml

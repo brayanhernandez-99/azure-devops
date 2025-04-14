@@ -1,6 +1,6 @@
 jobs:
-- job: 'semantic_version'
-  displayName: 'Semantic Version'
+- job: 'change_file'
+  displayName: 'Change File'
   pool:
     name: 'Azure Pipelines'
     VmImage: ubuntu-22.04

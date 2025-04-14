@@ -15,7 +15,3 @@ stages:
     - template: jobs/nodejs-jobs.yml
       parameters:
         apps: ${{ parameters.apps }}
-        
-
-
-
