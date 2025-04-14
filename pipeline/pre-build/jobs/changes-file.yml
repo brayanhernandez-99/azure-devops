@@ -31,7 +31,7 @@ jobs:
         mv main-pipeline-updated.yml main-pipeline.yml
 
         cat main-pipeline.yml
-        echo $[ replace(variables['Build.SourceBranch'], 'refs/heads/', '')]
+        echo "$[ replace(variables['Build.SourceBranch'], 'refs/heads/', '')]"
         # git config user.name "pipeline"
         # git config user.email "sebastian.londono@ux.technology"
         # git add main-pipeline.yml
