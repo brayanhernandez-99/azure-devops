@@ -7,6 +7,7 @@ jobs:
   steps:
     - checkout: self
       fetchDepth: 0
+      persistCredentials: true
   
     - script: |
         cd $(Build.SourcesDirectory)/apps
