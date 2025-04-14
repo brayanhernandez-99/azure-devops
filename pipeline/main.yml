@@ -31,9 +31,6 @@ resources:
 
 
 stages:
-  - ${{ if eq(parameters.typepeline, 'prepipeline') }}:
-    - template: pre-build/pre-build-developmet.yml
-
   - ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature'), in(variables['Build.SourceBranch'], 'refs/heads/develop', 'refs/heads/release' )) }}:
     - template: build/build-developmet.yml
       parameters:
