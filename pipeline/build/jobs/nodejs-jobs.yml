@@ -4,26 +4,25 @@ parameters:
 
 jobs:
   - job: 'build_nodejs'
+
     dependsOn: ${{ parameters.dependsOn }}
+    
     displayName: 'Build nodejs'    
     pool:
         name: 'Azure Pipelines'
         vmImage: 'ubuntu-22.04'
-    variables:
-      changedMs: $[ dependencies.semantic_version.outputs['DetectChangedMS.changedMs'] ]
-    # strategy:
-    #   matrix:
-    #     ${{ each ms in parameters.changedMs }}:
-    #       ${{ ms }}:
-    #         msName: ${{ ms }}
+
+    strategy:
+      matrix:
+        ${{ each ms in parameters.changedMs }}:
+          ${{ ms }}:
+            msName: ${{ ms }}
 
     steps:
+      - script: |
+        echo "Compilando microservicio: $(msName)"
+      displayName: "Build $(msName)"
 
-      - ${{ each ms in parameters.changedMs }}:
-        - script: |
-            echo "Compilando microservicio: ${{ ms }}"
-          displayName: "Build ${{ ms }}"
-      
       # - script: |
       #     echo $(changedMs)
       #     echo ${{parameters.changedMs }}
