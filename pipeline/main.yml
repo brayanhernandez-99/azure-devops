@@ -15,6 +15,10 @@ parameters:
   - name: typerelease
     type: string
     default: aws
+  
+  - name: apps
+    type: list
+    values: []
 
 resources:
   repositories:
@@ -31,3 +35,5 @@ stages:
       parameters:
         language: ${{ parameters.language }}
         typerelease: ${{ parameters.typerelease }}
+        apps: ${{ parameters.apps }}
+
