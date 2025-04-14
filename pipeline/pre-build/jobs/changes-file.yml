@@ -42,7 +42,7 @@ jobs:
           echo ${AZURE_DEVOPS_CLI_PAT}
           echo $(Build.SourceBranch)
           az pipelines run --name "Pruebas-consumir-template" \
-            --branch "feature/pruebas-versiones-correct" \
+            --branch "$(Build.SourceBranch)" \
             --project "$(System.TeamProject)" \
             --org "https://dev.azure.com/ux-technology"
       env:
