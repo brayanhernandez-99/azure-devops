@@ -33,6 +33,9 @@ jobs:
         cat main-pipeline.yml
 
       name: DetectChangedMS
+    
+    - script: az devops configure --defaults organization='$(System.TeamFoundationCollectionUri)' project='$(System.TeamProject)' --use-git-aliases true
+      displayName: 'Set default Azure DevOps organization and project'
 
     - script: |
           echo ${AZURE_DEVOPS_CLI_PAT} | az devops login
