@@ -1,8 +1,3 @@
-parameters:
-  language: ''
-  typerelease: ''
-  changedMs: []
-
 stages:
 - stage: 'microservices_developmet'
   displayName: 'microservices Developmet'
@@ -14,15 +9,12 @@ stages:
 - stage: 'build_developmet'
   displayName: 'Build Developmet'
   dependsOn: microservices_developmet
-  variables:
-    - name: changedMs
-      value: ${{ stageDependencies.microservices_developmet.semantic_version.outputs['DetectChangedMS.changedMs'] }}
 
   jobs:
   - ${{ if eq(parameters.language, 'nodejs') }}:
     - template: jobs/nodejs-jobs.yml
       parameters:
-        changedMs: ${{ variables.changedMs }}
+        apps: ${{ parameters.apps }}
         
 
 
