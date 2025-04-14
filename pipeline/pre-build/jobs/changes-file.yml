@@ -10,24 +10,37 @@ jobs:
   
     - script: |
         cd $(Build.SourcesDirectory)/apps
-        CHANGED_MS=$(git diff --name-only HEAD~1 HEAD | grep "^apps/" | cut -d '/' -f2 | sort | uniq | xargs)
-        CHANGED_MS_LIST=$(echo "$CHANGED_MS" | jq -R . | jq -s .)
-        echo $CHANGED_MS
-        echo CHANGED_MS_LIST
-        echo "##vso[task.setvariable variable=changedMs;isOutput=true]$CHANGED_MS"
-        echo "##vso[task.setvariable variable=changedMslist;isOutput=true]$CHANGED_MS_LIST"
-        echo $CHANGED_MS
-        echo $CHANGED_MS_LIST
+        CHANGED_APPS=$(git diff --name-only HEAD~1 HEAD | grep "^apps/" | cut -d '/' -f2 | sort -u)
+        echo $CHANGED_APPS
+
+        YAML="parameters:\n  apps:\n"
+        for app in $CHANGED_APPS; do
+          YAML+="    - $app\n"
+        done
+        echo -e "$YAML" > ms-trigger.yml
+
+        echo ms-trigger.yml
+
+
+
+        # CHANGED_MS=$(git diff --name-only HEAD~1 HEAD | grep "^apps/" | cut -d '/' -f2 | sort | uniq | xargs)
+        # CHANGED_MS_LIST=$(echo "$CHANGED_MS" | jq -R . | jq -s .)
+        # echo $CHANGED_MS
+        # echo CHANGED_MS_LIST
+        # echo "##vso[task.setvariable variable=changedMs;isOutput=true]$CHANGED_MS"
+        # echo "##vso[task.setvariable variable=changedMslist;isOutput=true]$CHANGED_MS_LIST"
+        # echo $CHANGED_MS
+        # echo $CHANGED_MS_LIST
       name: DetectChangedMS
 
-    - script: |
-        echo $(DetectChangedMS.changedMs)
-        CHANGED_MS_LIST=$(echo "$(DetectChangedMS.changedMs)" | xargs -n1 | jq -R . | jq -s .)
-        echo $CHANGED_MS_LIST
-        for ms in $(echo "$CHANGED_MS_LIST" | jq -r '.[]'); do
-          echo "Procesando microservicio: $ms"
-          VERSION=$(jq -r '.version' "$(Build.SourcesDirectory)/apps/$ms/package.json")
-          echo "Versión de $ms: $VERSION"
-          echo "##vso[task.setvariable variable=${ms}_version]$VERSION"
-        done
-      displayName: "Obtener versiones de los MS cambiados"
+    # - script: |
+    #     echo $(DetectChangedMS.changedMs)
+    #     CHANGED_MS_LIST=$(echo "$(DetectChangedMS.changedMs)" | xargs -n1 | jq -R . | jq -s .)
+    #     echo $CHANGED_MS_LIST
+    #     for ms in $(echo "$CHANGED_MS_LIST" | jq -r '.[]'); do
+    #       echo "Procesando microservicio: $ms"
+    #       VERSION=$(jq -r '.version' "$(Build.SourcesDirectory)/apps/$ms/package.json")
+    #       echo "Versión de $ms: $VERSION"
+    #       echo "##vso[task.setvariable variable=${ms}_version]$VERSION"
+    #     done
+    #   displayName: "Obtener versiones de los MS cambiados"
