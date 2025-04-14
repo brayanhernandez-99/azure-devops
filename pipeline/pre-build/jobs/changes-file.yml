@@ -40,6 +40,7 @@ jobs:
     - script: |
           echo ${AZURE_DEVOPS_CLI_PAT} | az devops login --organization https://dev.azure.com/ux-technology
           echo ${AZURE_DEVOPS_CLI_PAT}
+          echo $(Build.SourceBranchName)
           az pipelines run --name "Pruebas-consumir-template" \
             --branch "$(Build.SourceBranchName)" \
             --project "$(System.TeamProject)" \
