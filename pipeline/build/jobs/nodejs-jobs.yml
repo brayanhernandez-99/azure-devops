@@ -1,8 +1,6 @@
 jobs:
   - job: 'build_nodejs'
-
-    dependsOn: ${{ parameters.dependsOn }}
-    
+    dependsOn: semantic_version
     displayName: 'Build nodejs'    
     pool:
         name: 'Azure Pipelines'
@@ -10,7 +8,7 @@ jobs:
 
     strategy:
       matrix:
-        ${{ each ms in parameters.changedMs }}:
+        ${{ each ms in parameters.apps }}:
           ${{ ms }}:
             msName: ${{ ms }}
 
