@@ -18,9 +18,6 @@ parameters:
   
   - name: apps
     type: object
-  
-  - name: typepeline
-    type: string
 
 resources:
   repositories:
