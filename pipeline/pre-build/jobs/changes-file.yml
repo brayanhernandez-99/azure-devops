@@ -10,9 +10,27 @@ jobs:
   
     - script: |
         cd $(Build.SourcesDirectory)/apps
-        last_commit=$(git log --pretty=format:"%H" -- apps/ | grep -v "$(git log -1 --pretty=format:%H -- pipeline/main-pipeline.yml)" | head -1)
-        apps=$(git diff --name-only $last_relevant_commit HEAD | grep "^apps/" | cut -d '/' -f2 | sort -u | xargs)
+        apps=$(git diff --name-only HEAD~1 HEAD | grep "^apps/" | cut -d '/' -f2 | sort -u)
         echo $apps
+
+        cd $(Build.SourcesDirectory)/pipeline
+
+        apps_yaml="    apps:\n"
+        for app in $apps; do
+          apps_yaml+="      - $app\n"
+        done
+
+        # Reemplazar el bloque `apps:` en main-pipeline.yml
+        awk -v newapps="$apps_yaml" '
+          BEGIN {inside=0}
+          /^    apps:/ {inside=1; print newapps; next}
+          inside && /^[^ ]/ {inside=0}
+          !inside
+        ' main-pipeline.yml > main-pipeline-updated.yml
+
+        mv main-pipeline-updated.yml main-pipeline.yml
+
+        cat main-pipeline.yml
 
       name: DetectChangedMS
     
