@@ -19,7 +19,7 @@ jobs:
         done
         echo -e "$YAML" > ms-trigger.yml
 
-        echo ms-trigger.yml
+        cat ms-trigger.yml
 
 
 
