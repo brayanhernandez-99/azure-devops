@@ -15,7 +15,8 @@ stages:
   displayName: 'Build Developmet'
   dependsOn: microservices_developmet
   variables:
-    changedMs: $[ stageDependencies.microservices_developmet.semantic_version.outputs['DetectChangedMS.changedMs'] ]
+    - name: changedMs
+      value: ${{ stageDependencies.microservices_developmet.semantic_version.outputs['DetectChangedMS.changedMs'] }}
 
   jobs:
   - ${{ if eq(parameters.language, 'nodejs') }}:
