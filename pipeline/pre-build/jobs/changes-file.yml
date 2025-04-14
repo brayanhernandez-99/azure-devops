@@ -10,7 +10,7 @@ jobs:
   
     - script: |
         cd $(Build.SourcesDirectory)/apps
-        last_commit=$(git log --pretty=format:"%H" -- apps/ | grep -v "$(git log -1 --pretty=format:%H -- main-pipeline.yml)" | head -1)
+        last_commit=$(git log --pretty=format:"%H" -- apps/ | grep -v "$(git log -1 --pretty=format:%H -- pipeline/main-pipeline.yml)" | head -1)
         apps=$(git diff --name-only $last_relevant_commit HEAD | grep "^apps/" | cut -d '/' -f2 | sort -u | xargs)
         echo $apps
 
