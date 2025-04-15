@@ -10,7 +10,7 @@ jobs:
 
     - script: |
         # echo $(DetectChangedMS.changedMs)
-        echo ${{ parameters.apps }}
+        echo $APPS_LIST
         # CHANGED_MS_LIST=$(echo "$(DetectChangedMS.changedMs)" | xargs -n1 | jq -R . | jq -s .)
         # echo $CHANGED_MS_LIST
         # for ms in $(echo "$CHANGED_MS_LIST" | jq -r '.[]'); do
@@ -20,3 +20,5 @@ jobs:
         #   echo "##vso[task.setvariable variable=${ms}_version]$VERSION"
         # done
       displayName: "Obtener versiones de los MS cambiados"
+      env:
+        APPS_LIST: ${{ join(' ', parameters.apps) }}
