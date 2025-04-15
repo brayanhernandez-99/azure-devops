@@ -5,6 +5,8 @@ stages:
 
   jobs:
   - template: ../general/semantic-version-job-monorepo.yml
+    parameters:
+        apps: ${{ parameters.apps }}
   
 - stage: 'build_developmet'
   displayName: 'Build Developmet'
