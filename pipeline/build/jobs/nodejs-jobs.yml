@@ -25,8 +25,8 @@ jobs:
           versionSource: 'spec'
           versionSpec: '$(versionSpecification)'
       
-      # - task: Npm@1
-      #   inputs:
-      #     command: 'install'
-      #     workingDir: $(System.DefaultWorkingDirectory)/src
+      - task: Npm@1
+        inputs:
+          command: 'install'
+          workingDir: $(System.DefaultWorkingDirectory)/apps/$(msName)
 
