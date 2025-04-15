@@ -5,7 +5,6 @@ jobs:
         name: 'Azure Pipelines'
         vmImage: 'ubuntu-22.04'
     variables:
-      packageManager: $(package_manager)
       versionSpecification: $[coalesce(variables.nodejsVersion, '18.x')]
 
     strategy:
@@ -17,6 +16,7 @@ jobs:
     steps:
       - script: |
           echo "Compilando microservicio: $(msName)"
+          ls -l
         displayName: "Build $(msName)"
 
       - task: NodeTool@0
@@ -24,4 +24,9 @@ jobs:
         inputs:
           versionSource: 'spec'
           versionSpec: '$(versionSpecification)'
+      
+      # - task: Npm@1
+      #   inputs:
+      #     command: 'install'
+      #     workingDir: $(System.DefaultWorkingDirectory)/src
 
