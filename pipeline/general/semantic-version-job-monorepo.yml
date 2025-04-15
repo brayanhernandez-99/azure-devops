@@ -7,21 +7,10 @@ jobs:
   steps:
     - checkout: self
       fetchDepth: 0
-  
-    - script: |
-        cd $(Build.SourcesDirectory)/apps
-        CHANGED_MS=$(git diff --name-only HEAD~1 HEAD | grep "^apps/" | cut -d '/' -f2 | sort | uniq | xargs)
-        CHANGED_MS_LIST=$(echo "$CHANGED_MS" | jq -R . | jq -s .)
-        echo $CHANGED_MS
-        echo CHANGED_MS_LIST
-        echo "##vso[task.setvariable variable=changedMs;isOutput=true]$CHANGED_MS"
-        echo "##vso[task.setvariable variable=changedMslist;isOutput=true]$CHANGED_MS_LIST"
-        echo $CHANGED_MS
-        echo $CHANGED_MS_LIST
-      name: DetectChangedMS
 
     - script: |
         echo $(DetectChangedMS.changedMs)
+        echo ${{ parameters.apps }}
         CHANGED_MS_LIST=$(echo "$(DetectChangedMS.changedMs)" | xargs -n1 | jq -R . | jq -s .)
         echo $CHANGED_MS_LIST
         for ms in $(echo "$CHANGED_MS_LIST" | jq -r '.[]'); do
