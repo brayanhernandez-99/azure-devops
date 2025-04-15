@@ -4,6 +4,9 @@ jobs:
     pool:
         name: 'Azure Pipelines'
         vmImage: 'ubuntu-22.04'
+    variables:
+      packageManager: $(package_manager)
+      versionSpecification: $[coalesce(variables.nodejsVersion, '18.x')]
 
     strategy:
       matrix:
@@ -16,10 +19,9 @@ jobs:
           echo "Compilando microservicio: $(msName)"
         displayName: "Build $(msName)"
 
-      # - script: |
-      #     echo $(changedMs)
-      #     echo ${{parameters.changedMs }}
-
-      # - script: |
-      #     echo "segundo task"
+      - task: NodeTool@0
+        displayName: 'Use Nodejs $(versionSpecification)'
+        inputs:
+          versionSource: 'spec'
+          versionSpec: '$(versionSpecification)'
 
