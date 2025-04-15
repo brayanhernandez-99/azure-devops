@@ -1,3 +1,6 @@
+parameters:
+  apps: []
+  
 jobs:
 - job: 'semantic_version'
   displayName: 'Semantic Version'
