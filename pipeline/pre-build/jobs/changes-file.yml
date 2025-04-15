@@ -14,6 +14,11 @@ jobs:
         apps=$(git diff --name-only HEAD~1 HEAD | grep "^apps/" | cut -d '/' -f2 | sort -u)
         echo $apps
 
+        if [ -z "$apps" ]; then
+          echo "❌ No se detectaron cambios en apps. Cancelando ejecución del pipeline."
+          exit 1
+        fi
+        
         cd $(Build.SourcesDirectory)/pipeline
 
         apps_yaml="    apps:\n"
