@@ -34,10 +34,10 @@ jobs:
             export CODEARTIFACT_AUTH_TOKEN=$(aws codeartifact get-authorization-token \
               --domain matrixtech-npm-repository \
               --domain-owner 861262569826 \
+              --region us-east-1 \
               --query authorizationToken \
-              --output text \
-              --region us-east-1)
-
+              --output text )
+            $CODEARTIFACT_AUTH_TOKEN
             npm config set //matrixtech-npm-repository-861262569826.d.codeartifact.us-east-1.amazonaws.com/npm/matrixtech-npm-repository/:_authToken=$CODEARTIFACT_AUTH_TOKEN
             npm config set registry https://matrixtech-npm-repository-861262569826.d.codeartifact.us-east-1.amazonaws.com/npm/matrixtech-npm-repository/
         env:
