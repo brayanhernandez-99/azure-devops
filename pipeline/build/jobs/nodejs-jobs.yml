@@ -48,8 +48,15 @@ jobs:
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
       
-      - task: Npm@1
-        inputs:
-          command: 'install'
-          workingDir: $(System.DefaultWorkingDirectory)/apps/$(msName)
+      - script: |
+          echo "Estás en la carpeta: $(System.DefaultWorkingDirectory)/apps/$(msName)"
+          cd $(System.DefaultWorkingDirectory)/apps/$(msName)
+
+          echo "Agregando control de CI para evitar que Husky se instale..."
+          # Evitar que husky se instale en entornos CI
+          sed -i 's#"prepare": "husky install"#"prepare": "test \\$CI = true || husky install"#' package.json || echo "No se pudo modificar prepare, puede que ya esté ajustado."
+
+          echo "Instalando dependencias..."
+          npm install
+        displayName: 'Instalar dependencias del microservicio'
 
