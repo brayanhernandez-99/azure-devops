@@ -60,4 +60,6 @@ jobs:
           cd $(System.DefaultWorkingDirectory)/apps/$(msName)
           npm run build
           npm run test -- --coverage
+          ls -la 
+          tree
         displayName: 'Build and test'
