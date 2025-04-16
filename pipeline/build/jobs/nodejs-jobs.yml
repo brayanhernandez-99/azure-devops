@@ -51,12 +51,5 @@ jobs:
       - script: |
           echo "Estás en la carpeta: $(System.DefaultWorkingDirectory)/apps/$(msName)"
           cd $(System.DefaultWorkingDirectory)/apps/$(msName)
-
-          echo "Agregando control de CI para evitar que Husky se instale..."
-          # Evitar que husky se instale en entornos CI
-          sed -i 's#"prepare": "husky install"#"prepare": "test \\$CI = true || husky install"#' package.json || echo "No se pudo modificar prepare, puede que ya esté ajustado."
-
-          echo "Instalando dependencias..."
-          npm install
+          npm install --ignore-scripts
         displayName: 'Instalar dependencias del microservicio'
-
