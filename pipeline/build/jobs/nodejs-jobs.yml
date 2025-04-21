@@ -75,10 +75,10 @@ jobs:
           tree
         displayName: 'Build and test'
 
-      - task: SonarQubeAnalyze@6
+      - task: SonarQubeAnalyze@5
         displayName: 'Sonar Analysis'
 
-      - task: SonarQubePublish@6
+      - task: SonarQubePublish@5
         displayName: 'Publish Result Static Code Analysis'
         inputs:
           pollingTimeoutSec: 400
