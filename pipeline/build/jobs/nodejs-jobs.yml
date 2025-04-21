@@ -64,6 +64,7 @@ jobs:
           cliSources: '$(System.DefaultWorkingDirectory)/apps/$(msName)'
           extraProperties: |
             sonar.javascript.lcov.reportPaths=$(System.DefaultWorkingDirectory)/apps/$(msName)/coverage/lcov.info
+            sonar.branch.name=
 
       - script: |
           echo "Estás en la carpeta: $(System.DefaultWorkingDirectory)/apps/$(msName)"
