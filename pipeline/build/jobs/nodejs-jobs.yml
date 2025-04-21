@@ -53,11 +53,13 @@ jobs:
           versionSpec: '17'
           jdkArchitectureOption: 'x64'
           jdkSourceOption: 'PreInstalled'
-      
+          
+      - script: echo $SONAR_SCANNER_OPTS
+
       - script: |
           echo "## Evitando análisis por rama..."
           export SONAR_SCANNER_OPTS="-Dsonar.branch.name=main"
-          
+
       - task: SonarQubePrepare@5
         inputs:
           SonarQube: 'SonarQubeConection'
@@ -85,8 +87,13 @@ jobs:
           tree
         displayName: 'Build and test'
 
-      - task: SonarQubeAnalyze@5
-        displayName: 'Sonar Analysis'
+      - script: |
+          cd $(System.DefaultWorkingDirectory)/apps/$(msName)
+          sonar-scanner
+        displayName: 'Run Sonar Scanner manually'
+
+      # - task: SonarQubeAnalyze@5
+      #   displayName: 'Sonar Analysis'
 
       - task: SonarQubePublish@5
         displayName: 'Publish Result Static Code Analysis'
