@@ -48,13 +48,14 @@ jobs:
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
 
-      - task: SonarQubePrepare@7
+      - task: SonarQubePrepare@6
         inputs:
           SonarQube: 'SonarQubeConection'
           scannerMode: 'CLI'
           configMode: 'manual'
           cliProjectKey: 'pruebas-consumir-template'
-          cliSources: '$(System.DefaultWorkingDirectory)/apps/$(msName)/'
+          cliProjectName: 'pruebas-consumir-template'
+          cliSources: '$(System.DefaultWorkingDirectory)/apps/$(msName)'
           extraProperties: |
             sonar.javascript.lcov.reportPaths=$(System.DefaultWorkingDirectory)/apps/$(msName)/coverage/lcov.info
 
@@ -74,10 +75,10 @@ jobs:
           tree
         displayName: 'Build and test'
 
-      - task: SonarQubeAnalyze@7
+      - task: SonarQubeAnalyze@6
         displayName: 'Sonar Analysis'
 
-      - task: SonarQubePublish@7
+      - task: SonarQubePublish@6
         displayName: 'Publish Result Static Code Analysis'
         inputs:
           pollingTimeoutSec: 400
