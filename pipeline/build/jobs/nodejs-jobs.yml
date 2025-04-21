@@ -69,6 +69,7 @@ jobs:
           variable=$(echo $SONARQUBE_SCANNER_PARAMS | sed -E 's#"sonar\.branch\.name":"[^"]+",##g')
           echo $variable
           echo "##vso[task.setvariable variable=SONARQUBE_SCANNER_PARAMS]$variable"
+        displayName: 'set-variable'
 
       - script: |
           echo "Estás en la carpeta: $(System.DefaultWorkingDirectory)/apps/$(msName)"
@@ -81,7 +82,8 @@ jobs:
       - script: |
           cd $(System.DefaultWorkingDirectory)/apps/$(msName)
           npm run build
-          npm run test -- --coverage
+          npm run test 
+          npm run coverage
           ls -la 
           tree
         displayName: 'Build and test'
