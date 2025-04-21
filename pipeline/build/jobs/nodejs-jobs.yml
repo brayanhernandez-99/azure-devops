@@ -53,7 +53,11 @@ jobs:
           versionSpec: '17'
           jdkArchitectureOption: 'x64'
           jdkSourceOption: 'PreInstalled'
-
+      
+      - script: |
+          echo "## Evitando análisis por rama..."
+          export SONAR_SCANNER_OPTS="-Dsonar.branch.name=main"
+          
       - task: SonarQubePrepare@5
         inputs:
           SonarQube: 'SonarQubeConection'
@@ -64,7 +68,6 @@ jobs:
           cliSources: '$(System.DefaultWorkingDirectory)/apps/$(msName)'
           extraProperties: |
             sonar.javascript.lcov.reportPaths=$(System.DefaultWorkingDirectory)/apps/$(msName)/coverage/lcov.info
-            sonar.branch.name=main
 
       - script: |
           echo "Estás en la carpeta: $(System.DefaultWorkingDirectory)/apps/$(msName)"
@@ -82,7 +85,7 @@ jobs:
           tree
         displayName: 'Build and test'
 
-      - task: SonarQubeAnalyze@4
+      - task: SonarQubeAnalyze@5
         displayName: 'Sonar Analysis'
 
       - task: SonarQubePublish@5
