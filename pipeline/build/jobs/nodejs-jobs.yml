@@ -64,7 +64,7 @@ jobs:
           cliSources: '$(System.DefaultWorkingDirectory)/apps/$(msName)'
           extraProperties: |
             sonar.javascript.lcov.reportPaths=$(System.DefaultWorkingDirectory)/apps/$(msName)/coverage/lcov.info
-            sonar.exclusions=/*.java,test/**,/android/,/ios/**,/coverage/**,/.nyc_output/**,/reports/**,node_modules/**/*,migrations/**,/config/**
+            sonar.exclusions=**/*.java,**/test/**,**/android/**,**/ios/**,**/coverage/**,**/.nyc_output/**,**/reports/**,**/node_modules/**,**/migrations/**,**/config/**
 
       - script: |
           variable=$(echo $SONARQUBE_SCANNER_PARAMS | sed -E 's#"sonar\.branch\.name":"[^"]+",##g')
