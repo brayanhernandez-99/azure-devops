@@ -83,10 +83,14 @@ jobs:
       - script: |
           cd $(System.DefaultWorkingDirectory)/apps/$(msName)
           npm run build
+          # ./node_modules/.bin/env-cmd -f .env.local node -e "require('./handlers/container-handler.js').entrypoint()"
+        displayName: 'Build'
+
+      - script: |
+          cd $(System.DefaultWorkingDirectory)/apps/$(msName)
           npm run test 
           npm run coverage
-          ls -la 
-        displayName: 'Build and test'
+        displayName: 'test and coverage'
 
       - task: SonarQubeAnalyze@7
         displayName: 'Sonar Analysis'
