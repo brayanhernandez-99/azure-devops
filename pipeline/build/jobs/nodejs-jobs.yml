@@ -30,7 +30,6 @@ jobs:
         inputs:
           targetType: 'inline'
           script: |
-            echo $AWS_ACCESS_KEY_ID
             export CODEARTIFACT_AUTH_TOKEN=$(aws codeartifact get-authorization-token \
               --domain matrixtech-npm-repository \
               --domain-owner 861262569826 \

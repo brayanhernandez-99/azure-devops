@@ -16,8 +16,15 @@ stages:
         name: 'Azure Pipelines'
         VmImage: 'ubuntu-22.04'
       steps:
+        - checkout: self
+
+        - checkout: templates
+          repository: pipelines-templates
+          path: pipeline
+
         - script: |
             echo "build dev docker images"
+            ls -la 
 
   - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
     - job: 'publish_image_qa'
