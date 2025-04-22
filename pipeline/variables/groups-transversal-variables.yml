@@ -1,0 +1,5 @@
+variables:
+- group: trasversal-aws-deployment
+- group: trasversal-azure-devops
+
+- template: pipeline/vars-azure-pipeline.yml@self
