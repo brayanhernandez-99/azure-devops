@@ -19,7 +19,7 @@ stages:
         - checkout: self
 
         - checkout: templates
-          repository: pipelines-templates
+          repository: templates
           path: pipeline
 
         - script: |
