@@ -2,6 +2,9 @@ stages:
 - stage: 'change_file_detected'
   displayName: 'Change File Detected'
   dependsOn: [] 
+  
+  variables:
+  - template: ../variables/groups-transversal-variables.yml
 
   jobs:
   - template: jobs/changes-file.yml
