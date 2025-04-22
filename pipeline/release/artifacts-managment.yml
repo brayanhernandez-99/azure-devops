@@ -18,8 +18,8 @@ stages:
       steps:
         - checkout: self
 
-        - checkout: templates
-          path: pipeline
+        - checkout: git://DevOps-templates-UX/pipelines-templates@feature/Inicio-templates
+          fetchDepth: 1
 
         - script: |
             echo "build dev docker images"
