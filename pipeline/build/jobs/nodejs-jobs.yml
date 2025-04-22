@@ -59,8 +59,8 @@ jobs:
           SonarQube: 'SonarQubeConection'
           scannerMode: 'CLI'
           configMode: 'manual'
-          cliProjectKey: 'pruebas-consumir-template'
-          cliProjectName: 'pruebas-consumir-template'
+          cliProjectKey: 'pruebas-$(msName)'
+          cliProjectName: 'pruebas-$(msName)'
           cliSources: '$(System.DefaultWorkingDirectory)/apps/$(msName)'
           extraProperties: |
             sonar.javascript.lcov.reportPaths=$(System.DefaultWorkingDirectory)/apps/$(msName)/coverage/lcov.info
