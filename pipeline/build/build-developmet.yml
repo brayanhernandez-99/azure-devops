@@ -11,6 +11,9 @@ stages:
 - stage: 'build_developmet'
   displayName: 'Build Developmet'
   dependsOn: microservices_developmet
+  
+  variables:
+  - template: ../variables/groups-transversal-variables.yml
 
   jobs:
   - ${{ if eq(parameters.language, 'nodejs') }}:
