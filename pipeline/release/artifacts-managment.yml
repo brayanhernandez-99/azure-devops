@@ -27,8 +27,7 @@ stages:
 
         - script: |
             echo $ACCOUNT_ID_DEPLOY
-            ecrLoginUrl=echo $ACCOUNT_ID_DEPLOY.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
-            echo "##vso[task.setvariable variable=ecrLoginUrl]$ACCOUNT_ID_DEPLOY.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com"
+            ecrLoginUrl="$ACCOUNT_ID_DEPLOY.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com"
             echo $ecrLoginUrl
           displayName: 'Set ecrLoginUrl dynamically'
 
