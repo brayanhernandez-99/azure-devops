@@ -30,19 +30,15 @@ stages:
 
         - script: |
             echo "build dev docker images"
-            ls -la 
-            echo "ls en app "
-            ls -la $(Build.Repository.Name)/apps/$(msName)
             cp pipelines-templates/pipeline/docker/Dockerfile $(Build.Repository.Name)/apps/$(msName)
-            echo "ls en app con dockerfile"
-            cd $(Build.Repository.Name)/apps/$(msName)
-            ls -la
+          displayName: "Copy Dockerfile"
         
         - task: Bash@3
           name: AuthCodeArtifact
           inputs:
             targetType: 'inline'
             script: |
+              cd $(Build.Repository.Name)
               export CODEARTIFACT_AUTH_TOKEN=$(aws codeartifact get-authorization-token \
                 --domain matrixtech-npm-repository \
                 --domain-owner 861262569826 \
@@ -53,8 +49,8 @@ stages:
               npm config set registry https://matrixtech-npm-repository-861262569826.d.codeartifact.us-east-1.amazonaws.com/npm/matrixtech-npm-repository/
               aws sts get-caller-identity
 
-              echo "//matrixtech-npm-repository-861262569826.d.codeartifact.us-east-1.amazonaws.com/npm/matrixtech-npm-repository/:_authToken=$CODEARTIFACT_AUTH_TOKEN" > apps/$(msName)/.npmrc
-              echo "registry=https://matrixtech-npm-repository-861262569826.d.codeartifact.us-east-1.amazonaws.com/npm/matrixtech-npm-repository/" >> apps/$(msName)/.npmrc
+              echo "//matrixtech-npm-repository-861262569826.d.codeartifact.us-east-1.amazonaws.com/npm/matrixtech-npm-repository/:_authToken=$CODEARTIFACT_AUTH_TOKEN" >  $(Build.Repository.Name)/apps/$(msName)/.npmrc
+              echo "registry=https://matrixtech-npm-repository-861262569826.d.codeartifact.us-east-1.amazonaws.com/npm/matrixtech-npm-repository/" >> $(Build.Repository.Name)/apps/$(msName)/.npmrc
           env:
             AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
             AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
@@ -75,7 +71,7 @@ stages:
           inputs:
             command: 'build'
             repository: 'pruebas-pipeline-dev'
-            Dockerfile: 'pipelines-templates/pipeline/docker/Dockerfile'
+            Dockerfile: '$(Build.Repository.Name)/apps/$(msName)/Dockerfile'
             tags: $(Build.BuildNumber)
 
   - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
