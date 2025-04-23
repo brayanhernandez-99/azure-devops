@@ -31,7 +31,10 @@ stages:
         - script: |
             echo "build dev docker images"
             ls -la 
+            echo "ls en app "
+            ls -la $(Build.Repository.Name)/apps/$(msName)
             cp pipelines-templates/pipeline/docker/Dockerfile $(Build.Repository.Name)/apps/$(msName)
+            echo "ls en app con dockerfile"
             cd $(Build.Repository.Name)/apps/$(msName)
             ls -la
         
