@@ -17,10 +17,10 @@ stages:
         VmImage: 'ubuntu-22.04'
 
       strategy:
-      matrix:
-        ${{ each ms in parameters.apps }}:
-          ${{ ms }}:
-            msName: ${{ ms }}
+        matrix:
+          ${{ each ms in parameters.apps }}:
+            ${{ ms }}:
+              msName: ${{ ms }}
 
       steps:
         - checkout: self
