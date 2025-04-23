@@ -38,7 +38,7 @@ stages:
           inputs:
             targetType: 'inline'
             script: |
-              cd $(Build.Repository.Name)
+              cd $(Build.Repository.Name)/apps
               ls -la
               export CODEARTIFACT_AUTH_TOKEN=$(aws codeartifact get-authorization-token \
                 --domain matrixtech-npm-repository \
