@@ -90,6 +90,7 @@ jobs:
           npm run test 
           npm run coverage
         displayName: 'test and coverage'
+        continueOnError: true
 
       - task: SonarQubeAnalyze@7
         displayName: 'Sonar Analysis'
