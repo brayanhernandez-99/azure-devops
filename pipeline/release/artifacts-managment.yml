@@ -16,9 +16,6 @@ stages:
         name: 'Azure Pipelines'
         VmImage: 'ubuntu-22.04'
 
-      parameters:
-        apps: ${{ parameters.apps }}
-
       strategy:
       matrix:
         ${{ each ms in parameters.apps }}:
