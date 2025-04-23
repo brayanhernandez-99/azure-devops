@@ -39,6 +39,7 @@ stages:
             targetType: 'inline'
             script: |
               cd $(Build.Repository.Name)
+              ls -la
               export CODEARTIFACT_AUTH_TOKEN=$(aws codeartifact get-authorization-token \
                 --domain matrixtech-npm-repository \
                 --domain-owner 861262569826 \
