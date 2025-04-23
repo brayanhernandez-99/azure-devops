@@ -71,7 +71,7 @@ stages:
           displayName: 'Build Container Image Development $(msName)'
           inputs:
             command: 'build'
-            repository: 'pruebas-pipeline-dev'
+            repository: '861262569826.dkr.ecr.us-east-1.amazonaws.com/pruebas-pipeline-dev'
             Dockerfile: '$(Build.Repository.Name)/apps/$(msName)/Dockerfile'
             tags: $(Build.BuildNumber)
         
