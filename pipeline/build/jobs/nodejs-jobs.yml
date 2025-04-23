@@ -42,6 +42,7 @@ jobs:
 
             echo "//matrixtech-npm-repository-861262569826.d.codeartifact.us-east-1.amazonaws.com/npm/matrixtech-npm-repository/:_authToken=$CODEARTIFACT_AUTH_TOKEN" > apps/$(msName)/.npmrc
             echo "registry=https://matrixtech-npm-repository-861262569826.d.codeartifact.us-east-1.amazonaws.com/npm/matrixtech-npm-repository/" >> apps/$(msName)/.npmrc
+            ls -la
         env:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)

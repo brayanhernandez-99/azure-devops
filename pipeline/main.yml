@@ -28,12 +28,12 @@ resources:
 
 
 stages:
-  # - ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature'), in(variables['Build.SourceBranch'], 'refs/heads/develop')) }}:
-  #   - template: build/build-developmet.yml
-  #     parameters:
-  #       language: ${{ parameters.language }}
-  #       typerelease: ${{ parameters.typerelease }}
-  #       apps: ${{ parameters.apps }}
+  - ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature'), in(variables['Build.SourceBranch'], 'refs/heads/develop')) }}:
+    - template: build/build-developmet.yml
+      parameters:
+        language: ${{ parameters.language }}
+        typerelease: ${{ parameters.typerelease }}
+        apps: ${{ parameters.apps }}
 
   - ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), in(variables['Build.SourceBranch'], 'refs/heads/develop','refs/heads/staging','refs/heads/master' )) }}:
     - template: release/artifacts-managment.yml
