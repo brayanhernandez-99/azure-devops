@@ -38,8 +38,8 @@ stages:
           inputs:
             targetType: 'inline'
             script: |
-              cd $(Build.Repository.Name)/apps
-              ls -la
+              # cd $(Build.Repository.Name)/apps
+              # ls -la
               export CODEARTIFACT_AUTH_TOKEN=$(aws codeartifact get-authorization-token \
                 --domain matrixtech-npm-repository \
                 --domain-owner 861262569826 \
@@ -50,6 +50,8 @@ stages:
               npm config set registry https://matrixtech-npm-repository-861262569826.d.codeartifact.us-east-1.amazonaws.com/npm/matrixtech-npm-repository/
               aws sts get-caller-identity
 
+              cd $(Build.Repository.Name)/apps/$(msName)
+              ls -la
               echo "//matrixtech-npm-repository-861262569826.d.codeartifact.us-east-1.amazonaws.com/npm/matrixtech-npm-repository/:_authToken=$CODEARTIFACT_AUTH_TOKEN" >  $(Build.Repository.Name)/apps/$(msName)/.npmrc
               echo "registry=https://matrixtech-npm-repository-861262569826.d.codeartifact.us-east-1.amazonaws.com/npm/matrixtech-npm-repository/" >> $(Build.Repository.Name)/apps/$(msName)/.npmrc
           env:
