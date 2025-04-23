@@ -78,7 +78,7 @@ stages:
           displayName: 'Push Container Image Development $(msName)'
           inputs:
             command: 'Push'
-            repository: '$(ACCOUNT_ID_DEPLOY).dkr.$(AWS_DEFAULT_REGION).amazonaws.com/pruebas-pipeline-$(msName)-dev'
+            repository: '$(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/pruebas-pipeline-$(msName)-dev'
             tags: $(Build.BuildNumber)
 
   - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
