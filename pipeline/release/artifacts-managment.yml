@@ -36,7 +36,8 @@ stages:
           inputs:
             awsCredentials: 'aws-deployment-connection'
             awsRegion: '$AWS_DEFAULT_REGION'
-            awsCommand: 'aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $(ecrLoginUrl)'
+            awsCommand: 'aws ecr get-login-password --region $AWS_DEFAULT_REGION'
+            awsSubCommand: 'docker login --username AWS --password-stdin $(ecrLoginUrl)'
 
   - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
     - job: 'publish_image_qa'
