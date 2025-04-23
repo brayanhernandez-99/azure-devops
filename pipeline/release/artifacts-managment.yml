@@ -68,7 +68,7 @@ stages:
             AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
         
         - task: Docker@2
-          displayName: 'Build image'
+          displayName: 'Build Container Image Development $(msName)'
           inputs:
             command: 'build'
             repository: 'pruebas-pipeline-dev'
@@ -76,10 +76,10 @@ stages:
             tags: $(Build.BuildNumber)
         
         - task: Docker@2
-          displayName: 'Push Container Image Development'
+          displayName: 'Push Container Image Development $(msName)'
           inputs:
             command: 'Push'
-            repository: 'pruebas-pipeline-dev'
+            repository: '861262569826.dkr.ecr.us-east-1.amazonaws.com/pruebas-pipeline-dev'
             tags: $(Build.BuildNumber)
 
   - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
