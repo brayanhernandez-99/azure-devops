@@ -47,7 +47,7 @@ stages:
           inputs:
             command: 'build'
             repository: 'pruebas-pipeline-dev'
-            Dockerfile: 'pipelines-templates/docker/Dockerfile'
+            Dockerfile: 'pipelines-templates/pipeline/docker/Dockerfile'
             tags: $(Build.BuildNumber)
 
   - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
