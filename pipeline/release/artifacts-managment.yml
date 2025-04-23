@@ -40,18 +40,17 @@ stages:
             script: |
               export CODEARTIFACT_AUTH_TOKEN=$(aws codeartifact get-authorization-token \
                 --domain matrixtech-npm-repository \
-                --domain-owner 861262569826 \
-                --region us-east-1 \
+                --domain-owner $ACCOUNT_ID_DEPLOY \
+                --region $AWS_DEFAULT_REGION \
                 --query authorizationToken \
                 --output text )
-              npm config set //matrixtech-npm-repository-861262569826.d.codeartifact.us-east-1.amazonaws.com/npm/matrixtech-npm-repository/:_authToken=$CODEARTIFACT_AUTH_TOKEN
-              npm config set registry https://matrixtech-npm-repository-861262569826.d.codeartifact.us-east-1.amazonaws.com/npm/matrixtech-npm-repository/
+              npm config set //matrixtech-npm-repository-$ACCOUNT_ID_DEPLOY.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com/npm/matrixtech-npm-repository/:_authToken=$CODEARTIFACT_AUTH_TOKEN
+              npm config set registry https://matrixtech-npm-repository-$ACCOUNT_ID_DEPLOY.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com/npm/matrixtech-npm-repository/
               aws sts get-caller-identity
 
               cd $(Build.Repository.Name)/apps/$(msName)
-              echo "//matrixtech-npm-repository-861262569826.d.codeartifact.us-east-1.amazonaws.com/npm/matrixtech-npm-repository/:_authToken=$CODEARTIFACT_AUTH_TOKEN" > .npmrc
-              echo "registry=https://matrixtech-npm-repository-861262569826.d.codeartifact.us-east-1.amazonaws.com/npm/matrixtech-npm-repository/" >> .npmrc
-              ls -la
+              echo "//matrixtech-npm-repository-$ACCOUNT_ID_DEPLOY.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com/npm/matrixtech-npm-repository/:_authToken=$CODEARTIFACT_AUTH_TOKEN" > .npmrc
+              echo "registry=https://matrixtech-npm-repository-$ACCOUNT_ID_DEPLOY.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com/npm/matrixtech-npm-repository/" >> .npmrc
           env:
             AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
             AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
@@ -71,7 +70,7 @@ stages:
           displayName: 'Build Container Image Development $(msName)'
           inputs:
             command: 'build'
-            repository: '861262569826.dkr.ecr.us-east-1.amazonaws.com/pruebas-pipeline-dev'
+            repository: '$ACCOUNT_ID_DEPLOY.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/pruebas-pipeline-$(msName)-dev'
             Dockerfile: '$(Build.Repository.Name)/apps/$(msName)/Dockerfile'
             tags: $(Build.BuildNumber)
         
@@ -79,7 +78,7 @@ stages:
           displayName: 'Push Container Image Development $(msName)'
           inputs:
             command: 'Push'
-            repository: '861262569826.dkr.ecr.us-east-1.amazonaws.com/pruebas-pipeline-dev'
+            repository: '$ACCOUNT_ID_DEPLOY.dkr.$AWS_DEFAULT_REGION.amazonaws.com/pruebas-pipeline-$(msName)-dev'
             tags: $(Build.BuildNumber)
 
   - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
