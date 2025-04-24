@@ -17,29 +17,12 @@ jobs:
           echo "deploy microservicio: $(msName)"
       displayName: "deploy $(msName)"
 
-    # - task: AWSCLI@1
-    #   name: GetTaskDefArn
-    #   inputs:
-    #     awsCredentials: 'aws-developer-connection'
-    #     regionName: '$(AWS_DEFAULT_REGION)'
-    #     awsCommand: 'ecs'
-    #     awsSubCommand: 'describe-services'
-    #     awsArguments: >
-    #       --cluster astro-ms-cluster
-    #       --services astro-ms-fg-service
-    #       --query 'services[0].taskDefinition'
-    #       --output text
-    #   outputVariable: taskDefinitionArn
-    
-    - task: AWSCLI@1
-      name: ConfigureAWS
-      inputs:
-        awsCredentials: 'aws-developer-connection'
-        regionName: '$(AWS_DEFAULT_REGION)'
-        awsCommand: 'sts'
-        awsSubCommand: 'get-caller-identity'
 
     - script: |
+        export AWS_ACCESS_KEY_ID
+        export AWS_SECRET_ACCESS_KEY
+        export AWS_REGION
+
         echo "Obteniendo task definition..."
         arn=$(aws ecs describe-services \
           --cluster astro-ms-cluster \
@@ -51,6 +34,10 @@ jobs:
         echo "TaskDef ARN: $arn"
         echo "##vso[task.setvariable variable=taskDefinitionArn]$arn"
       displayName: "Obtener task definition ARN"
+      env:
+        AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
+        AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
+        AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
 
     
     - script: |
