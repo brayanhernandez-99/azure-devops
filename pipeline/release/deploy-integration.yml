@@ -7,11 +7,11 @@ stages:
   ${{ if or(in(variables['Build.SourceBranch'], 'refs/heads/master' ), startsWith(variables['Build.SourceBranch'], 'refs/tags/')) }}:
     displayName: 'Deploy Integration Master'
   
-  dependsOn: 
-    - 'artifacts_managment'
-  condition:
-      in(dependencies.artifacts_managment.result, 'Succeeded', 'SucceededWithIssues')
-      
+  # dependsOn: 
+  #   - 'artifacts_managment'
+  # condition:
+  #     in(dependencies.artifacts_managment.result, 'Succeeded', 'SucceededWithIssues')
+
   pool:
     name: 'Azure Pipelines'
     VmImage: Ubuntu-20.04
@@ -22,4 +22,7 @@ stages:
   jobs:
   - ${{ if in(parameters.typerelease, 'aws') }}:
     - template: jobs/aws-ecs-jobs.yml
+      language: ${{ parameters.language }}
+      typerelease: ${{ parameters.typerelease }}
+      apps: ${{ parameters.apps }}
 
