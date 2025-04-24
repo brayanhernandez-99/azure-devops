@@ -35,12 +35,12 @@ stages:
 
             if [ -f "$DOCKERFILE_PATH" ]; then
               echo "✅ Ya existe el Dockerfile en $DOCKERFILE_PATH"
-              ls -la
+              ls -la $(Build.Repository.Name)/apps/$(msName)
             else
               echo "⚠️ No existe el Dockerfile. Copiando desde templates..."
               cp pipelines-templates/pipeline/docker/Dockerfile $(Build.Repository.Name)/apps/$(msName)/Dockerfile
               echo "✅ Dockerfile copiado exitosamente."
-              ls -la
+              ls -la $(Build.Repository.Name)/apps/$(msName)
             fi
           displayName: "Check or Copy Dockerfile"
         
@@ -134,8 +134,19 @@ stages:
 
         - script: |
             echo "build qa docker images"
-            cp pipelines-templates/pipeline/docker/Dockerfile $(Build.Repository.Name)/apps/$(msName)
-          displayName: "Copy Dockerfile"
+            DOCKERFILE_PATH=$(Build.Repository.Name)/apps/$(msName)/Dockerfile
+            echo "Verificando existencia de: $DOCKERFILE_PATH"
+
+            if [ -f "$DOCKERFILE_PATH" ]; then
+              echo "✅ Ya existe el Dockerfile en $DOCKERFILE_PATH"
+              ls -la $(Build.Repository.Name)/apps/$(msName)
+            else
+              echo "⚠️ No existe el Dockerfile. Copiando desde templates..."
+              cp pipelines-templates/pipeline/docker/Dockerfile $(Build.Repository.Name)/apps/$(msName)/Dockerfile
+              echo "✅ Dockerfile copiado exitosamente."
+              ls -la $(Build.Repository.Name)/apps/$(msName)
+            fi
+          displayName: "Check or Copy Dockerfile"
         
         - task: Bash@3
           name: AuthCodeArtifact
@@ -178,6 +189,26 @@ stages:
             Dockerfile: '$(Build.Repository.Name)/apps/$(msName)/Dockerfile'
             tags: $(Build.BuildNumber)
         
+        - script: |
+            echo "Verificando si existe el repositorio pruebas-pipeline-$(msName)-qa"
+            aws ecr describe-repositories \
+              --repository-names pruebas-pipeline-$(msName)-qa \
+              --region $AWS_DEFAULT_REGION > /dev/null 2>&1
+
+            if [ $? -ne 0 ]; then
+              echo "Repositorio no existe. Creándolo..."
+              aws ecr create-repository \
+                --repository-name pruebas-pipeline-$(msName)-qa \
+                --region $AWS_DEFAULT_REGION
+            else
+              echo "Repositorio ya existe. Continuando..."
+            fi
+          displayName: 'Ensure ECR Repository Exists'
+          env:
+            AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
+            AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
+            AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+        
         - task: Docker@2
           displayName: 'Push Container Image Staging $(msName)'
           inputs:
@@ -206,9 +237,20 @@ stages:
           fetchDepth: 1
 
         - script: |
-            echo "build master docker images"
-            cp pipelines-templates/pipeline/docker/Dockerfile $(Build.Repository.Name)/apps/$(msName)
-          displayName: "Copy Dockerfile"
+            echo "build qa docker images"
+            DOCKERFILE_PATH=$(Build.Repository.Name)/apps/$(msName)/Dockerfile
+            echo "Verificando existencia de: $DOCKERFILE_PATH"
+
+            if [ -f "$DOCKERFILE_PATH" ]; then
+              echo "✅ Ya existe el Dockerfile en $DOCKERFILE_PATH"
+              ls -la $(Build.Repository.Name)/apps/$(msName)
+            else
+              echo "⚠️ No existe el Dockerfile. Copiando desde templates..."
+              cp pipelines-templates/pipeline/docker/Dockerfile $(Build.Repository.Name)/apps/$(msName)/Dockerfile
+              echo "✅ Dockerfile copiado exitosamente."
+              ls -la $(Build.Repository.Name)/apps/$(msName)
+            fi
+          displayName: "Check or Copy Dockerfile"
         
         - task: Bash@3
           name: AuthCodeArtifact
@@ -250,6 +292,26 @@ stages:
             repository: '$(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/pruebas-pipeline-$(msName)-prd'
             Dockerfile: '$(Build.Repository.Name)/apps/$(msName)/Dockerfile'
             tags: $(Build.BuildNumber)
+        
+        - script: |
+            echo "Verificando si existe el repositorio pruebas-pipeline-$(msName)-prd"
+            aws ecr describe-repositories \
+              --repository-names pruebas-pipeline-$(msName)-prd \
+              --region $AWS_DEFAULT_REGION > /dev/null 2>&1
+
+            if [ $? -ne 0 ]; then
+              echo "Repositorio no existe. Creándolo..."
+              aws ecr create-repository \
+                --repository-name pruebas-pipeline-$(msName)-prd \
+                --region $AWS_DEFAULT_REGION
+            else
+              echo "Repositorio ya existe. Continuando..."
+            fi
+          displayName: 'Ensure ECR Repository Exists'
+          env:
+            AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
+            AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
+            AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
         
         - task: Docker@2
           displayName: 'Push Container Image master $(msName)'
