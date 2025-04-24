@@ -1,0 +1,33 @@
+jobs:
+- job: 'aws_ecs'
+  displayName: 'AWS ECS'
+  pool:
+    name: Azure Pipelines
+    vmImage: 'ubuntu-22.04'
+
+  strategy:
+      matrix:
+        ${{ each ms in parameters.apps }}:
+          ${{ ms }}:
+            msName: ${{ ms }}
+
+  steps:
+
+    - script: |
+          echo "deploy microservicio: $(msName)"
+      displayName: "deploy $(msName)"
+
+
+  
+
+
+
+
+
+# - ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
+#   - job: 'create_publish_versioning'
+#     displayName: 'Create and Publish Versioning'
+#     dependsOn: aws_ecs
+#     steps:
+#       - task: git-tag-on-release-task@9
+#         displayName: 'Create and Publish Versioning Tag'
