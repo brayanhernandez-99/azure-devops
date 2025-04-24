@@ -73,6 +73,7 @@ jobs:
 
       - script: |
           echo "Estás en la carpeta: $(System.DefaultWorkingDirectory)/apps/$(msName)"
+          npm ls @aws-sdk/credential-provider-http
           cd $(System.DefaultWorkingDirectory)/apps/$(msName)
           npm install --ignore-scripts
           echo "Dependencias instaladas:"
