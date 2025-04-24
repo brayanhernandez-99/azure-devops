@@ -17,6 +17,29 @@ jobs:
           echo "deploy microservicio: $(msName)"
       displayName: "deploy $(msName)"
 
+    - task: AWSCLI@1
+      name: GetTaskDefArn
+      inputs:
+        awsCredentials: 'aws-developer-connection'
+        regionName: '$(AWS_DEFAULT_REGION)'
+        awsCommand: 'ecs'
+        awsSubCommand: 'describe-services'
+        awsArguments: >
+          --cluster astro-ms-cluster
+          --services astro-ms-fg-service
+          --query 'services[0].taskDefinition'
+          --output text
+      outputVariable: taskDefinitionArn
+    
+    - script: |
+        echo "Obteniendo family de task definition..."
+        ARN='$(taskDefinitionArn)'
+        echo $ARN
+        
+        # FAMILY=$(echo $ARN | cut -d'/' -f2 | cut -d':' -f1)
+        # echo "##vso[task.setvariable variable=taskFamily]$FAMILY"
+      displayName: 'Extraer family desde ARN'
+
 
   
 
