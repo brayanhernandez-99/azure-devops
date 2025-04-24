@@ -17,19 +17,41 @@ jobs:
           echo "deploy microservicio: $(msName)"
       displayName: "deploy $(msName)"
 
+    # - task: AWSCLI@1
+    #   name: GetTaskDefArn
+    #   inputs:
+    #     awsCredentials: 'aws-developer-connection'
+    #     regionName: '$(AWS_DEFAULT_REGION)'
+    #     awsCommand: 'ecs'
+    #     awsSubCommand: 'describe-services'
+    #     awsArguments: >
+    #       --cluster astro-ms-cluster
+    #       --services astro-ms-fg-service
+    #       --query 'services[0].taskDefinition'
+    #       --output text
+    #   outputVariable: taskDefinitionArn
+    
     - task: AWSCLI@1
-      name: GetTaskDefArn
+      name: ConfigureAWS
       inputs:
         awsCredentials: 'aws-developer-connection'
         regionName: '$(AWS_DEFAULT_REGION)'
-        awsCommand: 'ecs'
-        awsSubCommand: 'describe-services'
-        awsArguments: >
-          --cluster astro-ms-cluster
-          --services astro-ms-fg-service
-          --query 'services[0].taskDefinition'
-          --output text
-      outputVariable: taskDefinitionArn
+        awsCommand: 'sts'
+        awsSubCommand: 'get-caller-identity'
+
+    - script: |
+        echo "Obteniendo task definition..."
+        arn=$(aws ecs describe-services \
+          --cluster astro-ms-cluster \
+          --services astro-ms-fg-service \
+          --query 'services[0].taskDefinition' \
+          --output text \
+          --region $(AWS_DEFAULT_REGION))
+          
+        echo "TaskDef ARN: $arn"
+        echo "##vso[task.setvariable variable=taskDefinitionArn]$arn"
+      displayName: "Obtener task definition ARN"
+
     
     - script: |
         echo "Obteniendo family de task definition..."
