@@ -1,8 +1,6 @@
 parameters:
   - name: msName
     type: string
-  - name: clusters
-    type: object
 
 stages:
   - stage: Deploy_${{ replace(parameters.msName, '-', '_') }}
