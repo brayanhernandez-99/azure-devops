@@ -8,7 +8,7 @@ jobs:
         steps:
           - script: echo "Aprobación recibida. Iniciando despliegues..."
 
-- job: 'aws_ecs'
+- job: 'aws_ecs_qa'
   dependsOn: WaitForApproval
   displayName: 'AWS ECS'
   pool:

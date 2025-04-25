@@ -27,3 +27,9 @@ stages:
         typerelease: ${{ parameters.typerelease }}
         apps: ${{ parameters.apps }}
 
+    - template: jobs/aws-ecs-jobs-QA.yml
+      parameters:
+        language: ${{ parameters.language }}
+        typerelease: ${{ parameters.typerelease }}
+        apps: ${{ parameters.apps }}
+
