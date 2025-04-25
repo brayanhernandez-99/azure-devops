@@ -1,15 +1,15 @@
 jobs:
-- deployment: WaitForApprovalqa
-  displayName: 'Esperar aprobación'
-  environment: 'Deploy Developer' 
-  strategy:
-    runOnce:
-      deploy:
-        steps:
-          - script: echo "Aprobación recibida. Iniciando despliegues..."
+# - deployment: WaitForApprovalqa
+#   displayName: 'Esperar aprobación'
+#   environment: 'Deploy Developer' 
+#   strategy:
+#     runOnce:
+#       deploy:
+#         steps:
+#           - script: echo "Aprobación recibida. Iniciando despliegues..."
 
 - job: 'aws_ecs_qa'
-  dependsOn: WaitForApproval
+  # dependsOn: WaitForApproval
   displayName: 'AWS ECS'
   pool:
     name: Azure Pipelines
