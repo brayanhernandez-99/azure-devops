@@ -5,7 +5,7 @@ parameters:
     type: object
 
 stages:
-  - stage: Deploy_${{ parameters.msName }}
+  - stage: Deploy
     displayName: Desplegar ${{ parameters.msName }}
     jobs:
       - job: DeployMatrix
