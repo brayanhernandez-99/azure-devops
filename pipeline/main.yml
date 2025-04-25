@@ -58,7 +58,7 @@ stages:
   
     - ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), in(variables['Build.SourceBranch'], 'refs/heads/develop', 'refs/heads/staging', 'refs/heads/master' )) }}:
       - ${{ each ms in parameters.apps }}:
-        - template: templates/stage-deploy.yml
+        - template: release/deploy-integration-prueba.yml
           parameters:
             msName: ${{ ms }}
             clusters: ${{ parameters.clusters }}
