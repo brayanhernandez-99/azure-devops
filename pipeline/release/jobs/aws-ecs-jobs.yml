@@ -87,8 +87,8 @@ jobs:
 
         aws ecs register-task-definition \
           --cli-input-json file://new-taskdef-$(cleanMsName).json \
-          --region AWS_DEFAULT_REGION
-          
+          --region $AWS_DEFAULT_REGION
+
       displayName: "Registrar nueva task definition"
       env:
         AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEVELOPER)
