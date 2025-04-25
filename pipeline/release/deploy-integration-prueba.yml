@@ -20,5 +20,5 @@ stages:
               clusterName: prod
         steps:
           - script: |
-              echo "Desplegando ${{ parameters.msName }} en ${{ matrix.clusterName }}"
+              echo "Desplegando microservice-1 en $(clusterName)"
 
