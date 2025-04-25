@@ -9,6 +9,7 @@ jobs:
           - script: echo "Aprobación recibida. Iniciando despliegues..."
 
 - job: 'aws_ecs'
+  dependsOn: WaitForApproval
   displayName: 'AWS ECS'
   pool:
     name: Azure Pipelines
