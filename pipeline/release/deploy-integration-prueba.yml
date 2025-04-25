@@ -5,7 +5,7 @@ parameters:
     type: object
 
 stages:
-  - stage: 'Deploy_ms1'
+  - stage: Deploy_${{ replace(parameters.msName, '-', '_') }}
     displayName: Desplegar ${{ parameters.msName }}
     jobs:
       - job: DeployMatrix
