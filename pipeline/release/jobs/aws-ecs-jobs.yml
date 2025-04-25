@@ -117,9 +117,7 @@ jobs:
 
 - job: Approval
   displayName: Approvals
-  pool:
-    name: Azure Pipelines
-    vmImage: 'ubuntu-22.04'
+  pool: server
   
   steps:
     - task: ManualValidation@1
