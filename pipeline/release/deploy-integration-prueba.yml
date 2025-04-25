@@ -15,17 +15,9 @@ stages:
           name: 'Azure Pipelines'
           VmImage: Ubuntu-20.04
 
-        strategy:
-          matrix:
-            dev:
-              clusterName: dev
-            qa:
-              clusterName: qa
-            prod:
-              clusterName: prod
-          runOnce:
-            deploy:
-              steps:
-                - script: |
-                    echo "Desplegando ${{ parameters.msName }} en $(clusterName)"
+        runOnce:
+          deploy:
+            steps:
+              - script: |
+                  echo "Desplegando ${{ parameters.msName }}"
 
