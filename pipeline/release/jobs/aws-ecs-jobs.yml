@@ -110,9 +110,9 @@ jobs:
         export AWS_SECRET_ACCESS_KEY
         export AWS_REGION
 
-        aws ecs register-task-definition \
-          --cli-input-json file://new-taskdef-$(cleanMsName)-ecs.json \
-          --region $AWS_DEFAULT_REGION
+        output=$(aws ecs register-task-definition \
+        --cli-input-json file://new-taskdef-$(cleanMsName)-ecs.json \
+        --region $AWS_DEFAULT_REGION)
 
         arn=$(echo $output | jq -r '.taskDefinition.taskDefinitionArn')
     
@@ -128,7 +128,7 @@ jobs:
 
     - script: |
         echo $(taskDefinitionArnNew)
-        
+
         # aws ecs update-service \
         #   --cluster $(clusterName) \
         #   --service $(serviceName) \
