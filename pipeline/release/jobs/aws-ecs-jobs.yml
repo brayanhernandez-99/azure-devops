@@ -103,22 +103,22 @@ jobs:
 
         cat new-taskdef-$(cleanMsName)-ecs.json
 
-      displayName: "Cambio de tag Images task"
+      displayName: "Delete attributes"
 
-    # - script: |
-    #     export AWS_ACCESS_KEY_ID
-    #     export AWS_SECRET_ACCESS_KEY
-    #     export AWS_REGION
+    - script: |
+        export AWS_ACCESS_KEY_ID
+        export AWS_SECRET_ACCESS_KEY
+        export AWS_REGION
 
-    #     aws ecs register-task-definition \
-    #       --cli-input-json file://new-taskdef-$(cleanMsName).json \
-    #       --region $AWS_DEFAULT_REGION
+        aws ecs register-task-definition \
+          --cli-input-json file://new-taskdef-$(cleanMsName)-ecs.json \
+          --region $AWS_DEFAULT_REGION
 
-    #   displayName: "Registrar nueva task definition"
-    #   env:
-    #     AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEVELOPER)
-    #     AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEVELOPER)
-    #     AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+      displayName: "Registrar nueva task definition"
+      env:
+        AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEVELOPER)
+        AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEVELOPER)
+        AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
 
 
   
