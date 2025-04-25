@@ -1,15 +1,15 @@
 jobs:
-- deployment: WaitForApproval
-  displayName: 'Esperar aprobación'
-  environment: 'Deploy Developer' 
-  strategy:
-    runOnce:
-      deploy:
-        steps:
-          - script: echo "Aprobación recibida. Iniciando despliegues..."
+# - deployment: WaitForApproval
+#   displayName: 'Esperar aprobación'
+#   environment: 'Deploy Developer' 
+#   strategy:
+#     runOnce:
+#       deploy:
+#         steps:
+#           - script: echo "Aprobación recibida. Iniciando despliegues..."
 
 - job: 'aws_ecs'
-  dependsOn: WaitForApproval
+  # dependsOn: WaitForApproval
   displayName: 'AWS ECS'
   pool:
     name: Azure Pipelines
@@ -114,6 +114,21 @@ jobs:
         cat new-taskdef-$(cleanMsName)-ecs.json
 
       displayName: "Delete attributes"
+
+- job: Approval
+  displayName: Approvals
+  pool:
+    name: Azure Pipelines
+    vmImage: 'ubuntu-22.04'
+  
+  steps:
+    - task: ManualValidation@1
+      timeoutInMinutes: 2 # task times out in 1 day
+      inputs:
+        approvers: |
+            [Invictus]\Aprobadores Arquitectura
+        instructions: 'Deploy'
+        onTimeout: 'reject'
 
     # - script: |
     #     export AWS_ACCESS_KEY_ID
