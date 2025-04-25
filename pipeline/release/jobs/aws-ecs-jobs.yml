@@ -128,12 +128,11 @@ jobs:
 
     - script: |
         echo $(taskDefinitionArnNew)
-
-        # aws ecs update-service \
-        #   --cluster $(clusterName) \
-        #   --service $(serviceName) \
-        #   --task-definition $newArn \
-        #   --region $(awsRegion)
+        aws ecs update-service \
+          --cluster $(cleanMsName)-ms-cluster \
+          --service $(cleanMsName)-ms-fg-service \
+          --task-definition $(taskDefinitionArnNew) \
+          --region $AWS_DEFAULT_REGION
       displayName: "Actualizar servicio con nueva task definition"
 
 
