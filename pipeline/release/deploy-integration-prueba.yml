@@ -12,9 +12,12 @@ stages:
         displayName: "Deploy ${{ parameters.msName }} en clusters"
         strategy:
           matrix:
-            ${{ each cluster in parameters.clusters }}:
-              ${{ cluster }}:
-                clusterName: ${{ cluster }}
+            dev:
+              clusterName: dev
+            qa:
+              clusterName: qa
+            prod:
+              clusterName: prod
         steps:
           - script: |
               echo "Desplegando ${{ parameters.msName }} en ${{ matrix.clusterName }}"
