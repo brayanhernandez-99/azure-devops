@@ -1,0 +1,22 @@
+parameters:
+  - name: msName
+    type: string
+  - name: clusters
+    type: object
+
+stages:
+  - stage: Deploy_${{ parameters.msName }}
+    displayName: Desplegar ${{ parameters.msName }}
+    jobs:
+      - job: DeployMatrix
+        displayName: "Deploy ${{ parameters.msName }} en clusters"
+        strategy:
+          matrix:
+            ${{ each cluster in parameters.clusters }}:
+              ${{ cluster }}:
+                clusterName: ${{ cluster }}
+        steps:
+          - script: |
+              echo "Desplegando ${{ parameters.msName }} en ${{ matrix.clusterName }}"
+
+      

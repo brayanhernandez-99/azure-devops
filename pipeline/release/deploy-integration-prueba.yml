@@ -1,0 +1,5 @@
+stages:
+  ${{ each ms in parameters.apps }}:
+    - template: jobs/aws-ecs-jobs-prueba.yml
+      parameters:
+        msName: ${{ ms }}
