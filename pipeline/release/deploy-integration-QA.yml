@@ -21,15 +21,15 @@ stages:
 
   jobs:
   - ${{ if in(parameters.typerelease, 'aws') }}:
-    - template: jobs/aws-ecs-jobs.yml
-      parameters:
-        language: ${{ parameters.language }}
-        typerelease: ${{ parameters.typerelease }}
-        apps: ${{ parameters.apps }}
-
-    # - template: jobs/aws-ecs-jobs-QA.yml
+    # - template: jobs/aws-ecs-jobs.yml
     #   parameters:
     #     language: ${{ parameters.language }}
     #     typerelease: ${{ parameters.typerelease }}
     #     apps: ${{ parameters.apps }}
+
+    - template: jobs/aws-ecs-jobs-QA.yml
+      parameters:
+        language: ${{ parameters.language }}
+        typerelease: ${{ parameters.typerelease }}
+        apps: ${{ parameters.apps }}
 
