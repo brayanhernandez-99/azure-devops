@@ -1,9 +1,9 @@
 stages:
 - stage: 'artifacts_managment'
   displayName: 'Artifacts Managment'
-  dependsOn:
-    - 'build_developmet'
-  condition: in(dependencies.build_developmet.result, 'Succeeded', 'SucceededWithIssues')
+  # dependsOn:
+  #   - 'build_developmet'
+  # condition: in(dependencies.build_developmet.result, 'Succeeded', 'SucceededWithIssues')
 
   variables:
   - template: ../variables/groups-transversal-variables.yml
