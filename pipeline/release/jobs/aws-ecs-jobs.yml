@@ -68,8 +68,17 @@ jobs:
         AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
 
     - script: |
-        cat taskdef.json
-      displayName: "Obtener definición de la task actual"
+        newTag="$(Build.BuildNumber)"
+
+        jq --arg newTag "$newTag" '
+          .containerDefinitions |= map(
+            .image |= (split(":")[0] + ":" + $newTag)
+          )
+        ' taskdef.json > new-taskdef-$(cleanMsName).json
+
+        echo "Imagen actualizada con nuevo tag: $newTag"
+        cat new-taskdef-$(cleanMsName).json
+      displayName: "Cambio de tag Images task"
 
 
   
