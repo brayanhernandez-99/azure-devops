@@ -8,7 +8,8 @@ stages:
     jobs:
       - deployment: DeployMatrix
         displayName: "Deploy ${{ parameters.msName }} en clusters"
-        # environment: 'Deploy Developer'
+        dependsOn: []
+        environment: 'Deploy Developer'
         pool:
           name: 'Azure Pipelines'
           VmImage: Ubuntu-20.04
