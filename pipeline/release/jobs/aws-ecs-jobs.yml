@@ -67,6 +67,10 @@ jobs:
         AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEVELOPER)
         AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
 
+    - script: |
+        cat taskdef.json
+      displayName: "Obtener definición de la task actual"
+
 
   
 
