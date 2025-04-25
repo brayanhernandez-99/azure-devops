@@ -1,5 +1,5 @@
 stages:
-- stage: 'ecosystem_integration_$(Build.SourceBranch)'
+- stage: 'ecosystem_integration_qa'
   ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
     displayName: 'Deploy Integration Development'
   ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/release') }}:
