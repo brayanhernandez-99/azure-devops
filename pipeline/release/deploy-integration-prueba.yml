@@ -8,8 +8,13 @@ stages:
   - stage: Deploy_${{ replace(parameters.msName, '-', '_') }}
     displayName: Desplegar ${{ parameters.msName }}
     jobs:
-      - job: DeployMatrix
+      - deployment: DeployMatrix
         displayName: "Deploy ${{ parameters.msName }} en clusters"
+        environment: 'Deploy Developer'
+        pool:
+          name: 'Azure Pipelines'
+          VmImage: Ubuntu-20.04
+
         strategy:
           matrix:
             dev:
@@ -18,7 +23,9 @@ stages:
               clusterName: qa
             prod:
               clusterName: prod
-        steps:
-          - script: |
-              echo "Desplegando microservice-1 en $(clusterName)"
+          runOnce:
+            deploy:
+              steps:
+                - script: |
+                    echo "Desplegando ${{ parameters.msName }} en $(clusterName)"
 
