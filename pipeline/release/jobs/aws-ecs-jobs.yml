@@ -15,7 +15,7 @@ jobs:
 
     - script: |
           echo "Original msName: $(msName)"
-          cleanName=$(echo $(msName) | sed 's/-microservice//')
+          cleanName=$(echo $(msName) | sed 's/microservice-//')
           echo "Nombre limpio: $cleanName"
           echo "##vso[task.setvariable variable=cleanMsName]$cleanName"
       displayName: "deploy $(msName)"
