@@ -14,10 +14,10 @@ stages:
         pool:
           name: 'Azure Pipelines'
           VmImage: Ubuntu-20.04
-
-        runOnce:
-          deploy:
-            steps:
-              - script: |
-                  echo "Desplegando ${{ parameters.msName }}"
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - script: |
+                    echo "Desplegando ${{ parameters.msName }}"
 
