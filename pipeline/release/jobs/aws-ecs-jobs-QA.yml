@@ -1,5 +1,5 @@
 jobs:
-- deployment: WaitForApproval
+- deployment: WaitForApprovalqa
   displayName: 'Esperar aprobación'
   environment: 'Deploy Developer' 
   strategy:
