@@ -13,7 +13,10 @@ jobs:
 
 - job: 'aws_ecs'
   dependsOn: WaitForApproval
-  displayName: 'AWS ECS'
+  ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
+    displayName: 'AWS ECS Develop'
+  ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
+    displayName: 'AWS ECS Staging'
   pool:
     name: Azure Pipelines
     vmImage: 'ubuntu-22.04'
