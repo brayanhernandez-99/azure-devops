@@ -45,8 +45,8 @@ jobs:
 
         echo "Obteniendo task definition..."
         arn=$(aws ecs describe-services \
-          --cluster $(cleanMsName)-ms-cluster \
-          --services $(cleanMsName)-ms-fg-service \
+          --cluster $CLUSTER \
+          --services $SERVICES \
           --query 'services[0].taskDefinition' \
           --output text \
           --region $(AWS_DEFAULT_REGION))
@@ -163,17 +163,3 @@ jobs:
     #     AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID)
     #     AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY)
     #     AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
-      
-
-# - job: Approval
-#   displayName: Approvals
-#   pool: server
-  
-#   steps:
-#     - task: ManualValidation@1
-#       timeoutInMinutes: 2 # task times out in 1 day
-#       inputs:
-#         approvers: |
-#             [Invictus]\Aprobadores Arquitectura
-#         instructions: 'Deploy'
-#         onTimeout: 'reject'

@@ -4,8 +4,14 @@ stages:
     displayName: 'Deploy Integration Development'
   ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
     displayName: 'Deploy Integration Staging' 
-  ${{ if or(in(variables['Build.SourceBranch'], 'refs/heads/master' ), startsWith(variables['Build.SourceBranch'], 'refs/tags/')) }}:
-    displayName: 'Deploy Integration Master'
+  ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'antioquia')) }}: 
+    displayName: 'Deploy Integration Master Antioquia'
+  ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'cap')) }}: 
+    displayName: 'Deploy Integration Master Cap'
+  ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'tolima')) }}: 
+    displayName: 'Deploy Integration Master Tolima'
+  ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'huila')) }}: 
+    displayName: 'Deploy Integration Master Huila'
   
   dependsOn: 
     - 'artifacts_managment'
