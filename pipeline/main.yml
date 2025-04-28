@@ -42,7 +42,7 @@ stages:
         typerelease: ${{ parameters.typerelease }}
         apps: ${{ parameters.apps }}
   
-  - ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), in(variables['Build.SourceBranch'], 'refs/heads/develop', 'refs/heads/staging') }}:
+  - ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), in(variables['Build.SourceBranch'], 'refs/heads/develop', 'refs/heads/staging')) }}:
     - template: release/deploy-integration.yml
       parameters:
         language: ${{ parameters.language }}
