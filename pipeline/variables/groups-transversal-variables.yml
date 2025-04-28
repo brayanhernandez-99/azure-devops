@@ -1,6 +1,12 @@
 variables:
 - group: trasversal-aws-deployment
 - group: trasversal-azure-devops
-- group: trasversal-aws-developer
 
+- ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
+  - group: trasversal-aws-developer
+- ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
+  - group: trasversal-aws-qa
+- ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
+  - group: trasversal-aws-developer
+  
 - template: pipeline/vars-azure-pipeline.yml@self

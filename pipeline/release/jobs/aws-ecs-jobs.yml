@@ -17,6 +17,8 @@ jobs:
     displayName: 'AWS ECS Develop'
   ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
     displayName: 'AWS ECS Staging'
+  ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/master') }}:
+    displayName: 'AWS ECS master Antioquia'
   pool:
     name: Azure Pipelines
     vmImage: 'ubuntu-22.04'
