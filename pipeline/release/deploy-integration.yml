@@ -34,4 +34,5 @@ stages:
           language: ${{ parameters.language }}
           typerelease: ${{ parameters.typerelease }}
           apps: ${{ parameters.apps }}
+          red: ${{ parameters.red }}
 
