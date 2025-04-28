@@ -2,7 +2,7 @@ stages:
 - stage: 'deploy_integration'
   ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
     displayName: 'Deploy Integration Development'
-  ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/release') }}:
+  ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
     displayName: 'Deploy Integration Staging' 
   ${{ if or(in(variables['Build.SourceBranch'], 'refs/heads/master' ), startsWith(variables['Build.SourceBranch'], 'refs/tags/')) }}:
     displayName: 'Deploy Integration Master'
@@ -21,17 +21,9 @@ stages:
 
   jobs:
 
-  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
+  - ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), in(variables['Build.SourceBranch'], 'refs/heads/develop', 'refs/heads/staging') }}:
     - ${{ if in(parameters.typerelease, 'aws') }}:
-      - template: jobs/aws-ecs-jobs-dev.yml
-        parameters:
-          language: ${{ parameters.language }}
-          typerelease: ${{ parameters.typerelease }}
-          apps: ${{ parameters.apps }}
-
-  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
-    - ${{ if in(parameters.typerelease, 'aws') }}:
-      - template: jobs/aws-ecs-jobs-qa.yml
+      - template: jobs/aws-ecs-jobs.yml
         parameters:
           language: ${{ parameters.language }}
           typerelease: ${{ parameters.typerelease }}
