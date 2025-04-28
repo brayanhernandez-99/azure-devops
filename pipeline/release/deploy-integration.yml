@@ -1,5 +1,5 @@
 stages:
-- stage: 'ecosystem_integration'
+- stage: 'deploy_integration'
   ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
     displayName: 'Deploy Integration Development'
   ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/release') }}:
@@ -20,16 +20,20 @@ stages:
   - template: ../variables/groups-transversal-variables.yml
 
   jobs:
-  - ${{ if in(parameters.typerelease, 'aws') }}:
-    - template: jobs/aws-ecs-jobs.yml
-      parameters:
-        language: ${{ parameters.language }}
-        typerelease: ${{ parameters.typerelease }}
-        apps: ${{ parameters.apps }}
 
-    # - template: jobs/aws-ecs-jobs-QA.yml
-    #   parameters:
-    #     language: ${{ parameters.language }}
-    #     typerelease: ${{ parameters.typerelease }}
-    #     apps: ${{ parameters.apps }}
+  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
+    - ${{ if in(parameters.typerelease, 'aws') }}:
+      - template: jobs/aws-ecs-jobs-dev.yml
+        parameters:
+          language: ${{ parameters.language }}
+          typerelease: ${{ parameters.typerelease }}
+          apps: ${{ parameters.apps }}
+
+  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
+    - ${{ if in(parameters.typerelease, 'aws') }}:
+      - template: jobs/aws-ecs-jobs-qa.yml
+        parameters:
+          language: ${{ parameters.language }}
+          typerelease: ${{ parameters.typerelease }}
+          apps: ${{ parameters.apps }}
 
