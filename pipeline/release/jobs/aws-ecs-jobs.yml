@@ -1,7 +1,10 @@
 jobs:
 - deployment: WaitForApproval
   displayName: 'Esperar aprobación'
-  environment: 'Deploy $(Build.SourceBranch)' 
+  ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
+    environment: 'Deploy develop' 
+  ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
+    environment: 'Deploy staging' 
   strategy:
     runOnce:
       deploy:
