@@ -1,5 +1,5 @@
 stages:
-- stage: 'deploy_integration'
+- stage: 'deploy_integration_${{ parameters.red }}'
   ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
     displayName: 'Deploy Integration Development'
   ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
