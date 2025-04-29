@@ -22,6 +22,7 @@ jobs:
         checkLatest: true
 
     - script: |
+        $(System.DefaultWorkingDirectory)/apps/$(msName)
         npm install conventional-changelog-conventionalcommits
         npm install commitlint@latest
       displayName: Install commitlint
@@ -29,7 +30,6 @@ jobs:
     - script: |
         npx commitlint --last --verbose --config $(System.DefaultWorkingDirectory)/apps/$(msName)/.commitlintrc.json
       condition: ne(variables['Build.Reason'], 'PullRequest')
-      workingDirectory: $(System.DefaultWorkingDirectory)
       displayName: Validate current commit (last commit) with commitlint
 
     
