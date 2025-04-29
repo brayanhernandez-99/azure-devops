@@ -51,13 +51,8 @@ jobs:
 
 
 
-
-
-
-
-
-
-
+        for ms in $(echo "$CHANGED_MS_LIST" | jq -r '.[]'); do
+          echo "Procesando MS: $ms"
           SERVICE_PATH="$(Build.SourcesDirectory)/apps/$ms"
           PACKAGE_JSON="$SERVICE_PATH/package.json"
           VERSION=$(jq -r '.version' "$PACKAGE_JSON")
