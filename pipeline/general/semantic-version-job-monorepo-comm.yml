@@ -29,7 +29,7 @@ jobs:
     - script: |
         cp $(System.DefaultWorkingDirectory)/apps/$(msName)/.commitlintrc.json $(System.DefaultWorkingDirectory)
         git fetch origin develop
-        npx commitlint --from origin/develop --to HEAD --verboseS
+        npx commitlint --from origin/develop --to HEAD --verbose
       condition: ne(variables['Build.Reason'], 'PullRequest')
       displayName: Validate current commit (last commit) with commitlint
 
