@@ -23,7 +23,8 @@ jobs:
 
     - script: |
         npm install conventional-changelog-conventionalcommits
-        npm install commitlint@latest 
+        npm install commitlint@latest
+        ls -la
       displayName: Install commitlint
 
     - script: |
