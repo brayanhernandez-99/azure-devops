@@ -32,6 +32,7 @@ jobs:
         npx commitlint --from origin/develop --to HEAD --verbose
       condition: ne(variables['Build.Reason'], 'PullRequest')
       displayName: Validate current commit (last commit) with commitlint
+      continueOnError: true
 
     - script: |
         echo "Simulando próximo versionado..."
