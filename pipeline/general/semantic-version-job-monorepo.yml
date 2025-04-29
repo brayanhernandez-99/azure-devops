@@ -44,7 +44,7 @@ jobs:
         fi
 
         echo $APPLY_BUMP
-        echo COMPARE_BRANCH
+        echo $COMPARE_BRANCH
 
 
 
