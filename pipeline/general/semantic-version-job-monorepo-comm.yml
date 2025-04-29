@@ -33,4 +33,11 @@ jobs:
       condition: ne(variables['Build.Reason'], 'PullRequest')
       displayName: Validate current commit (last commit) with commitlint
 
+    - script: |
+        echo "Simulando próximo versionado..."
+        NEXT_VERSION=$(npx commit-and-tag-version --dry-run | grep "bumping version" | sed -E 's/.*to ([0-9]+\.[0-9]+\.[0-9]+).*/\1/')
+        echo "Versión detectada: $NEXT_VERSION"
+        echo "##vso[task.setvariable variable=NextVersion]$NEXT_VERSION"
+      displayName: Detect next version
+
     
