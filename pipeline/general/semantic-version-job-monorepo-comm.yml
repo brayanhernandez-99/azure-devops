@@ -26,7 +26,9 @@ jobs:
         npm install commitlint@latest
       displayName: Install commitlint
 
-    - script: npx commitlint --last --verbose
+    - script: |
+        cd $(System.DefaultWorkingDirectory)/apps/$(msName)
+        npx commitlint --last --verbose
       condition: ne(variables['Build.Reason'], 'PullRequest')
       displayName: Validate current commit (last commit) with commitlint
 
