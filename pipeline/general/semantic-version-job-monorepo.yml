@@ -32,6 +32,21 @@ jobs:
         
         CURRENT_BRANCH=$(echo $(Build.SourceBranchName))
         echo "Branch actual: $CURRENT_BRANCH"
+
+        git fetch origin master
+        MASTER_BRANCH="origin/master"
+
+
+
+
+
+        for ms in $(echo "$CHANGED_MS_LIST" | jq -r '.[]'); do
+          echo "Procesando MS: $ms"
+          SERVICE_PATH="$(Build.SourcesDirectory)/apps/$ms"
+          PACKAGE_JSON="$SERVICE_PATH/package.json"
+          VERSION=$(jq -r '.version' "$PACKAGE_JSON")
+          echo "Versión actual: $VERSION"
+        done
         
       displayName: "Obtener versiones de los MS cambiados"
       env:
