@@ -27,7 +27,7 @@ jobs:
       displayName: Install commitlint
 
     - script: |
-        npx commitlint --last --verbose
+        npx commitlint --last --verbose --config $(System.DefaultWorkingDirectory)/apps/$(msName)
       condition: ne(variables['Build.Reason'], 'PullRequest')
       workingDirectory: $(System.DefaultWorkingDirectory)
       displayName: Validate current commit (last commit) with commitlint
