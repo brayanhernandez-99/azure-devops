@@ -22,9 +22,12 @@ jobs:
         checkLatest: true
 
     - script: |
-        npm install --no-save @commitlint/cli@19.0.3 @commitlint/config-conventional@19.0.3
-      displayName: "install depedenci $(msName)"
+        npm install conventional-changelog-conventionalcommits
+        npm install commitlint@latest
+      displayName: Install commitlint
 
-    
+    - script: npx commitlint --last --verbose
+      condition: ne(variables['Build.Reason'], 'PullRequest')
+      displayName: Validate current commit (last commit) with commitlint
 
     
