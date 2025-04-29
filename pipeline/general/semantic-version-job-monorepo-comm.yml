@@ -1,0 +1,30 @@
+
+jobs:
+- job: 'semantic_version'
+  displayName: 'Semantic Version'
+  pool:
+    name: 'Azure Pipelines'
+    VmImage: ubuntu-22.04
+
+  strategy:
+      matrix:
+        ${{ each ms in parameters.apps }}:
+          ${{ ms }}:
+            msName: ${{ ms }}
+  steps:
+    - checkout: self
+      fetchDepth: 0
+      persistCredentials: true
+
+    - task: NodeTool@0
+      inputs:
+        versionSpec: "20.x"
+        checkLatest: true
+
+    - script: |
+        npm install --no-save @commitlint/cli@19.0.3 @commitlint/config-conventional@19.0.3
+      displayName: "install depedenci $(msName)"
+
+    
+
+    

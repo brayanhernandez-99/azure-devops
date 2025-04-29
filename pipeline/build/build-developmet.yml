@@ -4,7 +4,7 @@ stages:
   dependsOn: [] 
 
   jobs:
-  - template: ../general/semantic-version-job-monorepo.yml
+  - template: ../general/semantic-version-job-monorepo-comm.yml
     parameters:
         apps: ${{ parameters.apps }}
   
