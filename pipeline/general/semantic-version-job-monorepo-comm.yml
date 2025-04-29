@@ -22,13 +22,13 @@ jobs:
         checkLatest: true
 
     - script: |
-        cd $(System.DefaultWorkingDirectory)/apps/$(msName)
-        npm install --no-save conventional-changelog-conventionalcommits
-        npm install --no-save @commitlint@latest @commitlint/config-conventional@latest
+        npm install conventional-changelog-conventionalcommits
+        npm install @commitlint@latest @commitlint/config-conventional@latest
       displayName: Install commitlint
 
     - script: |
-        npx commitlint --last --verbose --config $(System.DefaultWorkingDirectory)/apps/$(msName)/.commitlintrc.json
+        cp $(System.DefaultWorkingDirectory)/apps/$(msName)/.commitlintrc.json $(System.DefaultWorkingDirectory)
+        npx commitlint --last --verbose 
       condition: ne(variables['Build.Reason'], 'PullRequest')
       displayName: Validate current commit (last commit) with commitlint
 
