@@ -43,10 +43,20 @@ jobs:
           APPLY_BUMP=false
         fi
 
-        echo $APPLY_BUMP
-        echo $COMPARE_BRANCH
+        echo "Se comparará contra: $COMPARE_BRANCH"
+        git fetch origin $COMPARE_BRANCH
 
-
+        bump_version() {
+          local version=$1
+          local bump=$2
+          IFS='.' read -r major minor patch <<< "$version"
+          case "$bump" in
+            major) echo "$((major + 1)).0.0" ;;
+            minor) echo "$major.$((minor + 1)).0" ;;
+            patch) echo "$major.$minor.$((patch + 1))" ;;
+            *) echo "$version" ;;
+          esac
+        }
 
 
 
@@ -55,8 +65,26 @@ jobs:
           echo "Procesando MS: $ms"
           SERVICE_PATH="$(Build.SourcesDirectory)/apps/$ms"
           PACKAGE_JSON="$SERVICE_PATH/package.json"
-          VERSION=$(jq -r '.version' "$PACKAGE_JSON")
-          echo "Versión actual: $VERSION"
+          CURRENT_VERSION=$(jq -r '.version' "$PACKAGE_JSON")
+
+
+          LOG=$(git log origin/$COMPARE_BRANCH..HEAD --pretty=%B -- apps/$ms) 
+
+          if echo "$LOG" | grep -q "#major"; then
+            bump_type="major"
+          elif echo "$LOG" | grep -q "#minor"; then
+            bump_type="minor"
+          elif echo "$LOG" | grep -q "#patch"; then
+            bump_type="patch"
+          else
+            bump_type=""
+          fi
+          
+          NEW_VERSION=$(bump_version "$CURRENT_VERSION" "$bump_type")
+
+          echo "🧪 [Dry Run] $ms tendría bump $bump_type: $CURRENT_VERSION → $NEW_VERSION"
+
+          # echo "Versión actual: $VERSION"
         done
         
       displayName: "Obtener versiones de los MS cambiados"
