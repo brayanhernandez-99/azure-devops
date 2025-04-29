@@ -38,7 +38,7 @@ jobs:
         MASTER_BRANCH="origin/master"
 
 
-        if [[ "$CURRENT_BRANCH" == 'refs/heads/feature' ]]; then
+        if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
           COMPARE_BRANCH="develop"
           APPLY_BUMP=false
         fi
