@@ -22,7 +22,7 @@ jobs:
         checkLatest: true
 
     - script: |
-        $(System.DefaultWorkingDirectory)/apps/$(msName)
+        cd $(System.DefaultWorkingDirectory)/apps/$(msName)
         npm install conventional-changelog-conventionalcommits
         npm install commitlint@latest
       displayName: Install commitlint
