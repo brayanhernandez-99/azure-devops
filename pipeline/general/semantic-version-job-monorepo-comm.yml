@@ -23,8 +23,8 @@ jobs:
 
     - script: |
         cd $(System.DefaultWorkingDirectory)/apps/$(msName)
-        npm install conventional-changelog-conventionalcommits
-        npm install commitlint@latest
+        npm install --no-save conventional-changelog-conventionalcommits
+        npm install --no-save @commitlint@latest @commitlint/config-conventional@latest
       displayName: Install commitlint
 
     - script: |
