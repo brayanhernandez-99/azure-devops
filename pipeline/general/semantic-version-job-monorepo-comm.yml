@@ -22,7 +22,7 @@ jobs:
         checkLatest: true
 
     - script: |
-        npm install --no-save @commitlint/cli@latest @commitlint/config-conventional@latest conventional-changelog-conventionalcommits@latest
+        npm install --no-save @commitlint/cli@latest @commitlint/config-conventional@latest conventional-changelog-conventionalcommits@latest commit-and-tag-version@latest
         ls -la
       displayName: Install commitlint
 
