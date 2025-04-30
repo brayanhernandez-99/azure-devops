@@ -59,6 +59,7 @@ jobs:
 
           echo "📌 Versión actual detectada: $CURRENT_VERSION"
           echo "🚀 Próxima versión para la rama develop: $NEXT_VERSION"
+          mkdir -p $(Build.ArtifactStagingDirectory)/$(msName)
           touch $(Build.ArtifactStagingDirectory)/$(msName)/version.json
           echo "{ \"ms\": \"$(msName)\", \"version\": \"$NEXT_VERSION\" }" > $(Build.ArtifactStagingDirectory)/$(msName)/version.json
         fi
