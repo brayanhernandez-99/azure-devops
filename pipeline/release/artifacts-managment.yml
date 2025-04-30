@@ -132,7 +132,7 @@ stages:
         #     tags: $(Build.BuildNumber)
 
   - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
-    - template: ../general/semantic-version-job.yml
+    - template: ../general/semantic-version-job-monorepo-comm.yml
     - job: 'publish_image_qa'
       displayName: 'Publish Docker Image Staging Environment'
       pool:
