@@ -39,7 +39,7 @@ jobs:
         CURRENT_BRANCH=$(echo $(Build.SourceBranch))
         echo $CURRENT_BRANCH
         if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
-          BUMP_OUTPUT=$(npx commit-and-tag-version --dry-run --skip.changelog --skip.tag --skip.commit)
+          BUMP_OUTPUT=$(npx commit-and-tag-version --dry-run)
           echo "$BUMP_OUTPUT"
           echo "----------------------------------------"
           
@@ -51,7 +51,7 @@ jobs:
         fi
 
         if [[ "$CURRENT_BRANCH" == refs/heads/develop ]]; then
-          BUMP_OUTPUT=$(npx commit-and-tag-version --prerelease develop --skip.tag --skip.commit)
+          BUMP_OUTPUT=$(npx commit-and-tag-version --prerelease develop --dry-run )
           echo "$BUMP_OUTPUT"
           echo "----------------------------------------"
           
