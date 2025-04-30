@@ -51,7 +51,7 @@ jobs:
         fi
 
         if [[ "$CURRENT_BRANCH" == refs/heads/develop ]]; then
-          BUMP_OUTPUT=$(npx commit-and-tag-version --prerelease develop --skip.changelog --skip.tag --skip.commit)
+          BUMP_OUTPUT=$(npx commit-and-tag-version --prerelease develop --skip.tag --skip.commit)
           echo "$BUMP_OUTPUT"
           echo "----------------------------------------"
           
