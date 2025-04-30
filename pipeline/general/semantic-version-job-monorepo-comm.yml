@@ -39,8 +39,7 @@ jobs:
         CURRENT_BRANCH=$(echo $(Build.SourceBranch))
         echo $CURRENT_BRANCH
         if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
-          # BUMP_OUTPUT=$(npx commit-and-tag-version --dry-run --skip.commit --skip.tag)
-          BUMP_OUTPUT=$(npx commit-and-tag-version --dry-run --prerelease feature --skip.changelog)
+          BUMP_OUTPUT=$(npx commit-and-tag-version --dry-run --skip.changelog --skip.tag --skip.commit)
           echo "$BUMP_OUTPUT"
           echo "----------------------------------------"
           
@@ -52,17 +51,16 @@ jobs:
         fi
 
         if [[ "$CURRENT_BRANCH" == refs/heads/develop ]]; then
-          BUMP_OUTPUT=$(npx commit-and-tag-version -- --prerelease develop)
+          BUMP_OUTPUT=$(npx commit-and-tag-version --prerelease develop --skip.changelog --skip.tag --skip.commit)
           echo "$BUMP_OUTPUT"
           echo "----------------------------------------"
           
           CURRENT_VERSION=$(echo "$BUMP_OUTPUT" | grep "bumping version" | sed -E 's/.*from ([0-9]+\.[0-9]+\.[0-9]+) to.*/\1/')
-          NEXT_VERSION=$(echo "$BUMP_OUTPUT" | grep "bumping version" | sed -E 's/.*to ([0-9]+\.[0-9]+\.[0-9]+).*/\1/')
+          NEXT_VERSION=$(echo "$BUMP_OUTPUT" | grep -oE 'to [0-9]+\.[0-9]+\.[0-9]+-[a-zA-Z]+\.[0-9]+' | awk '{print $2}')
 
           echo "📌 Versión actual detectada: $CURRENT_VERSION"
           echo "🚀 Próxima versión para la rama develop: $NEXT_VERSION"
         fi
-
         
       displayName: Detect next version
 
