@@ -41,7 +41,7 @@ jobs:
         # echo "Versión detectada: $NEXT_VERSION"
         # echo "##vso[task.setvariable variable=NextVersion]$NEXT_VERSION"
         cd $(System.DefaultWorkingDirectory)/apps/$(msName)
-        npx commit-and-tag-version --dry-run
+        npx commit-and-tag-version --dry-run --skip.commit --skip.tag
       displayName: Detect next version
 
     
