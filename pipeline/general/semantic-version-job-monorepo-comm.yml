@@ -35,6 +35,7 @@ jobs:
       continueOnError: true
 
     - script: |
+        cd $(System.DefaultWorkingDirectory)/apps/$(msName)
         BUMP_OUTPUT=$(npx commit-and-tag-version --dry-run --skip.commit --skip.tag)
         echo "$BUMP_OUTPUT"
         echo "----------------------------------------"
