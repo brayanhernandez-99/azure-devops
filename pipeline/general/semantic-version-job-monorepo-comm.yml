@@ -28,7 +28,6 @@ jobs:
 
     - script: |
         cp $(System.DefaultWorkingDirectory)/apps/$(msName)/.commitlintrc.json $(System.DefaultWorkingDirectory)
-        git fetch origin develop
         # npx commitlint --from origin/develop --to HEAD --verbose
         npx commitlint --last --verbose
       condition: ne(variables['Build.Reason'], 'PullRequest')
@@ -41,7 +40,8 @@ jobs:
         # echo "Versión detectada: $NEXT_VERSION"
         # echo "##vso[task.setvariable variable=NextVersion]$NEXT_VERSION"
         cd $(System.DefaultWorkingDirectory)/apps/$(msName)
-        npx commit-and-tag-version --dry-run --skip.commit --skip.tag
+        NEXT_VERSION=$(npx commit-and-tag-version --dry-run --skip.commit --skip.tag | grep "bumping version" | sed -E 's/.*to ([0-9]+\.[0-9]+\.[0-9]+).*/\1/')
+        echo $NEXT_VERSION
       displayName: Detect next version
 
     
