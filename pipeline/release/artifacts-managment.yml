@@ -21,12 +21,18 @@ stages:
           ${{ each ms in parameters.apps }}:
             ${{ ms }}:
               msName: ${{ ms }}
+      
+      variables:
+        msVersion: $[ dependencies.semantic_version.outputs['semantic_version_${{ ms }}.SemanticJob.nextVersion'] ]
 
       steps:
         - checkout: self
 
         - checkout: git://DevOps-templates-UX/pipelines-templates@feature/Inicio-templates
           fetchDepth: 1
+        
+        - script: |
+            echo "La versión para ${{ msName }} es: $(msVersion)"
 
         # - script: |
         #     echo "build dev docker images"

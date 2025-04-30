@@ -35,12 +35,12 @@ stages:
         typerelease: ${{ parameters.typerelease }}
         apps: ${{ parameters.apps }}
 
-  # - ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), in(variables['Build.SourceBranch'], 'refs/heads/develop','refs/heads/staging','refs/heads/master' )) }}:
-  #   - template: release/artifacts-managment.yml
-  #     parameters:
-  #       language: ${{ parameters.language }}
-  #       typerelease: ${{ parameters.typerelease }}
-  #       apps: ${{ parameters.apps }}
+  - ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), in(variables['Build.SourceBranch'], 'refs/heads/develop','refs/heads/staging','refs/heads/master' )) }}:
+    - template: release/artifacts-managment.yml
+      parameters:
+        language: ${{ parameters.language }}
+        typerelease: ${{ parameters.typerelease }}
+        apps: ${{ parameters.apps }}
   
   # - ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), in(variables['Build.SourceBranch'], 'refs/heads/develop', 'refs/heads/staging', 'refs/heads/master')) }}:
   #   - template: release/deploy-integration.yml

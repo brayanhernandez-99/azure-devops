@@ -1,4 +1,3 @@
-
 jobs:
 - job: 'semantic_version'
   displayName: 'Semantic Version'
@@ -60,8 +59,10 @@ jobs:
 
           echo "📌 Versión actual detectada: $CURRENT_VERSION"
           echo "🚀 Próxima versión para la rama develop: $NEXT_VERSION"
+          echo "##vso[task.setvariable variable=nextVersion;isOutput=true]$NEXT_VERSION"
         fi
         
       displayName: Detect next version
+      name: SemanticJob
 
     
