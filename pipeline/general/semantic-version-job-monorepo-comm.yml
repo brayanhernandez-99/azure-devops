@@ -59,10 +59,16 @@ jobs:
 
           echo "📌 Versión actual detectada: $CURRENT_VERSION"
           echo "🚀 Próxima versión para la rama develop: $NEXT_VERSION"
-          echo "##vso[task.setvariable variable=nextVersion;isOutput=true]$NEXT_VERSION"
+          echo "{ \"ms\": \"$(msName)\", \"version\": \"$NEXT_VERSION\" }" > $(Build.ArtifactStagingDirectory)/$(msName)/version.json
         fi
-        
       displayName: Detect next version
       name: SemanticJob
+    
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)/$(msName)'
+        ArtifactName: 'versions'
+        publishLocation: 'Container'
+      displayName: '📦 Publicar artifact de versión'
 
     
