@@ -170,7 +170,7 @@ stages:
             if [[ -f "$VERSION_FILE" ]]; then
               VERSION=$(jq -r '.version' $VERSION_FILE)
               echo "🚀 Versión detectada para $(msName): $VERSION"
-              # echo "##vso[task.setvariable variable=msVersion]$VERSION"
+              echo "##vso[task.setvariable variable=msVersion]$VERSION"
             else
               echo "❌ No se encontró archivo de versión para $(msName)"
               exit 1
@@ -178,7 +178,7 @@ stages:
           displayName: '📚 Leer versiones de microservicios'
 
         - script: |
-            echo $msVersion
+            echo $(msVersion)
 
         # - script: |
         #     echo "build qa docker images"
