@@ -177,6 +177,9 @@ stages:
             fi
           displayName: '📚 Leer versiones de microservicios'
 
+        - script: |
+            echo $msVersion
+
         # - script: |
         #     echo "build qa docker images"
         #     DOCKERFILE_PATH=$(Build.Repository.Name)/apps/$(msName)/Dockerfile
