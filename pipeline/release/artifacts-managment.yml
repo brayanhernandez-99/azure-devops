@@ -1,9 +1,16 @@
 stages:
 - stage: 'artifacts_managment'
   displayName: 'Artifacts Managment'
-  # dependsOn:
-  #   - 'build_developmet'
-  # condition: in(dependencies.build_developmet.result, 'Succeeded', 'SucceededWithIssues')
+
+  # ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), in(variables['Build.SourceBranch'], 'refs/heads/develop')) }}:
+  #   dependsOn:
+  #     - 'build_developmet'
+  #   condition: in(dependencies.build_developmet.result, 'Succeeded', 'SucceededWithIssues')
+
+  ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), in(variables['Build.SourceBranch'], 'refs/heads/staging','refs/heads/master' )) }}:
+    dependsOn:
+      - 'semantic_version_integration'
+    condition: in(dependencies.semantic_version_integration.result, 'Succeeded', 'SucceededWithIssues')
 
   variables:
   - template: ../variables/groups-transversal-variables.yml
@@ -135,7 +142,7 @@ stages:
     - template: ../general/semantic-version-job-monorepo-comm.yml
       parameters:
         apps: ${{ parameters.apps }}
-        
+
     - job: 'publish_image_qa'
       displayName: 'Publish Docker Image Staging Environment'
       pool:
