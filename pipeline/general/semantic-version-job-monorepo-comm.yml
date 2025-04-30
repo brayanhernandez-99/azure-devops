@@ -37,6 +37,7 @@ jobs:
         cd $(System.DefaultWorkingDirectory)/apps/$(msName)
         CURRENT_BRANCH=$(echo $(Build.SourceBranch))
         echo $CURRENT_BRANCH
+
         if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
           BUMP_OUTPUT=$(npx commit-and-tag-version --dry-run)
           echo "$BUMP_OUTPUT"
@@ -59,15 +60,49 @@ jobs:
 
           echo "📌 Versión actual detectada: $CURRENT_VERSION"
           echo "🚀 Próxima versión para la rama develop: $NEXT_VERSION"
-          
+
           mkdir -p $(Build.ArtifactStagingDirectory)/$(msName)
           touch $(Build.ArtifactStagingDirectory)/$(msName)/version.json
           echo "{ \"ms\": \"$(msName)\", \"version\": \"$NEXT_VERSION\" }" > $(Build.ArtifactStagingDirectory)/$(msName)/version.json
         fi
+
+        if [[ "$CURRENT_BRANCH" == refs/heads/staging ]]; then
+          BUMP_OUTPUT=$(npx commit-and-tag-version --prerelease staging --dry-run )
+          echo "$BUMP_OUTPUT"
+          echo "----------------------------------------"
+          
+          CURRENT_VERSION=$(echo "$BUMP_OUTPUT" | grep "bumping version" | sed -E 's/.*from ([0-9]+\.[0-9]+\.[0-9]+) to.*/\1/')
+          NEXT_VERSION=$(echo "$BUMP_OUTPUT" | grep -oE 'to [0-9]+\.[0-9]+\.[0-9]+-[a-zA-Z]+\.[0-9]+' | awk '{print $2}')
+
+          echo "📌 Versión actual detectada: $CURRENT_VERSION"
+          echo "🚀 Próxima versión para la rama develop: $NEXT_VERSION"
+
+          mkdir -p $(Build.ArtifactStagingDirectory)/$(msName)
+          touch $(Build.ArtifactStagingDirectory)/$(msName)/version.json
+          echo "{ \"ms\": \"$(msName)\", \"version\": \"$NEXT_VERSION\" }" > $(Build.ArtifactStagingDirectory)/$(msName)/version.json
+        fi
+
+        if [[ "$CURRENT_BRANCH" == refs/heads/master ]]; then
+          BUMP_OUTPUT=$(npx commit-and-tag-version --dry-run )
+          echo "$BUMP_OUTPUT"
+          echo "----------------------------------------"
+          
+          CURRENT_VERSION=$(echo "$BUMP_OUTPUT" | grep "bumping version" | sed -E 's/.*from ([0-9]+\.[0-9]+\.[0-9]+) to.*/\1/')
+          NEXT_VERSION=$(echo "$BUMP_OUTPUT" | grep -oE 'to [0-9]+\.[0-9]+\.[0-9]+-[a-zA-Z]+\.[0-9]+' | awk '{print $2}')
+
+          echo "📌 Versión actual detectada: $CURRENT_VERSION"
+          echo "🚀 Próxima versión para la rama develop: $NEXT_VERSION"
+
+          mkdir -p $(Build.ArtifactStagingDirectory)/$(msName)
+          touch $(Build.ArtifactStagingDirectory)/$(msName)/version.json
+          echo "{ \"ms\": \"$(msName)\", \"version\": \"$NEXT_VERSION\" }" > $(Build.ArtifactStagingDirectory)/$(msName)/version.json
+        fi
+
       displayName: Detect next version
       name: SemanticJob
     
     - task: PublishBuildArtifacts@1
+      condition: not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
       inputs:
         PathtoPublish: '$(Build.ArtifactStagingDirectory)'
         ArtifactName: 'versions'
