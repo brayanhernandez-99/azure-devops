@@ -40,7 +40,7 @@ jobs:
         echo $CURRENT_BRANCH
         if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
           # BUMP_OUTPUT=$(npx commit-and-tag-version --dry-run --skip.commit --skip.tag)
-          BUMP_OUTPUT=$(npx commit-and-tag-version -- --prerelease feature --skip.changelog)
+          BUMP_OUTPUT=$(npx commit-and-tag-version --dry-run --prerelease feature --skip.changelog)
           echo "$BUMP_OUTPUT"
           echo "----------------------------------------"
           
