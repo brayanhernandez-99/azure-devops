@@ -35,6 +35,7 @@ stages:
           displayName: '📥 Descargar artifact de versiones'
         
         - script: |
+            ls -R $(Pipeline.Workspace)/downloaded-versions
             VERSION_FILE="$(Pipeline.Workspace)/downloaded-versions/$(msName)/version.json"
             if [[ -f "$VERSION_FILE" ]]; then
               VERSION=$(jq -r '.version' $VERSION_FILE)

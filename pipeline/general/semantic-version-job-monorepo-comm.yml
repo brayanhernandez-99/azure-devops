@@ -68,9 +68,10 @@ jobs:
     
     - task: PublishBuildArtifacts@1
       inputs:
-        PathtoPublish: '$(Build.ArtifactStagingDirectory)/$(msName)'
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)'
         ArtifactName: 'versions'
         publishLocation: 'Container'
-      displayName: '📦 Publicar artifact de versión'
+      displayName: '📦 Publicar artifact de versiones por MS'
+
 
     
