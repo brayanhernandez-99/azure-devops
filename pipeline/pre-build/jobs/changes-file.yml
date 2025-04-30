@@ -8,6 +8,18 @@ jobs:
     - checkout: self
       fetchDepth: 0
       persistCredentials: true
+
+    - script: |
+        echo "Verificando commit automático..."
+        echo "Commit: $(Build.SourceVersionMessage)"
+        if echo "$(Build.SourceVersionMessage)" | grep -iqE '^chore\(release\):|auto-generated pipeline config'; then
+          echo "❌ Pipeline ejecutado por commit automático, cancelando ejecución."
+          echo "##vso[task.complete result=SucceededWithIssues;]Commit automático, no se ejecuta"
+          exit 0
+        else
+          echo "✅ Commit válido para rama de desarrollo: $(Build.SourceBranchName)"
+        fi
+      displayName: Validar automatico o normal
   
     - script: |
         cd $(Build.SourcesDirectory)/apps
