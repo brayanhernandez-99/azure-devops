@@ -35,13 +35,15 @@ jobs:
       continueOnError: true
 
     - script: |
-        # echo "Simulando próximo versionado..."
-        # NEXT_VERSION=$(npx commit-and-tag-version --dry-run | grep "bumping version" | sed -E 's/.*to ([0-9]+\.[0-9]+\.[0-9]+).*/\1/')
-        # echo "Versión detectada: $NEXT_VERSION"
-        # echo "##vso[task.setvariable variable=NextVersion]$NEXT_VERSION"
-        cd $(System.DefaultWorkingDirectory)/apps/$(msName)
-        NEXT_VERSION=$(npx commit-and-tag-version --dry-run --skip.commit --skip.tag | grep "bumping version" | sed -E 's/.*to ([0-9]+\.[0-9]+\.[0-9]+).*/\1/')
-        echo $NEXT_VERSION
+        BUMP_OUTPUT=$(npx commit-and-tag-version --dry-run --skip.commit --skip.tag)
+        echo "$BUMP_OUTPUT"
+        echo "----------------------------------------"
+        
+        CURRENT_VERSION=$(echo "$BUMP_OUTPUT" | grep "bumping version" | sed -E 's/.*from ([0-9]+\.[0-9]+\.[0-9]+) to.*/\1/')
+        NEXT_VERSION=$(echo "$BUMP_OUTPUT" | grep "bumping version" | sed -E 's/.*to ([0-9]+\.[0-9]+\.[0-9]+).*/\1/')
+
+        echo "📌 Versión actual detectada: $CURRENT_VERSION"
+        echo "🚀 Próxima versión para la rama develop: $NEXT_VERSION"
       displayName: Detect next version
 
     
