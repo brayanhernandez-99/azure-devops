@@ -1,0 +1,9 @@
+stages:
+- stage: 'semantic_version_integration'
+  displayName: 'semantic-version-integration'
+  dependsOn: [] 
+
+  jobs:
+  - template: ../general/semantic-version-job-monorepo-comm.yml
+    parameters:
+        apps: ${{ parameters.apps }}
