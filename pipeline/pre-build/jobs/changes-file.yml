@@ -54,7 +54,7 @@ jobs:
 
         git checkout $clean_branch
         git config user.name "pipeline"
-        git config user.email "sebastian.londono@ux.technology"
+        git config user.email "pipelineUX@ux.technology"
         git add main-pipeline.yml
         git commit -m "Auto-generated pipeline config ${BUILD_BUILDID}"
         git push origin $clean_branch
