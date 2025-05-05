@@ -59,7 +59,8 @@ jobs:
             BASE=$(git merge-base HEAD origin/master)
 
             # Generar changelog solo de commits en esa diferencia
-            npx conventional-recommended-bump -p angular --commit-path . --from "$BASE" --to HEAD
+            npx conventional-recommended-bump -p angular --from "$BASE" --to HEAD
+
 
 
             # Limpieza: borrar el tag temporal
