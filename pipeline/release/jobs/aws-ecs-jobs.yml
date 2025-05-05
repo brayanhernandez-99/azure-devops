@@ -201,7 +201,7 @@ jobs:
     #     AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
 
 - ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'antioquia')) }}:
-  - template: general/commit-tag-changeload.yml
+  - template: ../general/commit-tag-changeload.yml
     parameters:
       apps: ${{ parameters.apps }}
       red: ${{ parameters.red }}
