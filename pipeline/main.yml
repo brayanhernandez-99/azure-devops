@@ -57,30 +57,32 @@ stages:
   #       apps: ${{ parameters.apps }}
   #       red: antioquia
 
-  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/master') }}:
-    - template: release/deploy-integration.yml
-      parameters:
-        language: ${{ parameters.language }}
-        typerelease: ${{ parameters.typerelease }}
-        apps: ${{ parameters.apps }}
-        red: cap
+  # - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/master') }}:
+  #   - template: release/deploy-integration.yml
+  #     parameters:
+  #       language: ${{ parameters.language }}
+  #       typerelease: ${{ parameters.typerelease }}
+  #       apps: ${{ parameters.apps }}
+  #       red: cap
   
-  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/master') }}:
-    - template: release/deploy-integration.yml
-      parameters:
-        language: ${{ parameters.language }}
-        typerelease: ${{ parameters.typerelease }}
-        apps: ${{ parameters.apps }}
-        red: tolima
+  # - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/master') }}:
+  #   - template: release/deploy-integration.yml
+  #     parameters:
+  #       language: ${{ parameters.language }}
+  #       typerelease: ${{ parameters.typerelease }}
+  #       apps: ${{ parameters.apps }}
+  #       red: tolima
 
-  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/master') }}:
-    - template: release/deploy-integration.yml
-      parameters:
-        language: ${{ parameters.language }}
-        typerelease: ${{ parameters.typerelease }}
-        apps: ${{ parameters.apps }}
-        red: huila
+  # - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/master') }}:
+  #   - template: release/deploy-integration.yml
+  #     parameters:
+  #       language: ${{ parameters.language }}
+  #       typerelease: ${{ parameters.typerelease }}
+  #       apps: ${{ parameters.apps }}
+  #       red: huila
   
+
+
     # - ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), in(variables['Build.SourceBranch'], 'refs/heads/develop', 'refs/heads/staging', 'refs/heads/master' )) }}:
     #   - ${{ each ms in parameters.apps }}:
     #     - template: release/deploy-integration-prueba.yml
