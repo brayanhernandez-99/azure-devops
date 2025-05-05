@@ -109,7 +109,7 @@ stages:
         #     command: 'build'
         #     repository: '$(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/pruebas-pipeline-$(msName)-develop'
         #     Dockerfile: '$(Build.Repository.Name)/apps/$(msName)/Dockerfile'
-        #     tags: $(Build.BuildNumber)
+        #     tags: $(msVersion)
 
         # - script: |
         #     echo "Verificando si existe el repositorio pruebas-pipeline-$(msName)-develop"
@@ -136,7 +136,7 @@ stages:
         #   inputs:
         #     command: 'Push'
         #     repository: '$(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/pruebas-pipeline-$(msName)-develop'
-        #     tags: $(Build.BuildNumber)
+        #     tags: $(msVersion)
 
   - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
     - job: 'publish_image_qa'
@@ -235,7 +235,7 @@ stages:
         #     command: 'build'
         #     repository: '$(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/pruebas-pipeline-$(msName)-qa'
         #     Dockerfile: '$(Build.Repository.Name)/apps/$(msName)/Dockerfile'
-        #     tags: $(Build.BuildNumber)
+        #     tags: $(msVersion)
         
         # - script: |
         #     echo "Verificando si existe el repositorio pruebas-pipeline-$(msName)-qa"
@@ -262,8 +262,7 @@ stages:
         #   inputs:
         #     command: 'Push'
         #     repository: '$(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/pruebas-pipeline-$(msName)-qa'
-        #     tags: $(Build.BuildNumber)
-
+        #     tags: $(msVersion)
 
   - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/master') }}:
     - job: 'publish_image_pnd'
@@ -305,7 +304,7 @@ stages:
 
         - script: |
             echo $(msVersion)
-            
+
         # - script: |
         #     echo "build qa docker images"
         #     DOCKERFILE_PATH=$(Build.Repository.Name)/apps/$(msName)/Dockerfile
@@ -361,7 +360,7 @@ stages:
         #     command: 'build'
         #     repository: '$(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/pruebas-pipeline-$(msName)-prd'
         #     Dockerfile: '$(Build.Repository.Name)/apps/$(msName)/Dockerfile'
-        #     tags: $(Build.BuildNumber)
+        #     tags: $(msVersion)
         
         # - script: |
         #     echo "Verificando si existe el repositorio pruebas-pipeline-$(msName)-prd"
@@ -388,5 +387,5 @@ stages:
         #   inputs:
         #     command: 'Push'
         #     repository: '$(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/pruebas-pipeline-$(msName)-prd'
-        #     tags: $(Build.BuildNumber)
+        #     tags: $(msVersion)
 
