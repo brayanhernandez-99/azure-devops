@@ -52,14 +52,14 @@ jobs:
 
             # Ahora sí: obtener solo los commits nuevos en la feature
             # BUMP_OUTPUT=$(npx commit-and-tag-version --dry-run --from "$AUTO_TAG")
-            BUMP_OUTPUT=$(npx commit-and-tag-version --dry-run --from 60b7f431a960d3813d331f1b52292b6e70aba43a)
-            echo "$BUMP_OUTPUT"
+            # BUMP_OUTPUT=$(npx commit-and-tag-version --dry-run --from 60b7f431a960d3813d331f1b52292b6e70aba43a)
+            # echo "$BUMP_OUTPUT"
 
             # Obtener commit base entre la rama y master
-              BASE=$(git merge-base HEAD origin/master)
+            BASE=$(git merge-base HEAD origin/master)
 
-              # Generar changelog solo de commits en esa diferencia
-              npx conventional-changelog -p angular --commit-path . --from "$BASE" --to HEAD
+            # Generar changelog solo de commits en esa diferencia
+            npx conventional-changelog -p angular --commit-path . --from "$BASE" --to HEAD
 
 
             # Limpieza: borrar el tag temporal
