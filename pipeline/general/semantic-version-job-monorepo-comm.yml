@@ -57,7 +57,7 @@ jobs:
 
             # Obtener commit base entre la rama y master
             BASE=$(git merge-base HEAD origin/master)
-
+            echo $BASE
             # Generar changelog solo de commits en esa diferencia
             npx conventional-recommended-bump -p angular --from "$BASE" --to HEAD
 
