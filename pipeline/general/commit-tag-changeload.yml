@@ -1,3 +1,4 @@
+jobs:
 - job: 'commit_tag_version'
   dependsOn: aws_ecs
   ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
