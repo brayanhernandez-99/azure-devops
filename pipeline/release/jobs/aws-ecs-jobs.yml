@@ -199,9 +199,3 @@ jobs:
     #     AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID)
     #     AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY)
     #     AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
-
-- ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'antioquia')) }}:
-  - template: pipeline/general/commit-tag-changeload.yml
-    parameters:
-      apps: ${{ parameters.apps }}
-      red: ${{ parameters.red }}
