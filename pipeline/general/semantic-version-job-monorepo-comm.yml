@@ -39,15 +39,31 @@ jobs:
         echo $CURRENT_BRANCH
 
         if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
-          BUMP_OUTPUT=$(npx commit-and-tag-version --dry-run)
-          echo "$BUMP_OUTPUT"
-          echo "----------------------------------------"
-          
-          CURRENT_VERSION=$(echo "$BUMP_OUTPUT" | grep "bumping version" | sed -E 's/.*from ([0-9]+\.[0-9]+\.[0-9]+) to.*/\1/')
-          NEXT_VERSION=$(echo "$BUMP_OUTPUT" | grep "bumping version" | sed -E 's/.*to ([0-9]+\.[0-9]+\.[0-9]+).*/\1/')
+          BASE_COMMIT=$(git merge-base HEAD origin/develop)
 
-          echo "📌 Versión actual detectada: $CURRENT_VERSION"
-          echo "🚀 Próxima versión para la rama develop: $NEXT_VERSION"
+          # Buscar si hay un tag existente en ese commit
+          BASE_TAG=$(git tag --contains $BASE_COMMIT | head -n 1)
+
+          if [ -z "$BASE_TAG" ]; then
+            echo "❌ No se encontró un tag en el punto de corte con develop"
+            exit 1
+          fi
+
+          echo "✅ Usando tag base: $BASE_TAG"
+
+          # Ejecutar el bump solo desde ese tag hacia adelante
+          BUMP_OUTPUT=$(npx commit-and-tag-version --dry-run --from "$BASE_TAG")
+          echo "$BUMP_OUTPUT"
+
+          # BUMP_OUTPUT=$(npx commit-and-tag-version --dry-run)
+          # echo "$BUMP_OUTPUT"
+          # echo "----------------------------------------"
+          
+          # CURRENT_VERSION=$(echo "$BUMP_OUTPUT" | grep "bumping version" | sed -E 's/.*from ([0-9]+\.[0-9]+\.[0-9]+) to.*/\1/')
+          # NEXT_VERSION=$(echo "$BUMP_OUTPUT" | grep "bumping version" | sed -E 's/.*to ([0-9]+\.[0-9]+\.[0-9]+).*/\1/')
+
+          # echo "📌 Versión actual detectada: $CURRENT_VERSION"
+          # echo "🚀 Próxima versión para la rama develop: $NEXT_VERSION"
         fi
 
         if [[ "$CURRENT_BRANCH" == refs/heads/develop ]]; then
