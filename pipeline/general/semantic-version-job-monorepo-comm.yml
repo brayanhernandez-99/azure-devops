@@ -41,14 +41,14 @@ jobs:
         if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
   
            # Buscar el commit base compartido entre esta feature y master
-            BASE_COMMIT=$(git merge-base HEAD origin/master)
-            echo "📌 Commit base común con master: $BASE_COMMIT"
+            # BASE_COMMIT=$(git merge-base HEAD origin/master)
+            # echo "📌 Commit base común con master: $BASE_COMMIT"
 
-            AUTO_TAG="temp-feature-base"
-            git tag "$AUTO_TAG" "$BASE_COMMIT"
-            git push origin "$AUTO_TAG"
+            # AUTO_TAG="temp-feature-base"
+            # git tag "$AUTO_TAG" "$BASE_COMMIT"
+            # git push origin "$AUTO_TAG"
 
-            echo "🏷️ Tag creado en el commit base: $AUTO_TAG"
+            # echo "🏷️ Tag creado en el commit base: $AUTO_TAG"
 
             # Ahora sí: obtener solo los commits nuevos en la feature
             # BUMP_OUTPUT=$(npx commit-and-tag-version --dry-run --from "$AUTO_TAG")
@@ -56,8 +56,8 @@ jobs:
             echo "$BUMP_OUTPUT"
 
             # Limpieza: borrar el tag temporal
-            git tag -d "$AUTO_TAG"
-            git push origin ":refs/tags/$AUTO_TAG"
+            # git tag -d "$AUTO_TAG"
+            # git push origin ":refs/tags/$AUTO_TAG"
 
           # BUMP_OUTPUT=$(npx commit-and-tag-version --dry-run)
           # echo "$BUMP_OUTPUT"
