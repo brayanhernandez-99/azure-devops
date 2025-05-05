@@ -40,34 +40,33 @@ jobs:
 
         if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
   
-          echo "🔍 Rama feature detectada"
+           # Buscar el commit base compartido entre esta feature y master
+            BASE_COMMIT=$(git merge-base HEAD origin/master)
+            echo "📌 Commit base común con master: $BASE_COMMIT"
 
-          # Genera un tag temporal único basado en fecha/hora o SHA corto
-          AUTO_TAG="auto-tag-$(date +%s)"
+            AUTO_TAG="temp-feature-base"
+            git tag "$AUTO_TAG" "$BASE_COMMIT"
+            git push origin "$AUTO_TAG"
 
-          # Taguea automáticamente el último commit (HEAD)
-          git tag "$AUTO_TAG" HEAD
-          git push origin "$AUTO_TAG"
+            echo "🏷️ Tag creado en el commit base: $AUTO_TAG"
 
-          echo "🏷️ Tag automático creado: $AUTO_TAG"
+            # Ahora sí: obtener solo los commits nuevos en la feature
+            BUMP_OUTPUT=$(npx commit-and-tag-version --dry-run --from "$AUTO_TAG")
+            echo "$BUMP_OUTPUT"
 
-          # Usar ese tag como punto base para el análisis de versión
-          BUMP_OUTPUT=$(npx commit-and-tag-version --dry-run --from "$AUTO_TAG")
-          echo "$BUMP_OUTPUT"
+            # Limpieza: borrar el tag temporal
+            git tag -d "$AUTO_TAG"
+            git push origin ":refs/tags/$AUTO_TAG"
 
-          # Eliminar el tag si es temporal
-          git tag -d "$AUTO_TAG"
-          git push origin ":refs/tags/$AUTO_TAG"
-
-          BUMP_OUTPUT=$(npx commit-and-tag-version --dry-run)
-          echo "$BUMP_OUTPUT"
-          echo "----------------------------------------"
+          # BUMP_OUTPUT=$(npx commit-and-tag-version --dry-run)
+          # echo "$BUMP_OUTPUT"
+          # echo "----------------------------------------"
           
-          CURRENT_VERSION=$(echo "$BUMP_OUTPUT" | grep "bumping version" | sed -E 's/.*from ([0-9]+\.[0-9]+\.[0-9]+) to.*/\1/')
-          NEXT_VERSION=$(echo "$BUMP_OUTPUT" | grep "bumping version" | sed -E 's/.*to ([0-9]+\.[0-9]+\.[0-9]+).*/\1/')
+          # CURRENT_VERSION=$(echo "$BUMP_OUTPUT" | grep "bumping version" | sed -E 's/.*from ([0-9]+\.[0-9]+\.[0-9]+) to.*/\1/')
+          # NEXT_VERSION=$(echo "$BUMP_OUTPUT" | grep "bumping version" | sed -E 's/.*to ([0-9]+\.[0-9]+\.[0-9]+).*/\1/')
 
-          echo "📌 Versión actual detectada: $CURRENT_VERSION"
-          echo "🚀 Próxima versión para la rama develop: $NEXT_VERSION"
+          # echo "📌 Versión actual detectada: $CURRENT_VERSION"
+          # echo "🚀 Próxima versión para la rama develop: $NEXT_VERSION"
         fi
 
         if [[ "$CURRENT_BRANCH" == refs/heads/develop ]]; then
