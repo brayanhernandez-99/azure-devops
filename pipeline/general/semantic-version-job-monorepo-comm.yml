@@ -39,15 +39,14 @@ jobs:
         echo $CURRENT_BRANCH
 
         if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
-          # 1. Encuentra el commit base entre feature/* y develop
-          BASE_COMMIT=$(git merge-base HEAD origin/develop)
+  
+          BASE_COMMIT=$(git merge-base origin/develop HEAD )
 
           echo "🔍 Commit base entre feature/* y develop: $BASE_COMMIT"
 
-          # 2. Crea un tag temporal solo para el análisis
+          
           git tag temp-version-base $BASE_COMMIT
 
-          # 3. Ejecuta el dry-run solo desde ahí
           BUMP_OUTPUT=$(npx commit-and-tag-version --dry-run --from temp-version-base)
           echo "$BUMP_OUTPUT"
 
