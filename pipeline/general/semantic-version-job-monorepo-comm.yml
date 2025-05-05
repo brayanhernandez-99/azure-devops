@@ -39,20 +39,16 @@ jobs:
         echo $CURRENT_BRANCH
 
         if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
+          # 1. Encuentra el commit base entre feature/* y develop
           BASE_COMMIT=$(git merge-base HEAD origin/develop)
 
-          # Buscar si hay un tag existente en ese commit
-          BASE_TAG=$(git tag --contains $BASE_COMMIT | head -n 1)
+          echo "🔍 Commit base entre feature/* y develop: $BASE_COMMIT"
 
-          if [ -z "$BASE_TAG" ]; then
-            echo "❌ No se encontró un tag en el punto de corte con develop"
-            exit 1
-          fi
+          # 2. Crea un tag temporal solo para el análisis
+          git tag temp-version-base $BASE_COMMIT
 
-          echo "✅ Usando tag base: $BASE_TAG"
-
-          # Ejecutar el bump solo desde ese tag hacia adelante
-          BUMP_OUTPUT=$(npx commit-and-tag-version --dry-run --from "$BASE_TAG")
+          # 3. Ejecuta el dry-run solo desde ahí
+          BUMP_OUTPUT=$(npx commit-and-tag-version --dry-run --from temp-version-base)
           echo "$BUMP_OUTPUT"
 
           # BUMP_OUTPUT=$(npx commit-and-tag-version --dry-run)
