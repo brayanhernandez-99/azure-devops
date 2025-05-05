@@ -21,7 +21,7 @@ jobs:
         checkLatest: true
 
     - script: |
-        npm install --no-save @commitlint/cli@latest @commitlint/config-conventional@latest conventional-changelog-conventionalcommits@latest commit-and-tag-version@latest
+        npm install --no-save @commitlint/cli@latest @commitlint/config-conventional@latest conventional-changelog-conventionalcommits@latest commit-and-tag-version@latest conventional-changelog-cli@latest
         ls -la
       displayName: Install commitlint
 
@@ -40,29 +40,29 @@ jobs:
 
         if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
   
-          BASE_COMMIT=$(git merge-base HEAD origin/master)
+          # BASE_COMMIT=$(git merge-base HEAD origin/master)
 
-          # 2. Crea un tag temporal en ese commit base
-          git tag temp-feature-base $BASE_COMMIT
+          # # 2. Crea un tag temporal en ese commit base
+          # git tag temp-feature-base $BASE_COMMIT
 
-          # 3. Ejecuta commit-and-tag-version solo desde ahí
-          npx conventional-changelog -p angular --from temp-feature-base --to HEAD
+          # # 3. Ejecuta commit-and-tag-version solo desde ahí
+          # npx conventional-changelog -p angular --from temp-feature-base --to HEAD
 
-          # BUMP_OUTPUT=$(npx commit-and-tag-version --dry-run --from temp-feature-base)
-          # echo "$BUMP_OUTPUT"
+          # # BUMP_OUTPUT=$(npx commit-and-tag-version --dry-run --from temp-feature-base)
+          # # echo "$BUMP_OUTPUT"
 
-          # 4. (opcional) Limpia el tag temporal
-          git tag -d temp-feature-base
+          # # 4. (opcional) Limpia el tag temporal
+          # git tag -d temp-feature-base
 
-          # BUMP_OUTPUT=$(npx commit-and-tag-version --dry-run)
-          # echo "$BUMP_OUTPUT"
-          # echo "----------------------------------------"
+          BUMP_OUTPUT=$(npx commit-and-tag-version --dry-run)
+          echo "$BUMP_OUTPUT"
+          echo "----------------------------------------"
           
-          # CURRENT_VERSION=$(echo "$BUMP_OUTPUT" | grep "bumping version" | sed -E 's/.*from ([0-9]+\.[0-9]+\.[0-9]+) to.*/\1/')
-          # NEXT_VERSION=$(echo "$BUMP_OUTPUT" | grep "bumping version" | sed -E 's/.*to ([0-9]+\.[0-9]+\.[0-9]+).*/\1/')
+          CURRENT_VERSION=$(echo "$BUMP_OUTPUT" | grep "bumping version" | sed -E 's/.*from ([0-9]+\.[0-9]+\.[0-9]+) to.*/\1/')
+          NEXT_VERSION=$(echo "$BUMP_OUTPUT" | grep "bumping version" | sed -E 's/.*to ([0-9]+\.[0-9]+\.[0-9]+).*/\1/')
 
-          # echo "📌 Versión actual detectada: $CURRENT_VERSION"
-          # echo "🚀 Próxima versión para la rama develop: $NEXT_VERSION"
+          echo "📌 Versión actual detectada: $CURRENT_VERSION"
+          echo "🚀 Próxima versión para la rama develop: $NEXT_VERSION"
         fi
 
         if [[ "$CURRENT_BRANCH" == refs/heads/develop ]]; then
