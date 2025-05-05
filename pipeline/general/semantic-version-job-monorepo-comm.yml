@@ -40,19 +40,24 @@ jobs:
 
         if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
   
-          # BASE_COMMIT=$(git merge-base HEAD origin/master)
+          echo "🔍 Rama feature detectada"
 
-          # # 2. Crea un tag temporal en ese commit base
-          # git tag temp-feature-base $BASE_COMMIT
+          # Genera un tag temporal único basado en fecha/hora o SHA corto
+          AUTO_TAG="auto-tag-$(date +%s)"
 
-          # # 3. Ejecuta commit-and-tag-version solo desde ahí
-          # npx conventional-changelog -p angular --from temp-feature-base --to HEAD
+          # Taguea automáticamente el último commit (HEAD)
+          git tag "$AUTO_TAG" HEAD
+          git push origin "$AUTO_TAG"
 
-          # # BUMP_OUTPUT=$(npx commit-and-tag-version --dry-run --from temp-feature-base)
-          # # echo "$BUMP_OUTPUT"
+          echo "🏷️ Tag automático creado: $AUTO_TAG"
 
-          # # 4. (opcional) Limpia el tag temporal
-          # git tag -d temp-feature-base
+          # Usar ese tag como punto base para el análisis de versión
+          BUMP_OUTPUT=$(npx commit-and-tag-version --dry-run --from "$AUTO_TAG")
+          echo "$BUMP_OUTPUT"
+
+          # Eliminar el tag si es temporal
+          git tag -d "$AUTO_TAG"
+          git push origin ":refs/tags/$AUTO_TAG"
 
           BUMP_OUTPUT=$(npx commit-and-tag-version --dry-run)
           echo "$BUMP_OUTPUT"
