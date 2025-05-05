@@ -40,19 +40,19 @@ jobs:
 
         if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
   
-          BASE_COMMIT=$(git merge-base HEAD origin/master)
+          # BASE_COMMIT=$(git merge-base HEAD origin/master)
 
-          # 2. Crea un tag temporal en ese commit base
-          git tag temp-feature-base $BASE_COMMIT
+          # # 2. Crea un tag temporal en ese commit base
+          # git tag temp-feature-base $BASE_COMMIT
 
-          # 3. Ejecuta commit-and-tag-version solo desde ahí
-          npx conventional-changelog -p angular --from temp-feature-base --to HEAD
+          # # 3. Ejecuta commit-and-tag-version solo desde ahí
+          # npx conventional-changelog -p angular --from temp-feature-base --to HEAD
 
-          # BUMP_OUTPUT=$(npx commit-and-tag-version --dry-run --from temp-feature-base)
-          # echo "$BUMP_OUTPUT"
+          # # BUMP_OUTPUT=$(npx commit-and-tag-version --dry-run --from temp-feature-base)
+          # # echo "$BUMP_OUTPUT"
 
-          # 4. (opcional) Limpia el tag temporal
-          git tag -d temp-feature-base
+          # # 4. (opcional) Limpia el tag temporal
+          # git tag -d temp-feature-base
 
           # BUMP_OUTPUT=$(npx commit-and-tag-version --dry-run)
           # echo "$BUMP_OUTPUT"
