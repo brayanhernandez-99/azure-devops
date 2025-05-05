@@ -1,0 +1,54 @@
+- job: 'commit_tag_version'
+  dependsOn: aws_ecs
+  ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
+    displayName: 'Commit and Tag Version Develop'
+  ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
+    displayName: 'Commit and Tag Version Staging'
+  ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'antioquia')) }}:
+    displayName: 'Commit and Tag Version master Antioquia'
+  ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'cap')) }}:
+    displayName: 'Commit and Tag Version master cap'
+  ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'tolima')) }}:
+    displayName: 'Commit and Tag Version master tolima'
+  ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'huila')) }}:
+    displayName: 'Commit and Tag Version master huila'
+  pool:
+    name: Azure Pipelines
+    vmImage: 'ubuntu-22.04'
+
+  strategy:
+    matrix:
+      ${{ each ms in parameters.apps }}:
+        ${{ ms }}:
+          msName: ${{ ms }}
+
+  steps:
+    - checkout: self
+      fetchDepth: 0
+      persistCredentials: true
+
+    - task: NodeTool@0
+      inputs:
+        versionSpec: "20.x"
+        checkLatest: true
+
+    - script: |
+        npm install --no-save @commitlint/cli@latest @commitlint/config-conventional@latest conventional-changelog-conventionalcommits@latest commit-and-tag-version@latest
+        ls -la
+      displayName: Install commitlint
+
+    - script: |
+        cp $(System.DefaultWorkingDirectory)/apps/$(msName)/.commitlintrc.js $(System.DefaultWorkingDirectory)
+        npx commitlint --last --verbose
+      condition: ne(variables['Build.Reason'], 'PullRequest')
+      displayName: Validate current commit (last commit) with commitlint
+      continueOnError: true
+      
+    - script: |
+        cd $(System.DefaultWorkingDirectory)/apps/$(msName)
+        CURRENT_BRANCH=$(echo $(Build.SourceBranch))
+        echo $CURRENT_BRANCH
+      displayName: Tag, commit and update changeload
+
+
+    
