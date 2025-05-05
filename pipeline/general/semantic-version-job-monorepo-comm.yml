@@ -51,7 +51,8 @@ jobs:
             echo "🏷️ Tag creado en el commit base: $AUTO_TAG"
 
             # Ahora sí: obtener solo los commits nuevos en la feature
-            BUMP_OUTPUT=$(npx commit-and-tag-version --dry-run --from "$AUTO_TAG")
+            # BUMP_OUTPUT=$(npx commit-and-tag-version --dry-run --from "$AUTO_TAG")
+            BUMP_OUTPUT=$(npx commit-and-tag-version --dry-run --from c0c0a2b0ed796422d40b7211f86a32f246b433fa)
             echo "$BUMP_OUTPUT"
 
             # Limpieza: borrar el tag temporal
