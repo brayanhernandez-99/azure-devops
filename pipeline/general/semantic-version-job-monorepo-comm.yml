@@ -40,15 +40,17 @@ jobs:
 
         if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
   
-          BASE_COMMIT=$(git merge-base origin/develop HEAD )
+          BASE_COMMIT=$(git merge-base HEAD origin/master)
 
-          echo "🔍 Commit base entre feature/* y develop: $BASE_COMMIT"
+          # 2. Crea un tag temporal en ese commit base
+          git tag temp-feature-base $BASE_COMMIT
 
-          
-          git tag temp-version-base $BASE_COMMIT
-
-          BUMP_OUTPUT=$(npx commit-and-tag-version --dry-run --from temp-version-base)
+          # 3. Ejecuta commit-and-tag-version solo desde ahí
+          BUMP_OUTPUT=$(npx commit-and-tag-version --dry-run --from temp-feature-base)
           echo "$BUMP_OUTPUT"
+
+          # 4. (opcional) Limpia el tag temporal
+          git tag -d temp-feature-base
 
           # BUMP_OUTPUT=$(npx commit-and-tag-version --dry-run)
           # echo "$BUMP_OUTPUT"
