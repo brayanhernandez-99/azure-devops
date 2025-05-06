@@ -82,6 +82,7 @@ jobs:
 
         if [[ "$CURRENT_BRANCH" == refs/heads/develop ]]; then
           BASE=$(git merge-base origin/develop HEAD)
+          git fetch origin feature/pruebas-flujo-versiones2
           COMMITS=$(git log --oneline origin/develop..feature/pruebas-flujo-versiones2 | grep -vi "Auto-generated pipeline config")
 
           echo "Commits de la rama feature a develop:"
