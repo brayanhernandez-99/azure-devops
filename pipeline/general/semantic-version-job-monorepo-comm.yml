@@ -53,6 +53,14 @@ jobs:
       displayName: 'mirar ultimo pr'
 
     - script: |
+          curl -s -u ":$AZURE_DEVOPS_CLI_PAT" \
+            "https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories/edb34e24-3ded-4784-89e7-38161e93a600/pullRequests/39/commits?api-version=7.0"
+
+      env:
+        AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
+      displayName: 'mirar detalle'
+
+    - script: |
         cd $(System.DefaultWorkingDirectory)/apps/$(msName)
         CURRENT_BRANCH=$(echo $(Build.SourceBranch))
         echo $CURRENT_BRANCH
