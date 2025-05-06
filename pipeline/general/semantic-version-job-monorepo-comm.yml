@@ -85,7 +85,7 @@ jobs:
           TARGET_BRANCH="origin/$(System.PullRequest.TargetBranch | sed 's#refs/heads/##')"
 
           BASE=$(git merge-base $TARGET_BRANCH $SOURCE_BRANCH)
-          COMMITS=$(git log --pretty=format:"%s" $BASE..HEAD | grep -vi "Auto-generated pipeline config")
+          COMMITS=$(git log --pretty=format:"%s" $BASE..$SOURCE_BRANCH | grep -vi "Auto-generated pipeline config")
           echo $COMMITS
 
           IS_MAJOR=0
