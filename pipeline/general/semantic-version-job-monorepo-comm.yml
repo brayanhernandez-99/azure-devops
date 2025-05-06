@@ -81,7 +81,7 @@ jobs:
         fi
 
         if [[ "$CURRENT_BRANCH" == refs/heads/develop ]]; then
-          BASE=$(git merge-base HEAD origin/master)
+          BASE=$(git merge-base HEAD origin/develop)
           COMMITS=$(git log --pretty=format:"%s" $BASE..HEAD | grep -vi "Auto-generated pipeline config")
           echo $COMMITS
 
@@ -110,7 +110,7 @@ jobs:
           fi
           echo $RELEASE_TYPE
 
-          BUMP_OUTPUT=$(npx commit-and-tag-version --prerelease develop --dry-run )
+          BUMP_OUTPUT=$(npx commit-and-tag-version --prerelease develop --dry-run --release-as $RELEASE_TYPE)
           echo "$BUMP_OUTPUT"
           echo "----------------------------------------"
           
