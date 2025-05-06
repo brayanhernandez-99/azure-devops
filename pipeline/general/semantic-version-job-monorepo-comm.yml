@@ -21,7 +21,7 @@ jobs:
         checkLatest: true
 
     - script: |
-        npm install --no-save @commitlint/cli@latest @commitlint/config-conventional@latest conventional-changelog-conventionalcommits@latest commit-and-tag-version@latest conventional-changelog-cli@latest
+        npm install --no-save @commitlint/cli@latest @commitlint/config-conventional@latest conventional-changelog-conventionalcommits@latest commit-and-tag-version@^12.4.4 conventional-changelog-cli@latest
         ls -la
       displayName: Install commitlint
 
@@ -39,33 +39,23 @@ jobs:
         echo $CURRENT_BRANCH
 
         if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
-  
-           # Buscar el commit base compartido entre esta feature y master
-            # BASE_COMMIT=$(git merge-base HEAD origin/master)
-            # echo "📌 Commit base común con master: $BASE_COMMIT"
+          # Paso 1: Detectar el commit actual y su padre
+          LATEST_COMMIT=$(git rev-parse HEAD)
+          PREVIOUS_COMMIT=$(git rev-parse HEAD^)
 
-            # AUTO_TAG="temp-feature-base"
-            # git tag "$AUTO_TAG" "$BASE_COMMIT"
-            # git push origin "$AUTO_TAG"
+          # Paso 2: Crear tag temporal
+          git tag temp-start "$PREVIOUS_COMMIT"
 
-            # echo "🏷️ Tag creado en el commit base: $AUTO_TAG"
+          # Paso 3: Calcular bump
+          VERSION_BUMP=$(npx conventional-recommended-bump -p angular --from temp-start --to "$LATEST_COMMIT" --commit-path .)
+          echo "Recommended bump: $VERSION_BUMP"
 
-            # Ahora sí: obtener solo los commits nuevos en la feature
-            # BUMP_OUTPUT=$(npx commit-and-tag-version --dry-run --from "$AUTO_TAG")
-            # BUMP_OUTPUT=$(npx commit-and-tag-version --dry-run --from 60b7f431a960d3813d331f1b52292b6e70aba43a)
-            # echo "$BUMP_OUTPUT"
+          # (opcional) Paso 4: Ver commits
+          npx conventional-changelog -p angular --from temp-start --to "$LATEST_COMMIT"
 
-            # Obtener commit base entre la rama y master
-            BASE=$(git merge-base HEAD origin/master)
-            echo $BASE
-            # Generar changelog solo de commits en esa diferencia
-            npx conventional-recommended-bump -p angular --from "$BASE" --to HEAD
+          # Paso 5: Limpiar
+          git tag -d temp-start
 
-
-
-            # Limpieza: borrar el tag temporal
-            # git tag -d "$AUTO_TAG"
-            # git push origin ":refs/tags/$AUTO_TAG"
 
           # BUMP_OUTPUT=$(npx commit-and-tag-version --dry-run)
           # echo "$BUMP_OUTPUT"
