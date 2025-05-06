@@ -81,6 +81,11 @@ jobs:
         fi
 
         if [[ "$CURRENT_BRANCH" == refs/heads/develop ]]; then
+          BASE=$(git merge-base origin/develop HEAD)
+          COMMITS=$(git log --oneline $BASE..HEAD | grep -vi "Auto-generated pipeline config")
+
+          echo "Commits de la rama feature a develop:"
+          echo "$COMMITS"
           # SOURCE_BRANCH="origin/$(System.PullRequest.SourceBranch | sed 's#refs/heads/##')"
           # TARGET_BRANCH="origin/$(System.PullRequest.TargetBranch | sed 's#refs/heads/##')"
 
@@ -166,9 +171,6 @@ jobs:
 
       displayName: Detect next version
       name: SemanticJob
-      env:
-        SOURCE: $(System.PullRequest.SourceBranch)
-        TARGET: $(System.PullRequest.TargetBranch)
     
     - task: PublishBuildArtifacts@1
       condition: not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
