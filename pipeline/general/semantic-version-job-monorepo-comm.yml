@@ -48,13 +48,21 @@ jobs:
     - script: |
           curl -s -u ":$AZURE_DEVOPS_CLI_PAT" \
             "https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories/edb34e24-3ded-4784-89e7-38161e93a600/pullrequests?searchCriteria.status=completed&searchCriteria.targetRefName=refs/heads/develop&api-version=5.0" \
-            | jq '.value[0].pullRequestId'
-            
+            | jq 
+
+          PR_ID=$(curl -s -u ":$AZURE_DEVOPS_CLI_PAT" \
+            "https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories/edb34e24-3ded-4784-89e7-38161e93a600/pullrequests?searchCriteria.status=completed&searchCriteria.targetRefName=refs/heads/develop&$top=1&api-version=5.0" \
+            | jq -r '.value[0].pullRequestId')
+          
+          echo "id del pr $PR_ID"
+          echo "##vso[task.setvariable variable=ultimoPR]$PR_ID"
+
       env:
         AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
       displayName: 'mirar ultimo pr'
 
     - script: |
+          echo "Pull Request ID recuperado: $(ultimoPR)"
           curl -s -u ":$AZURE_DEVOPS_CLI_PAT" \
             "https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories/edb34e24-3ded-4784-89e7-38161e93a600/pullRequests/39/commits?api-version=7.0" \
             | jq '.value[0]'
