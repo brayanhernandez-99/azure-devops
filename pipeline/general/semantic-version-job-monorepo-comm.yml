@@ -36,21 +36,21 @@ jobs:
       displayName: Validate current commit (last commit) with commitlint
       continueOnError: true
     
-    - script: |
-        curl -s -u ":$AZURE_DEVOPS_CLI_PAT" \
-          "https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories?api-version=5.0"
-
-        $AZURE_DEVOPS_CLI_PAT
-      env:
-        AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
-      displayName: 'mirar ultimo pr'
-    
     # - script: |
-    #       curl -s -u "user:AZURE_DEVOPS_CLI_PAT" \
-    #         "https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories/{repoId}/pullrequests?searchCriteria.targetRefName=refs/heads/develop&searchCriteria.status=completed&$top=1&api-version=7.1-preview.1"
+    #     curl -s -u ":$AZURE_DEVOPS_CLI_PAT" \
+    #       "https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories?api-version=5.0"
+
+    #     $AZURE_DEVOPS_CLI_PAT
     #   env:
     #     AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
     #   displayName: 'mirar ultimo pr'
+    
+    - script: |
+          curl -s -u ":$AZURE_DEVOPS_CLI_PAT" \
+            "https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories/edb34e24-3ded-4784-89e7-38161e93a600/pullrequests?searchCriteria.targetRefName=refs/heads/develop&searchCriteria.status=completed&$top=1&api-version=7.1-preview.1"
+      env:
+        AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
+      displayName: 'mirar ultimo pr'
 
     - script: |
         cd $(System.DefaultWorkingDirectory)/apps/$(msName)
