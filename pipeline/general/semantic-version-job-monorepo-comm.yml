@@ -67,7 +67,7 @@ jobs:
           else
             RELEASE_TYPE="patch"  # default si no se detecta nada
           fi
-
+          echo $RELEASE_TYPE
           BUMP_OUTPUT=$(npx commit-and-tag-version --dry-run --release-as $RELEASE_TYPE )
           # BUMP_OUTPUT=$(npx commit-and-tag-version --dry-run --from "$BASE" )
           echo "$BUMP_OUTPUT"
