@@ -51,7 +51,7 @@ jobs:
           echo "Recommended bump: $VERSION_BUMP"
 
           # (opcional) Paso 4: Ver commits
-          npx conventional-changelog -p angular --from temp-start --to "$LATEST_COMMIT"
+          # npx conventional-changelog -p angular --from temp-start --to "$LATEST_COMMIT"
 
           # Paso 5: Limpiar
           git tag -d temp-start
