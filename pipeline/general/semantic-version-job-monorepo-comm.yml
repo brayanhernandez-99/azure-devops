@@ -39,7 +39,9 @@ jobs:
         echo $CURRENT_BRANCH
 
         if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
-          BUMP_OUTPUT=$(npx commit-and-tag-version --dry-run --release-as major )
+          BASE=$(git merge-base HEAD origin/master)
+          # BUMP_OUTPUT=$(npx commit-and-tag-version --dry-run --release-as major )
+          BUMP_OUTPUT=$(npx commit-and-tag-version --dry-run --from "$BASE" )
           echo "$BUMP_OUTPUT"
           echo "----------------------------------------"
           
