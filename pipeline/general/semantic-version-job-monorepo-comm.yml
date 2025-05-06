@@ -54,7 +54,8 @@ jobs:
 
     - script: |
           curl -s -u ":$AZURE_DEVOPS_CLI_PAT" \
-            "https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories/edb34e24-3ded-4784-89e7-38161e93a600/pullRequests/39/commits?api-version=7.0"
+            "https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories/edb34e24-3ded-4784-89e7-38161e93a600/pullRequests/39/commits?api-version=7.0" \
+            | jq
 
       env:
         AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
