@@ -81,51 +81,54 @@ jobs:
         fi
 
         if [[ "$CURRENT_BRANCH" == refs/heads/develop ]]; then
-          SOURCE_BRANCH="origin/$(System.PullRequest.SourceBranch | sed 's#refs/heads/##')"
-          TARGET_BRANCH="origin/$(System.PullRequest.TargetBranch | sed 's#refs/heads/##')"
+          # SOURCE_BRANCH="origin/$(System.PullRequest.SourceBranch | sed 's#refs/heads/##')"
+          # TARGET_BRANCH="origin/$(System.PullRequest.TargetBranch | sed 's#refs/heads/##')"
 
-          BASE=$(git merge-base $TARGET_BRANCH $SOURCE_BRANCH)
-          COMMITS=$(git log --pretty=format:"%s" $BASE..$SOURCE_BRANCH | grep -vi "Auto-generated pipeline config")
-          echo $COMMITS
+          echo $(System.PullRequest.SourceBranch)
+          echo $(System.PullRequest.TargetBranch)
 
-          IS_MAJOR=0
-          IS_MINOR=0
-          IS_PATCH=0
+          # BASE=$(git merge-base $TARGET_BRANCH $SOURCE_BRANCH)
+          # COMMITS=$(git log --pretty=format:"%s" $BASE..$SOURCE_BRANCH | grep -vi "Auto-generated pipeline config")
+          # echo $COMMITS
 
-          while read -r COMMIT; do
-            if [[ "$COMMIT" == *"!"* ]]; then
-              IS_MAJOR=1
-            elif [[ "$COMMIT" == feat:* ]]; then
-              IS_MINOR=1
-            elif [[ "$COMMIT" == fix:* ]]; then
-              IS_PATCH=1
-            fi
-          done <<< "$COMMITS"
+          # IS_MAJOR=0
+          # IS_MINOR=0
+          # IS_PATCH=0
 
-          if [[ $IS_MAJOR -eq 1 ]]; then
-            RELEASE_TYPE="major"
-          elif [[ $IS_MINOR -eq 1 ]]; then
-            RELEASE_TYPE="minor"
-          elif [[ $IS_PATCH -eq 1 ]]; then
-            RELEASE_TYPE="patch"
-          else
-            RELEASE_TYPE="patch"  # default si no se detecta nada
-          fi
-          echo $RELEASE_TYPE
+          # while read -r COMMIT; do
+          #   if [[ "$COMMIT" == *"!"* ]]; then
+          #     IS_MAJOR=1
+          #   elif [[ "$COMMIT" == feat:* ]]; then
+          #     IS_MINOR=1
+          #   elif [[ "$COMMIT" == fix:* ]]; then
+          #     IS_PATCH=1
+          #   fi
+          # done <<< "$COMMITS"
 
-          BUMP_OUTPUT=$(npx commit-and-tag-version --prerelease develop --dry-run --release-as $RELEASE_TYPE)
-          echo "$BUMP_OUTPUT"
-          echo "----------------------------------------"
+          # if [[ $IS_MAJOR -eq 1 ]]; then
+          #   RELEASE_TYPE="major"
+          # elif [[ $IS_MINOR -eq 1 ]]; then
+          #   RELEASE_TYPE="minor"
+          # elif [[ $IS_PATCH -eq 1 ]]; then
+          #   RELEASE_TYPE="patch"
+          # else
+          #   RELEASE_TYPE="patch"  # default si no se detecta nada
+          # fi
+          # echo $RELEASE_TYPE
+
+          # BUMP_OUTPUT=$(npx commit-and-tag-version --prerelease develop --dry-run --release-as $RELEASE_TYPE)
+          # echo "$BUMP_OUTPUT"
+          # echo "----------------------------------------"
           
-          CURRENT_VERSION=$(echo "$BUMP_OUTPUT" | grep "bumping version" | sed -E 's/.*from ([0-9]+\.[0-9]+\.[0-9]+) to.*/\1/')
-          NEXT_VERSION=$(echo "$BUMP_OUTPUT" | grep -oE 'to [0-9]+\.[0-9]+\.[0-9]+-[a-zA-Z]+\.[0-9]+' | awk '{print $2}')
+          # CURRENT_VERSION=$(echo "$BUMP_OUTPUT" | grep "bumping version" | sed -E 's/.*from ([0-9]+\.[0-9]+\.[0-9]+) to.*/\1/')
+          # NEXT_VERSION=$(echo "$BUMP_OUTPUT" | grep -oE 'to [0-9]+\.[0-9]+\.[0-9]+-[a-zA-Z]+\.[0-9]+' | awk '{print $2}')
 
-          echo "📌 Versión actual detectada: $CURRENT_VERSION"
-          echo "🚀 Próxima versión para Develop: $NEXT_VERSION"
+          # echo "📌 Versión actual detectada: $CURRENT_VERSION"
+          # echo "🚀 Próxima versión para Develop: $NEXT_VERSION"
 
-          mkdir -p $(Build.ArtifactStagingDirectory)/$(msName)
-          touch $(Build.ArtifactStagingDirectory)/$(msName)/version.json
-          echo "{ \"ms\": \"$(msName)\", \"version\": \"$NEXT_VERSION\" }" > $(Build.ArtifactStagingDirectory)/$(msName)/version.json
+          # mkdir -p $(Build.ArtifactStagingDirectory)/$(msName)
+          # touch $(Build.ArtifactStagingDirectory)/$(msName)/version.json
+          # echo "{ \"ms\": \"$(msName)\", \"version\": \"$NEXT_VERSION\" }" > $(Build.ArtifactStagingDirectory)/$(msName)/version.json
         fi
 
         if [[ "$CURRENT_BRANCH" == refs/heads/staging ]]; then
