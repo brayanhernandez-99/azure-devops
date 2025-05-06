@@ -68,7 +68,7 @@ jobs:
             RELEASE_TYPE="patch"  # default si no se detecta nada
           fi
           echo $RELEASE_TYPE
-          BUMP_OUTPUT=$(npx commit-and-tag-version --dry-run --release-as $RELEASE_TYPE )
+          BUMP_OUTPUT=$(npx commit-and-tag-version --dry-run --prerelease develop --release-as $RELEASE_TYPE )
           # BUMP_OUTPUT=$(npx commit-and-tag-version --dry-run --from "$BASE" )
           echo "$BUMP_OUTPUT"
           echo "----------------------------------------"
@@ -81,6 +81,35 @@ jobs:
         fi
 
         if [[ "$CURRENT_BRANCH" == refs/heads/develop ]]; then
+          BASE=$(git merge-base HEAD origin/master)
+          COMMITS=$(git log --pretty=format:"%s" $BASE..HEAD | grep -vi "Auto-generated pipeline config")
+          echo $COMMITS
+
+          IS_MAJOR=0
+          IS_MINOR=0
+          IS_PATCH=0
+
+          while read -r COMMIT; do
+            if [[ "$COMMIT" == *"!"* ]]; then
+              IS_MAJOR=1
+            elif [[ "$COMMIT" == feat:* ]]; then
+              IS_MINOR=1
+            elif [[ "$COMMIT" == fix:* ]]; then
+              IS_PATCH=1
+            fi
+          done <<< "$COMMITS"
+
+          if [[ $IS_MAJOR -eq 1 ]]; then
+            RELEASE_TYPE="major"
+          elif [[ $IS_MINOR -eq 1 ]]; then
+            RELEASE_TYPE="minor"
+          elif [[ $IS_PATCH -eq 1 ]]; then
+            RELEASE_TYPE="patch"
+          else
+            RELEASE_TYPE="patch"  # default si no se detecta nada
+          fi
+          echo $RELEASE_TYPE
+
           BUMP_OUTPUT=$(npx commit-and-tag-version --prerelease develop --dry-run )
           echo "$BUMP_OUTPUT"
           echo "----------------------------------------"
