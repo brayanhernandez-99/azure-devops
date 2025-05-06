@@ -40,9 +40,9 @@ jobs:
 
         if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
           BASE=$(git merge-base HEAD origin/master)
-          git log --oneline $BASE..HEAD
-          git log --pretty=format:"%s" $BASE..HEAD
-          COMMITS=$(git log --pretty=format:"%s" $BASE..HEAD)
+          COMMITS=$(git log --pretty=format:"%s" $BASE..HEAD | grep -vi "Auto-generated pipeline config")
+          echo $COMMITS
+
 
           IS_MAJOR=0
           IS_MINOR=0
