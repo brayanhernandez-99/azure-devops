@@ -81,7 +81,10 @@ jobs:
         fi
 
         if [[ "$CURRENT_BRANCH" == refs/heads/develop ]]; then
-          BASE=$(git merge-base HEAD origin/develop)
+          SOURCE_BRANCH="origin/$(System.PullRequest.SourceBranch | sed 's#refs/heads/##')"
+          TARGET_BRANCH="origin/$(System.PullRequest.TargetBranch | sed 's#refs/heads/##')"
+
+          BASE=$(git merge-base $TARGET_BRANCH $SOURCE_BRANCH)
           COMMITS=$(git log --pretty=format:"%s" $BASE..HEAD | grep -vi "Auto-generated pipeline config")
           echo $COMMITS
 
