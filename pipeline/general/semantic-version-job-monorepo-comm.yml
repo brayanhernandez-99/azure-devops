@@ -84,8 +84,8 @@ jobs:
           # SOURCE_BRANCH="origin/$(System.PullRequest.SourceBranch | sed 's#refs/heads/##')"
           # TARGET_BRANCH="origin/$(System.PullRequest.TargetBranch | sed 's#refs/heads/##')"
 
-          echo $(System.PullRequest.SourceBranch)
-          echo $(System.PullRequest.TargetBranch)
+          echo $SOURCE
+          echo $TARGET
 
           # BASE=$(git merge-base $TARGET_BRANCH $SOURCE_BRANCH)
           # COMMITS=$(git log --pretty=format:"%s" $BASE..$SOURCE_BRANCH | grep -vi "Auto-generated pipeline config")
@@ -166,6 +166,9 @@ jobs:
 
       displayName: Detect next version
       name: SemanticJob
+      env:
+        SOURCE: $(System.PullRequest.SourceBranch)
+        TARGET: $(System.PullRequest.TargetBranch)
     
     - task: PublishBuildArtifacts@1
       condition: not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
