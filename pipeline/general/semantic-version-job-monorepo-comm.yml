@@ -39,33 +39,15 @@ jobs:
         echo $CURRENT_BRANCH
 
         if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
-          # Paso 1: Detectar el commit actual y su padre
-          LATEST_COMMIT=$(git rev-parse HEAD)
-          PREVIOUS_COMMIT=$(git rev-parse HEAD^)
-
-          # Paso 2: Crear tag temporal
-          git tag temp-start "$PREVIOUS_COMMIT"
-
-          # Paso 3: Calcular bump
-          VERSION_BUMP=$(npx conventional-recommended-bump -p angular --from temp-start --to "$LATEST_COMMIT" --commit-path .)
-          echo "Recommended bump: $VERSION_BUMP"
-
-          # (opcional) Paso 4: Ver commits
-          # npx conventional-changelog -p angular --from temp-start --to "$LATEST_COMMIT"
-
-          # Paso 5: Limpiar
-          git tag -d temp-start
-
-
-          # BUMP_OUTPUT=$(npx commit-and-tag-version --dry-run)
-          # echo "$BUMP_OUTPUT"
-          # echo "----------------------------------------"
+          BUMP_OUTPUT=$(npx commit-and-tag-version --dry-run)
+          echo "$BUMP_OUTPUT"
+          echo "----------------------------------------"
           
-          # CURRENT_VERSION=$(echo "$BUMP_OUTPUT" | grep "bumping version" | sed -E 's/.*from ([0-9]+\.[0-9]+\.[0-9]+) to.*/\1/')
-          # NEXT_VERSION=$(echo "$BUMP_OUTPUT" | grep "bumping version" | sed -E 's/.*to ([0-9]+\.[0-9]+\.[0-9]+).*/\1/')
+          CURRENT_VERSION=$(echo "$BUMP_OUTPUT" | grep "bumping version" | sed -E 's/.*from ([0-9]+\.[0-9]+\.[0-9]+) to.*/\1/')
+          NEXT_VERSION=$(echo "$BUMP_OUTPUT" | grep "bumping version" | sed -E 's/.*to ([0-9]+\.[0-9]+\.[0-9]+).*/\1/')
 
-          # echo "📌 Versión actual detectada: $CURRENT_VERSION"
-          # echo "🚀 Próxima versión para la rama develop: $NEXT_VERSION"
+          echo "📌 Versión actual detectada: $CURRENT_VERSION"
+          echo "🚀 Próxima versión para la rama develop: $NEXT_VERSION"
         fi
 
         if [[ "$CURRENT_BRANCH" == refs/heads/develop ]]; then
