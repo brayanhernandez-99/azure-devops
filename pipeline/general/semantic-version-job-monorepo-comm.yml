@@ -48,8 +48,7 @@ jobs:
     - script: |
           curl -s -u ":$AZURE_DEVOPS_CLI_PAT" \
             # "https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories/edb34e24-3ded-4784-89e7-38161e93a600/pullrequests?searchCriteria.status=completed&searchCriteria.targetRefName=refs/heads/develop&$top=1&api-version=7.1-preview.1" \
-            "https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories/edb34e24-3ded-4784-89e7-38161e93a600/pullrequests?searchCriteria.status=completed&searchCriteria.targetRefName=refs%2Fheads%2Fdevelop&$top=1&api-version=7.1-preview.1" \
-            | jq
+            | jq '.value[0]'
 
       env:
         AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
