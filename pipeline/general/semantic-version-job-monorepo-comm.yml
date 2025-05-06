@@ -34,7 +34,7 @@ jobs:
       continueOnError: true
     
     - script: |
-          curl -s -u "user:AZURE_DEVOPS_CLI_PAT" \
+          curl -s -u "user:$(AZURE_DEVOPS_CLI_PAT)" \
             "https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories?api-version=7.1-preview.1"
 
       env:
