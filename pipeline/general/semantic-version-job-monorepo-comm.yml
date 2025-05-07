@@ -58,6 +58,11 @@ jobs:
           
           echo "id del pr $PR_ID"
           echo "##vso[task.setvariable variable=ultimoPR]$PR_ID"
+
+          mkdir -p $(Build.ArtifactStagingDirectory)/idpr
+          touch $(Build.ArtifactStagingDirectory)/idpr/idpr.json
+          echo "{\"version\": \"$PR_ID\" }" > $(Build.ArtifactStagingDirectory)/idpr/idpr.json
+
       env:
         AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
       displayName: 'ID Pull Request'
