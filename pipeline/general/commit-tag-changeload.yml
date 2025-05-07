@@ -90,7 +90,7 @@ jobs:
           raw_branch=$(Build.SourceBranch)
           clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
 
-          git checkout release/$clean_branch
+          git checkout version/$clean_branch
           git config user.name "pipeline"
           git config user.email "pipelineUX@ux.technology
 
