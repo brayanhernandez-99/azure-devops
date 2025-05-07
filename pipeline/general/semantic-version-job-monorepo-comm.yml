@@ -151,19 +151,19 @@ jobs:
           fi
           echo $RELEASE_TYPE
 
-          # BUMP_OUTPUT=$(npx commit-and-tag-version --prerelease develop --dry-run --release-as $RELEASE_TYPE)
-          # echo "$BUMP_OUTPUT"
-          # echo "----------------------------------------"
+          BUMP_OUTPUT=$(npx commit-and-tag-version --prerelease develop --dry-run --release-as $RELEASE_TYPE)
+          echo "$BUMP_OUTPUT"
+          echo "----------------------------------------"
           
-          # CURRENT_VERSION=$(echo "$BUMP_OUTPUT" | grep "bumping version" | sed -E 's/.*from ([0-9]+\.[0-9]+\.[0-9]+) to.*/\1/')
-          # NEXT_VERSION=$(echo "$BUMP_OUTPUT" | grep -oE 'to [0-9]+\.[0-9]+\.[0-9]+-[a-zA-Z]+\.[0-9]+' | awk '{print $2}')
+          CURRENT_VERSION=$(echo "$BUMP_OUTPUT" | grep "bumping version" | sed -E 's/.*from ([0-9]+\.[0-9]+\.[0-9]+) to.*/\1/')
+          NEXT_VERSION=$(echo "$BUMP_OUTPUT" | grep -oE 'to [0-9]+\.[0-9]+\.[0-9]+-[a-zA-Z]+\.[0-9]+' | awk '{print $2}')
 
-          # echo "📌 Versión actual detectada: $CURRENT_VERSION"
-          # echo "🚀 Próxima versión para Develop: $NEXT_VERSION"
+          echo "📌 Versión actual detectada: $CURRENT_VERSION"
+          echo "🚀 Próxima versión para Develop: $NEXT_VERSION"
 
-          # mkdir -p $(Build.ArtifactStagingDirectory)/$(msName)
-          # touch $(Build.ArtifactStagingDirectory)/$(msName)/version.json
-          # echo "{ \"ms\": \"$(msName)\", \"version\": \"$NEXT_VERSION\" }" > $(Build.ArtifactStagingDirectory)/$(msName)/version.json
+          mkdir -p $(Build.ArtifactStagingDirectory)/$(msName)
+          touch $(Build.ArtifactStagingDirectory)/$(msName)/version.json
+          echo "{ \"ms\": \"$(msName)\", \"version\": \"$NEXT_VERSION\" }" > $(Build.ArtifactStagingDirectory)/$(msName)/version.json
         fi
 
         if [[ "$CURRENT_BRANCH" == refs/heads/staging ]]; then
