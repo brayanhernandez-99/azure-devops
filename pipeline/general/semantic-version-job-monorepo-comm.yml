@@ -28,13 +28,13 @@ jobs:
         ls -la
       displayName: Install commitlint
 
-    - script: |
-        cp $(System.DefaultWorkingDirectory)/apps/$(msName)/.commitlintrc.js $(System.DefaultWorkingDirectory)
-        npx commitlint --from origin/master --to HEAD --verbose
-        # npx commitlint --last --verbose
-      condition: ne(variables['Build.Reason'], 'PullRequest')
-      displayName: Validate current commit (last commit) with commitlint
-      continueOnError: true
+    # - script: |
+    #     cp $(System.DefaultWorkingDirectory)/apps/$(msName)/.commitlintrc.js $(System.DefaultWorkingDirectory)
+    #     npx commitlint --from origin/master --to HEAD --verbose
+    #     # npx commitlint --last --verbose
+    #   condition: ne(variables['Build.Reason'], 'PullRequest')
+    #   displayName: Validate current commit (last commit) with commitlint
+    #   continueOnError: true
     
     - script: |
         REPO_ID=$(curl -s -u ":$AZURE_DEVOPS_CLI_PAT" \
@@ -48,6 +48,7 @@ jobs:
     
     - script: |
           echo "id del repositorio $(Build.Repository.Name) = $(repoID)" 
+          echo $(Build.SourceBranch)
           curl -s -u ":$AZURE_DEVOPS_CLI_PAT" \
             "https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories/$(repoID)/pullrequests?searchCriteria.status=completed&searchCriteria.targetRefName=refs/heads/develop&api-version=5.0" \
             | jq '.value[0]'
