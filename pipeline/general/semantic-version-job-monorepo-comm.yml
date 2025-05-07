@@ -39,8 +39,7 @@ jobs:
     - script: |
         curl -s -u ":$AZURE_DEVOPS_CLI_PAT" \
           "https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories?api-version=5.0" \
-          | jq -r '.value[] | select(.name == "Pruebas-consumir-template")'
-        
+          | jq -r '.value[] | select(.name == "$(Build.Repository.Name)").id'
       env:
         AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
       displayName: 'mirar ultimo pr'
