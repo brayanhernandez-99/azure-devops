@@ -225,7 +225,7 @@ jobs:
           fi
           echo $RELEASE_TYPE
 
-          BUMP_OUTPUT=$(npx commit-and-tag-version --skip.changelog --skip.tag --prerelease qa --release-as $RELEASE_TYPE)
+          BUMP_OUTPUT=$(npx commit-and-tag-version --skip.changelog --skip.tag --release-as $RELEASE_TYPE)
           
           git push origin HEAD
 
