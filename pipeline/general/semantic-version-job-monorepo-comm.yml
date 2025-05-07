@@ -44,35 +44,33 @@ jobs:
         echo "##vso[task.setvariable variable=repoID]$REPO_ID"
       env:
         AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
-      displayName: 'ID del repo'
+      displayName: 'ID Repositorio'
     
     - script: |
           echo "id del repositorio $(Build.Repository.Name) = $(repoID)" 
-          echo $(Build.SourceBranch)
           curl -s -u ":$AZURE_DEVOPS_CLI_PAT" \
-            "https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories/$(repoID)/pullrequests?searchCriteria.status=completed&searchCriteria.targetRefName=refs/heads/develop&api-version=5.0" \
+            "https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories/$(repoID)/pullrequests?searchCriteria.status=completed&searchCriteria.targetRefName=$(Build.SourceBranch)&api-version=5.0" \
             | jq '.value[0]'
 
           PR_ID=$(curl -s -u ":$AZURE_DEVOPS_CLI_PAT" \
-            "https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories/$(repoID)/pullrequests?searchCriteria.status=completed&searchCriteria.targetRefName=refs/heads/develop&api-version=5.0" \
+            "https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories/$(repoID)/pullrequests?searchCriteria.status=completed&searchCriteria.targetRefName=$(Build.SourceBranch)&api-version=5.0" \
             | jq '.value[0].pullRequestId')
           
           echo "id del pr $PR_ID"
           echo "##vso[task.setvariable variable=ultimoPR]$PR_ID"
-
       env:
         AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
-      displayName: 'mirar id del pr'
+      displayName: 'ID Pull Request'
 
     - script: |
           echo "Pull Request ID recuperado: $(ultimoPR)"
           echo "id del repositorio $(Build.Repository.Name) = $(repoID)" 
           curl -s -u ":$AZURE_DEVOPS_CLI_PAT" \
             "https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories/$(repoID)/pullRequests/$(ultimoPR)/commits?api-version=7.0" \
-            | jq 
+            | jq -r '.value[].comment'
       env:
         AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
-      displayName: 'mirar detalle de commit'
+      displayName: 'Detalles Commits Pull Request'
 
     - script: |
         cd $(System.DefaultWorkingDirectory)/apps/$(msName)
