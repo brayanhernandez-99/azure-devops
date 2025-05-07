@@ -158,7 +158,8 @@ jobs:
 
           git checkout version/$clean_branch
           VERSION_ACTUAL_Vdevelop=$(jq -r .version package.json)
-          echo $(echo "$VERSION_ACTUAL_Vdevelop" | sed -E 's/-develop\.[0-9]+//')
+          BASE_DEV=$(echo "$VERSION_ACTUAL_Vdevelop" | sed -E 's/-develop\.[0-9]+//')
+          echo $BASE_DEV
 
           
           git checkout origin/version/master
@@ -166,6 +167,21 @@ jobs:
 
           echo $VERSION_ACTUAL_MASTER
 
+          if [ "$BASE_DEV" = "$VERSION_VERSION_MASTER" ]; then
+            # Mismo número base, subir prerelease
+            echo "📌 Versión base igual. Solo se incrementa el prerelease."
+            BUMP_OUTPUT=$(npx commit-and-tag-version --skip.changelog --skip.tag --prerelease develop)
+          else
+            # Diferente, hacer bump desde la de master
+            echo "📌 Versión base distinta. Se incrementa según tipo: $RELEASE_TYPE"
+            git checkout version/master
+            git pull origin version/master
+            git checkout develop
+            git merge version/master --no-commit --no-ff  # opcional si quieres sincronizar
+            BUMP_OUTPUT=$(npx commit-and-tag-version --skip.changelog --skip.tag --prerelease develop --release-as $RELEASE_TYPE)
+          fi
+
+          echo "$BUMP_OUTPUT"
 
 
           # git checkout version/$clean_branch
