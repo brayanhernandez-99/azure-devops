@@ -114,7 +114,6 @@ jobs:
           fi
           echo $RELEASE_TYPE
           BUMP_OUTPUT=$(npx commit-and-tag-version --dry-run --prerelease develop --release-as $RELEASE_TYPE )
-          # BUMP_OUTPUT=$(npx commit-and-tag-version --dry-run --from "$BASE" )
           echo "$BUMP_OUTPUT"
           echo "----------------------------------------"
           
@@ -154,7 +153,7 @@ jobs:
             RELEASE_TYPE="patch"  # default si no se detecta nada
           fi
           echo $RELEASE_TYPE
-
+          git checkout version/$clean_branch
           BUMP_OUTPUT=$(npx commit-and-tag-version --prerelease develop --dry-run --release-as $RELEASE_TYPE)
           echo "$BUMP_OUTPUT"
           echo "----------------------------------------"
