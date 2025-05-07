@@ -123,7 +123,7 @@ jobs:
         if [[ "$CURRENT_BRANCH" == refs/heads/develop ]]; then
           COMMITS=$(filteredCommits)
           echo "Commits de la rama feature a develop:"
-          echo "$COMMITS"
+          echo $COMMITS
 
           IS_MAJOR=0
           IS_MINOR=0
