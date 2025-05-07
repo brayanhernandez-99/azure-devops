@@ -59,17 +59,16 @@ jobs:
 
       env:
         AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
-      displayName: 'mirar ultimo pr'
+      displayName: 'mirar id del pr'
 
     - script: |
           echo "Pull Request ID recuperado: $(ultimoPR)"
           curl -s -u ":$AZURE_DEVOPS_CLI_PAT" \
-            "https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories/edb34e24-3ded-4784-89e7-38161e93a600/pullRequests/39/commits?api-version=7.0" \
-            | jq '.value[0]'
-
+            "https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories/edb34e24-3ded-4784-89e7-38161e93a600/pullRequests/$(ultimoPR)/commits?api-version=7.0" \
+            | jq 
       env:
         AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
-      displayName: 'mirar detalle'
+      displayName: 'mirar detalle de commit'
 
     - script: |
         cd $(System.DefaultWorkingDirectory)/apps/$(msName)
