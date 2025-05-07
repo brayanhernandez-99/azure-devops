@@ -250,7 +250,7 @@ jobs:
           echo "----------------------------------------"
           
           CURRENT_VERSION=$(echo "$BUMP_OUTPUT" | grep "bumping version" | sed -E 's/.*from ([0-9]+\.[0-9]+\.[0-9]+) to.*/\1/')
-          NEXT_VERSION=$(echo "$BUMP_OUTPUT" | grep -oE 'to [0-9]+\.[0-9]+\.[0-9]+-[a-zA-Z]+\.[0-9]+')
+          NEXT_VERSION=$(echo "$BUMP_OUTPUT" | sed -nE 's/.*to ([0-9]+\.[0-9]+\.[0-9]+)(-.+)?/\1/p')
 
           echo "📌 Versión actual detectada: $CURRENT_VERSION"
           echo "🚀 Próxima versión para master: $NEXT_VERSION"
