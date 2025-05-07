@@ -28,56 +28,54 @@ jobs:
         checkLatest: true
 
     - script: |
-        npm install --no-save @commitlint/cli@latest @commitlint/config-conventional@latest conventional-changelog-conventionalcommits@latest commit-and-tag-version@latest
+        npm install --no-save @commitlint/cli@latest @commitlint/config-conventional@latest conventional-changelog-conventionalcommits@latest commit-and-tag-version@^12.4.4 conventional-changelog-cli@latest
         ls -la
       displayName: Install commitlint
 
+    # - script: |
+    #     cp $(System.DefaultWorkingDirectory)/apps/$(msName)/.commitlintrc.js $(System.DefaultWorkingDirectory)
+    #     npx commitlint --last --verbose
+    #   condition: ne(variables['Build.Reason'], 'PullRequest')
+    #   displayName: Validate current commit (last commit) with commitlint
+    #   continueOnError: true
+
     - script: |
-        cp $(System.DefaultWorkingDirectory)/apps/$(msName)/.commitlintrc.js $(System.DefaultWorkingDirectory)
-        npx commitlint --last --verbose
-      condition: ne(variables['Build.Reason'], 'PullRequest')
-      displayName: Validate current commit (last commit) with commitlint
-      continueOnError: true
+        REPO_ID=$(curl -s -u ":$AZURE_DEVOPS_CLI_PAT" \
+          "https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories?api-version=5.0" \
+          | jq -r '.value[] | select(.name == "$(Build.Repository.Name)").id')
+        echo "id del repositorio $(Build.Repository.Name) = $REPO_ID"
+        echo "##vso[task.setvariable variable=repoID]$REPO_ID"
+      env:
+        AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
+      displayName: 'ID Repositorio'
+
+    - task: DownloadBuildArtifacts@0
+      inputs:
+        artifactName: 'versions'
+        downloadPath: '$(Pipeline.Workspace)/downloaded-versions'
+      displayName: '📥 Descargar artifact de idpr'
+    
+    - script: |
+        ls -R $(Pipeline.Workspace)/downloaded-versions/versions/idpr
+        IDPR_FILE="$(Pipeline.Workspace)/downloaded-versions/versions/idpr.json"
+        if [[ -f "$IDPR_FILE" ]]; then
+          ID_PR=$(jq -r '.idpr' $IDPR_FILE)
+          echo "🚀 IDPR version detectada: $ID_PR"
+          echo "##vso[task.setvariable variable=idprversion]$ID_PR"
+        else
+          echo "❌ No se encontró el archivo idpr.json"
+          exit 1
+        fi
+      displayName: '📚 Leer versiones de microservicios'
+
+    - script: |
+        echo $(idprversion)
       
     - script: |
         cd $(System.DefaultWorkingDirectory)/apps/$(msName)
         CURRENT_BRANCH=$(echo $(Build.SourceBranch))
         echo $CURRENT_BRANCH
-
-        if [[ "$CURRENT_BRANCH" == refs/heads/develop ]]; then
-          BUMP_OUTPUT=$(npx commit-and-tag-version --prerelease develop --dry-run )
-          echo "$BUMP_OUTPUT"
-          
-          CURRENT_VERSION=$(echo "$BUMP_OUTPUT" | grep "bumping version" | sed -E 's/.*from ([0-9]+\.[0-9]+\.[0-9]+) to.*/\1/')
-          NEXT_VERSION=$(echo "$BUMP_OUTPUT" | grep -oE 'to [0-9]+\.[0-9]+\.[0-9]+-[a-zA-Z]+\.[0-9]+' | awk '{print $2}')
-
-          echo "📌 Versión actual detectada: $CURRENT_VERSION"
-          echo "🚀 Próxima versión para Develop: $NEXT_VERSION"
-        fi
-
-        if [[ "$CURRENT_BRANCH" == refs/heads/staging ]]; then
-          BUMP_OUTPUT=$(npx commit-and-tag-version --prerelease staging --dry-run )
-          echo "$BUMP_OUTPUT"
-          echo "----------------------------------------"
-          
-          CURRENT_VERSION=$(echo "$BUMP_OUTPUT" | grep "bumping version" | sed -E 's/.*from ([0-9]+\.[0-9]+\.[0-9]+) to.*/\1/')
-          NEXT_VERSION=$(echo "$BUMP_OUTPUT" | grep -oE 'to [0-9]+\.[0-9]+\.[0-9]+-[a-zA-Z]+\.[0-9]+' | awk '{print $2}')
-
-          echo "📌 Versión actual detectada: $CURRENT_VERSION"
-          echo "🚀 Próxima versión para la rama de staging: $NEXT_VERSION"
-        fi
-
-        if [[ "$CURRENT_BRANCH" == refs/heads/master ]]; then
-          BUMP_OUTPUT=$(npx commit-and-tag-version --dry-run )
-          echo "$BUMP_OUTPUT"
-          echo "----------------------------------------"
-          
-          CURRENT_VERSION=$(echo "$BUMP_OUTPUT" | grep "bumping version" | sed -E 's/.*from ([0-9]+\.[0-9]+\.[0-9]+) to.*/\1/')
-          NEXT_VERSION=$(echo "$BUMP_OUTPUT" | sed -nE 's/.*to ([0-9]+\.[0-9]+\.[0-9]+).*/\1/p')
-
-          echo "📌 Versión actual detectada: $CURRENT_VERSION"
-          echo "🚀 Próxima versión para la rama de master: $NEXT_VERSION"
-        fi
+        
       displayName: Tag, commit and update changeload
 
 

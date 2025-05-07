@@ -61,8 +61,7 @@ jobs:
 
           mkdir -p $(Build.ArtifactStagingDirectory)/idpr
           touch $(Build.ArtifactStagingDirectory)/idpr/idpr.json
-          echo "{\"version\": \"$PR_ID\" }" > $(Build.ArtifactStagingDirectory)/idpr/idpr.json
-
+          echo "{\"idpr\": \"$PR_ID\" }" > $(Build.ArtifactStagingDirectory)/idpr/idpr.json
       env:
         AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
       displayName: 'ID Pull Request'
