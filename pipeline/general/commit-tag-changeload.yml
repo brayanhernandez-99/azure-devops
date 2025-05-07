@@ -57,7 +57,7 @@ jobs:
     
     - script: |
         ls -R $(Pipeline.Workspace)/downloaded-versions/versions/idpr
-        IDPR_FILE="$(Pipeline.Workspace)/downloaded-versions/versions/idpr.json"
+        IDPR_FILE="$(Pipeline.Workspace)/downloaded-versions/versions/idpr/idpr.json"
         if [[ -f "$IDPR_FILE" ]]; then
           ID_PR=$(jq -r '.idpr' $IDPR_FILE)
           echo "🚀 IDPR version detectada: $ID_PR"
@@ -75,7 +75,7 @@ jobs:
         cd $(System.DefaultWorkingDirectory)/apps/$(msName)
         CURRENT_BRANCH=$(echo $(Build.SourceBranch))
         echo $CURRENT_BRANCH
-        
+
       displayName: Tag, commit and update changeload
 
 
