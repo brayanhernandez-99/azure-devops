@@ -68,8 +68,8 @@ jobs:
           COMMITS=$(curl -s -u ":$AZURE_DEVOPS_CLI_PAT" \
             "https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories/$(repoID)/pullRequests/$(ultimoPR)/commits?api-version=7.0" \
             | jq -r '.value[].comment' | grep -E 'feat:|fix:|!')
-          echo $COMMITS
-          echo "##vso[task.setvariable variable=filteredCommits]$COMMITS"
+          SAFE_COMMITS=$(echo "$COMMITS" | tr '\n' '|')
+          echo "##vso[task.setvariable variable=filteredCommits]$SAFE_COMMITS"
       env:
         AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
       displayName: 'Detalles Commits Pull Request'
@@ -121,9 +121,9 @@ jobs:
         fi
 
         if [[ "$CURRENT_BRANCH" == refs/heads/develop ]]; then
-          COMMITS=$(filteredCommits)
+          COMMITS=$(echo "$(filteredCommits)" | tr '|' '\n')
           echo "Commits de la rama feature a develop:"
-          echo $(filteredCommits)
+          echo $COMMITS
 
           IS_MAJOR=0
           IS_MINOR=0
