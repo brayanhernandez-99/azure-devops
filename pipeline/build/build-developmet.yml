@@ -11,7 +11,10 @@ stages:
   
 - stage: 'build_developmet'
   displayName: 'Build Developmet'
-  dependsOn: microservices_developmet
+  ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/feature') }}:
+    dependsOn: []
+  ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), in(variables['Build.SourceBranch'], 'refs/heads/develop','refs/heads/staging','refs/heads/master' )) }}:
+    dependsOn: microservices_developmet
 
   variables:
   - template: ../variables/groups-transversal-variables.yml
