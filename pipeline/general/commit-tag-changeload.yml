@@ -223,7 +223,7 @@ jobs:
           fi
           echo $RELEASE_TYPE
 
-          BUMP_OUTPUT=$(npx commit-and-tag-version --skip.changelog --release-as $RELEASE_TYPE)
+          BUMP_OUTPUT=$(npx commit-and-tag-version --skip.changelog --skip.tag --release-as $RELEASE_TYPE)
           echo "$BUMP_OUTPUT"
           git push origin HEAD
 
@@ -237,5 +237,12 @@ jobs:
         fi
       displayName: Tag, commit and update changeload
 
-
+- ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/master') }}:
+  - job: 'create_publish_versioning'
+    displayName: 'Create and Publish Versioning'
+    dependsOn: 'commit_tag_version'
+    steps:
+      - task: git-tag-on-release-task@9
+        displayName: 'Create and Publish Versioning Tag'
+        continueOnError: true
     
