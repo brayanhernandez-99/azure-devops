@@ -125,6 +125,8 @@ jobs:
         fi
 
         if [[ "$CURRENT_BRANCH" == refs/heads/develop ]]; then
+          raw_branch=$(Build.SourceBranch)
+          clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
           COMMITS=$(echo "$(filteredCommits)" | tr '|' '\n')
           echo "Commits de la rama feature a develop:"
           echo $COMMITS
@@ -153,7 +155,9 @@ jobs:
             RELEASE_TYPE="patch"  # default si no se detecta nada
           fi
           echo $RELEASE_TYPE
+
           git checkout version/$clean_branch
+
           BUMP_OUTPUT=$(npx commit-and-tag-version --prerelease develop --dry-run --release-as $RELEASE_TYPE)
           echo "$BUMP_OUTPUT"
           echo "----------------------------------------"
