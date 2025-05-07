@@ -65,9 +65,11 @@ jobs:
     - script: |
           echo "Pull Request ID recuperado: $(ultimoPR)"
           echo "id del repositorio $(Build.Repository.Name) = $(repoID)" 
-          curl -s -u ":$AZURE_DEVOPS_CLI_PAT" \
+          COMMITS=$(curl -s -u ":$(AZURE_DEVOPS_CLI_PAT)" \
             "https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories/$(repoID)/pullRequests/$(ultimoPR)/commits?api-version=7.0" \
-            | jq -r '.value[].comment'
+            | jq -r '.value[].comment' | grep -E 'feat:|fix:|!')
+            
+          echo $COMMITS
       env:
         AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
       displayName: 'Detalles Commits Pull Request'
@@ -81,7 +83,6 @@ jobs:
           BASE=$(git merge-base HEAD origin/master)
           COMMITS=$(git log --pretty=format:"%s" $BASE..HEAD | grep -vi "Auto-generated pipeline config")
           echo $COMMITS
-
 
           IS_MAJOR=0
           IS_MINOR=0
