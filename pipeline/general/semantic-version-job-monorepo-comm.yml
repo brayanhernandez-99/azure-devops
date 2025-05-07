@@ -158,21 +158,23 @@ jobs:
 
           git checkout version/$clean_branch
           VERSION_ACTUAL_Vdevelop=$(jq -r .version package.json)
-          echo $VERSION_ACTUAL_Vdevelop
+          echo $(echo "$VERSION_ACTUAL_Vdevelop" | sed -E 's/-develop\.[0-9]+//')
 
-          git fetch origin version/master
+          
           git checkout origin/version/master
           VERSION_ACTUAL_MASTER=$(jq -r .version package.json)
 
           echo $VERSION_ACTUAL_MASTER
 
+
+
           # git checkout version/$clean_branch
 
         
 
-          mkdir -p $(Build.ArtifactStagingDirectory)/$(msName)
-          touch $(Build.ArtifactStagingDirectory)/$(msName)/version.json
-          echo "{ \"ms\": \"$(msName)\", \"version\": \"$NEXT_VERSION\" }" > $(Build.ArtifactStagingDirectory)/$(msName)/version.json
+          # mkdir -p $(Build.ArtifactStagingDirectory)/$(msName)
+          # touch $(Build.ArtifactStagingDirectory)/$(msName)/version.json
+          # echo "{ \"ms\": \"$(msName)\", \"version\": \"$NEXT_VERSION\" }" > $(Build.ArtifactStagingDirectory)/$(msName)/version.json
         fi
 
         if [[ "$CURRENT_BRANCH" == refs/heads/staging ]]; then
