@@ -124,10 +124,9 @@ jobs:
           echo $RELEASE_TYPE
 
           BUMP_OUTPUT=$(npx commit-and-tag-version --skip.changelog --skip.tag --prerelease develop --release-as $RELEASE_TYPE)
-
-          git push origin HEAD
-
           echo "$BUMP_OUTPUT"
+          git push origin HEAD
+          
           echo "----------------------------------------"
           
           CURRENT_VERSION=$(echo "$BUMP_OUTPUT" | grep "bumping version" | sed -E 's/.*from ([0-9]+\.[0-9]+\.[0-9]+) to.*/\1/')
@@ -175,10 +174,9 @@ jobs:
           echo $RELEASE_TYPE
 
           BUMP_OUTPUT=$(npx commit-and-tag-version --skip.changelog --skip.tag --prerelease qa --release-as $RELEASE_TYPE)
-          
+          echo "$BUMP_OUTPUT"
           git push origin HEAD
 
-          echo "$BUMP_OUTPUT"
           echo "----------------------------------------"
           
           CURRENT_VERSION=$(echo "$BUMP_OUTPUT" | grep "bumping version" | sed -E 's/.*from ([0-9]+\.[0-9]+\.[0-9]+) to.*/\1/')
@@ -226,10 +224,9 @@ jobs:
           echo $RELEASE_TYPE
 
           BUMP_OUTPUT=$(npx commit-and-tag-version --skip.changelog --skip.tag --release-as $RELEASE_TYPE)
-          
+          echo "$BUMP_OUTPUT"
           git push origin HEAD
 
-          echo "$BUMP_OUTPUT"
           echo "----------------------------------------"
           
           CURRENT_VERSION=$(echo "$BUMP_OUTPUT" | grep "bumping version" | sed -E 's/.*from ([0-9]+\.[0-9]+\.[0-9]+) to.*/\1/')
