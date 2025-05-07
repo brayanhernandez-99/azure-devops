@@ -92,7 +92,7 @@ jobs:
 
           git checkout version/$clean_branch
           git config user.name "pipeline"
-          git config user.email "pipelineUX@ux.technology
+          git config user.email "pipelineUX@ux.technology"
 
           COMMITS=$(echo "$(filteredCommits)" | tr '|' '\n')
           echo "Commits de la rama feature a develop:"
