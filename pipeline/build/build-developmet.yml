@@ -2,19 +2,16 @@ stages:
 - stage: 'microservices_developmet'
   displayName: 'microservices Developmet'
   dependsOn: []
-  condition: and(succeeded(), not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')))
 
   jobs:
-  - template: ../general/semantic-version-job-monorepo-comm.yml
-    parameters:
-        apps: ${{ parameters.apps }}
+  - ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), in(variables['Build.SourceBranch'], 'refs/heads/develop','refs/heads/staging','refs/heads/master' )) }}:
+    - template: ../general/semantic-version-job-monorepo-comm.yml
+      parameters:
+          apps: ${{ parameters.apps }}
   
 - stage: 'build_developmet'
   displayName: 'Build Developmet'
-  ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/feature') }}:
-    dependsOn: []
-  ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), in(variables['Build.SourceBranch'], 'refs/heads/develop','refs/heads/staging','refs/heads/master' )) }}:
-    dependsOn: microservices_developmet
+  dependsOn: microservices_developmet
 
   variables:
   - template: ../variables/groups-transversal-variables.yml
