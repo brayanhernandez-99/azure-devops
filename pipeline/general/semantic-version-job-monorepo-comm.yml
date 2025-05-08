@@ -135,7 +135,7 @@ jobs:
           echo "🚀 Próxima versión para la rama develop: $NEXT_VERSION"
         fi
 
-        if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|staging|feature/*)$ ]]; then
+        if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|master|staging|feature/*)$ ]]; then
 
           if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
             clean_branch=develop
@@ -206,6 +206,7 @@ jobs:
 
           if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|staging|feature/*)$ ]]; then
             git checkout version/$clean_branch
+            echo $clean_branch
             VERSION_ACTUAL=$(jq -r .version package.json)
             BASE_VERSION_BRANCH=$(echo "$VERSION_ACTUAL" | sed -E 's/-$clean_branch\.[0-9]+//')
             echo $BASE_VERSION_BRANCH
