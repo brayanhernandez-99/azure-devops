@@ -13,7 +13,7 @@ stages:
   dependsOn: microservices_developmet
 
   variables:
-  - group: trasversal-aws-deployment
+  - template: ../variables/groups-transversal-variables.yml
 
   jobs:
   - ${{ if eq(parameters.language, 'nodejs') }}:
