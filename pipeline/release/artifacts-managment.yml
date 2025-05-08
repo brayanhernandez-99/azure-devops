@@ -2,10 +2,10 @@ stages:
 - stage: 'artifacts_managment'
   displayName: 'Artifacts Managment'
 
-  # ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), in(variables['Build.SourceBranch'], 'refs/heads/develop')) }}:
-  #   dependsOn:
-  #     - 'build_developmet'
-  #   condition: in(dependencies.build_developmet.result, 'Succeeded', 'SucceededWithIssues')
+  ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), in(variables['Build.SourceBranch'], 'refs/heads/develop')) }}:
+    dependsOn:
+      - 'build_developmet'
+    condition: in(dependencies.build_developmet.result, 'Succeeded', 'SucceededWithIssues')
 
   ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), in(variables['Build.SourceBranch'], 'refs/heads/staging','refs/heads/master' )) }}:
     dependsOn:
