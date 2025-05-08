@@ -89,7 +89,13 @@ jobs:
           cd $(System.DefaultWorkingDirectory)/apps/$(msName)
           npm run test 
           npm run coverage
-        displayName: 'test and coverage'
+        displayName: 'Test MS $(msName)'
+        continueOnError: true
+
+      - script: |
+          cd $(System.DefaultWorkingDirectory)/apps/$(msName)
+          npm run coverage
+        displayName: 'Coverage MS $(msName)'
         continueOnError: true
 
       - task: SonarQubeAnalyze@7

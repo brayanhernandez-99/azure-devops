@@ -17,24 +17,6 @@ jobs:
     - checkout: self
       fetchDepth: 0
       persistCredentials: true
-
-    # - task: NodeTool@0
-    #   inputs:
-    #     versionSpec: "20.x"
-    #     checkLatest: true
-
-    # - script: |
-    #     npm install --no-save @commitlint/cli@latest @commitlint/config-conventional@latest conventional-changelog-conventionalcommits@latest commit-and-tag-version@^12.4.4 conventional-changelog-cli@latest
-    #     ls -la
-    #   displayName: Install commitlint
-
-    # - script: |
-    #     cp $(System.DefaultWorkingDirectory)/apps/$(msName)/.commitlintrc.js $(System.DefaultWorkingDirectory)
-    #     npx commitlint --from origin/master --to HEAD --verbose
-    #     # npx commitlint --last --verbose
-    #   condition: ne(variables['Build.Reason'], 'PullRequest')
-    #   displayName: Validate current commit (last commit) with commitlint
-    #   continueOnError: true
     
     - script: |
         REPO_ID=$(curl -s -u ":$AZURE_DEVOPS_CLI_PAT" \
@@ -92,7 +74,6 @@ jobs:
       displayName: 'Detalles Commits Pull Request'
       condition: not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
       
-
     - script: |
         cd $(System.DefaultWorkingDirectory)/apps/$(msName)
         CURRENT_BRANCH=$(echo $(Build.SourceBranch))
@@ -212,51 +193,6 @@ jobs:
 
           echo "##vso[task.setvariable variable=cleanNEXT_VERSION]$NEXT_VERSION"
         fi
-
-        # if [[ "$CURRENT_BRANCH" == refs/heads/master ]]; then
-        #   COMMITS=$(echo "$(filteredCommits)" | tr '|' '\n')
-        #   echo "Commits de la rama staging a master:"
-        #   echo $COMMITS
-
-        #   IS_MAJOR=0
-        #   IS_MINOR=0
-        #   IS_PATCH=0
-
-        #   while read -r COMMIT; do
-        #     if [[ "$COMMIT" == *"!"* ]]; then
-        #       IS_MAJOR=1
-        #     elif [[ "$COMMIT" == feat:* ]]; then
-        #       IS_MINOR=1
-        #     elif [[ "$COMMIT" == fix:* ]]; then
-        #       IS_PATCH=1
-        #     fi
-        #   done <<< "$COMMITS"
-
-        #   if [[ $IS_MAJOR -eq 1 ]]; then
-        #     RELEASE_TYPE="major"
-        #   elif [[ $IS_MINOR -eq 1 ]]; then
-        #     RELEASE_TYPE="minor"
-        #   elif [[ $IS_PATCH -eq 1 ]]; then
-        #     RELEASE_TYPE="patch"
-        #   else
-        #     RELEASE_TYPE="patch"  # default si no se detecta nada
-        #   fi
-        #   echo $RELEASE_TYPE
-
-        #   BUMP_OUTPUT=$(npx commit-and-tag-version --dry-run --release-as $RELEASE_TYPE)
-        #   echo "$BUMP_OUTPUT"
-        #   echo "----------------------------------------"
-          
-        #   CURRENT_VERSION=$(echo "$BUMP_OUTPUT" | grep "bumping version" | sed -E 's/.*from ([0-9]+\.[0-9]+\.[0-9]+) to.*/\1/')
-        #   NEXT_VERSION=$(echo "$BUMP_OUTPUT" | sed -nE 's/.*to ([0-9]+\.[0-9]+\.[0-9]+)(-.+)?/\1/p')
-
-        #   echo "📌 Versión actual detectada: $CURRENT_VERSION"
-        #   echo "🚀 Próxima versión para master: $NEXT_VERSION"
-
-        #   mkdir -p $(Build.ArtifactStagingDirectory)/$(msName)
-        #   touch $(Build.ArtifactStagingDirectory)/$(msName)/version.json
-        #   echo "{ \"ms\": \"$(msName)\", \"version\": \"$NEXT_VERSION\" }" > $(Build.ArtifactStagingDirectory)/$(msName)/version.json
-        # fi
       displayName: Detect next version
       name: SemanticJob
     
