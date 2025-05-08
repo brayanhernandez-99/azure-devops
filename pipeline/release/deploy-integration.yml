@@ -44,8 +44,8 @@ stages:
         apps: ${{ parameters.apps }}
         red: ${{ parameters.red }}
 
-  - ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), in(variables['Build.SourceBranch'], 'refs/heads/develop', 'refs/heads/staging')) }}:
-    - template: ../general/commit-tag-changeload.yml
-      parameters:
-        apps: ${{ parameters.apps }}
-        red: ${{ parameters.red }}
+  # - ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), in(variables['Build.SourceBranch'], 'refs/heads/develop', 'refs/heads/staging')) }}:
+  #   - template: ../general/commit-tag-changeload.yml
+  #     parameters:
+  #       apps: ${{ parameters.apps }}
+  #       red: ${{ parameters.red }}
