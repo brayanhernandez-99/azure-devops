@@ -98,6 +98,7 @@ jobs:
         CURRENT_BRANCH=$(echo $(Build.SourceBranch))
         echo $CURRENT_BRANCH
 
+
         if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|master|staging|feature/.+)$ ]]; then
 
           if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
@@ -172,20 +173,10 @@ jobs:
           if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|staging|feature/.+)$ ]]; then
             git checkout version/$clean_branch
             VERSION_ACTUAL=$(jq -r .version package.json)
+            BASE_VERSION_BRANCH=$(echo "$VERSION_ACTUAL" | sed -E "s/-${clean_branch}\.[0-9]+//")
+            echo "versión base actual: $BASE_VERSION_BRANCH"
 
-            if [[ "$CURRENT_BRANCH" == refs/heads/staging ]]; then
-              BASE_VERSION_BRANCH=$(echo "$VERSION_ACTUAL" | sed -E "s/-qa\.[0-9]+//")
-              echo "versión base actual: $BASE_VERSION_BRANCH"
-
-              CURRENT_PRERELEASE=$(echo "$VERSION_ACTUAL" | sed -n "s/.*-qa\.\([0-9]\+\)/\1/p")
-            fi
-
-            if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|master|feature/.+)$ ]]; then
-              BASE_VERSION_BRANCH=$(echo "$VERSION_ACTUAL" | sed -E "s/-${clean_branch}\.[0-9]+//")
-              echo "versión base actual: $BASE_VERSION_BRANCH"
-
-              CURRENT_PRERELEASE=$(echo "$VERSION_ACTUAL" | sed -n "s/.*-${clean_branch}\.\([0-9]\+\)/\1/p")
-            fi
+            CURRENT_PRERELEASE=$(echo "$VERSION_ACTUAL" | sed -n "s/.*-${clean_branch}\.\([0-9]\+\)/\1/p")
 
             git checkout version/master
             VERSION_ACTUAL_MASTER=$(jq -r .version package.json)
@@ -195,21 +186,11 @@ jobs:
 
             if [[ "$BASE_VERSION_BRANCH" == "$VERSION_ACTUAL_MASTER" ]]; then
               # Las versiones base son iguales, solo incrementa el prerelease
-              if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|master|feature/.+)$ ]]; then
-                NEXT_VERSION="$BASE_VERSION_BRANCH-$clean_branch.$((CURRENT_PRERELEASE + 1))"
-              fi 
-              if [[ "$CURRENT_BRANCH" == refs/heads/staging ]]; then
-                NEXT_VERSION="$BASE_VERSION_BRANCH-$qa.$((CURRENT_PRERELEASE + 1))"
-              fi 
+              NEXT_VERSION="$BASE_VERSION_BRANCH-$clean_branch.$((CURRENT_PRERELEASE + 1))"
             else
               # Las bases son diferentes, calcular nueva base y resetear prerelease
               NEXT_BASE_VERSION=$(bump_version "$VERSION_ACTUAL_MASTER" "$RELEASE_TYPE")
-              if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|master|feature/.+)$ ]]; then
-                NEXT_VERSION="$NEXT_BASE_VERSION-$clean_branch.0"
-              fi
-              if [[ "$CURRENT_BRANCH" == refs/heads/staging ]]; then
-                NEXT_VERSION="$NEXT_BASE_VERSION-qa.0"
-              fi
+              NEXT_VERSION="$NEXT_BASE_VERSION-$clean_branch.0"
             fi
             echo "📌 anterior versión : $VERSION_ACTUAL"
             echo "🚀 Próxima versión : $NEXT_VERSION"
