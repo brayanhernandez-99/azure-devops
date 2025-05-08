@@ -2,8 +2,8 @@ variables:
 - group: trasversal-aws-deployment
 - group: trasversal-azure-devops
 
-- ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
-  - group: trasversal-aws-developer
+# - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
+#   - group: trasversal-aws-developer
 - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
   - group: trasversal-aws-qa
 - ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'antioquia')) }}: 
