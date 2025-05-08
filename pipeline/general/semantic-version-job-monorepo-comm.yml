@@ -313,7 +313,6 @@ jobs:
           clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
           
           cd $(System.DefaultWorkingDirectory)/apps/$(msName)
-          echo "Original msName: $(cleanNEXT_VERSION)"
           echo "🔧 Actualizando versión en apps/$(msName)/package.json a $(cleanNEXT_VERSION)"
           jq --arg version "$(cleanNEXT_VERSION)" '.version = $version' package.json > tmp.json && mv tmp.json package.json
 
