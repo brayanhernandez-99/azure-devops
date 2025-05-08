@@ -166,27 +166,28 @@ jobs:
           VERSION_ACTUAL_MASTER=$(jq -r .version package.json)
 
           echo $VERSION_ACTUAL_MASTER
+          git checkout version/$clean_branch
+          bump_version() {
+            IFS='.' read -r MAJOR MINOR PATCH <<< "$1"
+            case "$2" in
+              major) echo "$((MAJOR + 1)).0.0" ;;
+              minor) echo "$MAJOR.$((MINOR + 1)).0" ;;
+              patch) echo "$MAJOR.$MINOR.$((PATCH + 1))" ;;
+            esac
+          }
 
-          if [ "$BASE_DEV" = "$VERSION_VERSION_MASTER" ]; then
-            # Mismo número base, subir prerelease
-            echo "📌 Versión base igual. Solo se incrementa el prerelease."
-            BUMP_OUTPUT=$(npx commit-and-tag-version --skip.changelog --skip.tag --prerelease develop)
+          CURRENT_PRERELEASE=$(echo "$VERSION_ACTUAL_Vdevelop" | sed -n 's/.*-develop\.\([0-9]\+\)/\1/p')
+
+          if [[ "$BASE_DEV" == "$VERSION_ACTUAL_MASTER" ]]; then
+            # Las versiones base son iguales, solo incrementa el prerelease
+            NEXT_VERSION="$BASE_DEV-develop.$((CURRENT_PRERELEASE + 1))"
           else
-            # Diferente, hacer bump desde la de master
-            echo "📌 Versión base distinta. Se incrementa según tipo: $RELEASE_TYPE"
-            git checkout version/master
-            git pull origin version/master
-            git checkout develop
-            git merge version/master --no-commit --no-ff  # opcional si quieres sincronizar
-            BUMP_OUTPUT=$(npx commit-and-tag-version --skip.changelog --skip.tag --prerelease develop --release-as $RELEASE_TYPE)
+            # Las bases son diferentes, calcular nueva base y resetear prerelease
+            NEXT_BASE_VERSION=$(bump_version "$VERSION_ACTUAL_MASTER" "$RELEASE_TYPE")
+            NEXT_VERSION="$NEXT_BASE_VERSION-develop.0"
           fi
 
-          echo "$BUMP_OUTPUT"
-
-
-          # git checkout version/$clean_branch
-
-        
+          echo "📌 Próxima versión: $NEXT_VERSION"
 
           # mkdir -p $(Build.ArtifactStagingDirectory)/$(msName)
           # touch $(Build.ArtifactStagingDirectory)/$(msName)/version.json
