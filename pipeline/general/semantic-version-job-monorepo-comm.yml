@@ -76,6 +76,7 @@ jobs:
       env:
         AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
       displayName: 'ID Pull Request'
+      condition: not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
 
     - script: |
           echo "Pull Request ID recuperado: $(ultimoPR)"
@@ -89,6 +90,8 @@ jobs:
       env:
         AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
       displayName: 'Detalles Commits Pull Request'
+      condition: not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
+      
 
     - script: |
         cd $(System.DefaultWorkingDirectory)/apps/$(msName)
