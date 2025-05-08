@@ -49,6 +49,3 @@ stages:
       parameters:
         apps: ${{ parameters.apps }}
         red: ${{ parameters.red }}
-
-  
-
