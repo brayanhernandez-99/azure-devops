@@ -95,45 +95,45 @@ jobs:
         CURRENT_BRANCH=$(echo $(Build.SourceBranch))
         echo $CURRENT_BRANCH
 
-        if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
-          BASE=$(git merge-base HEAD origin/master)
-          COMMITS=$(git log --pretty=format:"%s" $BASE..HEAD | grep -vi "Auto-generated pipeline config")
-          echo $COMMITS
+        # if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
+        #   BASE=$(git merge-base HEAD origin/master)
+        #   COMMITS=$(git log --pretty=format:"%s" $BASE..HEAD | grep -vi "Auto-generated pipeline config")
+        #   echo $COMMITS
 
-          IS_MAJOR=0
-          IS_MINOR=0
-          IS_PATCH=0
+        #   IS_MAJOR=0
+        #   IS_MINOR=0
+        #   IS_PATCH=0
 
-          while read -r COMMIT; do
-            if [[ "$COMMIT" == *"!"* ]]; then
-              IS_MAJOR=1
-            elif [[ "$COMMIT" == feat:* ]]; then
-              IS_MINOR=1
-            elif [[ "$COMMIT" == fix:* ]]; then
-              IS_PATCH=1
-            fi
-          done <<< "$COMMITS"
+        #   while read -r COMMIT; do
+        #     if [[ "$COMMIT" == *"!"* ]]; then
+        #       IS_MAJOR=1
+        #     elif [[ "$COMMIT" == feat:* ]]; then
+        #       IS_MINOR=1
+        #     elif [[ "$COMMIT" == fix:* ]]; then
+        #       IS_PATCH=1
+        #     fi
+        #   done <<< "$COMMITS"
 
-          if [[ $IS_MAJOR -eq 1 ]]; then
-            RELEASE_TYPE="major"
-          elif [[ $IS_MINOR -eq 1 ]]; then
-            RELEASE_TYPE="minor"
-          elif [[ $IS_PATCH -eq 1 ]]; then
-            RELEASE_TYPE="patch"
-          else
-            RELEASE_TYPE="patch"  # default si no se detecta nada
-          fi
-          echo $RELEASE_TYPE
-          BUMP_OUTPUT=$(npx commit-and-tag-version --dry-run --prerelease develop --release-as $RELEASE_TYPE )
-          echo "$BUMP_OUTPUT"
-          echo "----------------------------------------"
+        #   if [[ $IS_MAJOR -eq 1 ]]; then
+        #     RELEASE_TYPE="major"
+        #   elif [[ $IS_MINOR -eq 1 ]]; then
+        #     RELEASE_TYPE="minor"
+        #   elif [[ $IS_PATCH -eq 1 ]]; then
+        #     RELEASE_TYPE="patch"
+        #   else
+        #     RELEASE_TYPE="patch"  # default si no se detecta nada
+        #   fi
+        #   echo $RELEASE_TYPE
+        #   BUMP_OUTPUT=$(npx commit-and-tag-version --dry-run --prerelease develop --release-as $RELEASE_TYPE )
+        #   echo "$BUMP_OUTPUT"
+        #   echo "----------------------------------------"
           
-          CURRENT_VERSION=$(echo "$BUMP_OUTPUT" | grep "bumping version" | sed -E 's/.*from ([0-9]+\.[0-9]+\.[0-9]+) to.*/\1/')
-          NEXT_VERSION=$(echo "$BUMP_OUTPUT" | grep "bumping version" | sed -E 's/.*to ([0-9]+\.[0-9]+\.[0-9]+).*/\1/')
+        #   CURRENT_VERSION=$(echo "$BUMP_OUTPUT" | grep "bumping version" | sed -E 's/.*from ([0-9]+\.[0-9]+\.[0-9]+) to.*/\1/')
+        #   NEXT_VERSION=$(echo "$BUMP_OUTPUT" | grep "bumping version" | sed -E 's/.*to ([0-9]+\.[0-9]+\.[0-9]+).*/\1/')
 
-          echo "📌 Versión actual detectada: $CURRENT_VERSION"
-          echo "🚀 Próxima versión para la rama develop: $NEXT_VERSION"
-        fi
+        #   echo "📌 Versión actual detectada: $CURRENT_VERSION"
+        #   echo "🚀 Próxima versión para la rama develop: $NEXT_VERSION"
+        # fi
 
         if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|master|staging|feature/*)$ ]]; then
 
