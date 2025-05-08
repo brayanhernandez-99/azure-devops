@@ -5,9 +5,7 @@ jobs:
         name: 'Azure Pipelines'
         vmImage: 'ubuntu-22.04'
     variables:
-    - template: ../variables/groups-transversal-variables.yml
-    - name: versionSpecification
-      value: $[coalesce(variables.nodejsVersion, '18.x')]
+      versionSpecification: $[coalesce(variables.nodejsVersion, '18.x')]
 
     strategy:
       matrix:
@@ -19,6 +17,7 @@ jobs:
       - script: |
           echo "Compilando microservicio: $(msName)"
           ls -l
+          $(AWS_ACCESS_KEY_ID_DEPLOY)
         displayName: "Build $(msName)"
 
       - task: NodeTool@0
