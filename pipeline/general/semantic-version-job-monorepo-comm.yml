@@ -301,7 +301,7 @@ jobs:
     - script: |
           cd $(System.DefaultWorkingDirectory)/apps/$(msName)
           echo "Original msName: $(cleanNEXT_VERSION)"
-          echo "🔧 Actualizando versión en apps/${{ matrix.msName }}/package.json a $cleanNEXT_VERSION"
+          echo "🔧 Actualizando versión en apps/$(msName)/package.json a $cleanNEXT_VERSION"
           jq --arg version "$cleanNEXT_VERSION" '.version = $version' package.json > tmp.json && mv tmp.json package.json
           cat package.json
       displayName: "Actualizar versión y push $(msName)"
