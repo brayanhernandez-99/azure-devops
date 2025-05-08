@@ -206,17 +206,15 @@ jobs:
 
           if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|staging|feature/*)$ ]]; then
             git checkout version/$clean_branch
-            echo $clean_branch
             VERSION_ACTUAL=$(jq -r .version package.json)
             BASE_VERSION_BRANCH=$(echo "$VERSION_ACTUAL" | sed -E "s/-${clean_branch}\.[0-9]+//")
-            echo $BASE_VERSION_BRANCH
+            echo "versión base actual: $BASE_VERSION_BRANCH"
 
             CURRENT_PRERELEASE=$(echo "$VERSION_ACTUAL" | sed -n "s/.*-${clean_branch}\.\([0-9]\+\)/\1/p")
-            echo $((CURRENT_PRERELEASE + 1))
 
             git checkout version/master
             VERSION_ACTUAL_MASTER=$(jq -r .version package.json)
-            echo $VERSION_ACTUAL_MASTER
+            echo "versión base master: $VERSION_ACTUAL_MASTER"
 
             git checkout version/$clean_branch
 
@@ -250,50 +248,50 @@ jobs:
           echo "##vso[task.setvariable variable=cleanNEXT_VERSION]$NEXT_VERSION"
         fi
 
-        if [[ "$CURRENT_BRANCH" == refs/heads/master ]]; then
-          COMMITS=$(echo "$(filteredCommits)" | tr '|' '\n')
-          echo "Commits de la rama staging a master:"
-          echo $COMMITS
+        # if [[ "$CURRENT_BRANCH" == refs/heads/master ]]; then
+        #   COMMITS=$(echo "$(filteredCommits)" | tr '|' '\n')
+        #   echo "Commits de la rama staging a master:"
+        #   echo $COMMITS
 
-          IS_MAJOR=0
-          IS_MINOR=0
-          IS_PATCH=0
+        #   IS_MAJOR=0
+        #   IS_MINOR=0
+        #   IS_PATCH=0
 
-          while read -r COMMIT; do
-            if [[ "$COMMIT" == *"!"* ]]; then
-              IS_MAJOR=1
-            elif [[ "$COMMIT" == feat:* ]]; then
-              IS_MINOR=1
-            elif [[ "$COMMIT" == fix:* ]]; then
-              IS_PATCH=1
-            fi
-          done <<< "$COMMITS"
+        #   while read -r COMMIT; do
+        #     if [[ "$COMMIT" == *"!"* ]]; then
+        #       IS_MAJOR=1
+        #     elif [[ "$COMMIT" == feat:* ]]; then
+        #       IS_MINOR=1
+        #     elif [[ "$COMMIT" == fix:* ]]; then
+        #       IS_PATCH=1
+        #     fi
+        #   done <<< "$COMMITS"
 
-          if [[ $IS_MAJOR -eq 1 ]]; then
-            RELEASE_TYPE="major"
-          elif [[ $IS_MINOR -eq 1 ]]; then
-            RELEASE_TYPE="minor"
-          elif [[ $IS_PATCH -eq 1 ]]; then
-            RELEASE_TYPE="patch"
-          else
-            RELEASE_TYPE="patch"  # default si no se detecta nada
-          fi
-          echo $RELEASE_TYPE
+        #   if [[ $IS_MAJOR -eq 1 ]]; then
+        #     RELEASE_TYPE="major"
+        #   elif [[ $IS_MINOR -eq 1 ]]; then
+        #     RELEASE_TYPE="minor"
+        #   elif [[ $IS_PATCH -eq 1 ]]; then
+        #     RELEASE_TYPE="patch"
+        #   else
+        #     RELEASE_TYPE="patch"  # default si no se detecta nada
+        #   fi
+        #   echo $RELEASE_TYPE
 
-          BUMP_OUTPUT=$(npx commit-and-tag-version --dry-run --release-as $RELEASE_TYPE)
-          echo "$BUMP_OUTPUT"
-          echo "----------------------------------------"
+        #   BUMP_OUTPUT=$(npx commit-and-tag-version --dry-run --release-as $RELEASE_TYPE)
+        #   echo "$BUMP_OUTPUT"
+        #   echo "----------------------------------------"
           
-          CURRENT_VERSION=$(echo "$BUMP_OUTPUT" | grep "bumping version" | sed -E 's/.*from ([0-9]+\.[0-9]+\.[0-9]+) to.*/\1/')
-          NEXT_VERSION=$(echo "$BUMP_OUTPUT" | sed -nE 's/.*to ([0-9]+\.[0-9]+\.[0-9]+)(-.+)?/\1/p')
+        #   CURRENT_VERSION=$(echo "$BUMP_OUTPUT" | grep "bumping version" | sed -E 's/.*from ([0-9]+\.[0-9]+\.[0-9]+) to.*/\1/')
+        #   NEXT_VERSION=$(echo "$BUMP_OUTPUT" | sed -nE 's/.*to ([0-9]+\.[0-9]+\.[0-9]+)(-.+)?/\1/p')
 
-          echo "📌 Versión actual detectada: $CURRENT_VERSION"
-          echo "🚀 Próxima versión para master: $NEXT_VERSION"
+        #   echo "📌 Versión actual detectada: $CURRENT_VERSION"
+        #   echo "🚀 Próxima versión para master: $NEXT_VERSION"
 
-          mkdir -p $(Build.ArtifactStagingDirectory)/$(msName)
-          touch $(Build.ArtifactStagingDirectory)/$(msName)/version.json
-          echo "{ \"ms\": \"$(msName)\", \"version\": \"$NEXT_VERSION\" }" > $(Build.ArtifactStagingDirectory)/$(msName)/version.json
-        fi
+        #   mkdir -p $(Build.ArtifactStagingDirectory)/$(msName)
+        #   touch $(Build.ArtifactStagingDirectory)/$(msName)/version.json
+        #   echo "{ \"ms\": \"$(msName)\", \"version\": \"$NEXT_VERSION\" }" > $(Build.ArtifactStagingDirectory)/$(msName)/version.json
+        # fi
       displayName: Detect next version
       name: SemanticJob
     
