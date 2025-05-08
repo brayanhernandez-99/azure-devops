@@ -8,15 +8,15 @@ stages:
     parameters:
       apps: ${{ parameters.apps }}
   
-# - stage: 'build_developmet'
-#   displayName: 'Build Developmet'
-#   dependsOn: microservices_developmet
+- stage: 'build_developmet'
+  displayName: 'Build Developmet'
+  dependsOn: microservices_developmet
 
-#   variables:
-#   - template: ../variables/groups-transversal-variables.yml
+  variables:
+  - template: ../variables/groups-transversal-variables.yml
 
-#   jobs:
-#   - ${{ if eq(parameters.language, 'nodejs') }}:
-#     - template: jobs/nodejs-jobs.yml
-#       parameters:
-#         apps: ${{ parameters.apps }}
+  jobs:
+  - ${{ if eq(parameters.language, 'nodejs') }}:
+    - template: jobs/nodejs-jobs.yml
+      parameters:
+        apps: ${{ parameters.apps }}
