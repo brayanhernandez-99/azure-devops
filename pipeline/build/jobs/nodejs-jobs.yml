@@ -79,11 +79,11 @@ jobs:
           npm ls --depth=0 || true
         displayName: 'Instalar dependencias del microservicio'
 
-      - script: |
-          cd $(System.DefaultWorkingDirectory)/apps/$(msName)
-          #npm run build
-          # ./node_modules/.bin/env-cmd -f .env.local node -e "require('./handlers/container-handler.js').entrypoint()"
-        displayName: 'Build'
+      # - script: |
+      #     cd $(System.DefaultWorkingDirectory)/apps/$(msName)
+      #     #npm run build
+      #     # ./node_modules/.bin/env-cmd -f .env.local node -e "require('./handlers/container-handler.js').entrypoint()"
+      #   displayName: 'Build'
 
       - script: |
           cd $(System.DefaultWorkingDirectory)/apps/$(msName)
