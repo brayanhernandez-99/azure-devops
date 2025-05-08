@@ -142,6 +142,7 @@ jobs:
 
           if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
             clean_branch=develop
+            echo $clean_branch
           fi
 
           if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|staging|master)$ ]]; then
