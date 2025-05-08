@@ -324,7 +324,10 @@ jobs:
           git add package.json
           git commit -m "chore($(msName)): bump version to $(cleanNEXT_VERSION)"
       displayName: "Actualizar versión y push $(msName)"
-      condition: and(succeeded(), ne(variables['Build.SourceBranchName'], 'master'), not(startsWith(variables['Build.SourceBranchName'], 'feature/')))
-
+      condition: and(
+                    succeeded(),
+                    ne(variables['Build.SourceBranchName'], 'master'),
+                    not(startsWith(variables['Build.SourceBranchName'], 'feature/'))
+        )
 
     
