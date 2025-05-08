@@ -17,7 +17,6 @@ jobs:
       - script: |
           echo "Compilando microservicio: $(msName)"
           ls -l
-          $(AWS_ACCESS_KEY_ID_DEPLOY)
         displayName: "Build $(msName)"
 
       - task: NodeTool@0
