@@ -139,7 +139,7 @@ jobs:
         # fi
 
         if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|master|staging|feature/.+)$ ]]; then
-          echo "entró"
+
           if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
             clean_branch=develop
             echo $clean_branch
@@ -153,6 +153,7 @@ jobs:
           if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
             BASE=$(git merge-base HEAD origin/master)
             COMMITS=$(git log --pretty=format:"%s" $BASE..HEAD | grep -vi "Auto-generated pipeline config")
+            echo "Commits de la rama feature"
             echo $COMMITS
           fi
 
@@ -208,7 +209,7 @@ jobs:
             esac
           }
 
-          if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|staging|feature/*)$ ]]; then
+          if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|staging|feature/.+)$ ]]; then
             git checkout version/$clean_branch
             VERSION_ACTUAL=$(jq -r .version package.json)
             BASE_VERSION_BRANCH=$(echo "$VERSION_ACTUAL" | sed -E "s/-${clean_branch}\.[0-9]+//")
