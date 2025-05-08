@@ -162,7 +162,7 @@ jobs:
           echo $BASE_DEV
 
           
-          git checkout origin/version/master
+          git checkout version/master
           VERSION_ACTUAL_MASTER=$(jq -r .version package.json)
 
           echo $VERSION_ACTUAL_MASTER
