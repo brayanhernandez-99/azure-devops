@@ -208,10 +208,10 @@ jobs:
             git checkout version/$clean_branch
             echo $clean_branch
             VERSION_ACTUAL=$(jq -r .version package.json)
-            BASE_VERSION_BRANCH=$(echo "$VERSION_ACTUAL" | sed -E 's/-${clean_branch}\.[0-9]+//')
+            BASE_VERSION_BRANCH=$(echo "$VERSION_ACTUAL" | sed -E 's/-$(clean_branch)\.[0-9]+//')
             echo $BASE_VERSION_BRANCH
 
-            CURRENT_PRERELEASE=$(echo "$VERSION_ACTUAL" | sed -n 's/.*-${clean_branch}\.\([0-9]\+\)/\1/p')
+            CURRENT_PRERELEASE=$(echo "$VERSION_ACTUAL" | sed -n 's/.*-$(clean_branch)\.\([0-9]\+\)/\1/p')
             echo $CURRENT_PRERELEASE
 
             git checkout version/master
