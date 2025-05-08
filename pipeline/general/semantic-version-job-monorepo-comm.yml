@@ -138,7 +138,7 @@ jobs:
         #   echo "🚀 Próxima versión para la rama develop: $NEXT_VERSION"
         # fi
 
-        if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|master|staging|feature/*)$ ]]; then
+        if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|master|staging|feature/.+)$ ]]; then
           echo "entró"
           if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
             clean_branch=develop
