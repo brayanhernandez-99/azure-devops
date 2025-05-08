@@ -58,7 +58,7 @@ jobs:
           if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|staging|master)$ ]]; then
             CURRENT_BRANCH_PR=$(echo $(Build.SourceBranch))
           fi
-          
+
           curl -s -u ":$AZURE_DEVOPS_CLI_PAT" \
             "https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories/$(repoID)/pullrequests?searchCriteria.status=completed&searchCriteria.targetRefName=$CURRENT_BRANCH_PR&api-version=5.0" \
             | jq '.value[0]'
@@ -319,6 +319,7 @@ jobs:
           git add package.json
           git commit -m "chore($(msName)): bump version to $(cleanNEXT_VERSION)"
       displayName: "Actualizar versión y push $(msName)"
+      condition: and(succeeded(), ne(variables['Build.SourceBranchName'], 'master'), not(startsWith(variables['Build.SourceBranchName'], 'feature/')))
 
 
     
