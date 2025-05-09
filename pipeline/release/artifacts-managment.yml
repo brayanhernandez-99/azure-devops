@@ -131,12 +131,12 @@ stages:
             AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
             AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
         
-        # - task: Docker@2
-        #   displayName: 'Push Container Image Development $(msName)'
-        #   inputs:
-        #     command: 'Push'
-        #     repository: '$(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/pruebas-pipeline-$(msName)-develop'
-        #     tags: $(msVersion)
+        - task: Docker@2
+          displayName: 'Push Container Image Development $(msName)'
+          inputs:
+            command: 'Push'
+            repository: '$(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/pruebas-pipeline-$(msName)-develop'
+            tags: $(msVersion)
 
   - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
     - job: 'publish_image_qa'
