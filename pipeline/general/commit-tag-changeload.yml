@@ -162,11 +162,11 @@ jobs:
           git push origin version/$clean_branch
       displayName: "Actualizar versión y push $(msName)"
 
-# - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/master') }}:
-#   - job: 'create_publish_versioning'
-#     displayName: 'Create and Publish Versioning'
-#     dependsOn: 'commit_tag_version'
-#     steps:
-#       - task: git-tag-on-release-task@9
-#         displayName: 'Create and Publish Versioning Tag'
-#         continueOnError: true
+- ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/master') }}:
+  - job: 'create_publish_versioning'
+    displayName: 'Create and Publish Versioning'
+    dependsOn: 'commit_tag_version'
+    steps:
+      - task: git-tag-on-release-task@9
+        displayName: 'Create and Publish Versioning Tag'
+        continueOnError: true
