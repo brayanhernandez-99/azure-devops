@@ -30,7 +30,7 @@ stages:
   jobs:
 
   - ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), in(variables['Build.SourceBranch'], 'refs/heads/develop', 'refs/heads/staging', 'refs/heads/master')) }}:
-    - ${{ if in(parameters.typerelease, 'aws') }}:
+    - ${{ if in(parameters.typerelease, 'aws-ecs') }}:
       - template: jobs/aws-ecs-jobs.yml
         parameters:
           language: ${{ parameters.language }}

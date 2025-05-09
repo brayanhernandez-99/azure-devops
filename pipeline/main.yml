@@ -14,7 +14,7 @@ parameters:
   
   - name: typerelease
     type: string
-    default: aws
+    default: aws-ecs
   
   - name: apps
     type: object
