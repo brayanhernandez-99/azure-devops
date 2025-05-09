@@ -2,10 +2,10 @@ stages:
 - stage: 'artifacts_managment'
   displayName: 'Artifacts Managment'
 
-  # ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), in(variables['Build.SourceBranch'], 'refs/heads/develop')) }}:
-  #   dependsOn:
-  #     - 'build_developmet'
-  #   condition: in(dependencies.build_developmet.result, 'Succeeded', 'SucceededWithIssues')
+  ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), in(variables['Build.SourceBranch'], 'refs/heads/develop')) }}:
+    dependsOn:
+      - 'build_developmet'
+    condition: in(dependencies.build_developmet.result, 'Succeeded', 'SucceededWithIssues')
 
   ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), in(variables['Build.SourceBranch'], 'refs/heads/staging','refs/heads/master' )) }}:
     dependsOn:
@@ -47,16 +47,12 @@ stages:
             if [[ -f "$VERSION_FILE" ]]; then
               VERSION=$(jq -r '.version' $VERSION_FILE)
               echo "🚀 Versión detectada para $(msName): $VERSION"
-              # echo "##vso[task.setvariable variable=msVersion]$VERSION"
+              echo "##vso[task.setvariable variable=msVersion]$VERSION"
             else
               echo "❌ No se encontró archivo de versión para $(msName)"
               exit 1
             fi
           displayName: '📚 Leer versiones de microservicios'
-        
-        - script: |
-            echo $(msVersion)
-          displayName: '📚 Leer version'
 
         - script: |
             echo "build dev docker images"
@@ -113,8 +109,7 @@ stages:
             command: 'build'
             repository: '$(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/pruebas-pipeline-$(msName)-develop'
             Dockerfile: '$(Build.Repository.Name)/apps/$(msName)/Dockerfile'
-            tags: |
-              "$(msVersion)"
+            tags: $(msVersion)
 
         - script: |
             echo "Verificando si existe el repositorio pruebas-pipeline-$(msName)-develop"
