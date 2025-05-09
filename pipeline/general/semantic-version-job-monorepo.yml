@@ -17,7 +17,37 @@ jobs:
     - checkout: self
       fetchDepth: 0
       persistCredentials: true
-    
+
+    - script: |
+        echo "📌 Verificando si feature está actualizada con master y si hay cambios relevantes..."
+
+        git fetch origin master
+
+        # Verifica si master está contenido en HEAD
+        if git merge-base --is-ancestor origin/master HEAD; then
+          echo "✅ La rama feature está actualizada con master."
+        else
+          echo "⚠️ La rama feature NO contiene todos los commits de master. Verificando cambios relevantes..."
+
+          # Obtén lista de archivos cambiados entre HEAD y master
+          CHANGED_FILES=$(git diff --name-only origin/master...HEAD)
+
+          echo "🔍 Archivos cambiados:"
+          echo "$CHANGED_FILES"
+
+          # Filtra si hay archivos relevantes (ignora todo lo que esté en pipeline/)
+          RELEVANT_CHANGES=$(echo "$CHANGED_FILES" | grep -vE '^pipeline/')
+
+          if [[ -z "$RELEVANT_CHANGES" ]]; then
+            echo "ℹ️ Solo hay cambios en archivos ignorados (pipeline/). Continuando..."
+          else
+            echo "❌ Cambios relevantes detectados y la rama no está actualizada con master."
+            exit 1
+          fi
+        fi
+      displayName: 'Validar que feature esté actualizada y sin cambios relevantes ignorados'
+      condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
+
     - script: |
         REPO_ID=$(curl -s -u ":$AZURE_DEVOPS_CLI_PAT" \
           "https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories?api-version=5.0" \
