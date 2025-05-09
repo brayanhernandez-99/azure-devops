@@ -2,11 +2,11 @@ stages:
 - stage: 'semantic_version_integration'
   displayName: 'semantic-version-integration'
   dependsOn: [] 
-  
+
   variables:
   - template: ../variables/groups-transversal-variables.yml
 
   jobs:
-  - template: ../general/semantic-version-job-monorepo-comm.yml
+  - template: ../general/semantic-version-job-monorepo.yml
     parameters:
         apps: ${{ parameters.apps }}
