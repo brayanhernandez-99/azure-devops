@@ -105,6 +105,7 @@ stages:
         
         - task: Docker@2
           displayName: 'Build Container Image Development $(msName)'
+          continueOnError: true
           inputs:
             command: 'build'
             repository: '$(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/pruebas-pipeline-$(msName)-develop'
@@ -228,6 +229,7 @@ stages:
         
         - task: Docker@2
           displayName: 'Build Container Image Staging $(msName)'
+          continueOnError: true
           inputs:
             command: 'build'
             repository: '$(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/pruebas-pipeline-$(msName)-qa'
@@ -350,6 +352,7 @@ stages:
         
         - task: Docker@2
           displayName: 'Build Container Image master $(msName)'
+          continueOnError: true
           inputs:
             command: 'build'
             repository: '$(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/pruebas-pipeline-$(msName)-prd'
