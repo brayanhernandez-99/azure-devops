@@ -88,7 +88,7 @@ jobs:
         script: |
           CURRENT_BRANCH=$(echo $(Build.SourceBranch))
           if [[ "$CURRENT_BRANCH" == refs/heads/develop ]]; then
-            clean_branch= dev
+            clean_branch=dev
           fi
 
           if [[ "$CURRENT_BRANCH" == refs/heads/staging ]]; then
