@@ -81,32 +81,32 @@ jobs:
         AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
         AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
     
-    - task: Bash@3
-      displayName: "Verificar si la imagen existe en ECR"
-      inputs:
-        targetType: 'inline'
-        script: |
-          raw_branch=$(Build.SourceBranch)
-          clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
-          REPO_NAME="pruebas-pipeline-$(msName)-$clean_branch"
-          IMAGE_TAG="$(msVersion)"
-          REGION="us-east-1"
+    # - task: Bash@3
+    #   displayName: "Verificar si la imagen existe en ECR"
+    #   inputs:
+    #     targetType: 'inline'
+    #     script: |
+    #       raw_branch=$(Build.SourceBranch)
+    #       clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
+    #       REPO_NAME="pruebas-pipeline-$(msName)-$clean_branch"
+    #       IMAGE_TAG="$(msVersion)"
+    #       REGION="us-east-1"
 
-          echo "🔍 Verificando si la imagen '$IMAGE_TAG' existe en '$REPO_NAME'..."
+    #       echo "🔍 Verificando si la imagen '$IMAGE_TAG' existe en '$REPO_NAME'..."
 
-          if aws ecr describe-images \
-              --repository-name "$REPO_NAME" \
-              --image-ids imageTag="$IMAGE_TAG" \
-              --region "$REGION" > /dev/null 2>&1; then
-            echo "✅ Imagen encontrada en ECR."
-          else
-            echo "❌ Imagen no encontrada: $REPO_NAME:$IMAGE_TAG"
-            exit 1
-          fi
-      env:
-        AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
-        AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
-        AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+    #       if aws ecr describe-images \
+    #           --repository-name "$REPO_NAME" \
+    #           --image-ids imageTag="$IMAGE_TAG" \
+    #           --region "$REGION" > /dev/null 2>&1; then
+    #         echo "✅ Imagen encontrada en ECR."
+    #       else
+    #         echo "❌ Imagen no encontrada: $REPO_NAME:$IMAGE_TAG"
+    #         exit 1
+    #       fi
+    #   env:
+    #     AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
+    #     AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
+    #     AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
 
     - script: |
         export AWS_ACCESS_KEY_ID
