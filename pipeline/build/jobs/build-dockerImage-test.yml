@@ -1,11 +1,9 @@
 jobs:
-  - job: 'build_nodejs'
-    displayName: 'Build nodejs'    
+  - job: 'build_DockerTest'
+    displayName: 'Build DokerTest'    
     pool:
         name: 'Azure Pipelines'
         vmImage: 'ubuntu-22.04'
-    variables:
-      versionSpecification: $[coalesce(variables.nodejsVersion, '18.x')]
 
     strategy:
       matrix:
@@ -42,67 +40,6 @@ jobs:
           echo "Compilando microservicio: $(msName)"
           ls -l
         displayName: "Build $(msName)"
-
-      - task: NodeTool@0
-        displayName: 'Use Nodejs $(versionSpecification)'
-        inputs:
-          versionSource: 'spec'
-          versionSpec: '$(versionSpecification)'
-
-      - task: Bash@3
-        name: AuthCodeArtifact
-        inputs:
-          targetType: 'inline'
-          script: |
-            export CODEARTIFACT_AUTH_TOKEN=$(aws codeartifact get-authorization-token \
-              --domain matrixtech-npm-repository \
-              --domain-owner $ACCOUNT_ID_DEPLOY \
-              --region $AWS_DEFAULT_REGION \
-              --query authorizationToken \
-              --output text )
-            npm config set //matrixtech-npm-repository-$ACCOUNT_ID_DEPLOY.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com/npm/matrixtech-npm-repository/:_authToken=$CODEARTIFACT_AUTH_TOKEN
-            npm config set registry https://matrixtech-npm-repository-861262569826.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com/npm/matrixtech-npm-repository/
-            aws sts get-caller-identity
-
-            echo "//matrixtech-npm-repository-$ACCOUNT_ID_DEPLOY.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com/npm/matrixtech-npm-repository/:_authToken=$CODEARTIFACT_AUTH_TOKEN" > $(Build.Repository.Name)/apps/$(msName)/.npmrc
-            echo "registry=https://matrixtech-npm-repository-$ACCOUNT_ID_DEPLOY.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com/npm/matrixtech-npm-repository/" >> $(Build.Repository.Name)/apps/$(msName)/.npmrc
-        env:
-          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
-          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
-          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
-      
-      - task: JavaToolInstaller@0
-        inputs:
-          versionSpec: '17'
-          jdkArchitectureOption: 'x64'
-          jdkSourceOption: 'PreInstalled'
-
-      - task: SonarQubePrepare@7
-        inputs:
-          SonarQube: 'SonarQubeConection'
-          scannerMode: 'CLI'
-          configMode: 'manual'
-          cliProjectKey: 'pruebas-$(msName)'
-          cliProjectName: 'pruebas-$(msName)'
-          cliSources: '$(System.DefaultWorkingDirectory)/$(Build.Repository.Name)/apps/$(msName)'
-          extraProperties: |
-            sonar.javascript.lcov.reportPaths=$(System.DefaultWorkingDirectory)/apps/$(msName)/coverage/lcov.info
-            sonar.exclusions=**/*.java,**/test/**,**/android/**,**/ios/**,**/coverage/**,**/.nyc_output/**,**/reports/**,**/node_modules/**,**/migrations/**,**/config/**
-
-      - script: |
-          variable=$(echo $SONARQUBE_SCANNER_PARAMS | sed -E 's#"sonar\.branch\.name":"[^"]+",##g')
-          echo $variable
-          echo "##vso[task.setvariable variable=SONARQUBE_SCANNER_PARAMS]$variable"
-        displayName: 'set-variable'
-
-      # - script: |
-      #     echo "Estás en la carpeta: $(System.DefaultWorkingDirectory)/apps/$(msName)"
-      #     cd $(System.DefaultWorkingDirectory)/apps/$(msName)
-      #     npm install --ignore-scripts
-      #     echo "Dependencias instaladas:"
-      #     npm ls --depth=0 || true
-      #   displayName: 'Instalar dependencias del microservicio'
-
       
       - script: |
             echo "build dev docker images"
@@ -161,35 +98,3 @@ jobs:
           repository: '$(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/pruebas-pipeline-$(msName)-develop'
           Dockerfile: '$(Build.Repository.Name)/apps/$(msName)/Dockerfile'
           tags: $(msVersion)
-      
-      # - script: |
-      #     cd $(System.DefaultWorkingDirectory)/apps/$(msName)
-      #     #npm run build
-      #     # ./node_modules/.bin/env-cmd -f .env.local node -e "require('./handlers/container-handler.js').entrypoint()"
-      #   displayName: 'Build'
-
-      - script: |
-          cd $(System.DefaultWorkingDirectory)/$(Build.Repository.Name)/apps/$(msName)
-          npm run test 
-          npm run coverage
-        displayName: 'Test MS $(msName)'
-        continueOnError: true
-
-      - script: |
-          cd $(System.DefaultWorkingDirectory)/$(Build.Repository.Name)/apps/$(msName)
-          npm run coverage
-        displayName: 'Coverage MS $(msName)'
-        continueOnError: true
-
-      - task: SonarQubeAnalyze@7
-        displayName: 'Sonar Analysis'
-
-      - task: SonarQubePublish@7
-        displayName: 'Publish Result Static Code Analysis'
-        inputs:
-          pollingTimeoutSec: 400
-      
-      - task: sonar-buildbreaker@8
-        displayName: 'Quality Gate'
-        inputs:
-          SonarQube: 'SonarQubeConection'
