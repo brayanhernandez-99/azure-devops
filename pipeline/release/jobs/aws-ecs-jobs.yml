@@ -107,8 +107,8 @@ jobs:
 
           if aws ecr describe-images \
               --repository-name "$REPO_NAME" \
-              --image-ids imageTag="$AWS_DEFAULT_REGION" \
-              --region "$REGION" > /dev/null 2>&1; then
+              --image-ids imageTag=$IMAGE_TAG \
+              --region "$AWS_DEFAULT_REGION" > /dev/null 2>&1; then
             echo "✅ Imagen encontrada en ECR."
           else
             echo "❌ Imagen no encontrada: $REPO_NAME:$IMAGE_TAG"
