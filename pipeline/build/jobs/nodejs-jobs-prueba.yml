@@ -18,6 +18,12 @@ jobs:
 
       - checkout: git://DevOps-templates-UX/pipelines-templates@feature/Inicio-templates
         fetchDepth: 1
+      
+      - task: DownloadBuildArtifacts@0
+        inputs:
+          artifactName: 'versions'
+          downloadPath: '$(Pipeline.Workspace)/downloaded-versions'
+        displayName: '📥 Descargar artifact de versiones'
 
       - script: |
             ls -R $(Pipeline.Workspace)/downloaded-versions/versions/$(msName)
