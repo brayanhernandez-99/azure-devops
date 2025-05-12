@@ -230,7 +230,7 @@ jobs:
       name: SemanticJob
     
     - task: PublishBuildArtifacts@1
-      condition: not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
+      # condition: not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
       inputs:
         PathtoPublish: '$(Build.ArtifactStagingDirectory)'
         ArtifactName: 'versions'

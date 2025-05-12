@@ -20,6 +20,19 @@ jobs:
         fetchDepth: 1
 
       - script: |
+            ls -R $(Pipeline.Workspace)/downloaded-versions/versions/$(msName)
+            VERSION_FILE="$(Pipeline.Workspace)/downloaded-versions/versions/$(msName)/version.json"
+            if [[ -f "$VERSION_FILE" ]]; then
+              VERSION=$(jq -r '.version' $VERSION_FILE)
+              echo "🚀 Versión detectada para $(msName): $VERSION"
+              echo "##vso[task.setvariable variable=msVersion]$VERSION"
+            else
+              echo "❌ No se encontró archivo de versión para $(msName)"
+              exit 1
+            fi
+        displayName: '📚 Leer versiones de microservicios'
+
+      - script: |
           echo "Compilando microservicio: $(msName)"
           ls -l
         displayName: "Build $(msName)"
