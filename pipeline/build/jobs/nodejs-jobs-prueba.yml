@@ -102,7 +102,7 @@ jobs:
         displayName: "Check or Copy Dockerfile"
       
       - task: Bash@3
-        name: AuthCodeArtifact
+        displayName: Authdocker
         inputs:
           targetType: 'inline'
           script: |
