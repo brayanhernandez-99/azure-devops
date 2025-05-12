@@ -78,7 +78,7 @@ jobs:
           echo "Dependencias instaladas:"
           npm ls --depth=0 || true
         displayName: 'Instalar dependencias del microservicio'
-      
+
       # - script: |
       #     cd $(System.DefaultWorkingDirectory)/apps/$(msName)
       #     #npm run build
