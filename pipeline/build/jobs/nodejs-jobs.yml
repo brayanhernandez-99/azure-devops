@@ -24,6 +24,10 @@ jobs:
         inputs:
           versionSource: 'spec'
           versionSpec: '$(versionSpecification)'
+        
+      - script: |
+          npm install -g pnpm
+        displayName: 'Instalar pnpm'
 
       - task: Bash@3
         name: AuthCodeArtifact
