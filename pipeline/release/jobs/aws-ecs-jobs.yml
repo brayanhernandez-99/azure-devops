@@ -16,6 +16,10 @@ jobs:
   strategy:
     runOnce:
       deploy:
+        pool:
+          name: Azure Pipelines
+          vmImage: 'ubuntu-22.04'
+          
         steps:
           - script: echo "Aprobación recibida. Iniciando despliegues..."
 

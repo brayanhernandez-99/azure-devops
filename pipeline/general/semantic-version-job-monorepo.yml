@@ -183,6 +183,10 @@ jobs:
               patch) echo "$MAJOR.$MINOR.$((PATCH + 1))" ;;
             esac
           }
+          version_gt() {
+            # returns 0 (true) if $1 > $2
+            [ "$(printf '%s\n' "$1" "$2" | sort -V | head -n1)" != "$1" ]
+          }
 
           if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|staging|feature/.+)$ ]]; then
             git checkout version/$clean_branch
@@ -200,6 +204,9 @@ jobs:
 
             if [[ "$BASE_VERSION_BRANCH" == "$VERSION_ACTUAL_MASTER" ]]; then
               # Las versiones base son iguales, solo incrementa el prerelease
+              NEXT_VERSION="$BASE_VERSION_BRANCH-$clean_branch.$((CURRENT_PRERELEASE + 1))"
+            elif version_gt "$BASE_VERSION_BRANCH" "$VERSION_ACTUAL_MASTER"; then
+              # Base ya es mayor que master, también incrementa el prerelease
               NEXT_VERSION="$BASE_VERSION_BRANCH-$clean_branch.$((CURRENT_PRERELEASE + 1))"
             else
               # Las bases son diferentes, calcular nueva base y resetear prerelease
