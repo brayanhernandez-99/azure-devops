@@ -1,27 +1,37 @@
 jobs:
-- deployment: WaitForApproval
-  displayName: 'Esperar aprobación'
-  ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
-    environment: 'Deploy develop' 
-  ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
-    environment: 'Deploy staging' 
-  ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'antioquia')) }}:
-    environment: 'Deploy master antioquia'
-  ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'cap')) }}:
-    environment: 'Deploy master cap'
-  ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'tolima')) }}:
-    environment: 'Deploy master tolima'
-  ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'huila')) }}:
-    environment: 'Deploy master huila'
-  strategy:
-    runOnce:
-      deploy:
-        pool:
-          name: Azure Pipelines
-          vmImage: 'ubuntu-22.04'
-          
-        steps:
-          - script: echo "Aprobación recibida. Iniciando despliegues..."
+# - deployment: WaitForApproval
+#   displayName: 'Esperar aprobación'
+#   ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
+#     environment: 'Deploy develop' 
+#   ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
+#     environment: 'Deploy staging' 
+#   ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'antioquia')) }}:
+#     environment: 'Deploy master antioquia'
+#   ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'cap')) }}:
+#     environment: 'Deploy master cap'
+#   ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'tolima')) }}:
+#     environment: 'Deploy master tolima'
+#   ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'huila')) }}:
+#     environment: 'Deploy master huila'
+#   strategy:
+#     runOnce:
+#       deploy:
+#         pool:
+#           name: Azure Pipelines
+#           vmImage: 'ubuntu-22.04'
+
+#         steps:
+#           - script: echo "Aprobación recibida. Iniciando despliegues..."
+
+- job: WaitForApproval
+  displayName: 'Esperar aprobación manual'
+  environment: 
+    name: 'Deploy develop'
+    resourceType: VirtualMachine  # o simplemente omite si no hay recursos
+  pool:
+    vmImage: 'ubuntu-latest'
+  steps:
+    - script: echo "✅ Aprobación recibida. Continuando..."
 
 - job: 'aws_ecs'
   dependsOn: WaitForApproval
