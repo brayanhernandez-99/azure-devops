@@ -80,6 +80,14 @@ stages:
         typerelease: ${{ parameters.typerelease }}
         apps: ${{ parameters.apps }}
         red: huila
+
+  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/master') }}:
+    - template: release/deploy-integration.yml
+      parameters:
+        language: ${{ parameters.language }}
+        typerelease: ${{ parameters.typerelease }}
+        apps: ${{ parameters.apps }}
+        red: cauca
   
 
 

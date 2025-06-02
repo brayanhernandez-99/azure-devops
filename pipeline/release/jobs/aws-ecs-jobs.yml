@@ -16,6 +16,8 @@ jobs:
     environment: 'Deploy master tolima'
   ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'huila')) }}:
     environment: 'Deploy master huila'
+  ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'cauca')) }}:
+    environment: 'Deploy master cauca'
   strategy:
     runOnce:
       deploy:
@@ -36,6 +38,8 @@ jobs:
     displayName: 'AWS ECS master tolima'
   ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'huila')) }}:
     displayName: 'AWS ECS master huila'
+  ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'cauca')) }}:
+    displayName: 'AWS ECS master cauca'
   pool:
     name: Azure Pipelines
     vmImage: 'ubuntu-22.04'

@@ -14,5 +14,6 @@ variables:
   - group: trasversal-aws-master-tolima
 - ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'huila')) }}: 
   - group: trasversal-aws-master-huila
-
+- ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'cauca')) }}: 
+  - group: trasversal-aws-master-cauca
 - template: pipeline/vars-azure-pipeline.yml@self

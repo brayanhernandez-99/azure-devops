@@ -12,7 +12,8 @@ stages:
     displayName: 'Deploy Integration Master Tolima'
   ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'huila')) }}: 
     displayName: 'Deploy Integration Master Huila'
-  
+  ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'cauca')) }}: 
+    displayName: 'Deploy Integration Master Cauca'
   dependsOn: 
     - 'artifacts_managment'
   condition:
