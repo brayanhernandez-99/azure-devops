@@ -4,10 +4,16 @@ stages:
   dependsOn: []
 
   jobs:
-  - template: ../general/semantic-version-job-monorepo.yml
-    parameters:
-      apps: ${{ parameters.apps }}
-  
+  - ${{ if eq(parameters.language, 'nodejs') }}:
+    - template: ../general/semantic-version-job-monorepo.yml
+      parameters:
+        apps: ${{ parameters.apps }}
+
+  - ${{ if eq(parameters.language, 'nodejsFront') }}:
+    - template: ../general/semantic-version-job-monorepo-front.yml
+      parameters:
+        apps: ${{ parameters.apps }}
+
 - stage: 'build_developmet'
   displayName: 'Build Developmet'
   dependsOn: microservices_developmet
@@ -18,5 +24,10 @@ stages:
   jobs:
   - ${{ if eq(parameters.language, 'nodejs') }}:
     - template: jobs/nodejs-jobs.yml
+      parameters:
+        apps: ${{ parameters.apps }}
+
+  - ${{ if eq(parameters.language, 'nodejsFront') }}:
+    - template: jobs/nodejs-jobs-front.yml
       parameters:
         apps: ${{ parameters.apps }}
