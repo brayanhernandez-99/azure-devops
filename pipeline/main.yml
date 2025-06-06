@@ -4,6 +4,7 @@ parameters:
     default: default
     values: 
       - nodejs
+      - nodejsFront
 
   - name: build
     type: string
