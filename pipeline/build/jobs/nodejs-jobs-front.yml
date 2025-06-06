@@ -14,10 +14,9 @@ jobs:
     #         msName: ${{ ms }}
 
     steps:
-      - script: |
-          echo "Compilando microservicio: $(msName)"
+      - script: | 
           ls -l
-        displayName: "Build $(msName)"
+        displayName: "Build"
 
       # - task: NodeTool@0
       #   displayName: 'Use Nodejs $(versionSpecification)'
