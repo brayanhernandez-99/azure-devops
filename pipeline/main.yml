@@ -17,8 +17,8 @@ parameters:
     type: string
     default: aws-ecs
   
-  - name: apps
-    type: object
+  # - name: apps
+  #   type: object
 
 resources:
   repositories:
