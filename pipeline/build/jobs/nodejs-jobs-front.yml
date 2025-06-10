@@ -73,7 +73,7 @@ jobs:
           #   echo "${clean_name}=${value}" >> "$ENV_FILE"
           # done
           echo $ADMIN_NODE_ENV
-          printenv | grep '^VUE_APP_' | sort
+          printenv | grep '^ADMIN_' | sort
 
           # echo "📄 Contenido generado:"
           # cat "$ENV_FILE"
