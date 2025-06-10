@@ -60,9 +60,13 @@ jobs:
         displayName: 'Instalar dependencias del microservicio'
 
       - script: |
-          echo "🛠 Generando .env.local para Administración con variables ADMIN_"
+          echo "🛠 Generando .env.local para administration-vue2"
           printenv | grep '^ADMIN_' | sed 's/^ADMIN_//' > app-legacy/app-administration-vue2/.env.local
           cat app-legacy/app-administration-vue2/.env.local
+
+          echo "🛠 Generando .env.local para sellers-vue2"
+          printenv | grep '^SELLERS_' | sed 's/^SELLERS_//' > ./app-legacy/app-sellers-vue2/.env.local
+          cat ./app-legacy/app-sellers-vue2/.env.local
 
         displayName: 'Generación de .env'
 
