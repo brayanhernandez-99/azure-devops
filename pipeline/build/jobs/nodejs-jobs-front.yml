@@ -72,7 +72,7 @@ jobs:
             clean_name="${name#ADMIN_}"
             echo "${clean_name}=${value}" >> "$ENV_FILE"
           done
-          echo $ADMIN_NODE_ENV
+          echo $(ADMIN_NODE_ENV)
 
           echo "📄 Contenido generado:"
           cat "$ENV_FILE"
