@@ -73,6 +73,7 @@ jobs:
           #   echo "${clean_name}=${value}" >> "$ENV_FILE"
           # done
           echo $ADMIN_NODE_ENV
+          printenv
 
           # echo "📄 Contenido generado:"
           # cat "$ENV_FILE"
