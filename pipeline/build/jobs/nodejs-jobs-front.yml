@@ -60,12 +60,14 @@ jobs:
         displayName: 'Instalar dependencias del microservicio'
 
       - script: |
-          # printenv | grep '^ADMIN_' | sed 's/^ADMIN_//' >> app-legacy/app-administration-vue2/var.txt
-          printenv | sort
+          echo "🛠 Generando .env.local para Administración"
+          printenv | grep '^ADMIN_' | sed 's/^ADMIN_//' > app-legacy/app-administration-vue2/.env.local
 
-          # echo "Contenido .env.local para Administración:"
-          # cat app-legacy/app-administration-vue2/var.txt
-
+          echo "Contenido .env.local para Administración:"
+          cat app-legacy/app-administration-vue2/.env.local
+        env:
+          ADMIN_NODE_ENV: $(ADMIN_NODE_ENV)
+          ADMIN_VUE_APP_API_ONE_VERSION: $(ADMIN_VUE_APP_API_ONE_VERSION)
         displayName: 'Generación de .env'
 
       
