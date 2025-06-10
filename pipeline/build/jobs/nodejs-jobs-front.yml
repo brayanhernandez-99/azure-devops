@@ -61,7 +61,7 @@ jobs:
 
       - script: |
           # printenv | grep '^ADMIN_' | sed 's/^ADMIN_//' >> app-legacy/app-administration-vue2/var.txt
-          printenv
+          printenv | sort
 
           # echo "Contenido .env.local para Administración:"
           # cat app-legacy/app-administration-vue2/var.txt
