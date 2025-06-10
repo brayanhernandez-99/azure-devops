@@ -105,6 +105,8 @@ jobs:
           printenv | grep '^VITE_' > apps/invictus/.env.$CURRENT_BRANCH_PR
           cat apps/invictus/.env.$CURRENT_BRANCH_PR
 
+          cp -R apps/invictus/.env.$CURRENT_BRANCH_PR apps/invictus/.env
+          cat apps/invictus/.env
         displayName: 'Generación de .env invictus'
 
 
