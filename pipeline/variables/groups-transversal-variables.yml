@@ -4,6 +4,8 @@ variables:
 
 - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
   - group: trasversal-aws-developer
+  - group: transversal-app-administration-vue2-develop
+  - group: transversal-app-sellers-vue2-develop
 - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
   - group: trasversal-aws-qa
 - ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'antioquia')) }}: 
