@@ -87,18 +87,18 @@ jobs:
           if [[ "$CURRENT_BRANCH" == refs/heads/staging ]]; then
             CURRENT_BRANCH_PR=qa
           fi
-          if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
-            CURRENT_BRANCH_PR=refs/heads/feature
-          fi
-          if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
-            CURRENT_BRANCH_PR=refs/heads/feature
-          fi
-          if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
-            CURRENT_BRANCH_PR=refs/heads/feature
-          fi
-          if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
-            CURRENT_BRANCH_PR=refs/heads/feature
-          fi
+          # if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
+          #   CURRENT_BRANCH_PR=refs/heads/feature
+          # fi
+          # if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
+          #   CURRENT_BRANCH_PR=refs/heads/feature
+          # fi
+          # if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
+          #   CURRENT_BRANCH_PR=refs/heads/feature
+          # fi
+          # if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
+          #   CURRENT_BRANCH_PR=refs/heads/feature
+          # fi
 
           echo "🛠 Generando .env.local para invictus"
           echo $CURRENT_BRANCH_PR
