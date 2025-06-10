@@ -2,6 +2,10 @@ variables:
 - group: trasversal-aws-deployment
 - group: trasversal-azure-devops
 
+- ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/feature') }}:
+  - group: trasversal-aws-developer
+  - group: transversal-app-administration-vue2-develop
+  - group: transversal-app-sellers-vue2-develop
 - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
   - group: trasversal-aws-developer
   - group: transversal-app-administration-vue2-develop
