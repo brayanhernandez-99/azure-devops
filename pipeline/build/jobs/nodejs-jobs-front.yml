@@ -71,10 +71,45 @@ jobs:
           cat app-legacy/app-sellers-vue2/.env.local
 
           ls -la app-legacy/app-administration-vue2
-          ls -la app-legacy/app-sellers-vue2
+          ls -la app-legacy/app-sellers-vue
+
+        displayName: 'Generación de .env admin y seller'
 
 
-        displayName: 'Generación de .env'
+      - script: |
+          CURRENT_BRANCH=$(echo $(Build.SourceBranch))
+          if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
+            CURRENT_BRANCH_PR=dev
+          fi
+          if [[ "$CURRENT_BRANCH" == refs/heads/develop ]]; then
+            CURRENT_BRANCH_PR=dev
+          fi
+          if [[ "$CURRENT_BRANCH" == refs/heads/staging ]]; then
+            CURRENT_BRANCH_PR=qa
+          fi
+          if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
+            CURRENT_BRANCH_PR=refs/heads/feature
+          fi
+          if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
+            CURRENT_BRANCH_PR=refs/heads/feature
+          fi
+          if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
+            CURRENT_BRANCH_PR=refs/heads/feature
+          fi
+          if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
+            CURRENT_BRANCH_PR=refs/heads/feature
+          fi
+
+          echo "🛠 Generando .env.local para invictus"
+          printenv | grep '^VITE_' > apps/invictus/.env.$CURRENT_BRANCH_PR
+          cat apps/invictus/.env.$CURRENT_BRANCH_PR
+          
+        displayName: 'Generación de .env invictus'
+
+
+          
+
+      
 
       
       # - task: JavaToolInstaller@0
