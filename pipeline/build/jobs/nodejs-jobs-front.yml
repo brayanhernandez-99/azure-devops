@@ -61,25 +61,9 @@ jobs:
 
       - script: |
           echo "🛠 Generando .env.local para Administración con variables ADMIN_"
+          printenv | grep '^ADMIN_' | sed 's/^ADMIN_//' > app-legacy/app-administration-vue2/.env.local
+          cat app-legacy/app-administration-vue2/.env.local
 
-          # ENV_FILE="./app-legacy/app-administration-vue2/.env.local"
-          # mkdir -p "$(dirname "$ENV_FILE")"
-          # > "$ENV_FILE"
-
-          # # Recorre todas las variables del entorno que empiezan con ADMIN_
-          # env | grep '^ADMIN_' | while IFS='=' read -r name value; do
-          #   # Quita el prefijo ADMIN_ del nombre de la variable
-          #   clean_name="${name#ADMIN_}"
-          #   echo "${clean_name}=${value}" >> "$ENV_FILE"
-          # done
-          echo $ADMIN_NODE_ENV
-          printenv | grep '^ADMIN_' | sort
-
-          # echo "📄 Contenido generado:"
-          # cat "$ENV_FILE"
-        # env:
-        #   ADMIN_NODE_ENV: $(ADMIN_NODE_ENV)
-        #   ADMIN_VUE_APP_API_ONE_VERSION: $(ADMIN_VUE_APP_API_ONE_VERSION)
         displayName: 'Generación de .env'
 
       
