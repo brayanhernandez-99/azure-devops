@@ -62,10 +62,10 @@ jobs:
       - script: |
           cd app-legacy
           ls -l
-          # printenv | grep '^ADMIN_' | sed 's/^ADMIN_//' > ./app-legacy/app-administration-vue2/.env.local
+          # printenv | grep '^ADMIN_' | sed 's/^ADMIN_//' > app-legacy/app-administration-vue2/.env.local
 
           # echo "Contenido .env.local para Administración:"
-          # cat ./app-legacy/app-administration-vue2/.env.local
+          # cat app-legacy/app-administration-vue2/.env.local
 
         displayName: 'Generación de .env'
 
