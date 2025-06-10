@@ -101,6 +101,7 @@ jobs:
           fi
 
           echo "🛠 Generando .env.local para invictus"
+          echo $CURRENT_BRANCH_PR
           printenv | grep '^VITE_' > apps/invictus/.env.$CURRENT_BRANCH_PR
           cat apps/invictus/.env.$CURRENT_BRANCH_PR
 
