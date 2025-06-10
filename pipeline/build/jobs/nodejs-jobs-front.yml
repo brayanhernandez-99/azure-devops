@@ -65,10 +65,14 @@ jobs:
           cat app-legacy/app-administration-vue2/.env.local
 
           echo " "
-          
+
           echo "🛠 Generando .env.local para sellers-vue2"
-          printenv | grep '^SELLERS_' | sed 's/^SELLERS_//' > ./app-legacy/app-sellers-vue2/.env.local
-          cat ./app-legacy/app-sellers-vue2/.env.local
+          printenv | grep '^SELLERS_' | sed 's/^SELLERS_//' > app-legacy/app-sellers-vue2/.env.local
+          cat app-legacy/app-sellers-vue2/.env.local
+
+          ls -l app-legacy/app-administration-vue2
+          ls -l app-legacy/app-sellers-vue2
+
 
         displayName: 'Generación de .env'
 
