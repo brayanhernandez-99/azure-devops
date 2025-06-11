@@ -160,6 +160,7 @@ jobs:
       - script: |
           cd apps/awards
           npm run coverage
+          ls -l apps/awards/coverage
         displayName: 'Coverage MS astro'
         continueOnError: true
 
