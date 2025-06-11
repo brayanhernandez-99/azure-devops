@@ -125,6 +125,7 @@ jobs:
         displayName: 'Instalar dependencias del microservicio'
 
       - script: |
+          ls -la
           ls -la apps/awards/dist
         displayName: 'Instalar dependencias del microservicio'
 
