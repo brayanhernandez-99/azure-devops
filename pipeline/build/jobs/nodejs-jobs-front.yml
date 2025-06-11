@@ -125,9 +125,10 @@ jobs:
         displayName: 'Instalar dependencias del microservicio'
 
       - script: |
+          pnpm build --filter=...$i
           ls -la
           ls -la apps/awards/dist
-        displayName: 'Instalar dependencias del microservicio'
+        displayName: 'compilar dependencias del microservicio'
 
 
           
