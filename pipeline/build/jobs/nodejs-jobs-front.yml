@@ -110,8 +110,12 @@ jobs:
         displayName: 'Generación de .env invictus'
 
       - script: |
+          echo -e "VITE_APP_VERSION=$npm_package_version\nVITE_BASE_URL=" > apps/awards/.env
+        displayName: 'cp env'
+
+      - script: |
           echo "Estás en la carpeta: $(System.DefaultWorkingDirectory)/apps/awards"
-          cd $(System.DefaultWorkingDirectory)/apps/awards
+          cd apps/awards
           # npm install --ignore-scripts
           pnpm i --ignore-scripts
           echo "Dependencias instaladas:"
