@@ -118,7 +118,8 @@ jobs:
           echo "Estás en la carpeta: $(System.DefaultWorkingDirectory)/apps/awards"
           cd apps/awards
           # npm install --ignore-scripts
-          pnpm i --ignore-scripts
+          # pnpm i --ignore-scripts
+          pnpm i 
           echo "Dependencias instaladas:"
           npm ls --depth=0 || true
         displayName: 'Instalar dependencias del microservicio'
