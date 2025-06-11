@@ -125,6 +125,7 @@ jobs:
         displayName: 'Instalar dependencias del microservicio'
 
       - script: |
+          pnpm add -D dotenv-cli
           pnpm build --filter=...awards
           ls -la
           ls -la apps/awards/dist
