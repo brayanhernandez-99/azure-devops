@@ -122,11 +122,6 @@ jobs:
           ls -la apps/awards/dist
         displayName: 'compilar dependencias del microservicio'
 
-
-          
-
-      
-
       
       - task: JavaToolInstaller@0
         inputs:
@@ -139,9 +134,9 @@ jobs:
           SonarQube: 'SonarQubeConection'
           scannerMode: 'CLI'
           configMode: 'manual'
-          cliProjectKey: 'pruebas-microfronted-astro'
-          cliProjectName: 'pruebas-microfronted-astro'
-          cliSources: '$(System.DefaultWorkingDirectory)/apps/astro'
+          cliProjectKey: 'pruebas-microfronted-awards'
+          cliProjectName: 'pruebas-microfronted-awards'
+          cliSources: '$(System.DefaultWorkingDirectory)/apps/awards'
           extraProperties: |
             sonar.javascript.lcov.reportPaths=$(System.DefaultWorkingDirectory)/apps/astro/coverage/lcov.info
             sonar.exclusions=**/*.java,**/test/**,**/android/**,**/ios/**,**/coverage/**,**/.nyc_output/**,**/reports/**,**/node_modules/**,**/migrations/**,**/config/**
@@ -153,14 +148,15 @@ jobs:
         displayName: 'set-variable'
 
       - script: |
-          cd apps/astro
+          ls -l
+          cd apps/awards
           npm run test 
           npm run coverage
-        displayName: 'Test MS astro'
+        displayName: 'Test MS awards'
         continueOnError: true
 
       - script: |
-          cd apps/astro
+          cd apps/awards
           npm run coverage
         displayName: 'Coverage MS astro'
         continueOnError: true
