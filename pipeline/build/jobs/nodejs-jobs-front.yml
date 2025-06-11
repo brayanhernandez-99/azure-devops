@@ -111,6 +111,7 @@ jobs:
 
       - script: |
           echo -e "VITE_APP_VERSION=$npm_package_version\nVITE_BASE_URL=" > apps/awards/.env
+          cat apps/awards/.env
         displayName: 'cp env'
 
       - script: |
