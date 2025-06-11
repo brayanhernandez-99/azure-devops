@@ -153,14 +153,14 @@ jobs:
         displayName: 'set-variable'
 
       - script: |
-          cd $(System.DefaultWorkingDirectory)/apps/astro
+          cd apps/astro
           npm run test 
           npm run coverage
         displayName: 'Test MS astro'
         continueOnError: true
 
       - script: |
-          cd $(System.DefaultWorkingDirectory)/apps/astro
+          cd apps/astro
           npm run coverage
         displayName: 'Coverage MS astro'
         continueOnError: true
