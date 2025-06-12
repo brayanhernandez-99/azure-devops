@@ -17,8 +17,8 @@ parameters:
     type: string
     default: aws-ecs
   
-  # - name: apps
-  #   type: object
+  - name: apps
+    type: object
 
 resources:
   repositories:
@@ -34,7 +34,7 @@ stages:
       parameters:
         language: ${{ parameters.language }}
         typerelease: ${{ parameters.typerelease }}
-        # apps: ${{ parameters.apps }}
+        apps: ${{ parameters.apps }}
 
   - ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), in(variables['Build.SourceBranch'], 'refs/heads/staging','refs/heads/master' )) }}:
     - template: build/semantic-version-integration.yml
