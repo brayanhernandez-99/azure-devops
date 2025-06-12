@@ -151,6 +151,7 @@ jobs:
 
       - script: |
           ls -l
+          pwd
           cd apps/awards
           npm run test 
           npm run coverage
@@ -159,7 +160,10 @@ jobs:
 
       - script: |
           cd apps/awards
-          npm run coverage
+          pwd
+          # npm run coverage
+          pnpm coverage
+
           tree
           ls -l apps/awards/coverage
         displayName: 'Coverage MS astro'
