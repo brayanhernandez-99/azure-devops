@@ -52,13 +52,13 @@ jobs:
 
       - script: |
           echo "🛠 Generando .env.local para administration-vue2"
-          printenv | grep '^ADMIN_' | sed 's/^ADMIN_//' > app-legacy/app-administration-vue2/.env.local
-          cat app-legacy/app-administration-vue2/.env.local
+          printenv | grep '^ADMIN_' | sed 's/^ADMIN_//' > $(System.DefaultWorkingDirectory)/app-legacy/app-administration-vue2/.env.local
+          cat $(System.DefaultWorkingDirectory)/app-legacy/app-administration-vue2/.env.local
 
           echo " "
 
           echo "🛠 Generando .env.local para sellers-vue2"
-          printenv | grep '^SELLERS_' | sed 's/^SELLERS_//' > app-legacy/app-sellers-vue2/.env.local
+          printenv | grep '^SELLERS_' | sed 's/^SELLERS_//' > $(System.DefaultWorkingDirectory)/app-legacy/app-sellers-vue2/.env.local
           cat app-legacy/app-sellers-vue2/.env.local
 
           ls -la app-legacy/app-administration-vue2
@@ -93,16 +93,16 @@ jobs:
 
           echo "🛠 Generando .env.local para invictus"
           echo $CURRENT_BRANCH_PR
-          printenv | grep '^VITE_' > apps/invictus/.env.$CURRENT_BRANCH_PR
+          printenv | grep '^VITE_' > $(System.DefaultWorkingDirectory)/apps/invictus/.env.$CURRENT_BRANCH_PR
           # cat apps/invictus/.env.$CURRENT_BRANCH_PR
 
-          cp -R apps/invictus/.env.$CURRENT_BRANCH_PR apps/invictus/.env
-          cat apps/invictus/.env
+          cp -R apps/invictus/.env.$CURRENT_BRANCH_PR $(System.DefaultWorkingDirectory)/apps/invictus/.env
+          cat $(System.DefaultWorkingDirectory)/apps/invictus/.env
         displayName: 'Generación de .env invictus'
 
       - script: |
-          echo -e "VITE_APP_VERSION=\$npm_package_version\nVITE_BASE_URL=" > apps/awards/.env
-          cat apps/awards/.env
+          echo -e "VITE_APP_VERSION=\$npm_package_version\nVITE_BASE_URL=" > $(System.DefaultWorkingDirectory)/apps/awards/.env
+          cat $(System.DefaultWorkingDirectory)/apps/awards/.env
         displayName: 'cp env'
 
       - script: |
@@ -121,7 +121,7 @@ jobs:
           pnpm add -D dotenv-cli
           pnpm build --filter=...awards
           ls -la
-          ls -la apps/awards/dist
+          ls -la $(System.DefaultWorkingDirectory)/apps/awards/dist
         displayName: 'compilar dependencias del microservicio'
 
       
