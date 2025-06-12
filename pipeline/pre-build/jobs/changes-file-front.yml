@@ -26,9 +26,9 @@ jobs:
         packages_changed=$(git diff --name-only HEAD~1 HEAD | grep "^packages/")
 
         if [[ -n "$packages_changed" ]]; then
-            apps=$(find apps apps-legacy -mindepth 1 -maxdepth 1 -type d | cut -d '/' -f2 | sort -u)
+            apps=$(find apps apps-legacy -mindepth 1 -maxdepth 1 -type d | sed -E 's|^apps[-]?legacy/||; s|^apps/||' | sort -u)
         else
-            apps=$(git diff --name-only HEAD~1 HEAD | grep -E "^apps/|^apps-legacy/" | cut -d '/' -f2 | sort -u)
+            apps=$(git diff --name-only HEAD~1 HEAD | grep -E "^apps/|^apps-legacy/" | cut -d '/' -f1,2 | sed -E 's|^apps[-]?legacy/||; s|^apps/||' | sort -u)
         fi
 
         echo $apps
