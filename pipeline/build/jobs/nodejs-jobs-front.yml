@@ -26,10 +26,6 @@ jobs:
           fi
         displayName: "Select file"
 
-      - script: | 
-          echo $(file)
-        displayName: "Select file"
-
       - task: NodeTool@0
         displayName: 'Use Nodejs $(versionSpecification)'
         inputs:
