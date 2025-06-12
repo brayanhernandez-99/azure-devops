@@ -30,173 +30,159 @@ jobs:
           echo $(file)
         displayName: "Select file"
 
-      # - task: NodeTool@0
-      #   displayName: 'Use Nodejs $(versionSpecification)'
-      #   inputs:
-      #     versionSource: 'spec'
-      #     versionSpec: '$(versionSpecification)'
+      - task: NodeTool@0
+        displayName: 'Use Nodejs $(versionSpecification)'
+        inputs:
+          versionSource: 'spec'
+          versionSpec: '$(versionSpecification)'
         
-      # - script: |
-      #     npm install -g pnpm
-      #   displayName: 'Instalar pnpm'
+      - script: |
+          npm install -g pnpm
+        displayName: 'Instalar pnpm'
 
-      # - task: Bash@3
-      #   name: AuthCodeArtifact
-      #   inputs:
-      #     targetType: 'inline'
-      #     script: |
-      #       export CODEARTIFACT_AUTH_TOKEN=$(aws codeartifact get-authorization-token \
-      #         --domain matrixtech-npm-repository \
-      #         --domain-owner $ACCOUNT_ID_DEPLOY \
-      #         --region $AWS_DEFAULT_REGION \
-      #         --query authorizationToken \
-      #         --output text )
-      #       npm config set //matrixtech-npm-repository-$ACCOUNT_ID_DEPLOY.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com/npm/matrixtech-npm-repository/:_authToken=$CODEARTIFACT_AUTH_TOKEN
-      #       npm config set registry https://matrixtech-npm-repository-861262569826.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com/npm/matrixtech-npm-repository/
-      #       aws sts get-caller-identity
+      - task: Bash@3
+        name: AuthCodeArtifact
+        inputs:
+          targetType: 'inline'
+          script: |
+            export CODEARTIFACT_AUTH_TOKEN=$(aws codeartifact get-authorization-token \
+              --domain matrixtech-npm-repository \
+              --domain-owner $ACCOUNT_ID_DEPLOY \
+              --region $AWS_DEFAULT_REGION \
+              --query authorizationToken \
+              --output text )
+            npm config set //matrixtech-npm-repository-$ACCOUNT_ID_DEPLOY.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com/npm/matrixtech-npm-repository/:_authToken=$CODEARTIFACT_AUTH_TOKEN
+            npm config set registry https://matrixtech-npm-repository-861262569826.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com/npm/matrixtech-npm-repository/
+            aws sts get-caller-identity
 
-      #       if [[ "$msName" == "app-legacy/app-administration-vue2" || "$msName" == "app-legacy/app-sellers-vue2" ]]; then
-      #         echo "//matrixtech-npm-repository-$ACCOUNT_ID_DEPLOY.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com/npm/matrixtech-npm-repository/:_authToken=$CODEARTIFACT_AUTH_TOKEN" > app-legacy/$(msName)/.npmrc
-      #         echo "registry=https://matrixtech-npm-repository-$ACCOUNT_ID_DEPLOY.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com/npm/matrixtech-npm-repository/" >> app-legacy/$(msName)/.npmrc
-      #       else
-      #         echo "//matrixtech-npm-repository-$ACCOUNT_ID_DEPLOY.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com/npm/matrixtech-npm-repository/:_authToken=$CODEARTIFACT_AUTH_TOKEN" > apps/$(msName)/.npmrc
-      #         echo "registry=https://matrixtech-npm-repository-$ACCOUNT_ID_DEPLOY.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com/npm/matrixtech-npm-repository/" >> apps/$(msName)/.npmrc
-      #       fi
-      #   env:
-      #     AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
-      #     AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
-      #     AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+            echo "//matrixtech-npm-repository-$ACCOUNT_ID_DEPLOY.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com/npm/matrixtech-npm-repository/:_authToken=$CODEARTIFACT_AUTH_TOKEN" > $(file)/$(msName)/.npmrc
+            echo "registry=https://matrixtech-npm-repository-$ACCOUNT_ID_DEPLOY.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com/npm/matrixtech-npm-repository/" >> $(file)/$(msName)/.npmrc
+        env:
+          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
+          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
 
-      # - script: |
-      #     echo "🛠 Generando .env.local para administration-vue2"
-      #     printenv | grep '^ADMIN_' | sed 's/^ADMIN_//' > $(System.DefaultWorkingDirectory)/app-legacy/app-administration-vue2/.env.local
-      #     cat $(System.DefaultWorkingDirectory)/app-legacy/app-administration-vue2/.env.local
+      - script: |
+          echo "🛠 Generando .env.local para administration-vue2"
+          printenv | grep '^ADMIN_' | sed 's/^ADMIN_//' > $(System.DefaultWorkingDirectory)/app-legacy/app-administration-vue2/.env.local
+          cat $(System.DefaultWorkingDirectory)/app-legacy/app-administration-vue2/.env.local
 
-      #     echo " "
+          echo " "
 
-      #     echo "🛠 Generando .env.local para sellers-vue2"
-      #     printenv | grep '^SELLERS_' | sed 's/^SELLERS_//' > $(System.DefaultWorkingDirectory)/app-legacy/app-sellers-vue2/.env.local
-      #     cat app-legacy/app-sellers-vue2/.env.local
+          echo "🛠 Generando .env.local para sellers-vue2"
+          printenv | grep '^SELLERS_' | sed 's/^SELLERS_//' > $(System.DefaultWorkingDirectory)/app-legacy/app-sellers-vue2/.env.local
+          cat app-legacy/app-sellers-vue2/.env.local
 
-      #     ls -la app-legacy/app-administration-vue2
-      #     ls -la app-legacy/app-sellers-vue2
-      #   displayName: 'Generación de .env admin y seller'
+          ls -la app-legacy/app-administration-vue2
+          ls -la app-legacy/app-sellers-vue2
+        displayName: 'Generación de .env admin y seller'
 
 
-      # - script: |
-      #     CURRENT_BRANCH=$(echo $(Build.SourceBranch))
-      #     if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
-      #       CURRENT_BRANCH_PR=dev
-      #     fi
-      #     if [[ "$CURRENT_BRANCH" == refs/heads/develop ]]; then
-      #       CURRENT_BRANCH_PR=dev
-      #     fi
-      #     if [[ "$CURRENT_BRANCH" == refs/heads/staging ]]; then
-      #       CURRENT_BRANCH_PR=qa
-      #     fi
-      #     # if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
-      #     #   CURRENT_BRANCH_PR=refs/heads/feature
-      #     # fi
-      #     # if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
-      #     #   CURRENT_BRANCH_PR=refs/heads/feature
-      #     # fi
-      #     # if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
-      #     #   CURRENT_BRANCH_PR=refs/heads/feature
-      #     # fi
-      #     # if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
-      #     #   CURRENT_BRANCH_PR=refs/heads/feature
-      #     # fi
+      - script: |
+          CURRENT_BRANCH=$(echo $(Build.SourceBranch))
+          if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
+            CURRENT_BRANCH_PR=dev
+          fi
+          if [[ "$CURRENT_BRANCH" == refs/heads/develop ]]; then
+            CURRENT_BRANCH_PR=dev
+          fi
+          if [[ "$CURRENT_BRANCH" == refs/heads/staging ]]; then
+            CURRENT_BRANCH_PR=qa
+          fi
+          # if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
+          #   CURRENT_BRANCH_PR=refs/heads/feature
+          # fi
+          # if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
+          #   CURRENT_BRANCH_PR=refs/heads/feature
+          # fi
+          # if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
+          #   CURRENT_BRANCH_PR=refs/heads/feature
+          # fi
+          # if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
+          #   CURRENT_BRANCH_PR=refs/heads/feature
+          # fi
 
-      #     echo "🛠 Generando .env.local para invictus"
-      #     echo $CURRENT_BRANCH_PR
-      #     printenv | grep '^VITE_' > $(System.DefaultWorkingDirectory)/apps/invictus/.env.$CURRENT_BRANCH_PR
-      #     # cat apps/invictus/.env.$CURRENT_BRANCH_PR
+          echo "🛠 Generando .env.local para invictus"
+          echo $CURRENT_BRANCH_PR
+          printenv | grep '^VITE_' > $(System.DefaultWorkingDirectory)/apps/invictus/.env.$CURRENT_BRANCH_PR
+          # cat apps/invictus/.env.$CURRENT_BRANCH_PR
 
-      #     cp -R apps/invictus/.env.$CURRENT_BRANCH_PR $(System.DefaultWorkingDirectory)/apps/invictus/.env
-      #     cat $(System.DefaultWorkingDirectory)/apps/invictus/.env
-      #   displayName: 'Generación de .env invictus'
+          cp -R apps/invictus/.env.$CURRENT_BRANCH_PR $(System.DefaultWorkingDirectory)/apps/invictus/.env
+          cat $(System.DefaultWorkingDirectory)/apps/invictus/.env
+        displayName: 'Generación de .env invictus'
 
-      # - script: |
-      #     if [[ "$msName" == "app-legacy/app-administration-vue2" || "$msName" == "app-legacy/app-sellers-vue2" ]]; then
-      #       echo -e "VITE_APP_VERSION=\$npm_package_version\nVITE_BASE_URL=" > $(System.DefaultWorkingDirectory)/app-legacy/$(msName)/.env
-      #       cat $(System.DefaultWorkingDirectory)/app-legacy/$(msName)/.env
-      #     else
-      #       echo -e "VITE_APP_VERSION=\$npm_package_version\nVITE_BASE_URL=" > $(System.DefaultWorkingDirectory)/apps/$(msName)/.env
-      #       cat $(System.DefaultWorkingDirectory)/apps/$(msName)/.env
-      #     fi
-      #   displayName: 'cp env'
+      - script: |
+            echo -e "VITE_APP_VERSION=\$npm_package_version\nVITE_BASE_URL=" > $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.env
+            cat $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.env
+        displayName: 'cp env'
 
-      # - script: |
-      #     if [[ "$msName" == "app-legacy/app-administration-vue2" || "$msName" == "app-legacy/app-sellers-vue2" ]]; then
-      #       cd $(System.DefaultWorkingDirectory)/app-legacy/$(msName)
-      #     else
-      #       cd $(System.DefaultWorkingDirectory)/apps/$(msName)
-      #     fi
-      #     # npm install --ignore-scripts
-      #     # pnpm i --ignore-scripts
-      #     pnpm i 
-      #     echo "Dependencias instaladas:"
-      #     npm ls --depth=0 || true
-      #   displayName: 'Instalar dependencias del microservicio'
+      - script: |
+          cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
+          # npm install --ignore-scripts
+          # pnpm i --ignore-scripts
+          pnpm i 
+          echo "Dependencias instaladas:"
+          npm ls --depth=0 || true
+        displayName: 'Instalar dependencias del microservicio'
 
-      # - script: |
-      #     pnpm add -D dotenv-cli
-      #     pnpm build --filter=...$(msName)
-      #     ls -la $(System.DefaultWorkingDirectory)/apps/$(msName)/dist
-      #   displayName: 'compilar dependencias del microservicio'
+      - script: |
+          pnpm add -D dotenv-cli
+          pnpm build --filter=...$(msName)
+          ls -la $(System.DefaultWorkingDirectory)/$(file)/$(msName)/dist
+        displayName: 'compilar dependencias del microservicio'
       
-      # - task: JavaToolInstaller@0
-      #   inputs:
-      #     versionSpec: '17'
-      #     jdkArchitectureOption: 'x64'
-      #     jdkSourceOption: 'PreInstalled'
+      - task: JavaToolInstaller@0
+        inputs:
+          versionSpec: '17'
+          jdkArchitectureOption: 'x64'
+          jdkSourceOption: 'PreInstalled'
 
-      # - task: SonarQubePrepare@7
-      #   inputs:
-      #     SonarQube: 'SonarQubeConection'
-      #     scannerMode: 'CLI'
-      #     configMode: 'manual'
-      #     cliProjectKey: 'pruebas-microfronted-awards'
-      #     cliProjectName: 'pruebas-microfronted-awards'
-      #     cliSources: '$(System.DefaultWorkingDirectory)/apps/awards'
-      #     extraProperties: |
-      #       sonar.javascript.lcov.reportPaths=$(System.DefaultWorkingDirectory)/apps/awards/coverage/lcov.info
-      #       sonar.exclusions=/tests/**,/coverage/**,/.nyc_output/**,/reports/**,sured-plugin/**,/reports_bck/**,/node_modules/**,/dist/**
+      - task: SonarQubePrepare@7
+        inputs:
+          SonarQube: 'SonarQubeConection'
+          scannerMode: 'CLI'
+          configMode: 'manual'
+          cliProjectKey: 'pruebas-microfronted-$(msName)'
+          cliProjectName: 'pruebas-microfronted-$(msName)'
+          cliSources: '$(System.DefaultWorkingDirectory)/$(file)/$(msName)'
+          extraProperties: |
+            sonar.javascript.lcov.reportPaths=$(System.DefaultWorkingDirectory)/$(file)/$(msName)/coverage/lcov.info
+            sonar.exclusions=/tests/**,/coverage/**,/.nyc_output/**,/reports/**,sured-plugin/**,/reports_bck/**,/node_modules/**,/dist/**
 
-      # - script: |
-      #     variable=$(echo $SONARQUBE_SCANNER_PARAMS | sed -E 's#"sonar\.branch\.name":"[^"]+",##g')
-      #     echo $variable
-      #     echo "##vso[task.setvariable variable=SONARQUBE_SCANNER_PARAMS]$variable"
-      #   displayName: 'set-variable'
+      - script: |
+          variable=$(echo $SONARQUBE_SCANNER_PARAMS | sed -E 's#"sonar\.branch\.name":"[^"]+",##g')
+          echo $variable
+          echo "##vso[task.setvariable variable=SONARQUBE_SCANNER_PARAMS]$variable"
+        displayName: 'set-variable'
 
-      # - script: |
-      #     ls -l
-      #     pwd
-      #     cd $(System.DefaultWorkingDirectory)/apps/$(msName)
-      #     npm run test
-      #   displayName: 'Test MS awards'
-      #   continueOnError: true
+      - script: |
+          ls -l
+          pwd
+          cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
+          npm run test
+        displayName: 'Test MS $(msName)'
+        continueOnError: true
 
-      # - script: |
-      #     cd $(System.DefaultWorkingDirectory)/apps/$(msName)
-      #     pwd
-      #     # npm run coverage
-      #     pnpm coverage
+      - script: |
+          cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
+          pwd
+          # npm run coverage
+          pnpm coverage
 
-      #     tree
-      #     ls -l $(System.DefaultWorkingDirectory)/apps/$(msName)/coverage
-      #   displayName: 'Coverage MS astro'
-      #   continueOnError: true
+          tree
+          ls -l $(System.DefaultWorkingDirectory)/$(file)/$(msName)/coverage
+        displayName: 'Coverage MS $(msName)'
+        continueOnError: true
 
-      # - task: SonarQubeAnalyze@7
-      #   displayName: 'Sonar Analysis'
+      - task: SonarQubeAnalyze@7
+        displayName: 'Sonar Analysis'
 
-      # - task: SonarQubePublish@7
-      #   displayName: 'Publish Result Static Code Analysis'
-      #   inputs:
-      #     pollingTimeoutSec: 400
+      - task: SonarQubePublish@7
+        displayName: 'Publish Result Static Code Analysis'
+        inputs:
+          pollingTimeoutSec: 400
       
-      # - task: sonar-buildbreaker@8
-      #   displayName: 'Quality Gate'
-      #   inputs:
-      #     SonarQube: 'SonarQubeConection'
+      - task: sonar-buildbreaker@8
+        displayName: 'Quality Gate'
+        inputs:
+          SonarQube: 'SonarQubeConection'
