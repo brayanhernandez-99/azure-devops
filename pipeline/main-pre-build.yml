@@ -1,7 +1,7 @@
 parameters:
   - name: typepeline
     type: string
-    
+
   - name: typepre
     type: string
 
@@ -16,4 +16,7 @@ resources:
 stages:
   - ${{ if eq(parameters.typepeline, 'prepipeline') }}:
     - template: pre-build/pre-build-developmet.yml
+      parameters:
+        typepre: ${{ parameters.typepre }}
+
 
