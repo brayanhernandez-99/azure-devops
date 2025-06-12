@@ -1,6 +1,9 @@
 parameters:
   - name: typepeline
     type: string
+    
+  - name: typepre
+    type: string
 
 resources:
   repositories:
