@@ -7,4 +7,8 @@ stages:
   - template: ../variables/groups-transversal-variables.yml
 
   jobs:
-  - template: jobs/changes-file.yml
+  - ${{ if eq(parameters.language, 'nodejs') }}:
+    - template: jobs/changes-file.yml
+  
+  - ${{ if eq(parameters.language, 'nodejsFront') }}:
+    - template: jobs/changes-file-front.yml

@@ -1,0 +1,75 @@
+jobs:
+- job: 'change_file'
+  displayName: 'Change File'
+  pool:
+    name: 'Azure Pipelines'
+    VmImage: ubuntu-22.04
+  steps:
+    - checkout: self
+      fetchDepth: 0
+      persistCredentials: true
+
+    - script: |
+        echo "Verificando commit automático..."
+        echo "Commit: $(Build.SourceVersionMessage)"
+        if echo "$(Build.SourceVersionMessage)" | grep -iqE '^chore\(release\):|auto-generated pipeline config'; then
+          echo "❌ Pipeline ejecutado por commit automático, cancelando ejecución."
+          echo "##vso[task.complete result=SucceededWithIssues;]Commit automático, no se ejecuta"
+          exit 0
+        else
+          echo "✅ Commit válido para rama de desarrollo: $(Build.SourceBranchName)"
+        fi
+      displayName: Validar automatico o normal
+  
+    - script: |
+        apps=$(git diff --name-only HEAD~1 HEAD | grep -E "^apps/|^apps-legacy/" | cut -d '/' -f1,2 | cut -d '/' -f2 | sort -u)
+        echo $apps
+
+        if [ -z "$apps" ]; then
+          echo "❌ No se detectaron cambios en apps. Cancelando ejecución del pipeline."
+          exit 1
+        fi
+        
+        cd $(Build.SourcesDirectory)/pipeline
+
+        apps_yaml="    apps:\n"
+        for app in $apps; do
+          apps_yaml+="      - $app\n"
+        done
+
+        # Reemplazar el bloque `apps:` en main-pipeline.yml
+        awk -v newapps="$apps_yaml" '
+          BEGIN {inside=0}
+          /^    apps:/ {inside=1; print newapps; next}
+          inside && /^[^ ]/ {inside=0}
+          !inside
+        ' main-pipeline.yml > main-pipeline-updated.yml
+
+        mv main-pipeline-updated.yml main-pipeline.yml
+
+        cat main-pipeline.yml
+        # raw_branch=$(Build.SourceBranch)
+        # clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
+
+        # git checkout $clean_branch
+        # git config user.name "pipeline"
+        # git config user.email "pipelineUX@ux.technology"
+        # git add main-pipeline.yml
+        # git commit -m "Auto-generated pipeline config ${BUILD_BUILDID}"
+        # git push origin $clean_branch
+
+      name: DetectChangedMS
+    
+    # - script: az devops configure --defaults organization='$(System.TeamFoundationCollectionUri)' project='$(System.TeamProject)' --use-git-aliases true
+    #   displayName: 'Set default Azure DevOps organization and project'
+
+    # - script: |
+    #       echo ${AZURE_DEVOPS_CLI_PAT} | az devops login --organization https://dev.azure.com/ux-technology
+    #       echo $(Build.SourceBranch)
+    #       az pipelines run --name "$(Build.Repository.Name)" \
+    #         --branch "$(Build.SourceBranch)" \
+    #         --project "$(System.TeamProject)" \
+    #         --org "https://dev.azure.com/ux-technology"
+    #   env:
+    #     AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
+    #   displayName: 'Trigger pipeline'
