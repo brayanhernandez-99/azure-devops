@@ -122,6 +122,7 @@ jobs:
         displayName: 'Instalar dependencias del microservicio'
 
       - script: |
+          msName=$(msName)
           msName=${msName%-vue2}
           echo $msName
           # pnpm add -D dotenv-cli
