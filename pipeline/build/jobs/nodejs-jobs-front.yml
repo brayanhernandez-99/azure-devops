@@ -15,7 +15,7 @@ jobs:
 
     steps:
       - script: | 
-          if [[ "$(msName)" == "app-administration" || "$(msName)" == "app-sellers" ]]; then
+          if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
             fileselect=app-legacy
             echo "ruta de archivo del mf: $fileselect"
             echo "##vso[task.setvariable variable=file]$fileselect"
