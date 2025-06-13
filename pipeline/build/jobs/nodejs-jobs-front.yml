@@ -122,9 +122,11 @@ jobs:
         displayName: 'Instalar dependencias del microservicio'
 
       - script: |
-          pnpm add -D dotenv-cli
-          pnpm build --filter=...$(msName)
-          ls -la $(System.DefaultWorkingDirectory)/$(file)/$(msName)/dist
+          msName=${msName%-vue2}
+          echo $msName
+          # pnpm add -D dotenv-cli
+          # pnpm build --filter=...$(msName)
+          # ls -la $(System.DefaultWorkingDirectory)/$(file)/$(msName)/dist
         displayName: 'compilar dependencias del microservicio'
       
       - task: JavaToolInstaller@0
