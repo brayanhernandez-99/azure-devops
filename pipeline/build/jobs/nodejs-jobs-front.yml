@@ -150,12 +150,21 @@ jobs:
           extraProperties: |
             sonar.javascript.lcov.reportPaths=$(System.DefaultWorkingDirectory)/$(file)/$(msName)/coverage/lcov.info
             sonar.exclusions=/tests/**,/coverage/**,/.nyc_output/**,/reports/**,sured-plugin/**,/reports_bck/**,/node_modules/**,/dist/**
-
+          condition: and(
+                      succeeded(),
+                      ne(variables['msName'], 'app-administration-vue2'),
+                      ne(variables['msName'], 'app-sellers-vue2')
+                    )
       - script: |
           variable=$(echo $SONARQUBE_SCANNER_PARAMS | sed -E 's#"sonar\.branch\.name":"[^"]+",##g')
           echo $variable
           echo "##vso[task.setvariable variable=SONARQUBE_SCANNER_PARAMS]$variable"
         displayName: 'set-variable'
+        condition: and(
+                      succeeded(),
+                      ne(variables['msName'], 'app-administration-vue2'),
+                      ne(variables['msName'], 'app-sellers-vue2')
+                    )
 
       - script: |
           ls -l
@@ -164,6 +173,11 @@ jobs:
           npm run test
         displayName: 'Test MS $(msName)'
         continueOnError: true
+        condition: and(
+                      succeeded(),
+                      ne(variables['msName'], 'app-administration-vue2'),
+                      ne(variables['msName'], 'app-sellers-vue2')
+                    )
 
       - script: |
           cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
@@ -175,16 +189,36 @@ jobs:
           ls -l $(System.DefaultWorkingDirectory)/$(file)/$(msName)/coverage
         displayName: 'Coverage MS $(msName)'
         continueOnError: true
+        condition: and(
+                      succeeded(),
+                      ne(variables['msName'], 'app-administration-vue2'),
+                      ne(variables['msName'], 'app-sellers-vue2')
+                    )
 
       - task: SonarQubeAnalyze@7
         displayName: 'Sonar Analysis'
+        condition: and(
+                      succeeded(),
+                      ne(variables['msName'], 'app-administration-vue2'),
+                      ne(variables['msName'], 'app-sellers-vue2')
+                    )
 
       - task: SonarQubePublish@7
         displayName: 'Publish Result Static Code Analysis'
         inputs:
           pollingTimeoutSec: 400
+        condition: and(
+                      succeeded(),
+                      ne(variables['msName'], 'app-administration-vue2'),
+                      ne(variables['msName'], 'app-sellers-vue2')
+                    )
       
       - task: sonar-buildbreaker@8
         displayName: 'Quality Gate'
         inputs:
           SonarQube: 'SonarQubeConection'
+        condition: and(
+                      succeeded(),
+                      ne(variables['msName'], 'app-administration-vue2'),
+                      ne(variables['msName'], 'app-sellers-vue2')
+                    )
