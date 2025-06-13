@@ -247,3 +247,23 @@ jobs:
                       ne(variables['msName'], 'app-administration-vue2'),
                       ne(variables['msName'], 'app-sellers-vue2')
                     )
+
+      - script: |
+          if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
+            msName=$(msName)
+            msName=${msName%-vue2}
+            echo $msName
+          fi
+
+          if [ -d "$(System.DefaultWorkingDirectory)/$(file)/$(msName)/dist" ]; then
+            # aws s3 cp ./apps/$i/dist s3://mf-$INVICTUS_NAME-$APP_DEPLOY_ACCOUNT/$INVICTUS_VERSION/ --recursive
+            echo $msName
+          fi
+          
+        displayName: "Obtener task definition ARN"
+        condition: not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
+        env:
+          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVIC)
+          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVIC)
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+      
