@@ -162,8 +162,8 @@ jobs:
       - script: |
           cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
           pwd
-          # npm run coverage
-          pnpm coverage
+          npm run coverage
+          #pnpm coverage
 
           tree
           ls -l $(System.DefaultWorkingDirectory)/$(file)/$(msName)/coverage
