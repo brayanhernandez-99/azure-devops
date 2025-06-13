@@ -201,9 +201,7 @@ jobs:
           }
 
           if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|staging|feature/.+)$ ]]; then
-            if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|staging)$ ]]; then
-              git checkout version/$clean_branch
-            fi
+            git checkout version/feature
             VERSION_ACTUAL=$(jq -r .version package.json)
             BASE_VERSION_BRANCH=$(echo "$VERSION_ACTUAL" | sed -E "s/-${clean_branch}\.[0-9]+//")
             echo "versión base actual: $BASE_VERSION_BRANCH"
