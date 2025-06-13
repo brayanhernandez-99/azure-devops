@@ -122,12 +122,18 @@ jobs:
         displayName: 'Instalar dependencias del microservicio'
 
       - script: |
-          msName=$(msName)
-          msName=${msName%-vue2}
-          echo $msName
-          pnpm add -D dotenv-cli
-          pnpm build --filter=...$msName
-          ls -la $(System.DefaultWorkingDirectory)/$(file)/$msName/dist
+          if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
+            msName=$(msName)
+            msName=${msName%-vue2}
+            echo $msName
+            pnpm add -D dotenv-cli
+            pnpm build --filter=...$msName
+            ls -la $(System.DefaultWorkingDirectory)/$(file)/$(msName)/dist
+          else
+            pnpm add -D dotenv-cli
+            pnpm build --filter=...$(msName)
+            ls -la $(System.DefaultWorkingDirectory)/$(file)/$(msName)/dist
+          fi
         displayName: 'compilar dependencias del microservicio'
       
       - task: JavaToolInstaller@0
