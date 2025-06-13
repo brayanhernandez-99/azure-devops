@@ -260,8 +260,8 @@ jobs:
             echo $msName
           fi
           
-        displayName: "Obtener task definition ARN"
-        condition: not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
+        displayName: "Upload S3"
+        # condition: not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
         env:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVIC)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVIC)
