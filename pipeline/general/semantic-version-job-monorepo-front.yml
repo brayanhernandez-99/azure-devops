@@ -270,10 +270,10 @@ jobs:
           git config user.name "pipeline"
           git config user.email "pipelineUX@ux.technology"
 
-          git checkout $clean_branch
+          git checkout version/feature
           git add package.json
           git commit -m "chore($(msName)): bump version to $(cleanNEXT_VERSION)"
-          git push origin $clean_branch
+          git push origin version/feature
       displayName: "Actualizar versión y push $(msName)"
       # condition: 
       #   and(
