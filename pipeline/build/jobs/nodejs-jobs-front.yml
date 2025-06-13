@@ -150,7 +150,7 @@ jobs:
           extraProperties: |
             sonar.javascript.lcov.reportPaths=$(System.DefaultWorkingDirectory)/$(file)/$(msName)/coverage/lcov.info
             sonar.exclusions=/tests/**,/coverage/**,/.nyc_output/**,/reports/**,sured-plugin/**,/reports_bck/**,/node_modules/**,/dist/**
-          condition: and(
+        condition: and(
                       succeeded(),
                       ne(variables['msName'], 'app-administration-vue2'),
                       ne(variables['msName'], 'app-sellers-vue2')
