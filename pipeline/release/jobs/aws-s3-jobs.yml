@@ -1,0 +1,76 @@
+jobs:
+- deployment: WaitForApproval
+  displayName: 'Esperar aprobación'
+  pool:
+    name: Azure Pipelines
+    vmImage: 'ubuntu-22.04'
+  ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
+    environment: 'Deploy develop' 
+  ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
+    environment: 'Deploy staging' 
+  ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'antioquia')) }}:
+    environment: 'Deploy master antioquia'
+  ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'cap')) }}:
+    environment: 'Deploy master cap'
+  ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'tolima')) }}:
+    environment: 'Deploy master tolima'
+  ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'huila')) }}:
+    environment: 'Deploy master huila'
+  ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'cauca')) }}:
+    environment: 'Deploy master cauca'
+  strategy:
+    runOnce:
+      deploy:
+        steps:
+          - script: echo "Aprobación recibida. Iniciando despliegues..."
+
+- job: 'aws_ecs'
+  dependsOn: WaitForApproval
+  ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
+    displayName: 'AWS S3 Develop'
+  ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
+    displayName: 'AWS S3 Staging'
+  ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'antioquia')) }}:
+    displayName: 'AWS S3 master Antioquia'
+  ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'cap')) }}:
+    displayName: 'AWS S3 master cap'
+  ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'tolima')) }}:
+    displayName: 'AWS S3 master tolima'
+  ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'huila')) }}:
+    displayName: 'AWS S3 master huila'
+  ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'cauca')) }}:
+    displayName: 'AWS S3 master cauca'
+  pool:
+    name: Azure Pipelines
+    vmImage: 'ubuntu-22.04'
+
+  strategy:
+    matrix:
+      ${{ each ms in parameters.apps }}:
+        ${{ ms }}:
+          msName: ${{ ms }}
+
+  steps:
+
+    - script: |
+          echo "Original msName: $(msName)"
+      displayName: "deploy $(msName)"
+
+    - task: DownloadBuildArtifacts@0
+      inputs:
+        artifactName: 'versions'
+        downloadPath: '$(Pipeline.Workspace)/downloaded-versions'
+      displayName: '📥 Descargar artifact de versiones'
+        
+    - script: |
+        ls -R $(Pipeline.Workspace)/downloaded-versions/versions/$(msName)
+        VERSION_FILE="$(Pipeline.Workspace)/downloaded-versions/versions/$(msName)/version.json"
+        if [[ -f "$VERSION_FILE" ]]; then
+          VERSION=$(jq -r '.version' $VERSION_FILE)
+          echo "🚀 Versión detectada para $(msName): $VERSION"
+          echo "##vso[task.setvariable variable=msVersion]$VERSION"
+        else
+          echo "❌ No se encontró archivo de versión para $(msName)"
+          exit 1
+        fi
+      displayName: '📚 Leer versiones de microservicios'

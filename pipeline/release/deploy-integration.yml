@@ -14,10 +14,17 @@ stages:
     displayName: 'Deploy Integration Master Huila'
   ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'cauca')) }}: 
     displayName: 'Deploy Integration Master Cauca'
-  dependsOn: 
-    - 'artifacts_managment'
-  condition:
-      in(dependencies.artifacts_managment.result, 'Succeeded', 'SucceededWithIssues')
+  
+  ${{ if eq(parameters.language, 'nodejs') }}:
+    dependsOn: 
+      - 'artifacts_managment'
+    condition:
+        in(dependencies.artifacts_managment.result, 'Succeeded', 'SucceededWithIssues')
+
+  ${{ if eq(parameters.language, 'nodejsFront') }}:
+    dependsOn: 
+      - 'build_developmet'
+    condition: in(dependencies.build_developmet.result, 'Succeeded', 'SucceededWithIssues')
 
   pool:
     name: 'Azure Pipelines'
@@ -33,6 +40,15 @@ stages:
   - ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), in(variables['Build.SourceBranch'], 'refs/heads/develop', 'refs/heads/staging', 'refs/heads/master')) }}:
     - ${{ if in(parameters.typerelease, 'aws-ecs') }}:
       - template: jobs/aws-ecs-jobs.yml
+        parameters:
+          language: ${{ parameters.language }}
+          typerelease: ${{ parameters.typerelease }}
+          apps: ${{ parameters.apps }}
+          red: ${{ parameters.red }}
+
+  - ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), in(variables['Build.SourceBranch'], 'refs/heads/develop', 'refs/heads/staging', 'refs/heads/master')) }}:
+    - ${{ if in(parameters.typerelease, 'aws-s3') }}:
+      - template: jobs/aws-s3-jobs.yml
         parameters:
           language: ${{ parameters.language }}
           typerelease: ${{ parameters.typerelease }}
