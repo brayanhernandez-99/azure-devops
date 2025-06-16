@@ -253,6 +253,8 @@ jobs:
             msName=$(msName)
             msName=${msName%-vue2}
             echo $msName
+          else 
+            msName=$(msName)
           fi
 
           if [ -d "$(System.DefaultWorkingDirectory)/$(file)/$(msName)/dist" ]; then
