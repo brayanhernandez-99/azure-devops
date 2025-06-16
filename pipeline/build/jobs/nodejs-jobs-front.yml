@@ -259,7 +259,7 @@ jobs:
           fi
 
           if [ -d "$(System.DefaultWorkingDirectory)/$(file)/$(msName)/dist" ]; then
-            # aws s3 cp ./$(file)/$i/dist s3://mf-$msName-$(ACCOUNT_ID_INVIC)/$(msVersion)/ --recursive
+            # aws s3 cp ./$(file)/$i/dist s3://mf-pruebas-$msName-$(ACCOUNT_ID_INVIC)/$(msVersion)/ --recursive
             echo $msName $(ACCOUNT_ID_INVIC) $(msVersion)
           fi
           

@@ -6,8 +6,9 @@ variables:
   - group: transversal-app-administration-vue2-develop
   - group: transversal-app-sellers-vue2-develop
   - group: transversal-app-invictus-microfrontend-develop
+  - group: trasversal-aws-devops
 - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
-  - group: trasversal-aws-developer
+  # - group: trasversal-aws-developer
   - group: transversal-app-administration-vue2-develop
   - group: transversal-app-sellers-vue2-develop
   - group: transversal-app-invictus-microfrontend-develop
