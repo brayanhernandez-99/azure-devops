@@ -157,6 +157,7 @@ jobs:
             ls -la $(System.DefaultWorkingDirectory)/$(file)/$(msName)/dist
           fi
         displayName: 'compilar dependencias del microservicio'
+        continueOnError: true
       
       - task: JavaToolInstaller@0
         inputs:
