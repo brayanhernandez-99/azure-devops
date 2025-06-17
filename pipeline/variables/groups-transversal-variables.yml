@@ -12,6 +12,7 @@ variables:
   - group: transversal-app-administration-vue2-develop
   - group: transversal-app-sellers-vue2-develop
   - group: transversal-app-invictus-microfrontend-develop
+  - group: trasversal-aws-devops
 - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
   - group: trasversal-aws-qa
 - ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'antioquia')) }}: 
