@@ -96,6 +96,7 @@ jobs:
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
     
     - script: |
+        echo "version a actualizar: $(msVersion)"
         jq --arg v "/$(msVersion)" '.DistributionConfig.Origins.Items[0].OriginPath = $v' "$(CLOUDFRONT_ID).json" > "temp-$(CLOUDFRONT_ID).json"
         cat temp-$(CLOUDFRONT_ID).json
       displayName: 'Insert Version'
