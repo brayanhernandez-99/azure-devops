@@ -77,5 +77,7 @@ jobs:
 
     - script: |
         ENV_VAR_NAME=$(echo "$(msName)" | tr '[:lower:]' '[:upper:]' | tr '-' '_')
+        ENV_VAR_NAME=CLOUDFRONT_ID_$ENV_VAR_NAME
         echo $ENV_VAR_NAME
+
       displayName: 'CLOUDFRONT NAME'
