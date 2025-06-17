@@ -85,9 +85,10 @@ jobs:
 
         aws cloudfront get-distribution-config --id $CLOUDFRONT_ID_VALUE --region us-east-1 > $CLOUDFRONT_ID_VALUE.json
         # cat $CLOUDFRONT_ID_VALUE.json | jq --arg INVICTUS_VERSION "/$(msVersion)" '.DistributionConfig.Origins.Items[0].OriginPath=$(msVersion)' > temp-$CLOUDFRONT_ID_VALUE.json
-        cat $CLOUDFRONT_ID_VALUE.json
-        Etag=`$CLOUDFRONT_ID_VALUE.json | jq '.ETag' | tr -d \"`
-        cat $CLOUDFRONT_ID_VALUE.json  | jq .DistributionConfig > updated-$CLOUDFRONT_ID_VALUE.json
+        jq --arg v "/$(msVersion)" '.DistributionConfig.Origins.Items[0].OriginPath = $v' "$CLOUDFRONT_ID_VALUE.json" > "temp-$CLOUDFRONT_ID_VALUE.json"
+        cat temp-$CLOUDFRONT_ID_VALUE.json
+        # Etag=`$CLOUDFRONT_ID_VALUE.json | jq '.ETag' | tr -d \"`
+        # cat $CLOUDFRONT_ID_VALUE.json  | jq .DistributionConfig > updated-$CLOUDFRONT_ID_VALUE.json
       displayName: 'CLOUDFRONT NAME'
       env:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVIC)
