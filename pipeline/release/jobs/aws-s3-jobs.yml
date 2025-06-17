@@ -24,7 +24,7 @@ jobs:
         steps:
           - script: echo "Aprobación recibida. Iniciando despliegues..."
 
-- job: 'aws_ecs'
+- job: 'aws_s3'
   dependsOn: WaitForApproval
   ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
     displayName: 'AWS S3 Develop'
@@ -74,3 +74,10 @@ jobs:
           exit 1
         fi
       displayName: '📚 Leer versiones de microservicios'
+
+    - script: |
+
+        ENV_VAR_NAME=$(echo "$msName" | tr '[:lower:]' '[:upper:]' | tr '-' '_')
+        echo $ENV_VAR_NAME
+
+      displayName: 'CLOUDFRONT NAME'
