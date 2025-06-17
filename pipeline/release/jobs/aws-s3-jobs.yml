@@ -88,8 +88,8 @@ jobs:
         cat temp-$CLOUDFRONT_ID_VALUE.json
         ETAG=$(jq -r '.ETag' $CLOUDFRONT_ID_VALUE.json)
         echo tag: "$ETAG"
-        jq '.DistributionConfig' "temp-${CLOUDFRONT_ID}.json" > "updated-${CLOUDFRONT_ID}.json"
-        cat updated-${CLOUDFRONT_ID}.json
+        jq '.DistributionConfig' "temp-$CLOUDFRONT_ID_VALUE.json" > "updated-$CLOUDFRONT_ID_VALUE.json"
+        cat updated-$CLOUDFRONT_ID_VALUE.json
       displayName: 'CLOUDFRONT NAME'
       env:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVIC)
