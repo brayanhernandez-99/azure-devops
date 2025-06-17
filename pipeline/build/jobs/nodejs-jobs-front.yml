@@ -259,8 +259,10 @@ jobs:
           fi
 
           if [ -d "$(System.DefaultWorkingDirectory)/$(file)/$(msName)/dist" ]; then
-            # aws s3 cp ./$(file)/$i/dist s3://mf-pruebas-$msName-$(ACCOUNT_ID_INVIC)/$(msVersion)/ --recursive
-            echo $msName $(ACCOUNT_ID_INVIC) $(msVersion)
+            aws s3 cp ./$(file)/$i/dist s3://mf-pruebas-$msName-$(ACCOUNT_ID_INVIC)/$(msVersion)/ --recursive
+            # echo $msName $(ACCOUNT_ID_INVIC) $(msVersion)
+          else
+            echo "No se encontro la carpeta dist, por ende no compilo el proyecto $msName"
           fi
           
         displayName: "Upload S3"
