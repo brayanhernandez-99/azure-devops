@@ -76,6 +76,6 @@ jobs:
       displayName: '📚 Leer versiones de microservicios'
 
     - script: |
-        ENV_VAR_NAME=$(echo "$msName" | tr '[:lower:]' '[:upper:]' | tr '-' '_')
+        ENV_VAR_NAME=$(echo "$(msName)" | tr '[:lower:]' '[:upper:]' | tr '-' '_')
         echo $ENV_VAR_NAME
       displayName: 'CLOUDFRONT NAME'
