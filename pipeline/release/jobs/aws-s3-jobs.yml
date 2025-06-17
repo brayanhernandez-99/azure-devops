@@ -80,4 +80,6 @@ jobs:
         ENV_VAR_NAME=CLOUDFRONT_ID_$ENV_VAR_NAME
         echo $ENV_VAR_NAME
 
+        CLOUDFRONT_ID_VALUE="${!ENV_VAR_NAME}"
+        echo CLOUDFRONT_ID_VALUE
       displayName: 'CLOUDFRONT NAME'
