@@ -90,6 +90,8 @@ jobs:
         echo tag: "$ETAG"
         jq '.DistributionConfig' "temp-$CLOUDFRONT_ID_VALUE.json" > "updated-$CLOUDFRONT_ID_VALUE.json"
         cat updated-$CLOUDFRONT_ID_VALUE.json
+        # aws cloudfront update-distribution --id $CLOUDFRONT_ID_VALUE --region $AWS_DEFAULT_REGION --if-match "$ETAG" --distribution-config file://updated-$CLOUDFRONT_ID_VALUE.json
+
       displayName: 'CLOUDFRONT NAME'
       env:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVIC)
