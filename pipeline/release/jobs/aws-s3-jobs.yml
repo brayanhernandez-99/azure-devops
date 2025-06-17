@@ -74,7 +74,7 @@ jobs:
           exit 1
         fi
       displayName: '📚 Leer versiones de microservicios'
-
+    
     - script: |
         ENV_VAR_NAME=$(echo "$(msName)" | tr '[:lower:]' '[:upper:]' | tr '-' '_')
         ENV_VAR_NAME=CLOUDFRONT_ID_$ENV_VAR_NAME
@@ -83,16 +83,38 @@ jobs:
         CLOUDFRONT_ID_VALUE="${!ENV_VAR_NAME}"
         echo $CLOUDFRONT_ID_VALUE
 
-        aws cloudfront get-distribution-config --id $CLOUDFRONT_ID_VALUE --region us-east-1 > $CLOUDFRONT_ID_VALUE.json
-        jq --arg v "/$(msVersion)" '.DistributionConfig.Origins.Items[0].OriginPath = $v' "$CLOUDFRONT_ID_VALUE.json" > "temp-$CLOUDFRONT_ID_VALUE.json"
-        cat temp-$CLOUDFRONT_ID_VALUE.json
-        ETAG=$(jq -r '.ETag' $CLOUDFRONT_ID_VALUE.json)
+        echo "##vso[task.setvariable variable=CLOUDFRONT_ID]$CLOUDFRONT_ID_VALUE"
+      displayName: 'Name Var'
+
+    - script: |
+        aws cloudfront get-distribution-config --id $(CLOUDFRONT_ID) --region us-east-1 > $(CLOUDFRONT_ID).json
+        cat $(CLOUDFRONT_ID).json
+      displayName: 'Get Distribution'
+      env:
+          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVIC)
+          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVIC)
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+    
+    - script: |
+        jq --arg v "/$(msVersion)" '.DistributionConfig.Origins.Items[0].OriginPath = $v' "$(CLOUDFRONT_ID).json" > "temp-$(CLOUDFRONT_ID).json"
+        cat temp-$(CLOUDFRONT_ID).json
+      displayName: 'Insert Version'
+
+    - script: |
+        ETAG=$(jq -r '.ETag' $(CLOUDFRONT_ID).json)
         echo tag: "$ETAG"
-        jq '.DistributionConfig' "temp-$CLOUDFRONT_ID_VALUE.json" > "updated-$CLOUDFRONT_ID_VALUE.json"
-        cat updated-$CLOUDFRONT_ID_VALUE.json
-        aws cloudfront update-distribution --id $CLOUDFRONT_ID_VALUE --region $AWS_DEFAULT_REGION --if-match "$ETAG" --distribution-config file://updated-$CLOUDFRONT_ID_VALUE.json
-        aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_ID_VALUE --paths '/*' 
-      displayName: 'CLOUDFRONT NAME'
+        jq '.DistributionConfig' "temp-$(CLOUDFRONT_ID).json" > "updated-$(CLOUDFRONT_ID).json"
+        cat updated-$(CLOUDFRONT_ID).json
+        aws cloudfront update-distribution --id $(CLOUDFRONT_ID) --region $AWS_DEFAULT_REGION --if-match "$ETAG" --distribution-config file://updated-$(CLOUDFRONT_ID).json
+      displayName: 'Update distribute'
+      env:
+          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVIC)
+          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVIC)
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+
+    - script: |
+        aws cloudfront create-invalidation --distribution-id $(CLOUDFRONT_ID) --paths '/*' 
+      displayName: 'Create Invalidation'
       env:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVIC)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVIC)
