@@ -36,7 +36,7 @@ stages:
         typerelease: ${{ parameters.typerelease }}
         apps: ${{ parameters.apps }}
   
-  - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/staging')), eq(parameters.typerelease, 'aws-s3')) }}:
+  - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/staging'), eq(parameters.typerelease, 'aws-s3')) }}:
     - template: build/build-developmet.yml
       parameters:
         language: ${{ parameters.language }}
