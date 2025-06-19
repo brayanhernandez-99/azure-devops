@@ -1,6 +1,10 @@
 jobs:
 - job: 'commit_tag_version'
-  dependsOn: aws_ecs
+  ${{ if in(parameters.typerelease, 'aws-s3') }}:
+    dependsOn: aws_s3
+  ${{ if in(parameters.typerelease, 'aws-ecs') }}:
+    dependsOn: aws_ecs
+  
   ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
     displayName: 'Commit and Tag Version Develop'
   ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:

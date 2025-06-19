@@ -7,6 +7,12 @@ stages:
   - template: ../variables/groups-transversal-variables.yml
 
   jobs:
-  - template: ../general/semantic-version-job-monorepo.yml
-    parameters:
+  - ${{ if eq(parameters.language, 'nodejs') }}:
+    - template: ../general/semantic-version-job-monorepo.yml
+      parameters:
+        apps: ${{ parameters.apps }}
+
+  - ${{ if eq(parameters.language, 'nodejsFront') }}:
+    - template: ../general/semantic-version-job-monorepo-front.yml
+      parameters:
         apps: ${{ parameters.apps }}

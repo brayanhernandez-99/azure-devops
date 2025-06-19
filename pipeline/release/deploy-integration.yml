@@ -56,10 +56,12 @@ stages:
           red: ${{ parameters.red }}
   
   - ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'antioquia')) }}:
-    - template: ../general/commit-tag-changeload.yml
-      parameters:
-        apps: ${{ parameters.apps }}
-        red: ${{ parameters.red }}
+      - template: ../general/commit-tag-changeload.yml
+        parameters:
+          apps: ${{ parameters.apps }}
+          red: ${{ parameters.red }}
+
+  
 
   # - ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), in(variables['Build.SourceBranch'], 'refs/heads/develop', 'refs/heads/staging')) }}:
   #   - template: ../general/commit-tag-changeload.yml

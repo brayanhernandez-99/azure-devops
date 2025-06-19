@@ -9,7 +9,7 @@ stages:
       parameters:
         apps: ${{ parameters.apps }}
 
-  - ${{ if and(eq(parameters.language, 'nodejsFront'), ne(variables['Build.SourceBranch'], 'refs/heads/master'))  }}:
+  - ${{ if eq(parameters.language, 'nodejsFront') }}:
     - template: ../general/semantic-version-job-monorepo-front.yml
       parameters:
         apps: ${{ parameters.apps }}
@@ -29,7 +29,7 @@ stages:
     displayName: 'Build Development Master Huila'
   ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'cauca')) }}: 
     displayName: 'Build Development Master Cauca'
-    
+
   dependsOn: microservices_developmet
 
   variables:
