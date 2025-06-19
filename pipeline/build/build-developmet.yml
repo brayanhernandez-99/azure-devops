@@ -30,7 +30,11 @@ stages:
   ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'cauca')) }}: 
     displayName: 'Build Development Master Cauca'
 
-  dependsOn: microservices_developmet
+    dependsOn: 
+      - 'microservices_developmet'
+    condition:
+        in(dependencies.microservices_developmet.result, 'Succeeded', 'SucceededWithIssues')
+  
 
   variables:
   - template: ../variables/groups-transversal-variables.yml
