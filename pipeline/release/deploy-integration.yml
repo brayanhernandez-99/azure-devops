@@ -23,8 +23,8 @@ stages:
 
   ${{ if eq(parameters.language, 'nodejsFront') }}:
     dependsOn: 
-      - 'build_developmet'
-    condition: in(dependencies.build_developmet.result, 'Succeeded', 'SucceededWithIssues')
+      - 'build_developmet_${{ parameters.red }}'
+    condition: in(dependencies.build_developmet_${{ parameters.red }}.result, 'Succeeded', 'SucceededWithIssues')
 
   pool:
     name: 'Azure Pipelines'
