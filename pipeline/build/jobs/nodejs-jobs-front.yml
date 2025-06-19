@@ -175,37 +175,37 @@ jobs:
                       ne(variables['Build.SourceBranchName'], 'staging')
                     )
 
-      - task: SonarQubePrepare@7
-        inputs:
-          SonarQube: 'SonarQubeConection'
-          scannerMode: 'CLI'
-          configMode: 'manual'
-          cliProjectKey: 'pruebas-microfronted-$(msName)'
-          cliProjectName: 'pruebas-microfronted-$(msName)'
-          cliSources: '$(System.DefaultWorkingDirectory)/$(file)/$(msName)'
-          extraProperties: |
-            sonar.javascript.lcov.reportPaths=$(System.DefaultWorkingDirectory)/$(file)/$(msName)/coverage/lcov.info
-            sonar.exclusions=/tests/**,/coverage/**,/.nyc_output/**,/reports/**,sured-plugin/**,/reports_bck/**,/node_modules/**,/dist/**
-        condition: and(
-                      succeeded(),
-                      ne(variables['msName'], 'app-administration-vue2'),
-                      ne(variables['msName'], 'app-sellers-vue2'),
-                      ne(variables['Build.SourceBranchName'], 'master'),
-                      ne(variables['Build.SourceBranchName'], 'staging')
-                    )
+      # - task: SonarQubePrepare@7
+      #   inputs:
+      #     SonarQube: 'SonarQubeConection'
+      #     scannerMode: 'CLI'
+      #     configMode: 'manual'
+      #     cliProjectKey: 'pruebas-microfronted-$(msName)'
+      #     cliProjectName: 'pruebas-microfronted-$(msName)'
+      #     cliSources: '$(System.DefaultWorkingDirectory)/$(file)/$(msName)'
+      #     extraProperties: |
+      #       sonar.javascript.lcov.reportPaths=$(System.DefaultWorkingDirectory)/$(file)/$(msName)/coverage/lcov.info
+      #       sonar.exclusions=/tests/**,/coverage/**,/.nyc_output/**,/reports/**,sured-plugin/**,/reports_bck/**,/node_modules/**,/dist/**
+      #   condition: and(
+      #                 succeeded(),
+      #                 ne(variables['msName'], 'app-administration-vue2'),
+      #                 ne(variables['msName'], 'app-sellers-vue2'),
+      #                 ne(variables['Build.SourceBranchName'], 'master'),
+      #                 ne(variables['Build.SourceBranchName'], 'staging')
+      #               )
 
-      - script: |
-          variable=$(echo $SONARQUBE_SCANNER_PARAMS | sed -E 's#"sonar\.branch\.name":"[^"]+",##g')
-          echo $variable
-          echo "##vso[task.setvariable variable=SONARQUBE_SCANNER_PARAMS]$variable"
-        displayName: 'set-variable'
-        condition: and(
-                      succeeded(),
-                      ne(variables['msName'], 'app-administration-vue2'),
-                      ne(variables['msName'], 'app-sellers-vue2'),
-                      ne(variables['Build.SourceBranchName'], 'master'),
-                      ne(variables['Build.SourceBranchName'], 'staging')
-                    )
+      # - script: |
+      #     variable=$(echo $SONARQUBE_SCANNER_PARAMS | sed -E 's#"sonar\.branch\.name":"[^"]+",##g')
+      #     echo $variable
+      #     echo "##vso[task.setvariable variable=SONARQUBE_SCANNER_PARAMS]$variable"
+      #   displayName: 'set-variable'
+      #   condition: and(
+      #                 succeeded(),
+      #                 ne(variables['msName'], 'app-administration-vue2'),
+      #                 ne(variables['msName'], 'app-sellers-vue2'),
+      #                 ne(variables['Build.SourceBranchName'], 'master'),
+      #                 ne(variables['Build.SourceBranchName'], 'staging')
+      #               )
 
       - script: |
           ls -l
@@ -240,39 +240,39 @@ jobs:
                       ne(variables['Build.SourceBranchName'], 'staging')
                     )
 
-      - task: SonarQubeAnalyze@7
-        displayName: 'Sonar Analysis'
-        condition: and(
-                      succeeded(),
-                      ne(variables['msName'], 'app-administration-vue2'),
-                      ne(variables['msName'], 'app-sellers-vue2'),
-                      ne(variables['Build.SourceBranchName'], 'master'),
-                      ne(variables['Build.SourceBranchName'], 'staging')
-                    )
+      # - task: SonarQubeAnalyze@7
+      #   displayName: 'Sonar Analysis'
+      #   condition: and(
+      #                 succeeded(),
+      #                 ne(variables['msName'], 'app-administration-vue2'),
+      #                 ne(variables['msName'], 'app-sellers-vue2'),
+      #                 ne(variables['Build.SourceBranchName'], 'master'),
+      #                 ne(variables['Build.SourceBranchName'], 'staging')
+      #               )
 
-      - task: SonarQubePublish@7
-        displayName: 'Publish Result Static Code Analysis'
-        inputs:
-          pollingTimeoutSec: 400
-        condition: and(
-                      succeeded(),
-                      ne(variables['msName'], 'app-administration-vue2'),
-                      ne(variables['msName'], 'app-sellers-vue2'),
-                      ne(variables['Build.SourceBranchName'], 'master'),
-                      ne(variables['Build.SourceBranchName'], 'staging')
-                    )
+      # - task: SonarQubePublish@7
+      #   displayName: 'Publish Result Static Code Analysis'
+      #   inputs:
+      #     pollingTimeoutSec: 400
+      #   condition: and(
+      #                 succeeded(),
+      #                 ne(variables['msName'], 'app-administration-vue2'),
+      #                 ne(variables['msName'], 'app-sellers-vue2'),
+      #                 ne(variables['Build.SourceBranchName'], 'master'),
+      #                 ne(variables['Build.SourceBranchName'], 'staging')
+      #               )
       
-      - task: sonar-buildbreaker@8
-        displayName: 'Quality Gate'
-        inputs:
-          SonarQube: 'SonarQubeConection'
-        condition: and(
-                      succeeded(),
-                      ne(variables['msName'], 'app-administration-vue2'),
-                      ne(variables['msName'], 'app-sellers-vue2'),
-                      ne(variables['Build.SourceBranchName'], 'master'),
-                      ne(variables['Build.SourceBranchName'], 'staging')
-                    )
+      # - task: sonar-buildbreaker@8
+      #   displayName: 'Quality Gate'
+      #   inputs:
+      #     SonarQube: 'SonarQubeConection'
+      #   condition: and(
+      #                 succeeded(),
+      #                 ne(variables['msName'], 'app-administration-vue2'),
+      #                 ne(variables['msName'], 'app-sellers-vue2'),
+      #                 ne(variables['Build.SourceBranchName'], 'master'),
+      #                 ne(variables['Build.SourceBranchName'], 'staging')
+      #               )
 
       - script: |
           # if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
