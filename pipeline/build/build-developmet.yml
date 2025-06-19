@@ -15,7 +15,21 @@ stages:
         apps: ${{ parameters.apps }}
 
 - stage: 'build_developmet_${{ parameters.red }}'
-  displayName: 'Build Developmet'
+  ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
+    displayName: 'Build Development'
+  ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
+    displayName: 'Build Development Staging' 
+  ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'antioquia')) }}: 
+    displayName: 'Build Development Master Antioquia'
+  ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'cap')) }}: 
+    displayName: 'Build Development Master Cap'
+  ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'tolima')) }}: 
+    displayName: 'Build Development Master Tolima'
+  ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'huila')) }}: 
+    displayName: 'Build Development Master Huila'
+  ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'cauca')) }}: 
+    displayName: 'Build Development Master Cauca'
+    
   dependsOn: microservices_developmet
 
   variables:
