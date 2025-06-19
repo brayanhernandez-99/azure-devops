@@ -1,3 +1,4 @@
+stages:
 - stage: 'build_developmet_${{ parameters.red }}'
   ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
     displayName: 'Build Development'
