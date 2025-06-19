@@ -35,13 +35,47 @@ stages:
         language: ${{ parameters.language }}
         typerelease: ${{ parameters.typerelease }}
         apps: ${{ parameters.apps }}
+        red: antioquia
   
-  - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/staging'), eq(parameters.typerelease, 'aws-s3')) }}:
+  - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), in(variables['Build.SourceBranch'], 'refs/heads/staging', 'refs/heads/master')), eq(parameters.typerelease, 'aws-s3')) }}:
     - template: build/build-developmet.yml
       parameters:
         language: ${{ parameters.language }}
         typerelease: ${{ parameters.typerelease }}
         apps: ${{ parameters.apps }}
+        red: antioquia
+    
+  - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(parameters.typerelease, 'aws-s3')) }}:
+    - template: build/build-developmet.yml
+      parameters:
+        language: ${{ parameters.language }}
+        typerelease: ${{ parameters.typerelease }}
+        apps: ${{ parameters.apps }}
+        red: cap
+  
+  - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(parameters.typerelease, 'aws-s3')) }}:
+    - template: build/build-developmet.yml
+      parameters:
+        language: ${{ parameters.language }}
+        typerelease: ${{ parameters.typerelease }}
+        apps: ${{ parameters.apps }}
+        red: tolima
+
+  - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(parameters.typerelease, 'aws-s3')) }}:
+    - template: build/build-developmet.yml
+      parameters:
+        language: ${{ parameters.language }}
+        typerelease: ${{ parameters.typerelease }}
+        apps: ${{ parameters.apps }}
+        red: huila
+
+  - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(parameters.typerelease, 'aws-s3')) }}:
+    - template: build/build-developmet.yml
+      parameters:
+        language: ${{ parameters.language }}
+        typerelease: ${{ parameters.typerelease }}
+        apps: ${{ parameters.apps }}
+        red: cauca
 
   - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), in(variables['Build.SourceBranch'], 'refs/heads/staging','refs/heads/master' )), ne(parameters.typerelease, 'aws-s3')) }}:
     - template: build/semantic-version-integration.yml

@@ -9,12 +9,12 @@ stages:
       parameters:
         apps: ${{ parameters.apps }}
 
-  - ${{ if eq(parameters.language, 'nodejsFront') }}:
+  - ${{ if and(eq(parameters.language, 'nodejsFront'), ne(variables['Build.SourceBranch'], 'refs/heads/master'))  }}:
     - template: ../general/semantic-version-job-monorepo-front.yml
       parameters:
         apps: ${{ parameters.apps }}
 
-- stage: 'build_developmet'
+- stage: 'build_developmet_${{ parameters.red }}'
   displayName: 'Build Developmet'
   dependsOn: microservices_developmet
 
@@ -31,3 +31,4 @@ stages:
     - template: jobs/nodejs-jobs-front.yml
       parameters:
         apps: ${{ parameters.apps }}
+        red: ${{ parameters.red }}
