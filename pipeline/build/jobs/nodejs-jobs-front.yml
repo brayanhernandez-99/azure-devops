@@ -167,6 +167,13 @@ jobs:
           versionSpec: '17'
           jdkArchitectureOption: 'x64'
           jdkSourceOption: 'PreInstalled'
+        condition: and(
+                      succeeded(),
+                      ne(variables['msName'], 'app-administration-vue2'),
+                      ne(variables['msName'], 'app-sellers-vue2'),
+                      ne(variables['Build.SourceBranchName'], 'master'),
+                      ne(variables['Build.SourceBranchName'], 'staging')
+                    )
 
       - task: SonarQubePrepare@7
         inputs:
@@ -182,8 +189,11 @@ jobs:
         condition: and(
                       succeeded(),
                       ne(variables['msName'], 'app-administration-vue2'),
-                      ne(variables['msName'], 'app-sellers-vue2')
+                      ne(variables['msName'], 'app-sellers-vue2'),
+                      ne(variables['Build.SourceBranchName'], 'master'),
+                      ne(variables['Build.SourceBranchName'], 'staging')
                     )
+
       - script: |
           variable=$(echo $SONARQUBE_SCANNER_PARAMS | sed -E 's#"sonar\.branch\.name":"[^"]+",##g')
           echo $variable
@@ -192,7 +202,9 @@ jobs:
         condition: and(
                       succeeded(),
                       ne(variables['msName'], 'app-administration-vue2'),
-                      ne(variables['msName'], 'app-sellers-vue2')
+                      ne(variables['msName'], 'app-sellers-vue2'),
+                      ne(variables['Build.SourceBranchName'], 'master'),
+                      ne(variables['Build.SourceBranchName'], 'staging')
                     )
 
       - script: |
@@ -205,7 +217,9 @@ jobs:
         condition: and(
                       succeeded(),
                       ne(variables['msName'], 'app-administration-vue2'),
-                      ne(variables['msName'], 'app-sellers-vue2')
+                      ne(variables['msName'], 'app-sellers-vue2'),
+                      ne(variables['Build.SourceBranchName'], 'master'),
+                      ne(variables['Build.SourceBranchName'], 'staging')
                     )
 
       - script: |
@@ -221,7 +235,9 @@ jobs:
         condition: and(
                       succeeded(),
                       ne(variables['msName'], 'app-administration-vue2'),
-                      ne(variables['msName'], 'app-sellers-vue2')
+                      ne(variables['msName'], 'app-sellers-vue2'),
+                      ne(variables['Build.SourceBranchName'], 'master'),
+                      ne(variables['Build.SourceBranchName'], 'staging')
                     )
 
       - task: SonarQubeAnalyze@7
@@ -229,7 +245,9 @@ jobs:
         condition: and(
                       succeeded(),
                       ne(variables['msName'], 'app-administration-vue2'),
-                      ne(variables['msName'], 'app-sellers-vue2')
+                      ne(variables['msName'], 'app-sellers-vue2'),
+                      ne(variables['Build.SourceBranchName'], 'master'),
+                      ne(variables['Build.SourceBranchName'], 'staging')
                     )
 
       - task: SonarQubePublish@7
@@ -239,7 +257,9 @@ jobs:
         condition: and(
                       succeeded(),
                       ne(variables['msName'], 'app-administration-vue2'),
-                      ne(variables['msName'], 'app-sellers-vue2')
+                      ne(variables['msName'], 'app-sellers-vue2'),
+                      ne(variables['Build.SourceBranchName'], 'master'),
+                      ne(variables['Build.SourceBranchName'], 'staging')
                     )
       
       - task: sonar-buildbreaker@8
@@ -249,7 +269,9 @@ jobs:
         condition: and(
                       succeeded(),
                       ne(variables['msName'], 'app-administration-vue2'),
-                      ne(variables['msName'], 'app-sellers-vue2')
+                      ne(variables['msName'], 'app-sellers-vue2'),
+                      ne(variables['Build.SourceBranchName'], 'master'),
+                      ne(variables['Build.SourceBranchName'], 'staging')
                     )
 
       - script: |
