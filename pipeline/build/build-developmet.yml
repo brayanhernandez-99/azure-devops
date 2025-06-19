@@ -2,6 +2,7 @@ stages:
 - stage: 'microservices_developmet'
   displayName: 'microservices Developmet'
   dependsOn: []
+  condition: and(succeeded(), ne(variables['Build.SourceBranch'], 'refs/heads/master'))
 
   jobs:
   - ${{ if eq(parameters.language, 'nodejs') }}:
@@ -30,11 +31,18 @@ stages:
   ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'cauca')) }}: 
     displayName: 'Build Development Master Cauca'
 
+  ${{ if ne(variables['Build.SourceBranch'], 'refs/heads/master') }}:
     dependsOn: 
       - 'microservices_developmet'
     condition:
         in(dependencies.microservices_developmet.result, 'Succeeded', 'SucceededWithIssues')
-  
+
+  ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), in(variables['Build.SourceBranch'], 'refs/heads/master')) }}:
+    dependsOn: 
+      - 'semantic_version_integration'
+    condition:
+        in(dependencies.semantic_version_integration.result, 'Succeeded', 'SucceededWithIssues')
+
   variables:
   - template: ../variables/groups-transversal-variables.yml
 
