@@ -1,5 +1,5 @@
 stages:
-- stage: 'microservices_developmet_${{ parameters.red }}'
+- stage: 'microservices_developmet'
   displayName: 'microservices Developmet'
   dependsOn: []
 
@@ -31,11 +31,10 @@ stages:
     displayName: 'Build Development Master Cauca'
 
     dependsOn: 
-      - 'microservices_developmet_${{ parameters.red }}'
+      - 'microservices_developmet'
     condition:
-        in(dependencies.microservices_developmet_${{ parameters.red }}.result, 'Succeeded', 'SucceededWithIssues')
+        in(dependencies.microservices_developmet.result, 'Succeeded', 'SucceededWithIssues')
   
-
   variables:
   - template: ../variables/groups-transversal-variables.yml
 
