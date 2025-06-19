@@ -1,5 +1,5 @@
 stages:
-- stage: 'microservices_developmet'
+- stage: 'microservices_developmet_${{ parameters.red }}'
   displayName: 'microservices Developmet'
   dependsOn: []
 
@@ -31,9 +31,9 @@ stages:
     displayName: 'Build Development Master Cauca'
 
     dependsOn: 
-      - 'microservices_developmet'
+      - 'microservices_developmet_${{ parameters.red }}'
     condition:
-        in(dependencies.microservices_developmet.result, 'Succeeded', 'SucceededWithIssues')
+        in(dependencies.microservices_developmet_${{ parameters.red }}.result, 'Succeeded', 'SucceededWithIssues')
   
 
   variables:
