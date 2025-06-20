@@ -23,6 +23,8 @@ stages:
 
   variables:
   - template: ../variables/groups-transversal-variables.yml
+    parameters:
+      red: ${{ parameters.red }}
 
   jobs:
   - ${{ if eq(parameters.language, 'nodejs') }}:

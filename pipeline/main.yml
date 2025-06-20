@@ -43,7 +43,7 @@ stages:
         language: ${{ parameters.language }}
         typerelease: ${{ parameters.typerelease }}
         apps: ${{ parameters.apps }}
-        red: cap
+        red: antioquia
   
   - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(parameters.typerelease, 'aws-s3')) }}:
     - template: build/build-master-front.yml
