@@ -114,7 +114,6 @@ jobs:
           ls -la app-legacy/app-sellers-vue2
         displayName: 'Generación de .env admin y seller'
 
-
       - script: |
           CURRENT_BRANCH=$(echo $(Build.SourceBranch))
           if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
@@ -126,18 +125,21 @@ jobs:
           if [[ "$CURRENT_BRANCH" == refs/heads/staging ]]; then
             CURRENT_BRANCH_PR=qa
           fi
-          # if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
-          #   CURRENT_BRANCH_PR=refs/heads/feature
-          # fi
-          # if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
-          #   CURRENT_BRANCH_PR=refs/heads/feature
-          # fi
-          # if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
-          #   CURRENT_BRANCH_PR=refs/heads/feature
-          # fi
-          # if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
-          #   CURRENT_BRANCH_PR=refs/heads/feature
-          # fi
+          if [[ "$CURRENT_BRANCH" == "refs/heads/master" && "$RED" == "antioquia" ]]; then
+            CURRENT_BRANCH_PR=prd-gana
+          fi
+          if [[ "$CURRENT_BRANCH" == "refs/heads/master" && "$RED" == "cap" ]]; then
+            CURRENT_BRANCH_PR=cap-gana
+          fi
+          if [[ "$CURRENT_BRANCH" == "refs/heads/master" && "$RED" == "tolima" ]]; then
+            CURRENT_BRANCH_PR=prd-tolima
+          fi
+          if [[ "$CURRENT_BRANCH" == "refs/heads/master" && "$RED" == "huila" ]]; then
+            CURRENT_BRANCH_PR=prd-huila
+          fi
+          if [[ "$CURRENT_BRANCH" == "refs/heads/master" && "$RED" == "cauca" ]]; then
+            CURRENT_BRANCH_PR=prd-cauca
+          fi
 
           echo "🛠 Generando .env.local para invictus"
           echo $CURRENT_BRANCH_PR
@@ -147,6 +149,8 @@ jobs:
           cp -R apps/invictus/.env.$CURRENT_BRANCH_PR $(System.DefaultWorkingDirectory)/apps/invictus/.env
           cat $(System.DefaultWorkingDirectory)/apps/invictus/.env
         displayName: 'Generación de .env invictus'
+        env:
+          RED: ${{ parameters.red }}
 
       - script: |
             echo -e "VITE_APP_VERSION=\$npm_package_version\nVITE_BASE_URL=" > $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.env
