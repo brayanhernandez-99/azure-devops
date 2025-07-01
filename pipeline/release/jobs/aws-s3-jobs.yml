@@ -84,7 +84,7 @@ jobs:
         echo $CLOUDFRONT_ID_VALUE
 
         echo "##vso[task.setvariable variable=CLOUDFRONT_ID]$CLOUDFRONT_ID_VALUE"
-      displayName: 'Name Var'
+      displayName: 'Name Var Cloudfront'
 
     - script: |
         aws cloudfront get-distribution-config --id $(CLOUDFRONT_ID) --region us-east-1 > $(CLOUDFRONT_ID).json
@@ -99,7 +99,7 @@ jobs:
         echo "version a actualizar: $(msVersion)"
         jq --arg v "/$(msVersion)" '.DistributionConfig.Origins.Items[0].OriginPath = $v' "$(CLOUDFRONT_ID).json" > "temp-$(CLOUDFRONT_ID).json"
         cat temp-$(CLOUDFRONT_ID).json
-      displayName: 'Insert Version'
+      displayName: 'Insert New Version'
 
     - script: |
         ETAG=$(jq -r '.ETag' $(CLOUDFRONT_ID).json)
@@ -107,7 +107,7 @@ jobs:
         jq '.DistributionConfig' "temp-$(CLOUDFRONT_ID).json" > "updated-$(CLOUDFRONT_ID).json"
         cat updated-$(CLOUDFRONT_ID).json
         aws cloudfront update-distribution --id $(CLOUDFRONT_ID) --region $AWS_DEFAULT_REGION --if-match "$ETAG" --distribution-config file://updated-$(CLOUDFRONT_ID).json
-      displayName: 'Update distribute'
+      displayName: 'Update Distribute'
       env:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVIC)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVIC)
