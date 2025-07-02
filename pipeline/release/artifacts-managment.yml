@@ -4,8 +4,8 @@ stages:
 
   ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), in(variables['Build.SourceBranch'], 'refs/heads/develop')) }}:
     dependsOn:
-      - 'build_developmet'
-    condition: in(dependencies.build_developmet.result, 'Succeeded', 'SucceededWithIssues')
+      - 'build_developmet_${{ parameters.red }}'
+    condition: in(dependencies.build_developmet_${{ parameters.red }}.result, 'Succeeded', 'SucceededWithIssues')
 
   ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), in(variables['Build.SourceBranch'], 'refs/heads/staging','refs/heads/master' )) }}:
     dependsOn:
