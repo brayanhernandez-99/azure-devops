@@ -16,7 +16,7 @@ stages:
         apps: ${{ parameters.apps }}
 
 - stage: 'build_developmet_${{ parameters.red }}'
-  ${{ if eq(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature')) }}:
+  ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/feature') }}:
     displayName: 'Build Development feature'
   ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
     displayName: 'Build Development'
