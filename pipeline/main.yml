@@ -32,8 +32,7 @@ resources:
 
 
 stages:
-  - ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature'), in(variables['Build.SourceBranch'], 'refs/heads/develop')) }}:
-    - ${{ if ne(parameters.language, 'flutter') }}:
+  - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature'), in(variables['Build.SourceBranch'], 'refs/heads/develop')), ne(parameters.language, 'flutter')) }}:
       - template: build/build-developmet.yml
         parameters:
           language: ${{ parameters.language }}
