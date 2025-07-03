@@ -1,61 +1,9 @@
 stages:
-- stage: 'microservices_developmet'
-  displayName: 'microservices Developmet'
-  dependsOn: []
-  condition: and(succeeded(), ne(variables['Build.SourceBranch'], 'refs/heads/master'))
-
-  jobs:
-  - ${{ if eq(parameters.language, 'nodejs') }}:
-    - template: ../general/semantic-version-job-monorepo.yml
-      parameters:
-        apps: ${{ parameters.apps }}
-
-  - ${{ if eq(parameters.language, 'nodejsFront') }}:
-    - template: ../general/semantic-version-job-monorepo-front.yml
-      parameters:
-        apps: ${{ parameters.apps }}
-
-- stage: 'build_developmet_${{ parameters.red }}'
-  ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/feature') }}:
-    displayName: 'Build Development Feature'
-  ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
-    displayName: 'Build Development'
-  ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
-    displayName: 'Build Development Staging' 
-  ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'antioquia')) }}: 
-    displayName: 'Build Development Master Antioquia'
-  ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'cap')) }}: 
-    displayName: 'Build Development Master Cap'
-  ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'tolima')) }}: 
-    displayName: 'Build Development Master Tolima'
-  ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'huila')) }}: 
-    displayName: 'Build Development Master Huila'
-  ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'cauca')) }}: 
-    displayName: 'Build Development Master Cauca'
-
-  ${{ if ne(variables['Build.SourceBranch'], 'refs/heads/master') }}:
-    dependsOn: 
-      - 'microservices_developmet'
-    condition:
-        in(dependencies.microservices_developmet.result, 'Succeeded', 'SucceededWithIssues')
-
-  ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), in(variables['Build.SourceBranch'], 'refs/heads/master')) }}:
-    dependsOn: 
-      - 'semantic_version_integration'
-    condition:
-        in(dependencies.semantic_version_integration.result, 'Succeeded', 'SucceededWithIssues')
+- stage: 'build_unit'
 
   variables:
   - template: ../variables/groups-transversal-variables.yml
 
   jobs:
-  - ${{ if eq(parameters.language, 'nodejs') }}:
-    - template: jobs/nodejs-jobs.yml
-      parameters:
-        apps: ${{ parameters.apps }}
-
-  - ${{ if eq(parameters.language, 'nodejsFront') }}:
-    - template: jobs/nodejs-jobs-front.yml
-      parameters:
-        apps: ${{ parameters.apps }}
-        red: ${{ parameters.red }}
+  - ${{ if eq(parameters.language, 'flutter') }}:
+    - template: jobs/flutter-jobs.yml
