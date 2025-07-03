@@ -1,12 +1,34 @@
 jobs:
   - job: 'build_flutter'
-    displayName: 'Build flutter'    
+    displayName: 'Build flutter'
     pool:
         name: 'Azure Pipelines'
         vmImage: 'ubuntu-22.04'
+
+    variables:
+      versionSpecification: $[coalesce(variables.flutterVersion, '3.7.x')]
 
     steps:
       - script: |
           echo "compila flutter"
           ls -l
         displayName: "Build flutter"
+      
+      - script: |
+          git clone https://github.com/flutter/flutter.git --branch $(versionSpecification) --depth 1
+          echo "##vso[task.prependpath]=$(Build.SourcesDirectory)/flutter/bin"
+        displayName: 'Install Flutter SDK'
+
+      - script: |
+          flutter --version
+          flutter pub get
+        displayName: 'Flutter Pub Get'
+
+      - script: |
+          ls -lah
+          ls -lah assets/
+        displayName: 'Verificar assets'
+
+      - script: |
+          flutter --no-color build apk --no-tree-shake-icons --profile
+        displayName: 'Flutter Build APK (profile)'
