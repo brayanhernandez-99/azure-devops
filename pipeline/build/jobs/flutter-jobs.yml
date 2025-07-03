@@ -21,11 +21,6 @@ jobs:
           version: 'custom'
           customVersion: $(versionSpecification)
 
-      # - script: |
-      #     git clone https://github.com/flutter/flutter.git --branch $(versionSpecification) --depth 1
-      #     echo "##vso[task.prependpath]=$(Build.SourcesDirectory)/flutter/bin"
-      #   displayName: 'Install Flutter SDK'
-
       - script: |
           flutter --version
           flutter pub get
