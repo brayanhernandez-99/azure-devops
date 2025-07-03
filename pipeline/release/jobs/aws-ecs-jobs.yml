@@ -131,11 +131,11 @@ jobs:
         export AWS_SECRET_ACCESS_KEY
         export AWS_REGION
 
-        if [[ "$(msName)" == "bff-administration" || "$(msName)" == "bff-sellers" ]]; then
+        if { [[ "$(msName)" == "bff-administration" || "$(msName)" == "bff-sellers" ]] && [[ "$RED" == "cap" || "$RED" == "antioquia" ]]; };then
             CLUSTER=$(msName)-cluster
             SERVICES=$(msName)-fg-service
         fi
-        if [[ "$(msName)" == "raffle" ]]; then
+        if { [[ "$(msName)" == "raffle" ]] && [[ "$RED" == "cap" || "$RED" == "antioquia" ]]; }; then
             CLUSTER=raffles-ms-cluster
             SERVICES=raffles-fg-service
         fi
@@ -157,6 +157,7 @@ jobs:
         AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVIC)
         AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVIC)
         AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+        RED: ${{ parameters.red }}
 
     - script: |
         echo "Obteniendo family de task definition..."
