@@ -131,6 +131,13 @@ jobs:
         export AWS_SECRET_ACCESS_KEY
         export AWS_REGION
 
+        if [[ "$(msName)" == "bff-administration" || "$(msName)" == "bff-sellers" ]]; then
+            CLUSTER=$(msName)-cluster
+            SERVICES=$(msName)-fg-service
+        fi
+        echo $CLUSTER
+          echo $SERVICES
+
         echo "Obteniendo task definition..."
         arn=$(aws ecs describe-services \
           --cluster $CLUSTER \
