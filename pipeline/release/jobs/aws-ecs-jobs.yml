@@ -136,7 +136,7 @@ jobs:
             SERVICES=$(msName)-fg-service
         fi
         echo $CLUSTER
-          echo $SERVICES
+        echo $SERVICES
 
         echo "Obteniendo task definition..."
         arn=$(aws ecs describe-services \
