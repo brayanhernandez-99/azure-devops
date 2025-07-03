@@ -20,7 +20,7 @@ parameters:
   
   - name: apps
     type: object
-    sdefault: {}
+    default: {}
 
 
 resources:
