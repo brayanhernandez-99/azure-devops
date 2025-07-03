@@ -1,5 +1,6 @@
 stages:
 - stage: 'build_unit'
+  displayName: 'Build Unit'
 
   variables:
   - template: ../variables/groups-transversal-variables.yml
