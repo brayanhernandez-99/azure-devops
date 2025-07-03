@@ -135,6 +135,10 @@ jobs:
             CLUSTER=$(msName)-cluster
             SERVICES=$(msName)-fg-service
         fi
+        if [[ "$(msName)" == "raffle" ]]; then
+            CLUSTER=raffles-ms-cluster
+            SERVICES=raffles-fg-service
+        fi
         echo $CLUSTER
         echo $SERVICES
 
