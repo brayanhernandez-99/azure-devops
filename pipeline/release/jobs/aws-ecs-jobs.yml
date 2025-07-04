@@ -135,7 +135,7 @@ jobs:
             CLUSTER=$(msName)-cluster
             SERVICES=$(msName)-fg-service
         fi
-        if { [[ "$(msName)" == "raffle" ]] && [[ "$RED" == "cap" || "$RED" == "antioquia" ]]; }; then
+        if { [[ "$(cleanMsName)" == "raffle" ]] && [[ "$RED" == "cap" || "$RED" == "antioquia" ]]; }; then
             CLUSTER=raffles-ms-cluster
             SERVICES=raffles-fg-service
         fi
