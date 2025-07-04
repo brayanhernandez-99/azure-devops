@@ -13,7 +13,7 @@ jobs:
           echo "compila flutter"
           ls -l
         displayName: "Build flutter"
-        
+
       - task: JavaToolInstaller@0
         inputs:
           versionSpec: '17'
@@ -40,3 +40,11 @@ jobs:
       - script: |
           flutter --no-color build apk --no-tree-shake-icons --profile
         displayName: 'Flutter Build APK (profile)'
+
+      - script: |
+          echo "acá queda el apk"
+          ls -l build/app/outputs/flutter-apk/
+
+          # aws s3 cp ./build/app/outputs/flutter-apk s3://repository-native/app-seller/android/pruebas --recursive
+
+        displayName: 'CP apk'
