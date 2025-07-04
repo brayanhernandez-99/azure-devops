@@ -139,6 +139,10 @@ jobs:
             CLUSTER=raffles-ms-cluster
             SERVICES=raffles-fg-service
         fi
+        if { [[ "$(cleanMsName)" == "notifier" ]] && [[ "$RED" == "cap" || "$RED" == "antioquia" ]]; }; then
+            CLUSTER=msnotifier-cluster
+            SERVICES=msnotifier-fg-service
+        fi
         echo $CLUSTER
         echo $SERVICES
 
