@@ -111,7 +111,7 @@ jobs:
 
       - script: |
           cd $(System.DefaultWorkingDirectory)/apps/$(msName)
-          echo "🔧 Actualizando versión en $(file)/$(msName)/package.json a $(msVersion)"
+          echo "🔧 Actualizando versión en apps/$(msName)/package.json a $(msVersion)"
           jq --arg version "$(msVersion)" '.version = $version' package.json > tmp.json && mv tmp.json package.json
         displayName: "Version temporal para compilar"
 
