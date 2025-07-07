@@ -95,6 +95,12 @@ jobs:
         displayName: 'set-variable'
 
       - script: |
+          cd $(System.DefaultWorkingDirectory)/apps/$(msName)
+          echo "🔧 Actualizando versión en apps/$(msName)/package.json a $(msVersion)"
+          jq --arg version "$(msVersion)" '.version = $version' package.json > tmp.json && mv tmp.json package.json
+        displayName: "Version temporal para compilar"
+
+      - script: |
           echo "Estás en la carpeta: $(System.DefaultWorkingDirectory)/apps/$(msName)"
           cd $(System.DefaultWorkingDirectory)/apps/$(msName)
           # npm install --ignore-scripts
@@ -108,12 +114,6 @@ jobs:
       #     #npm run build
       #     # ./node_modules/.bin/env-cmd -f .env.local node -e "require('./handlers/container-handler.js').entrypoint()"
       #   displayName: 'Build'
-
-      - script: |
-          cd $(System.DefaultWorkingDirectory)/apps/$(msName)
-          echo "🔧 Actualizando versión en apps/$(msName)/package.json a $(msVersion)"
-          jq --arg version "$(msVersion)" '.version = $version' package.json > tmp.json && mv tmp.json package.json
-        displayName: "Version temporal para compilar"
 
       - script: |
           cd $(System.DefaultWorkingDirectory)/apps/$(msName)
