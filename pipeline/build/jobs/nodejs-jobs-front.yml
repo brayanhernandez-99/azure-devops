@@ -169,6 +169,11 @@ jobs:
         displayName: "Version temporal para compilar"
 
       - script: |
+          echo "Comentando app-legacy/*"
+          sed -i '/app-legacy\//s/^/  # /' pnpm-workspace.yaml
+        displayName: "Comentar app-legacy/*"
+
+      - script: |
           cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
           # npm install --ignore-scripts
           # pnpm i --ignore-scripts
@@ -176,11 +181,6 @@ jobs:
           echo "Dependencias instaladas:"
           npm ls --depth=0 || true
         displayName: 'Instalar dependencias del microservicio'
-
-      - script: |
-          echo "Comentando app-legacy/*"
-          sed -i '/app-legacy\//s/^/  # /' pnpm-workspace.yaml
-        displayName: "Comentar app-legacy/*"
 
       - script: |
           cat $(System.DefaultWorkingDirectory)/app-legacy/app-administration-vue2/.env.local
