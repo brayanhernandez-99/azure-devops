@@ -175,7 +175,7 @@ jobs:
         condition: and(
                       succeeded(),
                       ne(variables['msName'], 'app-administration-vue2'),
-                      ne(variables['msName'], 'app-sellers-vue2'),
+                      ne(variables['msName'], 'app-sellers-vue2')
                     )
 
       - script: |
@@ -213,7 +213,7 @@ jobs:
         condition: and(
                       succeeded(),
                       ne(variables['msName'], 'app-administration-vue2'),
-                      ne(variables['msName'], 'app-sellers-vue2'),
+                      ne(variables['msName'], 'app-sellers-vue2')
                     )
       
       - task: JavaToolInstaller@0
