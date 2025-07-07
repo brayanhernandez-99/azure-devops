@@ -354,6 +354,13 @@ jobs:
           SONAR_TOKEN: $(SonarToken)         # Variable secreta definida en el pipeline
           SONAR_HOST_URL: $(SONAR_HOST_URL) 
         displayName: 'Verificar Quality Gate'
+        condition: and(
+                      succeeded(),
+                      ne(variables['msName'], 'app-administration-vue2'),
+                      ne(variables['msName'], 'app-sellers-vue2'),
+                      ne(variables['Build.SourceBranchName'], 'master'),
+                      ne(variables['Build.SourceBranchName'], 'staging')
+                    )
 
       - script: |
           # if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
