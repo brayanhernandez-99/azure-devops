@@ -265,7 +265,8 @@ jobs:
           ls -l
           pwd
           cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
-          npm run test
+          # npm run test
+          pnpm test --filter=...$(msName)
         displayName: 'Test MS $(msName)'
         continueOnError: true
         condition: and(
@@ -279,7 +280,9 @@ jobs:
       - script: |
           cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
           pwd
-          npm run coverage
+          # npm run coverage
+          pnpm coverage --filter=...$(msName)
+
           #pnpm coverage
 
           tree
