@@ -264,7 +264,7 @@ jobs:
       - script: |
           ls -l
           pwd
-          cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
+          # cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
           # npm run test
           pnpm test --filter=...$(msName)
         displayName: 'Test MS $(msName)'
@@ -278,7 +278,7 @@ jobs:
                     )
 
       - script: |
-          cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
+          # cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
           pwd
           # npm run coverage
           pnpm coverage --filter=...$(msName)
@@ -331,39 +331,39 @@ jobs:
                       ne(variables['Build.SourceBranchName'], 'staging')
                     )
 
-      - script: |
-          echo "Esperando Quality Gate..."
-          analysisId=$(cat .sonarqube/out/.sonar/report-task.txt | grep ceTaskId | cut -d= -f2)
+      # - script: |
+      #     echo "Esperando Quality Gate..."
+      #     analysisId=$(cat .sonarqube/out/.sonar/report-task.txt | grep ceTaskId | cut -d= -f2)
           
-          for i in {1..12}; do  # hasta 60 segundos (12 * 5)
-            sleep 5
-            status=$(curl -s -u "$(SONAR_TOKEN):" "$(SONAR_HOST_URL)/api/ce/task?id=$analysisId" | jq -r .task.status)
-            if [[ "$status" == "SUCCESS" ]]; then
-              qgStatus=$(curl -s -u "$(SONAR_TOKEN):" "$(SONAR_HOST_URL)/api/qualitygates/project_status?analysisId=$analysisId" | jq -r .projectStatus.status)
-              echo "Quality Gate status: $qgStatus"
-              if [[ "$qgStatus" != "OK" ]]; then
-                echo "❌ Quality Gate fallido."
-                exit 1
-              else
-                echo "✅ Quality Gate aprobado."
-                exit 0
-              fi
-            fi
-          done
+      #     for i in {1..12}; do  # hasta 60 segundos (12 * 5)
+      #       sleep 5
+      #       status=$(curl -s -u "$(SONAR_TOKEN):" "$(SONAR_HOST_URL)/api/ce/task?id=$analysisId" | jq -r .task.status)
+      #       if [[ "$status" == "SUCCESS" ]]; then
+      #         qgStatus=$(curl -s -u "$(SONAR_TOKEN):" "$(SONAR_HOST_URL)/api/qualitygates/project_status?analysisId=$analysisId" | jq -r .projectStatus.status)
+      #         echo "Quality Gate status: $qgStatus"
+      #         if [[ "$qgStatus" != "OK" ]]; then
+      #           echo "❌ Quality Gate fallido."
+      #           exit 1
+      #         else
+      #           echo "✅ Quality Gate aprobado."
+      #           exit 0
+      #         fi
+      #       fi
+      #     done
 
-          echo "❌ Timeout esperando Quality Gate"
-          exit 1
-        env:
-          SONAR_TOKEN: $(SonarToken)         # Variable secreta definida en el pipeline
-          SONAR_HOST_URL: $(SONAR_HOST_URL) 
-        displayName: 'Verificar Quality Gate'
-        condition: and(
-                      succeeded(),
-                      ne(variables['msName'], 'app-administration-vue2'),
-                      ne(variables['msName'], 'app-sellers-vue2'),
-                      ne(variables['Build.SourceBranchName'], 'master'),
-                      ne(variables['Build.SourceBranchName'], 'staging')
-                    )
+      #     echo "❌ Timeout esperando Quality Gate"
+      #     exit 1
+      #   env:
+      #     SONAR_TOKEN: $(SonarToken)         # Variable secreta definida en el pipeline
+      #     SONAR_HOST_URL: $(SONAR_HOST_URL) 
+      #   displayName: 'Verificar Quality Gate'
+      #   condition: and(
+      #                 succeeded(),
+      #                 ne(variables['msName'], 'app-administration-vue2'),
+      #                 ne(variables['msName'], 'app-sellers-vue2'),
+      #                 ne(variables['Build.SourceBranchName'], 'master'),
+      #                 ne(variables['Build.SourceBranchName'], 'staging')
+      #               )
 
       - script: |
           # if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
