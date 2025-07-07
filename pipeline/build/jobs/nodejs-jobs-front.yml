@@ -178,6 +178,11 @@ jobs:
         displayName: 'Instalar dependencias del microservicio'
 
       - script: |
+          echo "Comentando app-legacy/*"
+          sed -i '/app-legacy\//s/^/  # /' pnpm-workspace.yaml
+        displayName: "Comentar app-legacy/*"
+
+      - script: |
           cat $(System.DefaultWorkingDirectory)/app-legacy/app-administration-vue2/.env.local
 
           if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
@@ -195,6 +200,11 @@ jobs:
           fi
         displayName: 'compilar dependencias del microservicio'
         continueOnError: true
+      
+      - script: |
+          echo "Descomentando app-legacy/*"
+          sed -i '/# *app-legacy\//s/^  # *//' pnpm-workspace.yaml
+        displayName: "Restaurar línea app-legacy/*"
       
       - task: JavaToolInstaller@0
         inputs:
