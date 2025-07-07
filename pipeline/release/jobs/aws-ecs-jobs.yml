@@ -135,14 +135,21 @@ jobs:
             CLUSTER=$(msName)-cluster
             SERVICES=$(msName)-fg-service
         fi
+        
         if { [[ "$(cleanMsName)" == "raffle" ]] && [[ "$RED" == "cap" || "$RED" == "antioquia" ]]; }; then
             CLUSTER=raffles-ms-cluster
             SERVICES=raffles-ms-fg-service
         fi
+
         if { [[ "$(cleanMsName)" == "notifier" ]] && [[ "$RED" == "cap" || "$RED" == "antioquia" ]]; }; then
             CLUSTER=msnotifier-cluster
             SERVICES=msnotifier-fg-service
         fi
+
+        if { [[ "$(cleanMsName)" == "raffle" ]] && ! [[ "$RED" == "cap" || "$RED" == "antioquia" ]]; }; then
+            SERVICES=raffles
+        fi
+
         echo $CLUSTER
         echo $SERVICES
 
