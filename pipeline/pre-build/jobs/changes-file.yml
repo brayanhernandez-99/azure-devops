@@ -21,10 +21,60 @@ jobs:
         fi
       displayName: Validar automatico o normal
   
+    # - script: |
+    #     cd $(Build.SourcesDirectory)/apps
+    #     apps=$(git diff --name-only HEAD~1 HEAD | grep "^apps/" | cut -d '/' -f2 | sort -u)
+    #     echo $apps
+
+    #     if [ -z "$apps" ]; then
+    #       echo "❌ No se detectaron cambios en apps. Cancelando ejecución del pipeline."
+    #       exit 1
+    #     fi
+        
+    #     cd $(Build.SourcesDirectory)/pipeline
+
+    #     apps_yaml="    apps:\n"
+    #     for app in $apps; do
+    #       apps_yaml+="      - $app\n"
+    #     done
+
+    #     # Reemplazar el bloque `apps:` en main-pipeline.yml
+    #     awk -v newapps="$apps_yaml" '
+    #       BEGIN {inside=0}
+    #       /^    apps:/ {inside=1; print newapps; next}
+    #       inside && /^[^ ]/ {inside=0}
+    #       !inside
+    #     ' main-pipeline.yml > main-pipeline-updated.yml
+
+    #     mv main-pipeline-updated.yml main-pipeline.yml
+
+    #     cat main-pipeline.yml
+    #     raw_branch=$(Build.SourceBranch)
+    #     clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
+
+    #     git checkout $clean_branch
+    #     git config user.name "pipeline"
+    #     git config user.email "pipelineUX@ux.technology"
+    #     git add main-pipeline.yml
+    #     git commit -m "Auto-generated pipeline config ${BUILD_BUILDID}"
+    #     git push origin $clean_branch
+
+    #   name: DetectChangedMS
+
     - script: |
-        cd $(Build.SourcesDirectory)/apps
-        apps=$(git diff --name-only HEAD~1 HEAD | grep "^apps/" | cut -d '/' -f2 | sort -u)
-        echo $apps
+        cd $(Build.SourcesDirectory)
+
+        # Detectar último commit real, incluso si hubo merge o rebase
+        last_real_commit=$(git log --no-merges --pretty=format:%H -n 2 | tail -n1)
+
+        # Obtener todos los archivos modificados desde el último commit real
+        changed_files=$(git diff --name-only $last_real_commit HEAD)
+
+        # Extraer solo cambios en la carpeta apps/
+        apps=$(echo "$changed_files" | grep "^apps/" | cut -d '/' -f2 | sort -u)
+
+        echo "🔍 Apps modificadas detectadas:"
+        echo "$apps"
 
         if [ -z "$apps" ]; then
           echo "❌ No se detectaron cambios en apps. Cancelando ejecución del pipeline."
