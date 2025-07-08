@@ -148,7 +148,10 @@ jobs:
           # cat apps/invictus/.env.$CURRENT_BRANCH_PR
 
           cp -R apps/invictus/.env.$CURRENT_BRANCH_PR $(System.DefaultWorkingDirectory)/apps/invictus/.env
+          cp -R apps/invictus/.env.$CURRENT_BRANCH_PR $(System.DefaultWorkingDirectory)/apps/$(msName)/.env
           cat $(System.DefaultWorkingDirectory)/apps/invictus/.env
+          echo ""
+          cat $(System.DefaultWorkingDirectory)/apps/$(msName)/.env
         displayName: 'Generación de .env invictus'
         env:
           RED: ${{ parameters.red }}
