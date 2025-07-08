@@ -62,16 +62,19 @@ jobs:
     #   name: DetectChangedMS
 
     - script: |
-        cd $(Build.SourcesDirectory)
+        CURRENT_BRANCH=$(echo $(Build.SourceBranch))
+        
+        if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
 
-        # Detectar último commit real, incluso si hubo merge o rebase
-        last_real_commit=$(git log --no-merges --pretty=format:%H -n 2 | tail -n1)
-
-        # Obtener todos los archivos modificados desde el último commit real
-        changed_files=$(git diff --name-only $last_real_commit HEAD)
-
-        # Extraer solo cambios en la carpeta apps/
-        apps=$(echo "$changed_files" | grep "^apps/" | cut -d '/' -f2 | sort -u)
+          cd $(Build.SourcesDirectory)
+          last_real_commit=$(git log --no-merges --pretty=format:%H -n 2 | tail -n1)
+          changed_files=$(git diff --name-only $last_real_commit HEAD)
+          apps=$(echo "$changed_files" | grep "^apps/" | cut -d '/' -f2 | sort -u)
+        
+        else
+          cd $(Build.SourcesDirectory)/apps
+          apps=$(git diff --name-only HEAD~1 HEAD | grep "^apps/" | cut -d '/' -f2 | sort -u)
+        if
 
         echo "🔍 Apps modificadas detectadas:"
         echo "$apps"
