@@ -171,6 +171,7 @@ jobs:
       - script: |
           echo "Comentando app-legacy/*"
           sed -i '/app-legacy\//s/^/  # /' pnpm-workspace.yaml
+          cat pnpm-workspace.yaml
         displayName: "Comentar app-legacy/*"
         condition: and(
                       succeeded(),
