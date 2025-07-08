@@ -69,7 +69,7 @@ jobs:
     #   name: DetectChangedMS
     
     - script: |
-        last_real_commit=$(git log --no-merges --pretty=format:%H -n 1 HEAD^)
+        last_real_commit=$(git log --no-merges --pretty=format:%H -n 2 | tail -n1)
         changed_files=$(git diff --name-only $last_real_commit HEAD)
 
         echo $changed_files
