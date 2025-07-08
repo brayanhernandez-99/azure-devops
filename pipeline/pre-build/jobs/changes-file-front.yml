@@ -69,19 +69,30 @@ jobs:
     #   name: DetectChangedMS
     
     - script: |
-        last_real_commit=$(git log --no-merges --pretty=format:%H -n 2 | tail -n1)
-        changed_files=$(git diff --name-only $last_real_commit HEAD)
 
-        echo $changed_files
+        CURRENT_BRANCH=$(echo $(Build.SourceBranch))
+        
+        if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
+          last_real_commit=$(git log --no-merges --pretty=format:%H -n 2 | tail -n1)
+          changed_files=$(git diff --name-only $last_real_commit HEAD)
 
-        # Detectar si hubo cambios en packages
-        packages_changed=$(echo "$changed_files" | grep "^packages/" || true)
+          packages_changed=$(echo "$changed_files" | grep "^packages/" || true)
 
-
-        if [[ -n "$packages_changed" ]]; then
-            apps=$(find apps app-legacy -mindepth 1 -maxdepth 1 -type d | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u)
+          if [[ -n "$packages_changed" ]]; then
+              apps=$(find apps app-legacy -mindepth 1 -maxdepth 1 -type d | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u)
+          else
+              apps=$(echo "$changed_files" | grep -E "^apps/|^app-legacy/" | cut -d '/' -f1,2 | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u)
+          fi
+        
         else
-            apps=$(echo "$changed_files" | grep -E "^apps/|^app-legacy/" | cut -d '/' -f1,2 | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u)
+          packages_changed=$(git diff --name-only HEAD~1 HEAD | grep "^packages/")
+
+          if [[ -n "$packages_changed" ]]; then
+              apps=$(find apps app-legacy -mindepth 1 -maxdepth 1 -type d | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u)
+          else
+              apps=$(git diff --name-only HEAD~1 HEAD | grep -E "^apps/|^app-legacy/" | cut -d '/' -f1,2 | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u)
+          fi
+
         fi
 
         echo $apps
