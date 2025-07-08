@@ -71,8 +71,9 @@ jobs:
     - script: |
 
         CURRENT_BRANCH=$(echo $(Build.SourceBranch))
-        
+
         if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
+          cd $(Build.SourcesDirectory)
           last_real_commit=$(git log --no-merges --pretty=format:%H -n 2 | tail -n1)
           changed_files=$(git diff --name-only $last_real_commit HEAD)
 
