@@ -72,6 +72,8 @@ jobs:
         last_real_commit=$(git log --no-merges --pretty=format:%H -n 1 HEAD^)
         changed_files=$(git diff --name-only $last_real_commit HEAD)
 
+        echo $changed_files
+
         # Detectar si hubo cambios en packages
         packages_changed=$(echo "$changed_files" | grep "^packages/" || true)
 
