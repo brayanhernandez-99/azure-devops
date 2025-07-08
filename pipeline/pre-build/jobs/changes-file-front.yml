@@ -69,75 +69,53 @@ jobs:
     #   name: DetectChangedMS
     
     - script: |
-          # Variables iniciales
-          cd $(Build.SourcesDirectory)
-          raw_branch=$(Build.SourceBranch)
-          clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
+        last_real_commit=$(git log --no-merges --pretty=format:%H -n 1 HEAD^)
+        changed_files=$(git diff --name-only $last_real_commit HEAD)
 
-          # Configurar git (necesario para pipelines de Azure)
-          git config user.name "pipeline"
-          git config user.email "pipelineUX@ux.technology"
+        # Detectar si hubo cambios en packages
+        packages_changed=$(echo "$changed_files" | grep "^packages/" || true)
 
-          # Asegurar última versión del branch con rebase
-          git checkout $clean_branch
-          git pull --rebase origin $clean_branch
 
-          # Detectar cambios desde remoto (comparando con HEAD)
-          changed_files=$(git diff --name-only origin/$clean_branch..HEAD)
+        if [[ -n "$packages_changed" ]]; then
+            apps=$(find apps app-legacy -mindepth 1 -maxdepth 1 -type d | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u)
+        else
+            apps=$(echo "$changed_files" | grep -E "^apps/|^app-legacy/" | cut -d '/' -f1,2 | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u)
+        fi
 
-          # Detectar si hubo cambios en packages
-          packages_changed=$(echo "$changed_files" | grep "^packages/" || true)
+        echo $apps
 
-          if [[ -n "$packages_changed" ]]; then
-              echo "📦 Cambios en packages detectados. Incluyendo todas las apps."
+        if [ -z "$apps" ]; then
+          echo "❌ No se detectaron cambios en apps o app-legacy. Cancelando ejecución del pipeline."
+          exit 1
+        fi
+        
+        cd $(Build.SourcesDirectory)/pipeline
 
-              # Incluir todas las apps de apps/ y app-legacy/
-              apps=$(find apps app-legacy -mindepth 1 -maxdepth 1 -type d | sed -E 's|^apps/||; s|^app-legacy/||' | sort -u)
-          else
-              echo "🔍 Detectando cambios en apps/ y app-legacy/..."
+        apps_yaml="    apps:\n"
+        for app in $apps; do
+          apps_yaml+="      - $app\n"
+        done
 
-              apps=$(echo "$changed_files" | \
-                  grep -E "^apps/|^app-legacy/" | \
-                  cut -d '/' -f1,2 | \
-                  sed -E 's|^apps/||; s|^app-legacy/||' | \
-                  sort -u)
-          fi
+        # Reemplazar el bloque `apps:` en main-pipeline.yml
+        awk -v newapps="$apps_yaml" '
+          BEGIN {inside=0}
+          /^    apps:/ {inside=1; print newapps; next}
+          inside && /^[^ ]/ {inside=0}
+          !inside
+        ' main-pipeline.yml > main-pipeline-updated.yml
 
-          echo "🧩 Apps detectadas modificadas:"
-          echo "$apps"
+        mv main-pipeline-updated.yml main-pipeline.yml
 
-          if [[ -z "$apps" ]]; then
-              echo "❌ No se detectaron cambios en apps, app-legacy o packages. Cancelando ejecución."
-              exit 1
-          fi
+        cat main-pipeline.yml
+        raw_branch=$(Build.SourceBranch)
+        clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
 
-          # Construir bloque YAML
-          cd $(Build.SourcesDirectory)/pipeline
-
-          apps_yaml="    apps:\n"
-          for app in $apps; do
-            apps_yaml+="      - $app\n"
-          done
-
-          # Reemplazar el bloque apps: en main-pipeline.yml
-          awk -v newapps="$apps_yaml" '
-            BEGIN {inside=0}
-            /^    apps:/ {inside=1; print newapps; next}
-            inside && /^[^ ]/ {inside=0}
-            !inside
-          ' main-pipeline.yml > main-pipeline-updated.yml
-
-          mv main-pipeline-updated.yml main-pipeline.yml
-
-          echo "📝 Contenido actualizado de main-pipeline.yml:"
-          cat main-pipeline.yml
-
-          # Commit y push de los cambios
-          git add main-pipeline.yml
-          git commit -m "Auto-generated pipeline config ${BUILD_BUILDID}"
-          git push origin $clean_branch
-
-          echo "✅ Cambios subidos correctamente"
+        git checkout $clean_branch
+        git config user.name "pipeline"
+        git config user.email "pipelineUX@ux.technology"
+        git add main-pipeline.yml
+        git commit -m "Auto-generated pipeline config ${BUILD_BUILDID}"
+        git push origin $clean_branch
 
       name: DetectChangedMS
     
