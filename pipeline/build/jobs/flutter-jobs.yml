@@ -48,3 +48,7 @@ jobs:
           # aws s3 cp ./build/app/outputs/flutter-apk s3://repository-native/app-seller/android/pruebas --recursive
 
         displayName: 'CP apk'
+        env:
+          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
+          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
