@@ -242,7 +242,6 @@ jobs:
         CURRENT_BRANCH=$(echo $(Build.SourceBranch))
         echo $CURRENT_BRANCH
 
-
         if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|master|staging|feature/.+)$ ]]; then
 
           if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
@@ -255,11 +254,9 @@ jobs:
             clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
           fi
 
-
           if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|staging|feature/.+)$ ]]; then
             git checkout version/$clean_branch
             VERSION_ACTUAL=$(grep '^version:' pubspec.yaml | cut -d ' ' -f2)
-  
             echo "versión base actual: $VERSION_ACTUAL"
 
             git checkout version/master
@@ -267,6 +264,19 @@ jobs:
             echo "versión base master: $VERSION_ACTUAL_MASTER"
 
             git checkout version/$clean_branch
+
+            BUILD_NUMBER_VERSION_ACTUAL="${VERSION_ACTUAL#*+}"
+            BUILD_NUMBER_VERSION_MASTER="${VERSION_ACTUAL_MASTER#*+}"
+
+            if [[$BUILD_NUMBER_VERSION_ACTUAL == $BUILD_NUMBER_VERSION_MASTER]]; then 
+              NEW_BUILD_NUMBER=$((BUILD_NUMBER_VERSION_ACTUAL + 1))
+            elif [[$BUILD_NUMBER_VERSION_ACTUAL > $BUILD_NUMBER_VERSION_MASTER]]; then 
+              NEW_BUILD_NUMBER=$BUILD_NUMBER_VERSION_ACTUAL
+            elif [[$BUILD_NUMBER_VERSION_ACTUAL < $BUILD_NUMBER_VERSION_MASTER]]; then 
+              NEW_BUILD_NUMBER=$((BUILD_NUMBER_VERSION_MASTER + 1))
+            fi
+            echo "Nuevo Build: $NEW_BUILD_NUMBER"
+
           fi
 
           #   if [[ "$BASE_VERSION_BRANCH" == "$VERSION_ACTUAL_MASTER" ]]; then

@@ -102,7 +102,7 @@ jobs:
         displayName: 'Flutter Build APK (profile)'
 
       - script: |
-          echo "Verificando Build Appk"
+          echo "Verificando Build Apk"
           if [ -d "build/app/outputs/flutter-apk" ] && [ "$(ls -A build/app/outputs/flutter-apk)" ]; then
             echo "✅ Apk encontrado"
           else
