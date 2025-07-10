@@ -56,6 +56,10 @@ jobs:
               exit 1
             fi
         displayName: '📚 Leer versiones de microservicios'
+      
+      - script: |
+          echo "version a actualizar: $(msVersion)"
+        displayName: 'read version'
 
       - task: JavaToolInstaller@0
         inputs:
