@@ -72,7 +72,7 @@ jobs:
 
       - script: |
             echo "versionpub: $(msVersionPub)"
-        displayName: '📚 Leer versiones de apk pub'
+        displayName: '📚 pub'
 
       - task: JavaToolInstaller@0
         inputs:
