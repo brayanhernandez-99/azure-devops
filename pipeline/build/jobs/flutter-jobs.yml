@@ -55,7 +55,24 @@ jobs:
               echo "❌ No se encontró archivo de versión para apk"
               exit 1
             fi
-        displayName: '📚 Leer versiones de microservicios'
+        displayName: '📚 Leer versiones de apk'
+
+      - script: |
+            ls -R $(Pipeline.Workspace)/downloaded-versions/versions/version-Pub-apk
+            VERSION_FILE="$(Pipeline.Workspace)/downloaded-versions/versions/version-Pub-apk/version-Pub-apk.json"
+            if [[ -f "$VERSION_FILE" ]]; then
+              VERSION=$(jq -r '.version' $VERSION_FILE)
+              echo "🚀 Versión detectada para apk pub: $VERSION"
+              echo "##vso[task.setvariable variable=msVersionPub]$VERSION"
+            else
+              echo "❌ No se encontró archivo de versión para apk pub"
+              exit 1
+            fi
+        displayName: '📚 Leer versiones de apk pub'
+
+      - script: |
+            echo "versionpub: $(msVersionPub)"
+        displayName: '📚 Leer versiones de apk pub'
 
       - task: JavaToolInstaller@0
         inputs:
