@@ -337,9 +337,7 @@ jobs:
 
       - script: |
           echo "Esperando Quality Gate..."
-          echo $(SONAR_HOST_URL)
-
-
+    
           status=$(curl -s -u "$SONAR_TOKEN:" "$SONAR_HOST_URL/api/qualitygates/project_status?projectKey=pruebas-microfronted-$(msName)")
           
           gate=$(echo "$status" | jq -r '.projectStatus.qualityGate.name')
