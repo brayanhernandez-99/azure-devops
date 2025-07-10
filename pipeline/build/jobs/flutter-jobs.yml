@@ -56,16 +56,24 @@ jobs:
               exit 1
             fi
         displayName: '📚 Leer versiones de microservicios'
-      
-      - script: |
-          echo "version a actualizar: $(msVersion)"
-        displayName: 'read version'
 
       - task: JavaToolInstaller@0
         inputs:
           versionSpec: '17'
           jdkArchitectureOption: 'x64'
           jdkSourceOption: 'PreInstalled'
+      
+      - script: |
+          echo "version a actualizar: $(msVersion)"
+          sed -i "s/^version: .*/version: $(msVersion)/" pubspec.yaml
+          cat pubspec.yaml
+        displayName: 'change version file pubspect'
+      
+      - script: |
+          echo "version a actualizar: $(msVersion)"
+          jq --arg version "$NEW_VERSION" '.VERSION = $version' env.json > tmp.json && mv tmp.json env.json
+          cat env.json
+        displayName: 'change version file env.json'
 
       - task: FlutterInstall@0
         inputs:
@@ -128,7 +136,7 @@ jobs:
               ;;
           esac
 
-          mv build/app/outputs/flutter-apk/app-profile.apk build/app/outputs/flutter-apk/invictus-$CURRENT_BRANCH_PR-v1.0.0.apk
+          mv build/app/outputs/flutter-apk/app-profile.apk build/app/outputs/flutter-apk/invictus-$CURRENT_BRANCH_PR-v$(msVersion).apk
         displayName: 'change name file Apk'
         condition: not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
         env:
