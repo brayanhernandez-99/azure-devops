@@ -71,7 +71,7 @@ jobs:
       
       - script: |
           echo "version a actualizar: $(msVersion)"
-          jq --arg version "$NEW_VERSION" '.VERSION = $version' env.json > tmp.json && mv tmp.json env.json
+          jq --arg version "$NEW_VERSION" '.VERSION = $(msVersion)' env.json > tmp.json && mv tmp.json env.json
           cat env.json
         displayName: 'change version file env.json'
 
