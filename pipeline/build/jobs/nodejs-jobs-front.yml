@@ -323,44 +323,10 @@ jobs:
                       ne(variables['Build.SourceBranchName'], 'staging')
                     )
       
-      - task: sonar-buildbreaker@8
-        displayName: 'Quality Gate'
-        inputs:
-          SonarQube: 'SonarQubeConection'
-        condition: and(
-                      succeeded(),
-                      ne(variables['msName'], 'app-administration-vue2'),
-                      ne(variables['msName'], 'app-sellers-vue2'),
-                      ne(variables['Build.SourceBranchName'], 'master'),
-                      ne(variables['Build.SourceBranchName'], 'staging')
-                    )
-
-      # - script: |
-      #     echo "Esperando Quality Gate..."
-      #     analysisId=$(cat .sonarqube/out/.sonar/report-task.txt | grep ceTaskId | cut -d= -f2)
-          
-      #     for i in {1..12}; do  # hasta 60 segundos (12 * 5)
-      #       sleep 5
-      #       status=$(curl -s -u "$(SONAR_TOKEN):" "$(SONAR_HOST_URL)/api/ce/task?id=$analysisId" | jq -r .task.status)
-      #       if [[ "$status" == "SUCCESS" ]]; then
-      #         qgStatus=$(curl -s -u "$(SONAR_TOKEN):" "$(SONAR_HOST_URL)/api/qualitygates/project_status?analysisId=$analysisId" | jq -r .projectStatus.status)
-      #         echo "Quality Gate status: $qgStatus"
-      #         if [[ "$qgStatus" != "OK" ]]; then
-      #           echo "❌ Quality Gate fallido."
-      #           exit 1
-      #         else
-      #           echo "✅ Quality Gate aprobado."
-      #           exit 0
-      #         fi
-      #       fi
-      #     done
-
-      #     echo "❌ Timeout esperando Quality Gate"
-      #     exit 1
-      #   env:
-      #     SONAR_TOKEN: $(SonarToken)         # Variable secreta definida en el pipeline
-      #     SONAR_HOST_URL: $(SONAR_HOST_URL) 
-      #   displayName: 'Verificar Quality Gate'
+      # - task: sonar-buildbreaker@8
+      #   displayName: 'Quality Gate'
+      #   inputs:
+      #     SonarQube: 'SonarQubeConection'
       #   condition: and(
       #                 succeeded(),
       #                 ne(variables['msName'], 'app-administration-vue2'),
@@ -370,16 +336,46 @@ jobs:
       #               )
 
       - script: |
-          # if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
-          #   msName=$(msName)
-          #   msName=${msName%-vue2}
-          #   echo $msName
-          # else 
-          #   msName=$(msName)
-          # fi
+          echo "Esperando Quality Gate..."
+
+          status=$(curl -s -u "$(SONAR_TOKEN):" "$(SONAR_URL)/api/qualitygates/project_status?projectKey=pruebas-microfronted-$(msName)")
+          
+          gate=$(echo "$status" | jq -r '.projectStatus.qualityGate.name')
+          status_code=$(echo "$status" | jq -r '.projectStatus.status')
+          echo "🔹 Proyecto: pruebas-microfronted-$(msName) | Quality Gate: $gate | Estado: $status_code"
+
+          if [[ "$status_code" == "ERROR" ]]; then
+            echo "❌ El proyecto falló su Quality Gate."
+            exit 1
+          else
+            echo "✅ El proyecto pasó su Quality Gate."
+          fi
+
+        env:
+          SONAR_TOKEN: $(SONAR_TOKEN) 
+          SONAR_HOST_URL: $(SONAR_HOST_URL) 
+        displayName: 'Verificar Quality Gate'
+        continueOnError: true
+        condition: and(
+                      succeeded(),
+                      ne(variables['msName'], 'app-administration-vue2'),
+                      ne(variables['msName'], 'app-sellers-vue2'),
+                      ne(variables['Build.SourceBranchName'], 'master'),
+                      ne(variables['Build.SourceBranchName'], 'staging')
+                    )
+
+      - script: |
 
           if [ -d "$(System.DefaultWorkingDirectory)/$(file)/$(msName)/dist" ]; then
-            aws s3 cp ./$(file)/$(msName)/dist s3://mf-prueba-$(msName)-$(ACCOUNT_ID_INVIC)/$(msVersion)/ --recursive
+            if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
+              msName=$(msName)
+              msName=${msName%-vue2}
+              echo $msName
+            else 
+              msName=$(msName)
+            fi
+
+            aws s3 cp ./$(file)/$msName/dist s3://mf-prueba-$msName-$(ACCOUNT_ID_INVIC)/$(msVersion)/ --recursive
             # echo $msName $(ACCOUNT_ID_INVIC) $(msVersion)
           else
             echo "No se encontro la carpeta dist, por ende no compilo el proyecto $msName"
