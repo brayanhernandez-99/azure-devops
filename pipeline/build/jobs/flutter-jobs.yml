@@ -106,6 +106,7 @@ jobs:
 
           mv build/app/outputs/flutter-apk/app-profile.apk build/app/outputs/flutter-apk/invictus-$CURRENT_BRANCH_PR-v1.0.0.apk
         displayName: 'change name file Apk'
+        condition: not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
         env:
           RED: ${{ parameters.red }}
 
