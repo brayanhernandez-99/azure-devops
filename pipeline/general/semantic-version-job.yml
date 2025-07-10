@@ -260,7 +260,7 @@ jobs:
             git checkout version/$clean_branch
             VERSION_ACTUAL=$(grep '^version:' pubspec.yaml | cut -d ' ' -f2)
   
-            echo "versión base actual: VERSION_ACTUAL"
+            echo "versión base actual: $VERSION_ACTUAL"
 
             git checkout version/master
             VERSION_ACTUAL_MASTER=$(grep '^version:' pubspec.yaml | cut -d ' ' -f2)
