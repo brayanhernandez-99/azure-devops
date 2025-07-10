@@ -267,6 +267,7 @@ jobs:
             echo "versión base master: $VERSION_ACTUAL_MASTER"
 
             git checkout version/$clean_branch
+          fi
 
           #   if [[ "$BASE_VERSION_BRANCH" == "$VERSION_ACTUAL_MASTER" ]]; then
           #     # Las versiones base son iguales, calcular nueva base y resetear prerelease 
