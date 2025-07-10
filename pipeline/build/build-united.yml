@@ -8,3 +8,5 @@ stages:
   jobs:
   - ${{ if eq(parameters.language, 'flutter') }}:
     - template: jobs/flutter-jobs.yml
+      parameters:
+        red: ${{ parameters.red }}

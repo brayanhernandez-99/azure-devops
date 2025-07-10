@@ -1,4 +1,31 @@
 jobs:
+
+  - ${{ if not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')) }}:
+    - deployment: WaitForApproval
+      displayName: 'Esperar aprobación'
+      pool:
+        name: Azure Pipelines
+        vmImage: 'ubuntu-22.04'
+      ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
+        environment: 'Build develop'
+      ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
+        environment: 'Build Development Staging' 
+      ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'antioquia')) }}:
+        environment: 'Build master antioquia'
+      ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'cap')) }}:
+        environment: 'Build master cap'
+      ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'tolima')) }}:
+        environment: 'Build master tolima'
+      ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'huila')) }}:
+        environment: 'Build master huila'
+      ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'cauca')) }}:
+        environment: 'Build master cauca'
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+              - script: echo "Aprobación recibida. Iniciando despliegues..."
+
   - job: 'build_flutter'
     displayName: 'Build flutter'
     pool:
@@ -53,9 +80,62 @@ jobs:
         displayName: 'Verificar Apk'
 
       - script: |
-          aws s3 cp ./build/app/outputs/flutter-apk s3://repository-native/app-seller/android/pruebas --recursive
-        displayName: 'Copy Apk Bucket S3'
+          echo "Renombrando APK..."
+          CURRENT_BRANCH=$(echo $(Build.SourceBranch))
+          case "$CURRENT_BRANCH" in
+            "refs/heads/develop")
+              CURRENT_BRANCH_PR="dev"
+              ;;
+            "refs/heads/staging")
+              CURRENT_BRANCH_PR="qa"
+              ;;
+            "refs/heads/master")
+              case "$RED" in
+                "antioquia") CURRENT_BRANCH_PR="prd-gana" ;;
+                "cap")       CURRENT_BRANCH_PR="cap" ;;
+                "tolima")    CURRENT_BRANCH_PR="prd-seapto" ;;
+                "huila")     CURRENT_BRANCH_PR="prd-suchance" ;;
+                "cauca")     CURRENT_BRANCH_PR="prd-acertemos" ;;
+                *)           echo "⚠️ Región $RED no reconocida para master"; exit 1 ;;
+              esac
+              ;;
+            *)
+              echo "⚠️ Rama $CURRENT_BRANCH no reconocida"; exit 1
+              ;;
+          esac
 
+          mv build/app/outputs/flutter-apk/app-profile.apk build/app/outputs/flutter-apk/invictus-$CURRENT_BRANCH_PR-v1.0.0.apk
+        displayName: 'Verificar Apk'
+        env:
+          RED: ${{ parameters.red }}
+
+      - script: |
+          CURRENT_BRANCH=$(echo $(Build.SourceBranch))
+          case "$CURRENT_BRANCH" in
+            "refs/heads/develop")
+              CURRENT_BRANCH_PR="dev"
+              ;;
+            "refs/heads/staging")
+              CURRENT_BRANCH_PR="qa"
+              ;;
+            "refs/heads/master")
+              case "$RED" in
+                "antioquia") CURRENT_BRANCH_PR="prd-gana" ;;
+                "cap")       CURRENT_BRANCH_PR="cap" ;;
+                "tolima")    CURRENT_BRANCH_PR="prd-seapto" ;;
+                "huila")     CURRENT_BRANCH_PR="prd-suchance" ;;
+                "cauca")     CURRENT_BRANCH_PR="prd-acertemos" ;;
+                *)           echo "⚠️ Región $RED no reconocida para master"; exit 1 ;;
+              esac
+              ;;
+            *)
+              echo "⚠️ Rama $CURRENT_BRANCH no reconocida"; exit 1
+              ;;
+          esac
+          
+          aws s3 cp ./build/app/outputs/flutter-apk s3://repository-native/app-seller/android/pruebas-$CURRENT_BRANCH_PR --recursive
+        displayName: 'Copy Apk Bucket S3'
+        condition: not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
         env:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
