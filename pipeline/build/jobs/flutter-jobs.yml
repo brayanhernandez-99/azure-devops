@@ -48,8 +48,9 @@ jobs:
             VERSION_FILE="$(Pipeline.Workspace)/downloaded-versions/versions/version-apk/version-apk.json"
             if [[ -f "$VERSION_FILE" ]]; then
               VERSION=$(jq -r '.version' $VERSION_FILE)
-              echo "🚀 Versión detectada para apk: $VERSION"
-              echo "##vso[task.setvariable variable=msVersion]$VERSION"
+              VERSION_CLEAN=$(echo "$VERSION" | cut -d'-' -f1)
+              echo "🚀 Versión detectada para apk: $VERSION_CLEAN"
+              echo "##vso[task.setvariable variable=msVersion]$VERSION_CLEAN"
             else
               echo "❌ No se encontró archivo de versión para apk"
               exit 1
