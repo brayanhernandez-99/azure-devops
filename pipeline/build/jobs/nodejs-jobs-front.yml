@@ -338,7 +338,7 @@ jobs:
       - script: |
           echo "Esperando Quality Gate..."
 
-          status=$(curl -s -u "$(SONAR_TOKEN):" "$(SONAR_URL)/api/qualitygates/project_status?projectKey=pruebas-microfronted-$(msName)")
+          status=$(curl -s -u "${SONAR_TOKEN}:" "${SONAR_HOST_URL}/api/qualitygates/project_status?projectKey=pruebas-microfronted-$(msName)")
           
           gate=$(echo "$status" | jq -r '.projectStatus.qualityGate.name')
           status_code=$(echo "$status" | jq -r '.projectStatus.status')
@@ -365,7 +365,7 @@ jobs:
                     )
 
       - script: |
-
+          
           if [ -d "$(System.DefaultWorkingDirectory)/$(file)/$(msName)/dist" ]; then
             if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
               msName=$(msName)
@@ -375,7 +375,7 @@ jobs:
               msName=$(msName)
             fi
 
-            aws s3 cp ./$(file)/$msName/dist s3://mf-prueba-$msName-$(ACCOUNT_ID_INVIC)/$(msVersion)/ --recursive
+            aws s3 cp ./$(file)/$(msName)/dist s3://mf-prueba-$msName-$(ACCOUNT_ID_INVIC)/$(msVersion)/ --recursive
             # echo $msName $(ACCOUNT_ID_INVIC) $(msVersion)
           else
             echo "No se encontro la carpeta dist, por ende no compilo el proyecto $msName"
