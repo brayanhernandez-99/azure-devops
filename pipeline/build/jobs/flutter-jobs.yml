@@ -16,7 +16,7 @@ jobs:
           jdkArchitectureOption: 'x64'
           jdkSourceOption: 'PreInstalled'
 
-      - task: Cache@0
+      - task: Cache@2
         inputs:
           key: 'flutter-pub-$(Agent.OS)-$(Build.SourceVersion)'
           path: ~/.pub-cache
