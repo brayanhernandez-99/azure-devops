@@ -10,19 +10,19 @@ jobs:
       flutterCacheKey: $(Build.SourceVersion)
       
     steps:
-      - task: JavaToolInstaller
+      - task: JavaToolInstaller@0
         inputs:
           versionSpec: '17'
           jdkArchitectureOption: 'x64'
           jdkSourceOption: 'PreInstalled'
 
-      - task: Cache
+      - task: Cache@0
         inputs:
           key: 'flutter-pub-$(Agent.OS)-$(Build.SourceVersion)'
           path: ~/.pub-cache
         displayName: 'Cache Flutter Pub Packages'
 
-      - task: FlutterInstall
+      - task: FlutterInstall@0
         inputs:
           mode: 'auto'
           channel: 'stable'
