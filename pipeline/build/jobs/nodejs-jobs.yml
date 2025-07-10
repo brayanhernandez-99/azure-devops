@@ -135,7 +135,30 @@ jobs:
       #   inputs:
       #     pollingTimeoutSec: 400
       
-      # - task: sonar-buildbreaker@8
-      #   displayName: 'Quality Gate'
-      #   inputs:
-      #     SonarQube: 'SonarQubeConection'
+      - script: |
+          echo "Esperando Quality Gate..."
+    
+          status=$(curl -s -u "$SONAR_TOKEN:" "$SONAR_HOST_URL/api/qualitygates/project_status?projectKey=pruebas-$(msName)")
+          
+          gate=$(echo "$status" | jq -r '.projectStatus.qualityGate.name')
+          status_code=$(echo "$status" | jq -r '.projectStatus.status')
+          echo "🔹 Proyecto: pruebas-microfronted-$(msName) | Quality Gate: $gate | Estado: $status_code"
+
+          if [[ "$status_code" == "ERROR" ]]; then
+            echo "❌ El proyecto falló su Quality Gate."
+            exit 1
+          else
+            echo "✅ El proyecto pasó su Quality Gate."
+          fi
+        env:
+          SONAR_TOKEN: $(SONAR_TOKEN) 
+          SONAR_HOST_URL: $(SONAR_HOST_URL) 
+        displayName: 'Verificar Quality Gate'
+        continueOnError: true
+        condition: and(
+                      succeeded(),
+                      ne(variables['msName'], 'app-administration-vue2'),
+                      ne(variables['msName'], 'app-sellers-vue2'),
+                      ne(variables['Build.SourceBranchName'], 'master'),
+                      ne(variables['Build.SourceBranchName'], 'staging')
+                    )

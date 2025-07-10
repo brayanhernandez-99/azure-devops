@@ -322,18 +322,6 @@ jobs:
                       ne(variables['Build.SourceBranchName'], 'master'),
                       ne(variables['Build.SourceBranchName'], 'staging')
                     )
-      
-      # - task: sonar-buildbreaker@8
-      #   displayName: 'Quality Gate'
-      #   inputs:
-      #     SonarQube: 'SonarQubeConection'
-      #   condition: and(
-      #                 succeeded(),
-      #                 ne(variables['msName'], 'app-administration-vue2'),
-      #                 ne(variables['msName'], 'app-sellers-vue2'),
-      #                 ne(variables['Build.SourceBranchName'], 'master'),
-      #                 ne(variables['Build.SourceBranchName'], 'staging')
-      #               )
 
       - script: |
           echo "Esperando Quality Gate..."
