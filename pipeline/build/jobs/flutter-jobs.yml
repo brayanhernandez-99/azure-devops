@@ -44,8 +44,7 @@ jobs:
       - script: |
           echo "acá queda el apk"
           ls -l build/app/outputs/flutter-apk/
-
-          # aws s3 cp ./build/app/outputs/flutter-apk s3://repository-native/app-seller/android/pruebas --recursive
+          aws s3 cp ./build/app/outputs/flutter-apk s3://repository-native/app-seller/android/pruebas --recursive
 
         displayName: 'CP apk'
         env:
