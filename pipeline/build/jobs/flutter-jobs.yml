@@ -7,20 +7,22 @@ jobs:
 
     variables:
       versionSpecification: $[coalesce(variables.flutterVersion, '3.7.x')]
-
+      flutterCacheKey: $(Build.SourceVersion)
+      
     steps:
-      - script: |
-          echo "compila flutter"
-          ls -l
-        displayName: "Build flutter"
-
-      - task: JavaToolInstaller@0
+      - task: JavaToolInstaller
         inputs:
           versionSpec: '17'
           jdkArchitectureOption: 'x64'
           jdkSourceOption: 'PreInstalled'
-      
-      - task: FlutterInstall@0
+
+      - task: Cache
+        inputs:
+          key: 'flutter-pub-$(Agent.OS)-$(Build.SourceVersion)'
+          path: ~/.pub-cache
+        displayName: 'Cache Flutter Pub Packages'
+
+      - task: FlutterInstall
         inputs:
           mode: 'auto'
           channel: 'stable'
@@ -33,8 +35,13 @@ jobs:
         displayName: 'Flutter Pub Get'
 
       - script: |
-          ls -lah
-          ls -lah assets/
+          echo "Verificando carpeta assets"
+          if [ -d "assets" ] && [ "$(ls -A assets)" ]; then
+            echo "✅ Assets encontrados"
+          else
+            echo "❌ Error: No se encontraron assets"
+            exit 99
+          fi
         displayName: 'Verificar assets'
 
       - script: |
@@ -42,11 +49,19 @@ jobs:
         displayName: 'Flutter Build APK (profile)'
 
       - script: |
-          echo "acá queda el apk"
-          ls -l build/app/outputs/flutter-apk/
-          aws s3 cp ./build/app/outputs/flutter-apk s3://repository-native/app-seller/android/pruebas --recursive
+          echo "Verificando Build Appk"
+          if [ -d "build/app/outputs/flutter-apk" ] && [ "$(ls -A build/app/outputs/flutter-apk)" ]; then
+            echo "✅ Apk encontrado"
+          else
+            echo "❌ Error: Apk no encontrado"
+            exit 99
+          fi
+        displayName: 'Verificar Apk'
 
-        displayName: 'CP apk'
+      - script: |
+          aws s3 cp ./build/app/outputs/flutter-apk s3://repository-native/app-seller/android/pruebas --recursive
+        displayName: 'Copy Apk Bucket S3'
+
         env:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
