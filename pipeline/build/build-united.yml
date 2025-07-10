@@ -1,4 +1,12 @@
 stages:
+- stage: 'microservices_developmet'
+  displayName: 'microservices Developmet'
+  dependsOn: []
+
+  jobs:
+  - template: ../general/semantic-version-job.yml
+
+
 - stage: 'build_unit'
   displayName: 'Build Unit'
 
