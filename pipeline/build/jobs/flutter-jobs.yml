@@ -9,7 +9,7 @@ jobs:
       ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
         environment: 'Build develop'
       ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
-        environment: 'Build Development Staging' 
+        environment: 'Build Staging' 
       ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'antioquia')) }}:
         environment: 'Build master antioquia'
       ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'cap')) }}:
@@ -46,7 +46,7 @@ jobs:
         vmImage: 'ubuntu-22.04'
 
     variables:
-      versionSpecification: $[coalesce(variables.flutterVersion, '3.7.x')]
+      versionSpecification: $[coalesce(variables.flutterVersion, '3.24.0')]
       flutterCacheKey: $(Build.SourceVersion)
       
     steps:
@@ -235,6 +235,8 @@ jobs:
           esac
 
           mv build/app/outputs/flutter-apk/app-profile.apk build/app/outputs/flutter-apk/invictus-$CURRENT_BRANCH_PR-v$(msVersion).apk
+          APKNAME="invictus-$CURRENT_BRANCH_PR-v$(msVersion).apk"
+          echo "##vso[task.setvariable variable=apknameclean]$APKNAME"
           ls -l build/app/outputs/flutter-apk
         displayName: 'Change name file Apk'
         condition: not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
@@ -264,8 +266,16 @@ jobs:
               echo "⚠️ Rama $CURRENT_BRANCH no reconocida"; exit 1
               ;;
           esac
-          
-          aws s3 cp ./build/app/outputs/flutter-apk s3://repository-native/app-seller/android/pruebas-$CURRENT_BRANCH_PR --recursive
+          mkdir -p build/app/outputs/flutter-apk/pruebas-$CURRENT_BRANCH_PR
+
+          # Mover el archivo a la subcarpeta
+          mv build/app/outputs/flutter-apk/$(apknameclean) build/app/outputs/flutter-apk/pruebas-$CURRENT_BRANCH_PR/
+
+          # Verifica que el archivo está donde debe
+          ls -l build/app/outputs/flutter-apk/pruebas-$CURRENT_BRANCH_PR/
+
+          # Subir a S3 la carpeta completa
+          aws s3 cp build/app/outputs/flutter-apk/pruebas-$CURRENT_BRANCH_PR/ s3://repository-native/app-seller/android/pruebas-$CURRENT_BRANCH_PR/ --recursive
         displayName: 'Copy Apk Bucket S3'
         condition: not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
         env:
