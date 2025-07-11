@@ -16,3 +16,7 @@ stages:
     - template: ../general/semantic-version-job-monorepo-front.yml
       parameters:
         apps: ${{ parameters.apps }}
+
+  - ${{ if eq(parameters.language, 'flutter') }}:
+    - template: ../general/semantic-version-job.yml
+

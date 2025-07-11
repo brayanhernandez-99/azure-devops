@@ -1,13 +1,13 @@
 stages:
-- stage: 'microservices_developmet'
-  displayName: 'microservices Developmet'
-  dependsOn: []
+# - stage: 'microservices_developmet'
+#   displayName: 'microservices Developmet'
+#   dependsOn: []
 
-  jobs:
-  - template: ../general/semantic-version-job.yml
+#   jobs:
+#   - template: ../general/semantic-version-job.yml
 
 
-- stage: 'build_unit'
+- stage: 'build_unit${{ parameters.red }}'
   ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
     displayName: 'Build Flutter Development'
   ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
