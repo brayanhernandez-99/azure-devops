@@ -23,6 +23,11 @@ stages:
   ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'cauca')) }}: 
     displayName: 'Build Flutter Master Cauca'
 
+  dependsOn: 
+    - 'semantic_version_integration'
+  condition:
+      in(dependencies.semantic_version_integration.result, 'Succeeded', 'SucceededWithIssues')
+
   variables:
   - template: ../variables/groups-transversal-variables.yml
 
