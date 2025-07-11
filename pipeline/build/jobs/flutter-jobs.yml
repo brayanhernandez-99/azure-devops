@@ -87,32 +87,36 @@ jobs:
         displayName: 'change version file pubspect'
       
       - script: |
-          echo "version a actualizar: $(msVersion)"
+          echo "Version a actualizar: $(msVersion)"
           CURRENT_BRANCH=$(echo $(Build.SourceBranch))
-          if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
-            CURRENT_BRANCH_PR=DEV
-          fi
-          if [[ "$CURRENT_BRANCH" == refs/heads/develop ]]; then
-            CURRENT_BRANCH_PR=DEV
-          fi
-          if [[ "$CURRENT_BRANCH" == refs/heads/staging ]]; then
-            CURRENT_BRANCH_PR=QA
-          fi
-          if [[ "$CURRENT_BRANCH" == "refs/heads/master" && "$RED" == "antioquia" ]]; then
-            CURRENT_BRANCH_PR=PRD-GANA
-          fi
-          if [[ "$CURRENT_BRANCH" == "refs/heads/master" && "$RED" == "cap" ]]; then
-            CURRENT_BRANCH_PR=PRD-CAP
-          fi
-          if [[ "$CURRENT_BRANCH" == "refs/heads/master" && "$RED" == "tolima" ]]; then
-            CURRENT_BRANCH_PR=PRD-TOLIMA
-          fi
-          if [[ "$CURRENT_BRANCH" == "refs/heads/master" && "$RED" == "huila" ]]; then
-            CURRENT_BRANCH_PR=PRD-HUILA
-          fi
-          if [[ "$CURRENT_BRANCH" == "refs/heads/master" && "$RED" == "cauca" ]]; then
-            CURRENT_BRANCH_PR=PRD-CAUCA
-          fi
+
+          case "$CURRENT_BRANCH" in
+            refs/heads/develop | refs/heads/feature/*)
+              CURRENT_BRANCH_PR="DEV"
+              echo "$CURRENT_BRANCH"
+              ;;
+            refs/heads/staging)
+              CURRENT_BRANCH_PR="QA"
+              echo "$CURRENT_BRANCH"
+              ;;
+            refs/heads/master)
+              case "$RED" in
+                "antioquia") CURRENT_BRANCH_PR="PRD-GANA" ;;
+                "cap")       CURRENT_BRANCH_PR="PRD-CAP" ;;
+                "tolima")    CURRENT_BRANCH_PR="PRD-SEAPTO" ;;
+                "huila")     CURRENT_BRANCH_PR="PRD-SUCHANCE" ;;
+                "cauca")     CURRENT_BRANCH_PR="PRD-ACERTEMOS" ;;
+                *) 
+                  echo "⚠️ Región $RED no reconocida para master"; 
+                  exit 99 
+                  ;;
+              esac
+              ;;
+            *)
+              echo "⚠️ Rama $CURRENT_BRANCH no reconocida"
+              exit 99
+              ;;
+          esac
 
           echo $(msVersion)
           echo $CURRENT_BRANCH_PR
@@ -128,9 +132,11 @@ jobs:
       - script: |
           echo "version a actualizar: $(msVersion)"
           CURRENT_BRANCH=$(echo $(Build.SourceBranch))
+
           case "$CURRENT_BRANCH" in
             refs/heads/develop | refs/heads/feature/*)
               CURRENT_BRANCH_PR="DEV"
+              echo "$CURRENT_BRANCH_PR"
               ;;
             refs/heads/staging)
               CURRENT_BRANCH_PR="QA"
@@ -142,11 +148,15 @@ jobs:
                 "tolima")    CURRENT_BRANCH_PR="SEAPTO" ;;
                 "huila")     CURRENT_BRANCH_PR="SUCHANCE" ;;
                 "cauca")     CURRENT_BRANCH_PR="ACERTEMOS" ;;
-                *)           echo "⚠️ Región $RED no reconocida para master"; exit 1 ;;
+                *)           
+                  echo "⚠️ Región $RED no reconocida para master"; 
+                  exit 99 
+                  ;;
               esac
               ;;
             *)
-              echo "⚠️ Rama $CURRENT_BRANCH no reconocida"; exit 1
+              echo "⚠️ Rama $CURRENT_BRANCH no reconocida"
+              exit 99 
               ;;
           esac
 
@@ -199,6 +209,7 @@ jobs:
           case "$CURRENT_BRANCH" in
             refs/heads/develop)
               CURRENT_BRANCH_PR="dev"
+              echo "$CURRENT_BRANCH_PR"
               ;;
             refs/heads/staging)
               CURRENT_BRANCH_PR="qa"
