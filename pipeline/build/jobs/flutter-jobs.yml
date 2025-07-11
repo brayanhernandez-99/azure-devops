@@ -90,13 +90,13 @@ jobs:
           echo "version a actualizar: $(msVersion)"
           CURRENT_BRANCH=$(echo $(Build.SourceBranch))
           case "$CURRENT_BRANCH" in
-            "refs/heads/develop" | "refs/heads/feature/*")
+            refs/heads/develop | refs/heads/feature/*)
               CURRENT_BRANCH_PR="DEV"
               ;;
-            "refs/heads/staging")
+            refs/heads/staging)
               CURRENT_BRANCH_PR="QA"
               ;;
-            "refs/heads/master")
+            refs/heads/master)
               case "$RED" in
                 "antioquia") CURRENT_BRANCH_PR="PRD-GANA" ;;
                 "cap")       CURRENT_BRANCH_PR="PRD-CAP" ;;
@@ -125,13 +125,13 @@ jobs:
           echo "version a actualizar: $(msVersion)"
           CURRENT_BRANCH=$(echo $(Build.SourceBranch))
           case "$CURRENT_BRANCH" in
-            "refs/heads/develop" | "refs/heads/feature/*")
+            refs/heads/develop | refs/heads/feature/*)
               CURRENT_BRANCH_PR="DEV"
               ;;
-            "refs/heads/staging")
+            refs/heads/staging)
               CURRENT_BRANCH_PR="QA"
               ;;
-            "refs/heads/master")
+            refs/heads/master)
               case "$RED" in
                 "antioquia") CURRENT_BRANCH_PR="GANA" ;;
                 "cap")       CURRENT_BRANCH_PR="CAP" ;;
@@ -191,13 +191,13 @@ jobs:
           echo "Renombrando APK..."
           CURRENT_BRANCH=$(echo $(Build.SourceBranch))
           case "$CURRENT_BRANCH" in
-            "refs/heads/develop")
+            refs/heads/develop)
               CURRENT_BRANCH_PR="dev"
               ;;
-            "refs/heads/staging")
+            refs/heads/staging)
               CURRENT_BRANCH_PR="qa"
               ;;
-            "refs/heads/master")
+            refs/heads/master)
               case "$RED" in
                 "antioquia") CURRENT_BRANCH_PR="prd-gana" ;;
                 "cap")       CURRENT_BRANCH_PR="cap" ;;
@@ -221,13 +221,13 @@ jobs:
       - script: |
           CURRENT_BRANCH=$(echo $(Build.SourceBranch))
           case "$CURRENT_BRANCH" in
-            "refs/heads/develop")
+            refs/heads/develop)
               CURRENT_BRANCH_PR="dev"
               ;;
-            "refs/heads/staging")
+            refs/heads/staging)
               CURRENT_BRANCH_PR="qa"
               ;;
-            "refs/heads/master")
+            refs/heads/master)
               case "$RED" in
                 "antioquia") CURRENT_BRANCH_PR="prd-gana" ;;
                 "cap")       CURRENT_BRANCH_PR="cap" ;;
