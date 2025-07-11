@@ -90,7 +90,7 @@ jobs:
           echo "version a actualizar: $(msVersion)"
           CURRENT_BRANCH=$(echo $(Build.SourceBranch))
           case "$CURRENT_BRANCH" in
-            "refs/heads/feature/*"")
+            "refs/heads/feature/*")
               CURRENT_BRANCH_PR="DEV"
               ;;
             refs/heads/staging)
@@ -120,6 +120,8 @@ jobs:
           env.json > tmp.json && mv tmp.json env.json
           cat env.json
         displayName: 'change version file, URL and Environment env.json'
+        env:
+          RED: ${{ parameters.red }}
 
       - script: |
           echo "version a actualizar: $(msVersion)"
@@ -150,6 +152,8 @@ jobs:
           sed -i "s|applicationId *= *\"[^\"]*\"|applicationId = \"$NEW_APP_ID\"|" android/app/build.gradle
           cat android/app/build.gradle
         displayName: 'change file build.gradle'
+        env:
+          RED: ${{ parameters.red }}
 
       - task: FlutterInstall@0
         inputs:
