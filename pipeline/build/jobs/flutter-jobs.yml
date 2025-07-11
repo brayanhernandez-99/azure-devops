@@ -93,7 +93,6 @@ jobs:
           case "$CURRENT_BRANCH" in
             refs/heads/develop | refs/heads/feature/*)
               CURRENT_BRANCH_PR="DEV"
-              echo "$CURRENT_BRANCH"
               ;;
             refs/heads/staging)
               CURRENT_BRANCH_PR="QA"
@@ -118,11 +117,11 @@ jobs:
               ;;
           esac
 
-          echo $(msVersion)
-          echo $CURRENT_BRANCH_PR
-          echo $(BASE_URL_FLUTTER)
-          jq --arg version "$msVersion" --arg environment "$CURRENT_BRANCH_PR" --arg url "$BASE_URL_FLUTTER" '.VERSION = $version | .ENVIRONMENT = $environment | .BASE_URL = $url' env.json > tmp.json && mv tmp.json env.json
-          # env.json > tmp.json && mv tmp.json env.json
+          echo VERSION: $(msVersion)
+          echo ENVIRONMENT:: $CURRENT_BRANCH_PR
+          echo URL$(BASE_URL_FLUTTER)
+
+          jq --arg version "$(msVersion)" --arg environment "$CURRENT_BRANCH_PR" --arg url "$(BASE_URL_FLUTTER)" '.VERSION = $version | .ENVIRONMENT = $environment | .BASE_URL = $url' env.json > tmp.json && mv tmp.json env.json
           cat env.json
         displayName: 'change version file, URL and Environment env.json'
         env:
