@@ -92,7 +92,7 @@ jobs:
           CURRENT_BRANCH="$CURRENT_BRANCH"
           echo $CURRENT_BRANCH
           case "$CURRENT_BRANCH" in
-            refs/heads/feature/*)
+            "refs/heads/feature/*")
               CURRENT_BRANCH_PR="DEV"
               ;;
             refs/heads/staging)
