@@ -267,7 +267,7 @@ jobs:
               ;;
           esac
           ls -l build/app/outputs/flutter-apk
-          aws s3 cp build/app/outputs/flutter-apk/$(apknameclean) s3://repository-native/app-seller/android/pruebas-$CURRENT_BRANCH_PR --recursive
+          aws s3 cp build/app/outputs/flutter-apk/$(apknameclean) s3://repository-native/app-seller/android/pruebas-$CURRENT_BRANCH_PR
         displayName: 'Copy Apk Bucket S3'
         condition: not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
         env:
