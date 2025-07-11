@@ -157,7 +157,7 @@ stages:
         apps: ${{ parameters.apps }}
         red: antioquia
 
-  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/master') }}:
+  - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/master'), ne(parameters.language, 'flutter')) }}:
     - template: release/deploy-integration.yml
       parameters:
         language: ${{ parameters.language }}
@@ -165,7 +165,7 @@ stages:
         apps: ${{ parameters.apps }}
         red: cap
   
-  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/master') }}:
+  - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/master'), ne(parameters.language, 'flutter')) }}:
     - template: release/deploy-integration.yml
       parameters:
         language: ${{ parameters.language }}
@@ -173,7 +173,7 @@ stages:
         apps: ${{ parameters.apps }}
         red: tolima
 
-  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/master') }}:
+  - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/master'), ne(parameters.language, 'flutter')) }}:
     - template: release/deploy-integration.yml
       parameters:
         language: ${{ parameters.language }}
@@ -181,7 +181,7 @@ stages:
         apps: ${{ parameters.apps }}
         red: huila
 
-  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/master') }}:
+  - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/master'), ne(parameters.language, 'flutter')) }}:
     - template: release/deploy-integration.yml
       parameters:
         language: ${{ parameters.language }}
