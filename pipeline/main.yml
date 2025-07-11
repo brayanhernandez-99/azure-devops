@@ -22,14 +22,12 @@ parameters:
     type: object
     default: {}
 
-
 resources:
   repositories:
   - repository: self
     name: $(System.TeamProject)/$(Build.Repository.Name)
     type: git
     ref: $(Build.SourceBranch)
-
 
 stages:
   - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature'), in(variables['Build.SourceBranch'], 'refs/heads/develop')), ne(parameters.language, 'flutter')) }}:
@@ -185,13 +183,9 @@ stages:
         apps: ${{ parameters.apps }}
         red: cauca
   
-
-
     # - ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), in(variables['Build.SourceBranch'], 'refs/heads/develop', 'refs/heads/staging', 'refs/heads/master' )) }}:
     #   - ${{ each ms in parameters.apps }}:
     #     - template: release/deploy-integration-prueba.yml
     #       parameters:
     #         msName: ${{ ms }}
-
-
 
