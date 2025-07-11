@@ -95,9 +95,11 @@ jobs:
             "refs/heads/develop" |  refs/heads/feature/*)
               CURRENT_BRANCH_PR="DEV"
               echo "Si"
+              exit 0
               ;;
             "refs/heads/staging")
               CURRENT_BRANCH_PR="QA"
+              exit 0
               ;;
             "refs/heads/master")
               case "$RED" in
