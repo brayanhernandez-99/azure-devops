@@ -133,6 +133,7 @@ jobs:
           case "$CURRENT_BRANCH" in
             refs/heads/develop | refs/heads/feature/*)
               CURRENT_BRANCH_PR="DEV"
+              echo "$CURRENT_BRANCH_PR"
               ;;
             refs/heads/staging)
               CURRENT_BRANCH_PR="QA"
@@ -205,6 +206,7 @@ jobs:
           case "$CURRENT_BRANCH" in
             refs/heads/develop)
               CURRENT_BRANCH_PR="dev"
+              echo "$CURRENT_BRANCH_PR"
               ;;
             refs/heads/staging)
               CURRENT_BRANCH_PR="qa"
