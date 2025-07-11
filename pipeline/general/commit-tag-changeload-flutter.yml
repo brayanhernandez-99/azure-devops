@@ -1,10 +1,9 @@
 jobs:
 - job: 'commit_tag_version'
-  ${{ if in(parameters.typerelease, 'aws-s3') }}:
-    dependsOn: 
-      - 'build_flutter'
-    condition:
-        in(dependencies.build_flutter.result, 'Succeeded', 'SucceededWithIssues')
+  dependsOn: 
+    - 'build_flutter'
+  condition:
+      in(dependencies.build_flutter.result, 'Succeeded', 'SucceededWithIssues')
   
   ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
     displayName: 'Commit and Tag Version Develop'
@@ -290,7 +289,7 @@ jobs:
           touch $(Build.ArtifactStagingDirectory)/version-pubspec-apk/version-pubspec-apk.json
           echo "{ \"ms\": \"pubspec-apk\", \"version\": \"$NEW_BUILD_NUMBER\" }" > $(Build.ArtifactStagingDirectory)/version-pubspec-apk/version-pubspec-apk.json
 
-          echo "##vso[task.setvariable variable=NEW_BUILD_NUMBER]$NEXT_VERSION_PUB"
+          echo "##vso[task.setvariable variable=NEXT_VERSION_PUB]$NEW_BUILD_NUMBER"
         fi
       displayName: Detect next version pubspec
       name: SemanticJobPubspec
@@ -305,7 +304,7 @@ jobs:
           git checkout version/$clean_branch
           
           echo "🔧 Actualizando versión $(cleanNEXT_VERSION) en el pubspec.yaml"
-          sed -i "s/^version: .*/version: $(cleanNEXT_VERSION)+$(NEW_BUILD_NUMBER)/" pubspec.yaml
+          sed -i "s/^version: .*/version: $(cleanNEXT_VERSION)$(NEW_BUILD_NUMBER)/" pubspec.yaml
 
           cat pubspec.yaml
 
