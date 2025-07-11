@@ -109,7 +109,7 @@ stages:
         typerelease: ${{ parameters.typerelease }}
         apps: ${{ parameters.apps }}
 
-  - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), in(variables['Build.SourceBranch'], 'refs/heads/develop','refs/heads/staging','refs/heads/master' )), ne(parameters.typerelease, 'aws-s3')) }}:
+  - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), in(variables['Build.SourceBranch'], 'refs/heads/develop','refs/heads/staging','refs/heads/master' )), ne(parameters.typerelease, 'aws-s3'), ne(parameters.language, 'flutter')) }}:
     - template: release/artifacts-managment.yml
       parameters:
         language: ${{ parameters.language }}
@@ -117,7 +117,7 @@ stages:
         apps: ${{ parameters.apps }}
         red: antioquia
   
-  - ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), in(variables['Build.SourceBranch'], 'refs/heads/develop', 'refs/heads/staging', 'refs/heads/master')) }}:
+  - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), in(variables['Build.SourceBranch'], 'refs/heads/develop', 'refs/heads/staging', 'refs/heads/master')), ne(parameters.language, 'flutter')) }}:
     - template: release/deploy-integration.yml
       parameters:
         language: ${{ parameters.language }}
