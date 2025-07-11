@@ -327,10 +327,13 @@ jobs:
           echo "Esperando Quality Gate..."
     
           status=$(curl -s -u "$SONAR_TOKEN:" "$SONAR_HOST_URL/api/qualitygates/project_status?projectKey=pruebas-microfronted-$(msName)")
-          
-          gate=$(echo "$status" | jq -r '.projectStatus.qualityGate.name')
+          metrics_response=$(curl -s -u "$SONAR_TOKEN:" "$SONAR_HOST_URL/api/measures/component?component=pruebas-microfronted-$(msName)&metricKeys=coverage,duplicated_lines_density")
+
+          coverage=$(echo "$metrics_response" | jq -r '.component.measures[] | select(.metric=="coverage") | .value')
+          duplication=$(echo "$metrics_response" | jq -r '.component.measures[] | select(.metric=="duplicated_lines_density") | .value')
+
           status_code=$(echo "$status" | jq -r '.projectStatus.status')
-          echo "🔹 Proyecto: pruebas-microfronted-$(msName) | Quality Gate: $gate | Estado: $status_code"
+          echo "🔹 Proyecto: pruebas-microfronted-$(msName) | Coverage: $coverage | Lines Duplications: $duplication | Estado: $status_code"
 
           if [[ "$status_code" == "ERROR" ]]; then
             echo "❌ El proyecto falló su Quality Gate."
