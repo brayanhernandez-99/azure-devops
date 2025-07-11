@@ -114,6 +114,9 @@ jobs:
             CURRENT_BRANCH_PR=PRD-CAUCA
           fi
 
+          echo $(msVersion)
+          echo $CURRENT_BRANCH_PR
+          echo $(BASE_URL_FLUTTER)
           jq --arg version "$(msVersion)" --arg environment "$CURRENT_BRANCH_PR" --arg url "$(BASE_URL_FLUTTER)" '.VERSION = $version' | '.ENVIRONMENT = $environment' | '.BASE_URL = $url' env.json > tmp.json && mv tmp.json env.json
 
           # env.json > tmp.json && mv tmp.json env.json
