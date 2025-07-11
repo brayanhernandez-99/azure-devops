@@ -228,6 +228,7 @@ jobs:
           esac
 
           mv build/app/outputs/flutter-apk/app-profile.apk build/app/outputs/flutter-apk/invictus-$CURRENT_BRANCH_PR-v$(msVersion).apk
+          ls -l build/app/outputs/flutter-apk
         displayName: 'change name file Apk'
         condition: not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
         env:
