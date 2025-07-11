@@ -266,7 +266,7 @@ jobs:
               echo "⚠️ Rama $CURRENT_BRANCH no reconocida"; exit 1
               ;;
           esac
-          
+          ls -l build/app/outputs/flutter-apk
           aws s3 cp build/app/outputs/flutter-apk/$(apknameclean) s3://repository-native/app-seller/android/pruebas-$CURRENT_BRANCH_PR --recursive
         displayName: 'Copy Apk Bucket S3'
         condition: not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
