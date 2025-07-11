@@ -304,7 +304,7 @@ jobs:
           git checkout version/$clean_branch
           
           echo "🔧 Actualizando versión $(cleanNEXT_VERSION) en el pubspec.yaml"
-          sed -i "s/^version: .*/version: $(cleanNEXT_VERSION)$(NEW_BUILD_NUMBER)/" pubspec.yaml
+          sed -i "s/^version: .*/version: $(cleanNEXT_VERSION)$(NEXT_VERSION_PUB)/" pubspec.yaml
 
           cat pubspec.yaml
 
