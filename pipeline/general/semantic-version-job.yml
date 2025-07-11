@@ -288,7 +288,7 @@ jobs:
           echo "##vso[task.setvariable variable=NEW_BUILD_NUMBER]$NEXT_VERSION_PUB"
         fi
       displayName: Detect next version pubspec
-      name: SemanticJobPubspect
+      name: SemanticJobPubspec
     
     - task: PublishBuildArtifacts@1
       inputs:
