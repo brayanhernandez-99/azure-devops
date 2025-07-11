@@ -93,7 +93,7 @@ jobs:
           echo "version a actualizar: $(msVersion)"
           sed -i "s/^version: .*/version: $(msVersion)+$(msVersionPubspec)/" pubspec.yaml
           cat pubspec.yaml
-        displayName: 'change version file pubspect'
+        displayName: 'Change version file pubspec'
       
       - script: |
           echo "Version a actualizar: $(msVersion)"
@@ -168,7 +168,7 @@ jobs:
           NEW_APP_ID="com.ux.mobile.$CURRENT_BRANCH_PR"
           sed -i "s|applicationId *= *\"[^\"]*\"|applicationId = \"$NEW_APP_ID\"|" android/app/build.gradle
           cat android/app/build.gradle
-        displayName: 'change file build.gradle'
+        displayName: 'Change file build.gradle'
         env:
           RED: ${{ parameters.red }}
 
@@ -236,7 +236,7 @@ jobs:
 
           mv build/app/outputs/flutter-apk/app-profile.apk build/app/outputs/flutter-apk/invictus-$CURRENT_BRANCH_PR-v$(msVersion).apk
           ls -l build/app/outputs/flutter-apk
-        displayName: 'change name file Apk'
+        displayName: 'Change name file Apk'
         condition: not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
         env:
           RED: ${{ parameters.red }}
