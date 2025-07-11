@@ -6,7 +6,6 @@ stages:
 #   jobs:
 #   - template: ../general/semantic-version-job.yml
 
-
 - stage: 'build_unit${{ parameters.red }}'
   ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
     displayName: 'Build Flutter Development'
@@ -30,6 +29,8 @@ stages:
 
   variables:
   - template: ../variables/groups-transversal-variables.yml
+    parameters:
+      red: ${{ parameters.red }}
 
   jobs:
   - ${{ if eq(parameters.language, 'flutter') }}:
