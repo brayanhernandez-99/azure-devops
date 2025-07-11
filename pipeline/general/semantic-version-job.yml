@@ -279,7 +279,6 @@ jobs:
               NEW_BUILD_NUMBER=$((BUILD_NUMBER_VERSION_MASTER + 1))
             fi
             echo "Nuevo Build: +$NEW_BUILD_NUMBER"
-
           fi
 
           mkdir -p $(Build.ArtifactStagingDirectory)/version-pubspec-apk
@@ -296,7 +295,7 @@ jobs:
         PathtoPublish: '$(Build.ArtifactStagingDirectory)'
         ArtifactName: 'versions'
         publishLocation: 'Container'
-      displayName: '📦 public artifact version'
+      displayName: '📦 Public artifact version'
 
     # - script: |
     #       raw_branch=$(Build.SourceBranch)

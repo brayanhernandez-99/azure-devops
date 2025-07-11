@@ -71,8 +71,8 @@ jobs:
         displayName: '📚 Leer versiones de apk'
 
       - script: |
-            ls -R $(Pipeline.Workspace)/downloaded-versions/versions/version-Pub-apk
-            VERSION_FILE="$(Pipeline.Workspace)/downloaded-versions/versions/version-Pub-apk/version-Pub-apk.json"
+            ls -R $(Pipeline.Workspace)/downloaded-versions/versions/version-pubspec-apk
+            VERSION_FILE="$(Pipeline.Workspace)/downloaded-versions/versions/version-pubspec-apk/version-pubspec-apk.json"
             if [[ -f "$VERSION_FILE" ]]; then
               VERSION=$(jq -r '.version' $VERSION_FILE)
               echo "🚀 Versión detectada para apk pub: +$VERSION"
