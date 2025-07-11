@@ -9,7 +9,7 @@ jobs:
       ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
         environment: 'Build develop'
       ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
-        environment: 'Build Development Staging' 
+        environment: 'Build Staging' 
       ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'antioquia')) }}:
         environment: 'Build master antioquia'
       ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'cap')) }}:

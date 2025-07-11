@@ -123,7 +123,7 @@ stages:
         typerelease: ${{ parameters.typerelease }}
         red: cauca
 
-  - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), in(variables['Build.SourceBranch'], 'refs/heads/staging','refs/heads/master' )), ne(parameters.typerelease, 'aws-s3')) }}:
+  - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), in(variables['Build.SourceBranch'], 'refs/heads/staging','refs/heads/master' )), ne(parameters.typerelease, 'aws-s3'), ne(parameters.language, 'flutter')) }}:
     - template: build/semantic-version-integration.yml
       parameters:
         language: ${{ parameters.language }}
