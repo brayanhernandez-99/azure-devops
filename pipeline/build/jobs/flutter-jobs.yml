@@ -27,7 +27,20 @@ jobs:
               - script: echo "Aprobación recibida. Iniciando despliegues..."
 
   - job: 'build_flutter'
-    displayName: 'Build flutter'
+    ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
+      displayName: 'Build Flutter Develop'
+    ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
+      displayName: 'Build Flutter Staging'
+    ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'antioquia')) }}:
+      displayName: 'Build Flutter Antioquia'
+    ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'cap')) }}:
+      displayName: 'Build Flutter cap'
+    ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'tolima')) }}:
+      displayName: 'Build Flutter tolima'
+    ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'huila')) }}:
+      displayName: 'Build Flutter huila'
+    ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'cauca')) }}:
+      displayName: 'Build Flutter cauca'
     pool:
         name: 'Azure Pipelines'
         vmImage: 'ubuntu-22.04'

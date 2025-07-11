@@ -8,7 +8,20 @@ stages:
 
 
 - stage: 'build_unit'
-  displayName: 'Build Unit'
+  ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
+    displayName: 'Build Flutter Development'
+  ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
+    displayName: 'Build Flutter Staging' 
+  ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'antioquia')) }}: 
+    displayName: 'Build Flutter Master Antioquia'
+  ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'cap')) }}: 
+    displayName: 'Build Flutter Master Cap'
+  ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'tolima')) }}: 
+    displayName: 'Build Flutter Master Tolima'
+  ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'huila')) }}: 
+    displayName: 'Build Flutter Master Huila'
+  ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'cauca')) }}: 
+    displayName: 'Build Flutter Master Cauca'
 
   variables:
   - template: ../variables/groups-transversal-variables.yml
