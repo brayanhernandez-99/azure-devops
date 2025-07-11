@@ -285,6 +285,16 @@ jobs:
             echo "Nuevo Build: +$NEW_BUILD_NUMBER"
           fi
 
+          if [[ "$CURRENT_BRANCH" == refs/heads/master ]]; then
+            git checkout version/$clean_branch
+            VERSION_ACTUAL_MASTER=$(grep '^version:' pubspec.yaml | cut -d ' ' -f2)
+            BUILD_NUMBER_VERSION_MASTER="${VERSION_ACTUAL_MASTER#*+}"
+            NEW_BUILD_NUMBER=$((BUILD_NUMBER_VERSION_MASTER + 1))
+
+            echo "📌 Anterior versión : +$BUILD_NUMBER_VERSION_MASTER"
+            echo "🚀 Próxima versión : +$NEW_BUILD_NUMBER"
+          fi
+
           mkdir -p $(Build.ArtifactStagingDirectory)/version-pubspec-apk
           touch $(Build.ArtifactStagingDirectory)/version-pubspec-apk/version-pubspec-apk.json
           echo "{ \"ms\": \"pubspec-apk\", \"version\": \"$NEW_BUILD_NUMBER\" }" > $(Build.ArtifactStagingDirectory)/version-pubspec-apk/version-pubspec-apk.json
