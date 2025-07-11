@@ -90,7 +90,7 @@ jobs:
           echo "version a actualizar: $(msVersion)"
           CURRENT_BRANCH=$(echo $(Build.SourceBranch))
           case "$CURRENT_BRANCH" in
-            refs/heads/develop | refs/heads/feature/*)
+            "refs/heads/feature/*"")
               CURRENT_BRANCH_PR="DEV"
               ;;
             refs/heads/staging)
