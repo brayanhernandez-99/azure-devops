@@ -62,17 +62,13 @@ jobs:
             VERSION_FILE="$(Pipeline.Workspace)/downloaded-versions/versions/version-Pub-apk/version-Pub-apk.json"
             if [[ -f "$VERSION_FILE" ]]; then
               VERSION=$(jq -r '.version' $VERSION_FILE)
-              echo "🚀 Versión detectada para apk pub: $VERSION"
-              echo "##vso[task.setvariable variable=msVersionPub]$VERSION"
+              echo "🚀 Versión detectada para apk pub: +$VERSION"
+              echo "##vso[task.setvariable variable=msVersionPubspec]$VERSION"
             else
-              echo "❌ No se encontró archivo de versión para apk pub"
+              echo "❌ No se encontró archivo de versión para apk pubspec"
               exit 1
             fi
-        displayName: '📚 Leer versiones de apk pub'
-
-      - script: |
-            echo "versionpub: $(msVersionPub)"
-        displayName: '📚 pub'
+        displayName: '📚 Leer versiones de apk pubspec'
 
       - task: JavaToolInstaller@0
         inputs:
@@ -82,7 +78,7 @@ jobs:
       
       - script: |
           echo "version a actualizar: $(msVersion)"
-          sed -i "s/^version: .*/version: $(msVersion)+$(msVersionPub)/" pubspec.yaml
+          sed -i "s/^version: .*/version: $(msVersion)+$(msVersionPubspec)/" pubspec.yaml
           cat pubspec.yaml
         displayName: 'change version file pubspect'
       
@@ -96,7 +92,6 @@ jobs:
               ;;
             refs/heads/staging)
               CURRENT_BRANCH_PR="QA"
-              echo "$CURRENT_BRANCH"
               ;;
             refs/heads/master)
               case "$RED" in
@@ -134,7 +129,6 @@ jobs:
           case "$CURRENT_BRANCH" in
             refs/heads/develop | refs/heads/feature/*)
               CURRENT_BRANCH_PR="DEV"
-              echo "$CURRENT_BRANCH_PR"
               ;;
             refs/heads/staging)
               CURRENT_BRANCH_PR="QA"
