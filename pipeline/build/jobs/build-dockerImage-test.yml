@@ -98,3 +98,4 @@ jobs:
           repository: '$(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/pruebas-pipeline-$(msName)-develop'
           Dockerfile: '$(Build.Repository.Name)/apps/$(msName)/Dockerfile'
           tags: $(msVersion)
+          
