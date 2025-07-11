@@ -283,7 +283,8 @@ jobs:
   
             VERSION_ACTUAL_MASTER=$(grep '^version:' pubspec.yaml | cut -d ' ' -f2)
             echo "versión base master: $VERSION_ACTUAL_MASTER"
-            NEW_BUILD_NUMBER=$((VERSION_ACTUAL_MASTER + 1))
+            BUILD_NUMBER_VERSION_MASTER="${VERSION_ACTUAL_MASTER#*+}"
+            NEW_BUILD_NUMBER=$((BUILD_NUMBER_VERSION_MASTER + 1))
 
             echo "📌 anterior versión : $VERSION_ACTUAL_MASTER"
             echo "🚀 Próxima versión : $NEW_BUILD_NUMBER"
