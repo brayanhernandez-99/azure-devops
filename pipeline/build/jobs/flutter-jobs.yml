@@ -106,7 +106,10 @@ jobs:
                 "tolima")    CURRENT_BRANCH_PR="PRD-SEAPTO" ;;
                 "huila")     CURRENT_BRANCH_PR="PRD-SUCHANCE" ;;
                 "cauca")     CURRENT_BRANCH_PR="PRD-ACERTEMOS" ;;
-                *) echo "⚠️ Región $RED no reconocida para master"; exit 99 ;;
+                *) 
+                  echo "⚠️ Región $RED no reconocida para master"; 
+                  exit 99 
+                  ;;
               esac
               ;;
             *)
@@ -126,6 +129,7 @@ jobs:
       - script: |
           echo "version a actualizar: $(msVersion)"
           CURRENT_BRANCH=$(echo $(Build.SourceBranch))
+
           case "$CURRENT_BRANCH" in
             refs/heads/develop | refs/heads/feature/*)
               CURRENT_BRANCH_PR="DEV"
@@ -140,11 +144,15 @@ jobs:
                 "tolima")    CURRENT_BRANCH_PR="SEAPTO" ;;
                 "huila")     CURRENT_BRANCH_PR="SUCHANCE" ;;
                 "cauca")     CURRENT_BRANCH_PR="ACERTEMOS" ;;
-                *)           echo "⚠️ Región $RED no reconocida para master"; exit 1 ;;
+                *)           
+                  echo "⚠️ Región $RED no reconocida para master"; 
+                  exit 99 
+                  ;;
               esac
               ;;
             *)
-              echo "⚠️ Rama $CURRENT_BRANCH no reconocida"; exit 1
+              echo "⚠️ Rama $CURRENT_BRANCH no reconocida"
+              exit 99 
               ;;
           esac
 
