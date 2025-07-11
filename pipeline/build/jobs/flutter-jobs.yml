@@ -92,14 +92,14 @@ jobs:
           CURRENT_BRANCH="$CURRENT_BRANCH"
           echo $CURRENT_BRANCH
           case "$CURRENT_BRANCH" in
-            refs/heads/feature/feature/inicio-compila-pipeline)
+            "refs/heads/develop" |  refs/heads/feature/inicio-compila-pipeline)
               CURRENT_BRANCH_PR="DEV"
               echo "Si"
               ;;
-            refs/heads/staging)
+            "refs/heads/staging")
               CURRENT_BRANCH_PR="QA"
               ;;
-            refs/heads/master)
+            "refs/heads/master")
               case "$RED" in
                 "antioquia") CURRENT_BRANCH_PR="PRD-GANA" ;;
                 "cap")       CURRENT_BRANCH_PR="PRD-CAP" ;;
@@ -110,7 +110,7 @@ jobs:
               esac
               ;;
             *)
-              echo "⚠️ Rama $CURRENT_BRANCH no reconocida"; exit 1
+              echo "⚠️ Rama $CURRENT_BRANCH no reconocida"; exit 99
               ;;
           esac
 
