@@ -92,8 +92,9 @@ jobs:
           CURRENT_BRANCH="$CURRENT_BRANCH"
           echo $CURRENT_BRANCH
           case "$CURRENT_BRANCH" in
-            "refs/heads/feature/*")
+            refs/heads/feature/feature/inicio-compila-pipeline)
               CURRENT_BRANCH_PR="DEV"
+              echo "Si"
               ;;
             refs/heads/staging)
               CURRENT_BRANCH_PR="QA"
