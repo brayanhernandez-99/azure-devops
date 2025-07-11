@@ -88,9 +88,68 @@ jobs:
       
       - script: |
           echo "version a actualizar: $(msVersion)"
-          jq --arg version "$NEW_VERSION" '.VERSION = $(msVersion)' env.json > tmp.json && mv tmp.json env.json
+          CURRENT_BRANCH=$(echo $(Build.SourceBranch))
+          case "$CURRENT_BRANCH" in
+            "refs/heads/develop" | "refs/heads/feature/*")
+              CURRENT_BRANCH_PR="DEV"
+              ;;
+            "refs/heads/staging")
+              CURRENT_BRANCH_PR="QA"
+              ;;
+            "refs/heads/master")
+              case "$RED" in
+                "antioquia") CURRENT_BRANCH_PR="PRD-GANA" ;;
+                "cap")       CURRENT_BRANCH_PR="PRD-CAP" ;;
+                "tolima")    CURRENT_BRANCH_PR="PRD-SEAPTO" ;;
+                "huila")     CURRENT_BRANCH_PR="PRD-SUCHANCE" ;;
+                "cauca")     CURRENT_BRANCH_PR="PRD-ACERTEMOS" ;;
+                *)           echo "⚠️ Región $RED no reconocida para master"; exit 1 ;;
+              esac
+              ;;
+            *)
+              echo "⚠️ Rama $CURRENT_BRANCH no reconocida"; exit 1
+              ;;
+          esac
+
+          jq \
+          --arg version "$(msVersion)" \
+          --arg environment "$CURRENT_BRANCH_PR" \
+          --arg baseUrl "$(BASE_URL_FLUTTER)" \
+          '.VERSION = $version | .ENVIRONMENT = $environment | .BASE_URL = $baseUrl' \
+
+          env.json > tmp.json && mv tmp.json env.json
           cat env.json
-        displayName: 'change version file env.json'
+        displayName: 'change version file, URL and Environment env.json'
+
+      - script: |
+          echo "version a actualizar: $(msVersion)"
+          CURRENT_BRANCH=$(echo $(Build.SourceBranch))
+          case "$CURRENT_BRANCH" in
+            "refs/heads/develop" | "refs/heads/feature/*")
+              CURRENT_BRANCH_PR="DEV"
+              ;;
+            "refs/heads/staging")
+              CURRENT_BRANCH_PR="QA"
+              ;;
+            "refs/heads/master")
+              case "$RED" in
+                "antioquia") CURRENT_BRANCH_PR="GANA" ;;
+                "cap")       CURRENT_BRANCH_PR="CAP" ;;
+                "tolima")    CURRENT_BRANCH_PR="SEAPTO" ;;
+                "huila")     CURRENT_BRANCH_PR="SUCHANCE" ;;
+                "cauca")     CURRENT_BRANCH_PR="ACERTEMOS" ;;
+                *)           echo "⚠️ Región $RED no reconocida para master"; exit 1 ;;
+              esac
+              ;;
+            *)
+              echo "⚠️ Rama $CURRENT_BRANCH no reconocida"; exit 1
+              ;;
+          esac
+
+          NEW_APP_ID="com.ux.mobile.$CURRENT_BRANCH_PR"
+          sed -i "s|applicationId *= *\"[^\"]*\"|applicationId = \"$NEW_APP_ID\"|" android/app/build.gradle
+          cat android/app/build.gradle
+        displayName: 'change file build.gradle'
 
       - task: FlutterInstall@0
         inputs:
