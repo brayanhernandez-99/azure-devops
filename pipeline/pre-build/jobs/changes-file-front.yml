@@ -72,7 +72,7 @@ jobs:
 
         if [[ "$BUILD_REASON" == "PullRequest" ]]; then
           git reset --hard HEAD
-        else
+        fi
 
         CURRENT_BRANCH=$(echo $(Build.SourceBranch))
 
