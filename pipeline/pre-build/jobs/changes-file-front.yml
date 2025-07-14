@@ -124,6 +124,10 @@ jobs:
         raw_branch=$(Build.SourceBranch)
         clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
 
+        if [[ "$raw_branch" == 'refs/pull/* ]]; then
+          clean_branch=$(System.PullRequest.SourceBranch | sed 's#refs/heads/##')
+        fi
+
         git checkout $clean_branch
         git config user.name "pipeline"
         git config user.email "pipelineUX@ux.technology"
