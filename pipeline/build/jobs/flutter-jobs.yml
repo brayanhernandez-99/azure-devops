@@ -232,13 +232,14 @@ jobs:
           ESCAPED_STORE_PASSWORD=$(escape_value "$STORE_PASSWORD")
           ESCAPED_KEY_PASSWORD=$(escape_value "$KEY_PASSWORD")
 
-          touch key.properties
-          echo "storePassword=$ESCAPED_STORE_PASSWORD" >> key.properties
-          echo "keyPassword=$ESCAPED_KEY_PASSWORD" >> key.properties
-          echo "keyAlias=$KEY_ALIAS" >> key.properties
-          echo "storeFile=keystore/$KEY_ALIAS.jks" >> key.properties
+          touch android/key.properties
+          echo "keyAlias=$KEY_ALIAS" >> android/key.properties
+          echo "keyPassword=$ESCAPED_KEY_PASSWORD" >> android/key.properties
+          echo "storePassword=$ESCAPED_STORE_PASSWORD" >> android/key.properties
+          echo "storeFile=keystore/$KEY_ALIAS.jks" >> android/key.properties
 
-          ls -la key.properties
+          ls -la android/key.properties
+          cat android/key.properties
         displayName: 'Asignar Keystore'
         env:
           KEY_ALIAS: $(KEY_ALIAS)
@@ -290,6 +291,14 @@ jobs:
           APKNAME="invictus-$CURRENT_BRANCH_PR-v$(msVersion).apk"
           echo "##vso[task.setvariable variable=apknameclean]$APKNAME"
           ls -l build/app/outputs/flutter-apk
+
+          echo "\n"
+          echo "**********************"
+          ls -ltra *.sha1
+          cat *.sha1
+          CHECKSUM=$(shasum -a 1 build/app/outputs/flutter-apk/*.sha1 | awk '{ print $1 }')
+          echo "SHA-1: $CHECKSUM"
+
         displayName: 'Change name file Apk'
         condition: not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
         env:
