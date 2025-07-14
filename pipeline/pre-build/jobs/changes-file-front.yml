@@ -123,6 +123,12 @@ jobs:
         cat main-pipeline.yml
         raw_branch=$(Build.SourceBranch)
         clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
+        echo $raw_branch
+
+        if [[ "$raw_branch" == 'refs/pull/*' ]]; then
+          clean_branch=$(echo "$SYSTEM_PULLREQUEST_SOURCEBRANCH" | sed 's#refs/heads/##')
+          echo $clean_branch
+        fi
 
         git checkout $clean_branch
         git config user.name "pipeline"
