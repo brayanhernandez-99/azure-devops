@@ -330,5 +330,6 @@ jobs:
       condition: 
         and(
           succeeded(),
-          ne(variables['Build.SourceBranchName'], 'master')
+          ne(variables['Build.SourceBranchName'], 'master'),
+          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
         )
