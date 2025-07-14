@@ -84,7 +84,9 @@ jobs:
           cd $(Build.SourcesDirectory)
           last_real_commit=$(git log --no-merges --pretty=format:%H -n 2 | tail -n1)
           echo $last_real_commit
-          changed_files=$(git diff --name-only $last_real_commit HEAD)
+          # changed_files=$(git diff --name-only $last_real_commit HEAD)
+          git fetch origin $clean_branch
+          changed_files=$(git diff --name-only origin/$clean_branch...HEAD)
           echo $changed_files
 
           packages_changed=$(echo "$changed_files" | grep "^packages/" || true)
