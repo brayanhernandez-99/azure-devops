@@ -184,7 +184,7 @@ jobs:
         inputs:
           key: 'flutter-pub-cache | "$(Agent.OS)" | pubspec.yaml'
           path: $(HOME)/.pub-cache
-        displayName: 'Cache Flutter Pub Cache'
+        displayName: 'Flutter Pub Cache'
 
       - script: |
           flutter --version
@@ -236,8 +236,8 @@ jobs:
             -e 's/-/\\-/g'
           }
 
-          ESCAPED_STORE_PASSWORD=$(escape_value "$STORE_PASSWORD")
-          ESCAPED_KEY_PASSWORD=$(escape_value "$KEY_PASSWORD")
+          ESCAPED_STORE_PASSWORD=$(escape_value "${STORE_PASSWORD}")
+          ESCAPED_KEY_PASSWORD=$(escape_value "${KEY_PASSWORD}")
 
           cat > key.properties << EOF
           storePassword=$(ESCAPED_STORE_PASSWORD)
