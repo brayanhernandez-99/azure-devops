@@ -203,6 +203,7 @@ jobs:
           aws s3 cp s3://repository-native/app-seller/android/app/keystore/$(KEY_ALIAS).jks android/app/keystore/            
           if [ -d "android/app/keystore" ] && [ "$(ls -A android/app/keystore/$(KEY_ALIAS).jks)" ]; then
             echo "✅ Keystore descargado"
+            pwd
             ls -la android/app/keystore/*
           else
             echo "❌ Error: No se descargo el Keystore"
@@ -238,6 +239,9 @@ jobs:
           echo "storePassword=$ESCAPED_STORE_PASSWORD" >> android/key.properties
           echo "storeFile=android/app/keystore/$KEY_ALIAS.jks" >> android/key.properties
 
+          pwd
+          ls-ltra
+          echo "*************************************"
           ls -la android/key.properties
           cat android/key.properties
         displayName: 'Asignar Keystore'
