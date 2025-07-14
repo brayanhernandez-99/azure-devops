@@ -75,9 +75,6 @@ jobs:
           git checkout $clean_branch
           git reset --hard HEAD
         fi
-        echo $clean_branch
-        CURRENT_BRANCH=$(echo $(Build.SourceBranch))
-        echo $CURRENT_BRANCH
 
         if [[ "$BUILD_REASON" == "PullRequest" || "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
           cd $(Build.SourcesDirectory)
