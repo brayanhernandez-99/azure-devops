@@ -76,7 +76,6 @@ jobs:
           clean_branch=$(echo "$(System.PullRequest.SourceBranch)" | sed 's#refs/heads/##')
           git checkout $clean_branch
           git reset --hard HEAD
-          
         fi
 
         CURRENT_BRANCH=$(echo $(Build.SourceBranch))
@@ -84,7 +83,9 @@ jobs:
         if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
           cd $(Build.SourcesDirectory)
           last_real_commit=$(git log --no-merges --pretty=format:%H -n 2 | tail -n1)
+          echo $last_real_commit
           changed_files=$(git diff --name-only $last_real_commit HEAD)
+          echo $changed_files
 
           packages_changed=$(echo "$changed_files" | grep "^packages/" || true)
 
