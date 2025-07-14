@@ -183,6 +183,8 @@ jobs:
       - task: Cache@2
         inputs:
           key: 'flutter-pub-cache | "$(Agent.OS)" | pubspec.yaml'
+          restoreKeys: |
+            flutter-pub-cache | "$(Agent.OS)"
           path: $(HOME)/.pub-cache
         displayName: 'Flutter Pub Cache'
 
