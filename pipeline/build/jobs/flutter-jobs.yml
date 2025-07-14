@@ -180,6 +180,12 @@ jobs:
           version: 'custom'
           customVersion: $(versionSpecification)
 
+      - task: Cache@2
+        inputs:
+          key: 'flutter-pub-cache | "$(Agent.OS)" | pubspec.yaml'
+          path: $(HOME)/.pub-cache
+        displayName: 'Cache Flutter Pub Cache'
+
       - script: |
           flutter --version
           flutter pub get
@@ -215,7 +221,7 @@ jobs:
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
 
       - script: |
-          escape_property_value() {
+          escape_value() {
           local raw="$1"
           printf '%s' "$raw" | sed \
             -e 's/\\/\\\\/g' \
@@ -230,14 +236,14 @@ jobs:
             -e 's/-/\\-/g'
           }
 
-          ESCAPED_STORE_PASSWORD=$(escape_property_value "$STORE_PASSWORD")
-          ESCAPED_KEY_PASSWORD=$(escape_property_value "$KEY_PASSWORD")
+          ESCAPED_STORE_PASSWORD=$(escape_value "$STORE_PASSWORD")
+          ESCAPED_KEY_PASSWORD=$(escape_value "$KEY_PASSWORD")
 
           cat > key.properties << EOF
-          storePassword=${ESCAPED_STORE_PASSWORD}
-          keyPassword=${ESCAPED_KEY_PASSWORD}
+          storePassword=$(ESCAPED_STORE_PASSWORD)
+          keyPassword=$(ESCAPED_KEY_PASSWORD)
           keyAlias=${KEY_ALIAS}
-          storeFile=keystore/$KEY_ALIAS.jks
+          storeFile=keystore/${KEY_ALIAS}.jks
           EOF
 
           ls -la key.properties
