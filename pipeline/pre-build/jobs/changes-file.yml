@@ -105,12 +105,12 @@ jobs:
         raw_branch=$(Build.SourceBranch)
         clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
 
-        git checkout $clean_branch
-        git config user.name "pipeline"
-        git config user.email "pipelineUX@ux.technology"
-        git add main-pipeline.yml
-        git commit -m "Auto-generated pipeline config ${BUILD_BUILDID}"
-        git push origin $clean_branch
+        # git checkout $clean_branch
+        # git config user.name "pipeline"
+        # git config user.email "pipelineUX@ux.technology"
+        # git add main-pipeline.yml
+        # git commit -m "Auto-generated pipeline config ${BUILD_BUILDID}"
+        # git push origin $clean_branch
 
       name: DetectChangedMS
     
