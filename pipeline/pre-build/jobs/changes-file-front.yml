@@ -128,7 +128,7 @@ jobs:
         echo "$(System.PullRequest.SourceBranch)"
 
         if [[ "$raw_branch" == 'refs/pull/*' ]]; then
-          clean_branch=$(echo "$SYSTEM_PULLREQUEST_SOURCEBRANCH" | sed 's#refs/heads/##')
+          clean_branch=$(echo "$(System.PullRequest.SourceBranch)" | sed 's#refs/heads/##')
           echo $clean_branch
         fi
 
