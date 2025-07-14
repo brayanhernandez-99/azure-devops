@@ -79,14 +79,11 @@ jobs:
         CURRENT_BRANCH=$(echo $(Build.SourceBranch))
         echo $CURRENT_BRANCH
 
-        if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
+        if [[ "$BUILD_REASON" == "PullRequest" || "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
           cd $(Build.SourcesDirectory)
           last_real_commit=$(git log --no-merges --pretty=format:%H -n 2 | tail -n1)
           echo $last_real_commit
-          # changed_files=$(git diff --name-only $last_real_commit HEAD)
-          git fetch origin $clean_branch
-          changed_files=$(git diff --name-only origin/$clean_branch...HEAD)
-          echo $changed_files
+          changed_files=$(git diff --name-only $last_real_commit HEAD)
 
           packages_changed=$(echo "$changed_files" | grep "^packages/" || true)
 
