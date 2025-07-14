@@ -239,12 +239,11 @@ jobs:
           ESCAPED_STORE_PASSWORD=$(escape_value "${STORE_PASSWORD}")
           ESCAPED_KEY_PASSWORD=$(escape_value "${KEY_PASSWORD}")
 
-          cat > key.properties << EOF
-          storePassword=$(ESCAPED_STORE_PASSWORD)
-          keyPassword=$(ESCAPED_KEY_PASSWORD)
-          keyAlias=${KEY_ALIAS}
-          storeFile=keystore/${KEY_ALIAS}.jks
-          EOF
+          touch key.properties
+          echo "storePassword=$ESCAPED_STORE_PASSWORD" >> key.properties
+          echo "keyPassword=$ESCAPED_KEY_PASSWORD" >> key.properties
+          echo "keyAlias=$KEY_ALIAS" >> key.properties
+          echo "storeFile=keystore/$KEY_ALIAS.jks" >> key.properties
 
           ls -la key.properties
           cat key.properties
