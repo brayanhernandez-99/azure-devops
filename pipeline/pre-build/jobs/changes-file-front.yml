@@ -127,7 +127,7 @@ jobs:
         echo $BUILD_REASON
         echo "$(System.PullRequest.SourceBranch)"
 
-        if [[ "$raw_branch" == 'refs/pull/*' ]]; then
+        if [[ "$BUILD_REASON" == 'PullRequest' ]]; then
           clean_branch=$(echo "$(System.PullRequest.SourceBranch)" | sed 's#refs/heads/##')
           echo $clean_branch
         fi
