@@ -131,7 +131,6 @@ jobs:
         clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
         echo $raw_branch
         echo $BUILD_REASON
-        echo "$(System.PullRequest.SourceBranch)"
 
         if [[ "$BUILD_REASON" == 'PullRequest' ]]; then
           clean_branch=$(echo "$(System.PullRequest.SourceBranch)" | sed 's#refs/heads/##')
