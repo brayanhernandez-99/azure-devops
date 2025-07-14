@@ -203,9 +203,7 @@ jobs:
           aws s3 cp s3://repository-native/app-seller/android/keystore/$(KEY_ALIAS).jks keystore/            
           if [ -d "keystore" ] && [ "$(ls -A keystore/$(KEY_ALIAS).jks)" ]; then
             echo "✅ Keystore descargado"
-            pwd
-            ls-ltra 
-            echo "***"
+            ls -ltra
             ls -la keystore/$(KEY_ALIAS).jks
           else
             echo "❌ Error: No se descargo el Keystore"
@@ -219,18 +217,36 @@ jobs:
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
 
       - script: |
+          escape_property_value() {
+          local raw="$1"
+          printf '%s' "$raw" | sed \
+            -e 's/\\/\\\\/g' \
+            -e 's/"/\\"/g' \
+            -e "s/'/\\'/g" \
+            -e 's/=/\\=/g' \
+            -e 's/:/\\:/g' \
+            -e 's/ /\\ /g' \
+            -e 's/!/\!/g' \
+            -e 's/#/\\#/g' \
+            -e 's/\$/\\$/g' \
+            -e 's/-/\\-/g'
+          }
+
+          ESCAPED_STORE_PASSWORD=$(escape_property_value "$STORE_PASSWORD")
+          ESCAPED_KEY_PASSWORD=$(escape_property_value "$KEY_PASSWORD")
+
           cat > key.properties << EOF
-          storePassword=$(STORE_PASSWORD)
-          keyPassword=$(KEY_PASSWORD)
-          keyAlias=$(KEY_ALIAS)
+          storePassword=${ESCAPED_STORE_PASSWORD}
+          keyPassword=${ESCAPED_KEY_PASSWORD}
+          keyAlias=${KEY_ALIAS}
           storeFile=keystore/$KEY_ALIAS.jks
           EOF
 
-          echo "**** File: Key.properties"
+          ls -ltra
           cat key.properties
         displayName: 'Asignar Keystore'
         env:
-          KEY_ALIAS: $(KEY_ALIAS)
+          #KEY_ALIAS: $(KEY_ALIAS)
           KEY_PASSWORD: $(KEY_PASSWORD)
           STORE_PASSWORD: $(STORE_PASSWORD)
 
