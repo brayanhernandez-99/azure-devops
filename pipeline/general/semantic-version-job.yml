@@ -303,25 +303,32 @@ jobs:
         publishLocation: 'Container'
       displayName: '📦 Public artifact version'
 
-    # - script: |
-    #       raw_branch=$(Build.SourceBranch)
-    #       clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
+    - script: |
+          raw_branch=$(Build.SourceBranch)
+          clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
+
+          git config user.name "pipeline"
+          git config user.email "pipelineUX@ux.technology"
+
+          git checkout version/$clean_branch
           
-    #       cd $(System.DefaultWorkingDirectory)/apps/$(msName)
-    #       echo "🔧 Actualizando versión en apps/$(msName)/package.json a $(cleanNEXT_VERSION)"
-    #       jq --arg version "$(cleanNEXT_VERSION)" '.version = $version' package.json > tmp.json && mv tmp.json package.json
+          echo "🔧 Actualizando versión $(cleanNEXT_VERSION) en el pubspec.yaml"
+          sed -i "s/^version: .*/version: $(cleanNEXT_VERSION)+$(NEXT_VERSION_PUB)/" pubspec.yaml
 
-    #       git config user.name "pipeline"
-    #       git config user.email "pipelineUX@ux.technology"
+          cat pubspec.yaml
 
-    #       git checkout version/$clean_branch
-    #       git add package.json
-    #       git commit -m "chore($(msName)): bump version to $(cleanNEXT_VERSION)"
-    #       git push origin version/$clean_branch
-    #   displayName: "Actualizar versión y push $(msName)"
-    #   condition: 
-    #     and(
-    #       succeeded(),
-    #       ne(variables['Build.SourceBranchName'], 'master'),
-    #       not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
-    #     )
+          jq --arg version "$(cleanNEXT_VERSION)"  '.VERSION = $version' env.json > tmp.json && mv tmp.json env.json
+
+          echo " "
+          cat env.json
+
+          # git add env.json pubspec.yaml
+          # git commit -m "chore Flutter: bump version to $(cleanNEXT_VERSION)"
+          # git push origin version/$clean_branch
+
+      displayName: "Actualizar versión y push"
+      condition: 
+        and(
+          succeeded(),
+          ne(variables['Build.SourceBranchName'], 'master')
+        )
