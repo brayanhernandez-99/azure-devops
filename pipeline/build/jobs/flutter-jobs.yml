@@ -137,7 +137,6 @@ jobs:
           RED: ${{ parameters.red }}
 
       - script: |
-          echo "version a actualizar: $(msVersion)"
           CURRENT_BRANCH=$(echo $(Build.SourceBranch))
 
           case "$CURRENT_BRANCH" in
@@ -167,6 +166,7 @@ jobs:
           esac
 
           NEW_APP_ID="com.ux.mobile.$CURRENT_BRANCH_PR"
+          echo "New app ID: $NEW_APP_ID"
           sed -i "s|applicationId *= *\"[^\"]*\"|applicationId = \"$NEW_APP_ID\"|" android/app/build.gradle
           cat android/app/build.gradle
         displayName: 'Change file build.gradle'
