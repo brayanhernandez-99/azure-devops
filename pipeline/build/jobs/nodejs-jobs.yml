@@ -76,17 +76,17 @@ jobs:
           jdkArchitectureOption: 'x64'
           jdkSourceOption: 'PreInstalled'
 
-      # - task: SonarQubePrepare@7
-      #   inputs:
-      #     SonarQube: 'SonarQubeConection'
-      #     scannerMode: 'CLI'
-      #     configMode: 'manual'
-      #     cliProjectKey: 'pruebas-$(msName)'
-      #     cliProjectName: 'pruebas-$(msName)'
-      #     cliSources: '$(System.DefaultWorkingDirectory)/apps/$(msName)'
-      #     extraProperties: |
-      #       sonar.javascript.lcov.reportPaths=$(System.DefaultWorkingDirectory)/apps/$(msName)/coverage/lcov.info
-      #       sonar.exclusions=**/*.java,**/test/**,**/android/**,**/ios/**,**/coverage/**,**/.nyc_output/**,**/reports/**,**/node_modules/**,**/migrations/**,**/config/**
+      - task: SonarQubePrepare@7
+        inputs:
+          SonarQube: 'SonarQubeConection'
+          scannerMode: 'CLI'
+          configMode: 'manual'
+          cliProjectKey: 'pruebas-$(msName)'
+          cliProjectName: 'pruebas-$(msName)'
+          cliSources: '$(System.DefaultWorkingDirectory)/apps/$(msName)'
+          extraProperties: |
+            sonar.javascript.lcov.reportPaths=$(System.DefaultWorkingDirectory)/apps/$(msName)/coverage/lcov.info
+            sonar.exclusions=**/*.java,**/test/**,**/android/**,**/ios/**,**/coverage/**,**/.nyc_output/**,**/reports/**,**/node_modules/**,**/migrations/**,**/config/**
 
       - script: |
           variable=$(echo $SONARQUBE_SCANNER_PARAMS | sed -E 's#"sonar\.branch\.name":"[^"]+",##g')
@@ -127,22 +127,25 @@ jobs:
         displayName: 'Coverage MS $(msName)'
         continueOnError: true
 
-      # - task: SonarQubeAnalyze@7
-      #   displayName: 'Sonar Analysis'
+      - task: SonarQubeAnalyze@7
+        displayName: 'Sonar Analysis'
 
-      # - task: SonarQubePublish@7
-      #   displayName: 'Publish Result Static Code Analysis'
-      #   inputs:
-      #     pollingTimeoutSec: 400
+      - task: SonarQubePublish@7
+        displayName: 'Publish Result Static Code Analysis'
+        inputs:
+          pollingTimeoutSec: 400
       
       - script: |
           echo "Esperando Quality Gate..."
     
           status=$(curl -s -u "$SONAR_TOKEN:" "$SONAR_HOST_URL/api/qualitygates/project_status?projectKey=pruebas-$(msName)")
-          
-          gate=$(echo "$status" | jq -r '.projectStatus.qualityGate.name')
+          metrics_response=$(curl -s -u "$SONAR_TOKEN:" "$SONAR_HOST_URL/api/measures/component?component=pruebas-$(msName)&metricKeys=coverage,duplicated_lines_density")
+
+          coverage=$(echo "$metrics_response" | jq -r '.component.measures[] | select(.metric=="coverage") | .value')
+          duplication=$(echo "$metrics_response" | jq -r '.component.measures[] | select(.metric=="duplicated_lines_density") | .value')
+
           status_code=$(echo "$status" | jq -r '.projectStatus.status')
-          echo "🔹 Proyecto: pruebas-microfronted-$(msName) | Quality Gate: $gate | Estado: $status_code"
+          echo "🔹 Proyecto: pruebas-$(msName) | Coverage: $coverage | Lines Duplications: $duplication | Estado: $status_code"
 
           if [[ "$status_code" == "ERROR" ]]; then
             echo "❌ El proyecto falló su Quality Gate."
@@ -153,7 +156,7 @@ jobs:
         env:
           SONAR_TOKEN: $(SONAR_TOKEN) 
           SONAR_HOST_URL: $(SONAR_HOST_URL) 
-        displayName: 'Verificar Quality Gate'
+        displayName: 'Verificar Quality Gate $(msName)'
         continueOnError: true
         condition: and(
                       succeeded(),
