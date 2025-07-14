@@ -203,18 +203,16 @@ jobs:
           aws s3 cp s3://repository-native/app-seller/android/keystore/$(KEY_ALIAS).jks keystore/            
           if [ -d "keystore" ] && [ "$(ls -A keystore/$(KEY_ALIAS).jks)" ]; then
             echo "✅ Keystore descargado"
-            ls -ltra
             ls -la keystore/$(KEY_ALIAS).jks
           else
             echo "❌ Error: No se descargo el Keystore"
             exit 99
           fi
         displayName: 'Descargar Keystore'
-        env:
-          KEY_ALIAS: $(KEY_ALIAS)
-          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
-          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
-          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+        #env:
+          #AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
+          #AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
+          #AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
 
       - script: |
           escape_property_value() {
@@ -242,13 +240,9 @@ jobs:
           storeFile=keystore/$KEY_ALIAS.jks
           EOF
 
-          ls -ltra
+          ls -la key.properties
           cat key.properties
         displayName: 'Asignar Keystore'
-        env:
-          #KEY_ALIAS: $(KEY_ALIAS)
-          KEY_PASSWORD: $(KEY_PASSWORD)
-          STORE_PASSWORD: $(STORE_PASSWORD)
 
       - script: |
           flutter --no-color build apk --no-tree-shake-icons --profile
