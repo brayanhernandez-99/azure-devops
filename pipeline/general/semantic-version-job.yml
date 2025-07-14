@@ -299,7 +299,7 @@ jobs:
     - task: PublishBuildArtifacts@1
       inputs:
         PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-        ArtifactName: 'versions'
+        ArtifactName: 'versions' 
         publishLocation: 'Container'
       displayName: '📦 Public artifact version'
 
