@@ -106,14 +106,8 @@ jobs:
         echo $apps
 
         if [ -z "$apps" ]; then
-          if [[ "$BUILD_REASON" == "PullRequest" ]]; then
-            echo "❌ No se detectaron cambios en apps o app-legacy. Cancelando ejecución del pipeline."
-            echo "##vso[task.complete result=Skipped;]Commit automático: omitiendo ejecución."
-            exit 0
-          else
-            echo "❌ No se detectaron cambios en apps o app-legacy. Cancelando ejecución del pipeline."
-            exit 1
-          fi
+          echo "❌ No se detectaron cambios en apps o app-legacy. Cancelando ejecución del pipeline."
+          exit 1
         fi
         
         cd $(Build.SourcesDirectory)/pipeline
