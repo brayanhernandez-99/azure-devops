@@ -235,20 +235,19 @@ jobs:
             -e 's/\$/\\$/g' \
             -e 's/-/\\-/g'
           }
-
-          ESCAPED_STORE_PASSWORD=$(escape_value "${STORE_PASSWORD}")
-          ESCAPED_KEY_PASSWORD=$(escape_value "${KEY_PASSWORD}")
+          ESCAPED_STORE_PASSWORD=$(escape_value "$(STORE_PASSWORD)")
+          ESCAPED_KEY_PASSWORD=$(escape_value "$(KEY_PASSWORD)")
 
           touch key.properties
           echo "storePassword=$ESCAPED_STORE_PASSWORD" >> key.properties
           echo "keyPassword=$ESCAPED_KEY_PASSWORD" >> key.properties
-          echo "keyAlias=$KEY_ALIAS" >> key.properties
-          echo "storeFile=keystore/$KEY_ALIAS.jks" >> key.properties
+          echo "keyAlias=$(KEY_ALIAS)" >> key.properties
+          echo "storeFile=keystore/$(KEY_ALIAS).jks" >> key.properties
 
           ls -la key.properties
           cat key.properties
         displayName: 'Asignar Keystore'
-
+          
       - script: |
           flutter --no-color build apk --no-tree-shake-icons --profile
         displayName: 'Flutter Build APK (profile)'
