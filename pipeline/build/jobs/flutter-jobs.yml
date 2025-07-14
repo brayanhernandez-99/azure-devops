@@ -179,6 +179,10 @@ jobs:
           channel: 'stable'
           version: 'custom'
           customVersion: $(versionSpecification)
+      
+      - script: |
+          flutter --version
+        displayName: 'Inicializar Flutter (crear .pub-cache)'
 
       - task: Cache@2
         inputs:
@@ -189,7 +193,6 @@ jobs:
         displayName: 'Flutter Pub Cache'
 
       - script: |
-          flutter --version
           flutter pub get
         displayName: 'Flutter Pub Get'
 
