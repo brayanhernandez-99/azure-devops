@@ -189,6 +189,7 @@ jobs:
           echo "Verificando carpeta assets"
           if [ -d "assets" ] && [ "$(ls -A assets)" ]; then
             echo "✅ Assets encontrados"
+            ls -la assets
           else
             echo "❌ Error: No se encontraron assets"
             exit 99
@@ -199,54 +200,13 @@ jobs:
           echo "Descargando Keystore"
           mkdir -p keystore
 
-          CURRENT_BRANCH=$(echo $(Build.SourceBranch))
-          case "$CURRENT_BRANCH" in
-            refs/heads/develop | refs/heads/feature/*)
-              CURRENT_BRANCH_PR="DEV"
-              KEYSTORE="com.ux.mobile.dev"
-              ;;
-            refs/heads/staging)
-              CURRENT_BRANCH_PR="QA"
-              KEYSTORE="com.ux.mobile.qa"
-              ;;
-            refs/heads/master)
-              case "$RED" in
-                "antioquia") 
-                  CURRENT_BRANCH_PR="GANA" 
-                  KEYSTORE="com.ux.mobile.gana"
-                  ;;
-                "cap")       
-                  CURRENT_BRANCH_PR="CAP" 
-                  KEYSTORE="com.ux.mobile.cap" 
-                  ;;
-                "tolima")    
-                  CURRENT_BRANCH_PR="SEAPTO" 
-                  KEYSTORE="com.ux.mobile.seapto" 
-                  ;;
-                "huila")     
-                  CURRENT_BRANCH_PR="SUCHANCE" 
-                  KEYSTORE="com.ux.mobile.suchance" 
-                  ;;
-                "cauca")     
-                  CURRENT_BRANCH_PR="ACERTEMOS" 
-                  KEYSTORE="com.ux.mobile.acertemos" 
-                  ;;
-                *)           
-                  echo "⚠️ Región $RED no reconocida para master"; 
-                  exit 99 
-                  ;;
-              esac
-              ;;
-            *)
-              echo "⚠️ Rama $CURRENT_BRANCH no reconocida"
-              exit 99 
-              ;;
-          esac
-
           aws s3 cp s3://repository-native/app-seller/android/keystore/$KEYSTORE.jks keystore/            
           if [ -d "keystore" ] && [ "$(ls -A keystore/$KEYSTORE.jks)" ]; then
             echo "✅ Keystore descargado"
-            ls -ltra keystore/$KEYSTORE.jks
+            pwd
+            ls-ltra 
+            echo "***"
+            ls -la keystore/$KEYSTORE.jks
           else
             echo "❌ Error: No se descargo el Keystore"
             exit 99
@@ -256,7 +216,23 @@ jobs:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
-          RED: ${{ parameters.red }}
+
+      - script: |
+          cat > key.properties << EOF
+          storePassword=$(STORE_PASSWORD)
+          keyPassword=$(KEY_PASSWORD)
+          keyAlias=$(KEY_ALIAS)
+          storeFile=$(KEYSTORE_PATH)
+          EOF
+
+          echo "**** File: Key.properties"
+          cat key.properties
+        displayName: 'Asignar Keystore'
+        env:
+          KEY_ALIAS: $(KEY_ALIAS)
+          KEY_PASSWORD: $(KEY_PASSWORD)
+          STORE_PASSWORD: $(STORE_PASSWORD)
+          KEYSTORE_PATH: $(KEYSTORE_PATH)
 
       - script: |
           flutter --no-color build apk --no-tree-shake-icons --profile
@@ -266,6 +242,7 @@ jobs:
           echo "Verificando Build Apk"
           if [ -d "build/app/outputs/flutter-apk" ] && [ "$(ls -A build/app/outputs/flutter-apk)" ]; then
             echo "✅ Apk encontrado"
+            ls -la build/app/outputs/
           else
             echo "❌ Error: Apk no encontrado"
             exit 99
