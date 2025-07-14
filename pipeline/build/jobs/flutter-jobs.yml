@@ -179,20 +179,9 @@ jobs:
           channel: 'stable'
           version: 'custom'
           customVersion: $(versionSpecification)
-      
+
       - script: |
           flutter --version
-        displayName: 'Inicializar Flutter (crear .pub-cache)'
-
-      - task: Cache@2
-        inputs:
-          key: 'flutter-pub-cache | "$(Agent.OS)" | pubspec.yaml'
-          restoreKeys: |
-            flutter-pub-cache | "$(Agent.OS)"
-          path: $(HOME)/.pub-cache
-        displayName: 'Flutter Pub Cache'
-
-      - script: |
           flutter pub get
         displayName: 'Flutter Pub Get'
 
