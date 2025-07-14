@@ -200,19 +200,20 @@ jobs:
           echo "Descargando Keystore"
           mkdir -p keystore
 
-          aws s3 cp s3://repository-native/app-seller/android/keystore/$KEYSTORE.jks keystore/            
-          if [ -d "keystore" ] && [ "$(ls -A keystore/$KEYSTORE.jks)" ]; then
+          aws s3 cp s3://repository-native/app-seller/android/keystore/$(KEY_ALIAS).jks keystore/            
+          if [ -d "keystore" ] && [ "$(ls -A keystore/$(KEY_ALIAS).jks)" ]; then
             echo "✅ Keystore descargado"
             pwd
             ls-ltra 
             echo "***"
-            ls -la keystore/$KEYSTORE.jks
+            ls -la keystore/$(KEY_ALIAS).jks
           else
             echo "❌ Error: No se descargo el Keystore"
             exit 99
           fi
         displayName: 'Descargar Keystore'
         env:
+          KEY_ALIAS: $(KEY_ALIAS)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
@@ -222,7 +223,7 @@ jobs:
           storePassword=$(STORE_PASSWORD)
           keyPassword=$(KEY_PASSWORD)
           keyAlias=$(KEY_ALIAS)
-          storeFile=$(KEYSTORE_PATH)
+          storeFile=keystore/$KEY_ALIAS.jks
           EOF
 
           echo "**** File: Key.properties"
@@ -232,7 +233,6 @@ jobs:
           KEY_ALIAS: $(KEY_ALIAS)
           KEY_PASSWORD: $(KEY_PASSWORD)
           STORE_PASSWORD: $(STORE_PASSWORD)
-          KEYSTORE_PATH: $(KEYSTORE_PATH)
 
       - script: |
           flutter --no-color build apk --no-tree-shake-icons --profile
