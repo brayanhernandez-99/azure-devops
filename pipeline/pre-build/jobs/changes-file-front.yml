@@ -71,7 +71,10 @@ jobs:
     - script: |
 
         if [[ "$BUILD_REASON" == "PullRequest" ]]; then
+          clean_branch=$(echo "$(System.PullRequest.SourceBranch)" | sed 's#refs/heads/##')
+          git checkout $clean_branch
           git reset --hard HEAD
+          
         fi
 
         CURRENT_BRANCH=$(echo $(Build.SourceBranch))
