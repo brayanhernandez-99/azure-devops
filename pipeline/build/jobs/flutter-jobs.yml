@@ -1,5 +1,4 @@
 jobs:
-
   - ${{ if not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')) }}:
     - deployment: WaitForApproval
       displayName: 'Esperar aprobación'
@@ -27,6 +26,8 @@ jobs:
               - script: echo "Aprobación recibida. Iniciando despliegues..."
 
   - job: 'build_flutter'
+    ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/') }}:
+      displayName: 'Build Flutter Feature'
     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
       displayName: 'Build Flutter Develop'
     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:

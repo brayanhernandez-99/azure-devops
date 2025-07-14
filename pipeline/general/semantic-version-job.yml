@@ -291,7 +291,7 @@ jobs:
           touch $(Build.ArtifactStagingDirectory)/version-pubspec-apk/version-pubspec-apk.json
           echo "{ \"ms\": \"pubspec-apk\", \"version\": \"$NEW_BUILD_NUMBER\" }" > $(Build.ArtifactStagingDirectory)/version-pubspec-apk/version-pubspec-apk.json
 
-          echo "##vso[task.setvariable variable=NEW_BUILD_NUMBER]$NEXT_VERSION_PUB"
+          echo "##vso[task.setvariable variable=NEXT_VERSION_PUB]$NEW_BUILD_NUMBER"
         fi
       displayName: Detect next version pubspec
       name: SemanticJobPubspec
@@ -303,33 +303,33 @@ jobs:
         publishLocation: 'Container'
       displayName: '📦 Public artifact version'
 
-    - script: |
-          raw_branch=$(Build.SourceBranch)
-          clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
+    # - script: |
+    #       raw_branch=$(Build.SourceBranch)
+    #       clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
 
-          git config user.name "pipeline"
-          git config user.email "pipelineUX@ux.technology"
+    #       git config user.name "pipeline"
+    #       git config user.email "pipelineUX@ux.technology"
 
-          git checkout version/$clean_branch
+    #       git checkout version/$clean_branch
           
-          echo "🔧 Actualizando versión $(cleanNEXT_VERSION) en el pubspec.yaml"
-          sed -i "s/^version: .*/version: $(cleanNEXT_VERSION)+$(NEXT_VERSION_PUB)/" pubspec.yaml
+    #       echo "🔧 Actualizando versión $(cleanNEXT_VERSION) en el pubspec.yaml"
+    #       sed -i "s/^version: .*/version: $(cleanNEXT_VERSION)+$(NEXT_VERSION_PUB)/" pubspec.yaml
 
-          cat pubspec.yaml
+    #       cat pubspec.yaml
 
-          jq --arg version "$(cleanNEXT_VERSION)"  '.VERSION = $version' env.json > tmp.json && mv tmp.json env.json
+    #       jq --arg version "$(cleanNEXT_VERSION)"  '.VERSION = $version' env.json > tmp.json && mv tmp.json env.json
 
-          echo " "
-          cat env.json
+    #       echo " "
+    #       cat env.json
 
-          # git add env.json pubspec.yaml
-          # git commit -m "chore Flutter: bump version to $(cleanNEXT_VERSION)"
-          # git push origin version/$clean_branch
+    #       # git add env.json pubspec.yaml
+    #       # git commit -m "chore Flutter: bump version to $(cleanNEXT_VERSION)"
+    #       # git push origin version/$clean_branch
 
-      displayName: "Actualizar versión y push"
-      condition: 
-        and(
-          succeeded(),
-          ne(variables['Build.SourceBranchName'], 'master'),
-          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
-        )
+    #   displayName: "Actualizar versión y push"
+    #   condition: 
+    #     and(
+    #       succeeded(),
+    #       ne(variables['Build.SourceBranchName'], 'master'),
+    #       not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
+    #     )
