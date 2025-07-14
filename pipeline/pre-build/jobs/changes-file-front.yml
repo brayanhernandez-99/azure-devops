@@ -121,7 +121,7 @@ jobs:
         mv main-pipeline-updated.yml main-pipeline.yml
 
         cat main-pipeline.yml
-        
+
         # raw_branch=$(Build.SourceBranch)
         # clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
         # echo $raw_branch
@@ -145,7 +145,7 @@ jobs:
         echo "🧼 clean_branch: $clean_branch"
 
         # Asegurar que no haya cambios pendientes antes de checkout
-        git reset --hard HEAD
+        # git reset --hard HEAD
 
         # Asegurar que existe la rama remota y movernos a ella
         git fetch origin "$clean_branch"
