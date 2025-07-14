@@ -339,7 +339,7 @@ jobs:
           ls -l build/app/outputs/flutter-apk/pruebas-$CURRENT_BRANCH_PR/
 
           # Subir a S3 la carpeta completa
-          aws s3 cp build/app/outputs/flutter-apk/pruebas-$CURRENT_BRANCH_PR/ s3://repository-native/app-seller/android/pruebas-$CURRENT_BRANCH_PR/ --recursive
+          aws s3 cp build/app/outputs/flutter-apk/pruebas-$CURRENT_BRANCH_PR/ s3://repository-native/app-seller/android/pruebas-$CURRENT_BRANCH_PR/ --recursive --acl public-read
         displayName: 'Copy Apk Bucket S3'
         condition: not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
         env:
