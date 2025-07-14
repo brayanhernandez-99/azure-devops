@@ -147,10 +147,17 @@ jobs:
       displayName: 'Set default Azure DevOps organization and project'
 
     - script: |
+          raw_branch=$(Build.SourceBranch)
+
+          if [[ "$BUILD_REASON" == 'PullRequest' ]]; then
+            raw_branch=$(System.PullRequest.SourceBranch)
+            echo $raw_branch
+          fi
+
           echo ${AZURE_DEVOPS_CLI_PAT} | az devops login --organization https://dev.azure.com/ux-technology
           echo $(Build.SourceBranch)
           az pipelines run --name "$(Build.Repository.Name)" \
-            --branch "$(Build.SourceBranch)" \
+            --branch "$raw_branch" \
             --project "$(System.TeamProject)" \
             --org "https://dev.azure.com/ux-technology"
       env:
