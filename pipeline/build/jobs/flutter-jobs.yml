@@ -27,7 +27,7 @@ jobs:
 
   - job: 'build_flutter'
     ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/') }}:
-    displayName: 'Build Flutter Feature'
+      displayName: 'Build Flutter Feature'
     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
       displayName: 'Build Flutter Develop'
     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
