@@ -147,7 +147,6 @@ jobs:
         git add main-pipeline.yml
         git commit -m "Auto-generated pipeline config ${BUILD_BUILDID}"
         git push origin $clean_branch
-
       name: DetectChangedMS
     
     - script: az devops configure --defaults organization='$(System.TeamFoundationCollectionUri)' project='$(System.TeamProject)' --use-git-aliases true
