@@ -130,6 +130,7 @@ jobs:
         if [[ "$BUILD_REASON" == 'PullRequest' ]]; then
           clean_branch=$(echo "$(System.PullRequest.SourceBranch)" | sed 's#refs/heads/##')
           echo $clean_branch
+          git reset --hard HEAD
           git fetch origin $clean_branch
         fi
 
