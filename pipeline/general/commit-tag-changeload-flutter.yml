@@ -323,9 +323,9 @@ jobs:
           echo " "
           cat env.json
 
-          # git add env.json pubspec.yaml
-          # git commit -m "chore Flutter: bump version to $(cleanNEXT_VERSION)"
-          # git push origin version/$clean_branch
+          git add env.json pubspec.yaml
+          git commit -m "chore Flutter: bump version to $(cleanNEXT_VERSION)"
+          git push origin version/$clean_branch
           
       displayName: "Actualizar versión y push "
 
