@@ -238,18 +238,6 @@ jobs:
           echo "storePassword=$ESCAPED_STORE_PASSWORD" >> android/key.properties
           #echo "storeFile=android/app/keystore/$KEY_ALIAS.jks" >> android/key.properties
           echo "storeFile=keystore/$KEY_ALIAS.jks" >> android/key.properties
-          
-          #Borrar
-          cat android/key.properties
-          ls -ltra 
-          
-          echo "**********"
-          ls -ltra android/
-          echo "**********"
-          ls -ltra android/app/
-          echo "**********"
-          ls -ltra android/app/keystore/
-          #
 
           echo "✅ File key.properties creado"
           ls -la android/key.properties
@@ -268,6 +256,13 @@ jobs:
           if [ -d "build/app/outputs/flutter-apk" ] && [ "$(ls -A build/app/outputs/flutter-apk)" ]; then
             echo "✅ Apk encontrado"
             ls -la build/app/outputs/
+
+            echo "**********************"
+            cd build/app/outputs/flutter-apk/ && ls -ltra
+            cat *.sha1
+            CHECKSUM=$(shasum -a 1 build/app/outputs/flutter-apk/*.sha1 | awk '{ print $1 }')
+            echo "SHA-1: $CHECKSUM"
+            
           else
             echo "❌ Error: Apk no encontrado"
             exit 99
@@ -304,14 +299,6 @@ jobs:
           APKNAME="invictus-$CURRENT_BRANCH_PR-v$(msVersion).apk"
           echo "##vso[task.setvariable variable=apknameclean]$APKNAME"
           ls -l build/app/outputs/flutter-apk
-
-          echo "\n"
-          echo "**********************"
-          ls -ltra *.sha1
-          cat *.sha1
-          CHECKSUM=$(shasum -a 1 build/app/outputs/flutter-apk/*.sha1 | awk '{ print $1 }')
-          echo "SHA-1: $CHECKSUM"
-
         displayName: 'Change name file Apk'
         condition: not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
         env:
