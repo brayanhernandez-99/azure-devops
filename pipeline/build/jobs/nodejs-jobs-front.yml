@@ -213,15 +213,15 @@ jobs:
         displayName: 'Compilar dependencias del microservicio'
         continueOnError: true
       
-      # - script: |
-      #     echo "Descomentando app-legacy/*"
-      #     sed -i '/# *app-legacy\//s/^  # *//' pnpm-workspace.yaml
-      #   displayName: "Restaurar línea app-legacy/*"
-      #   condition: and(
-      #                 succeeded(),
-      #                 ne(variables['msName'], 'app-administration-vue2'),
-      #                 ne(variables['msName'], 'app-sellers-vue2')
-      #               )
+      - script: |
+          echo "Descomentando app-legacy/*"
+          sed -i '/# *app-legacy\//s/^  # *//' pnpm-workspace.yaml
+        displayName: "Restaurar línea app-legacy/*"
+        condition: and(
+                      succeeded(),
+                      ne(variables['msName'], 'app-administration-vue2'),
+                      ne(variables['msName'], 'app-sellers-vue2')
+                    )
       
       - task: JavaToolInstaller@0
         inputs:
