@@ -327,16 +327,16 @@ jobs:
               echo "⚠️ Rama $CURRENT_BRANCH no reconocida"; exit 1
               ;;
           esac
-          mkdir -p build/app/outputs/flutter-apk/pruebas-$CURRENT_BRANCH_PR
+          mkdir -p build/app/outputs/flutter-apk/$CURRENT_BRANCH_PR
 
           # Mover el archivo a la subcarpeta
-          mv build/app/outputs/flutter-apk/$(apknameclean) build/app/outputs/flutter-apk/pruebas-$CURRENT_BRANCH_PR/
+          mv build/app/outputs/flutter-apk/$(apknameclean) build/app/outputs/flutter-apk/$CURRENT_BRANCH_PR/
 
           # Verifica que el archivo está donde debe
-          ls -l build/app/outputs/flutter-apk/pruebas-$CURRENT_BRANCH_PR/
+          ls -l build/app/outputs/flutter-apk/$CURRENT_BRANCH_PR/
 
           # Subir a S3 la carpeta completa
-          aws s3 cp build/app/outputs/flutter-apk/pruebas-$CURRENT_BRANCH_PR/ s3://repository-native/app-seller/android/pruebas-$CURRENT_BRANCH_PR/ --recursive --acl public-read
+          aws s3 cp build/app/outputs/flutter-apk/$CURRENT_BRANCH_PR/ s3://repository-native/app-seller/android/$CURRENT_BRANCH_PR/ --recursive --acl public-read
         displayName: 'Copy Apk Bucket S3'
         condition: not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
         env:
