@@ -255,14 +255,13 @@ jobs:
           echo "Verificando Build Apk"
           if [ -d "build/app/outputs/flutter-apk" ] && [ "$(ls -A build/app/outputs/flutter-apk)" ]; then
             echo "✅ Apk encontrado"
-            ls -la build/app/outputs/
+            ls -la build/app/outputs/flutter-apk
 
             echo "**********************"
-            cd build/app/outputs/flutter-apk/ && ls -ltra
-            cat *.sha1
-            CHECKSUM=$(shasum -a 1 build/app/outputs/flutter-apk/*.sha1 | awk '{ print $1 }')
+            cat app-profile.apk.sha1
+            CHECKSUM=$(shasum -a 1 build/app/outputs/flutter-apk/app-profile.apk.sha1 | awk '{ print $1 }')
             echo "SHA-1: $CHECKSUM"
-            
+
           else
             echo "❌ Error: Apk no encontrado"
             exit 99
