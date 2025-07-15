@@ -249,7 +249,7 @@ jobs:
           
       - script: |
           flutter --no-color build apk --no-tree-shake-icons --profile
-        displayName: 'Flutter Build APK (profile)'
+        displayName: 'Flutter Build APK'
 
       - script: |
           echo "Verificando Build Apk"
