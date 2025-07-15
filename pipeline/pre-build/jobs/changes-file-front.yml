@@ -69,7 +69,8 @@ jobs:
     #   name: DetectChangedMS
 
     - script: |
-
+        CURRENT_BRANCH=$(echo $(Build.SourceBranch))
+        
         if [[ "$BUILD_REASON" == "PullRequest" ]]; then
           clean_branch=$(echo "$(System.PullRequest.SourceBranch)" | sed 's#refs/heads/##')
           git checkout $clean_branch

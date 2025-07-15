@@ -63,14 +63,18 @@ jobs:
 
     - script: |
         CURRENT_BRANCH=$(echo $(Build.SourceBranch))
-        
-        if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
 
+        if [[ "$BUILD_REASON" == "PullRequest" ]]; then
+          clean_branch=$(echo "$(System.PullRequest.SourceBranch)" | sed 's#refs/heads/##')
+          git checkout $clean_branch
+          git reset --hard HEAD
+        fi
+        
+        if [[ "$BUILD_REASON" == "PullRequest" || "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
           cd $(Build.SourcesDirectory)
           last_real_commit=$(git log --no-merges --pretty=format:%H -n 2 | tail -n1)
           changed_files=$(git diff --name-only $last_real_commit HEAD)
           apps=$(echo "$changed_files" | grep "^apps/" | cut -d '/' -f2 | sort -u)
-        
         else
           cd $(Build.SourcesDirectory)/apps
           apps=$(git diff --name-only HEAD~1 HEAD | grep "^apps/" | cut -d '/' -f2 | sort -u)
@@ -105,12 +109,21 @@ jobs:
         raw_branch=$(Build.SourceBranch)
         clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
 
-        # git checkout $clean_branch
-        # git config user.name "pipeline"
-        # git config user.email "pipelineUX@ux.technology"
-        # git add main-pipeline.yml
-        # git commit -m "Auto-generated pipeline config ${BUILD_BUILDID}"
-        # git push origin $clean_branch
+        echo $raw_branch
+        echo $BUILD_REASON
+
+        if [[ "$BUILD_REASON" == 'PullRequest' ]]; then
+          clean_branch=$(echo "$(System.PullRequest.SourceBranch)" | sed 's#refs/heads/##')
+          echo $clean_branch
+          git fetch origin $clean_branch
+        fi
+
+        git checkout $clean_branch
+        git config user.name "pipeline"
+        git config user.email "pipelineUX@ux.technology"
+        git add main-pipeline.yml
+        git commit -m "Auto-generated pipeline config ${BUILD_BUILDID}"
+        git push origin $clean_branch
 
       name: DetectChangedMS
     
