@@ -158,8 +158,10 @@ jobs:
           RED: ${{ parameters.red }}
 
       - script: |
-            printenv | grep '^VITE_'
-        displayName: 'Ver env VIT'
+            printenv | grep '^VITE_' > $(System.DefaultWorkingDirectory)/.env
+            ls -la 
+            cat $(System.DefaultWorkingDirectory)/.env
+        displayName: 'Generar env VIT'
 
       - script: |
             echo -e "VITE_APP_VERSION=\$npm_package_version\nVITE_BASE_URL=" > $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.env
