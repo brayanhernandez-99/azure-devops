@@ -40,11 +40,11 @@ jobs:
       - script: | 
           if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
             fileselect=app-legacy
-            echo "ruta de archivo del mf: $fileselect"
+            echo "Ruta de archivo del mf: $fileselect"
             echo "##vso[task.setvariable variable=file]$fileselect"
           else
             fileselect=apps
-            echo "ruta de archivo del mf: $fileselect"
+            echo "Ruta de archivo del mf: $fileselect"
             echo "##vso[task.setvariable variable=file]$fileselect"
           fi
         displayName: "Select file"
@@ -105,14 +105,15 @@ jobs:
           printenv | grep '^ADMIN_' | sed 's/^ADMIN_//' > $(System.DefaultWorkingDirectory)/app-legacy/app-administration-vue2/.env.local
           cat $(System.DefaultWorkingDirectory)/app-legacy/app-administration-vue2/.env.local
 
-          echo " "
-
-          echo "🛠 Generando .env.local para sellers-vue2"
+          echo -e "\n🛠 Generando .env.local para sellers-vue2"
           printenv | grep '^SELLERS_' | sed 's/^SELLERS_//' > $(System.DefaultWorkingDirectory)/app-legacy/app-sellers-vue2/.env.local
           cat app-legacy/app-sellers-vue2/.env.local
 
-          ls -la app-legacy/app-administration-vue2
+          echo "Archivos .env.local para sellers-vue2"
           ls -la app-legacy/app-sellers-vue2
+
+          echo "Archivos .env.local para administration-vue2"
+          ls -la app-legacy/app-administration-vue2
         displayName: 'Generación de .env admin y seller'
 
       - script: |
@@ -158,12 +159,12 @@ jobs:
 
       - script: |
             printenv | grep '^VITE_'
-        displayName: 'env VIT'
+        displayName: 'Ver env VIT'
 
       - script: |
             echo -e "VITE_APP_VERSION=\$npm_package_version\nVITE_BASE_URL=" > $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.env
             cat $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.env
-        displayName: 'cp env'
+        displayName: 'Copiar env'
 
       - script: |
           cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
@@ -207,7 +208,7 @@ jobs:
             pnpm build --filter=...$(msName)
             ls -la $(System.DefaultWorkingDirectory)/$(file)/$(msName)/dist
           fi
-        displayName: 'compilar dependencias del microservicio'
+        displayName: 'Compilar dependencias del microservicio'
         continueOnError: true
       
       # - script: |
@@ -256,7 +257,7 @@ jobs:
           variable=$(echo $SONARQUBE_SCANNER_PARAMS | sed -E 's#"sonar\.branch\.name":"[^"]+",##g')
           echo $variable
           echo "##vso[task.setvariable variable=SONARQUBE_SCANNER_PARAMS]$variable"
-        displayName: 'set-variable'
+        displayName: 'Set-variable'
         condition: and(
                       succeeded(),
                       ne(variables['msName'], 'app-administration-vue2'),
