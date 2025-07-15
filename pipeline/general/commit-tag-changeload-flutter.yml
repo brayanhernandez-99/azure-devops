@@ -330,14 +330,14 @@ jobs:
       displayName: "Actualizar versión y push "
 
 
-# - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/master') }}:
-#   - job: 'create_publish_versioning'
-#     displayName: 'Create and Publish Versioning'
-#     dependsOn: 'commit_tag_version'
-#     pool:
-#       name: Azure Pipelines
-#       vmImage: 'ubuntu-22.04'
-#     steps:
-#       - task: git-tag-on-release-task@9
-#         displayName: 'Create and Publish Versioning Tag'
-#         continueOnError: true
+- ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/master') }}:
+  - job: 'create_publish_versioning'
+    displayName: 'Create and Publish Versioning'
+    dependsOn: 'commit_tag_version'
+    pool:
+      name: Azure Pipelines
+      vmImage: 'ubuntu-22.04'
+    steps:
+      - task: git-tag-on-release-task@9
+        displayName: 'Create and Publish Versioning Tag'
+        continueOnError: true
