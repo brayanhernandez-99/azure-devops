@@ -201,7 +201,7 @@ jobs:
           mkdir -p android/app/keystore
           
           aws s3 cp s3://repository-native/app-seller/android/keystore/$(KEY_ALIAS).jks android/app/keystore/            
-          if [ -d "android/app/keystore" ] && [ "$(ls -A android/app/keystore/$(KEY_ALIAS).jks)" ]; then
+          if [ -d "android/app/keystore" ] && [ "$(ls -A android/app/keystore/$(KEY_ALIAS).jks)" ]; then    
             echo "✅ Keystore descargado"
             ls -la android/app/keystore/*
           else
@@ -237,6 +237,18 @@ jobs:
           echo "keyPassword=$ESCAPED_KEY_PASSWORD" >> android/key.properties
           echo "storePassword=$ESCAPED_STORE_PASSWORD" >> android/key.properties
           echo "storeFile=android/app/keystore/$KEY_ALIAS.jks" >> android/key.properties
+          
+          #Borrar
+          cat android/key.properties
+          ls -ltra 
+          
+          echo "**********"
+          ls -ltra android/
+          echo "**********"
+          ls -ltra android/app/
+          echo "**********"
+          ls -ltra android/app/keystore/
+          #
 
           echo "✅ File key.properties creado"
           ls -la android/key.properties
