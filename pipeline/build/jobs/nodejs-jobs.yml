@@ -1,9 +1,9 @@
 jobs:
-  - job: 'build_nodejs'
-    displayName: 'Build nodejs'    
+  - job: "build_nodejs"
+    displayName: "Build nodejs"
     pool:
-        name: 'Azure Pipelines'
-        vmImage: 'ubuntu-22.04'
+      name: "Azure Pipelines"
+      vmImage: "ubuntu-22.04"
     variables:
       versionSpecification: $[coalesce(variables.nodejsVersion, '18.x')]
 
@@ -21,37 +21,37 @@ jobs:
 
       - task: DownloadBuildArtifacts@0
         inputs:
-          artifactName: 'versions'
-          downloadPath: '$(Pipeline.Workspace)/downloaded-versions'
-        displayName: '📥 Descargar artifact de versiones'
-        
+          artifactName: "versions"
+          downloadPath: "$(Pipeline.Workspace)/downloaded-versions"
+        displayName: "📥 Descargar artifact de versiones"
+
       - script: |
-            ls -R $(Pipeline.Workspace)/downloaded-versions/versions/$(msName)
-            VERSION_FILE="$(Pipeline.Workspace)/downloaded-versions/versions/$(msName)/version.json"
-            if [[ -f "$VERSION_FILE" ]]; then
-              VERSION=$(jq -r '.version' $VERSION_FILE)
-              echo "🚀 Versión detectada para $(msName): $VERSION"
-              echo "##vso[task.setvariable variable=msVersion]$VERSION"
-            else
-              echo "❌ No se encontró archivo de versión para $(msName)"
-              exit 1
-            fi
-        displayName: '📚 Leer versiones de microservicios'
+          ls -R $(Pipeline.Workspace)/downloaded-versions/versions/$(msName)
+          VERSION_FILE="$(Pipeline.Workspace)/downloaded-versions/versions/$(msName)/version.json"
+          if [[ -f "$VERSION_FILE" ]]; then
+            VERSION=$(jq -r '.version' $VERSION_FILE)
+            echo "🚀 Versión detectada para $(msName): $VERSION"
+            echo "##vso[task.setvariable variable=msVersion]$VERSION"
+          else
+            echo "❌ No se encontró archivo de versión para $(msName)"
+            exit 1
+          fi
+        displayName: "📚 Leer versiones de microservicios"
 
       - task: NodeTool@0
-        displayName: 'Use Nodejs $(versionSpecification)'
+        displayName: "Use Nodejs $(versionSpecification)"
         inputs:
-          versionSource: 'spec'
-          versionSpec: '$(versionSpecification)'
-        
+          versionSource: "spec"
+          versionSpec: "$(versionSpecification)"
+
       - script: |
           npm install -g pnpm
-        displayName: 'Instalar pnpm'
+        displayName: "Instalar pnpm"
 
       - task: Bash@3
         name: AuthCodeArtifact
         inputs:
-          targetType: 'inline'
+          targetType: "inline"
           script: |
             export CODEARTIFACT_AUTH_TOKEN=$(aws codeartifact get-authorization-token \
               --domain matrixtech-npm-repository \
@@ -69,21 +69,21 @@ jobs:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
-      
+
       - task: JavaToolInstaller@0
         inputs:
-          versionSpec: '17'
-          jdkArchitectureOption: 'x64'
-          jdkSourceOption: 'PreInstalled'
+          versionSpec: "17"
+          jdkArchitectureOption: "x64"
+          jdkSourceOption: "PreInstalled"
 
       - task: SonarQubePrepare@7
         inputs:
-          SonarQube: 'SonarQubeConection'
-          scannerMode: 'CLI'
-          configMode: 'manual'
-          cliProjectKey: 'pruebas-$(msName)'
-          cliProjectName: 'pruebas-$(msName)'
-          cliSources: '$(System.DefaultWorkingDirectory)/apps/$(msName)'
+          SonarQube: "SonarQubeConection"
+          scannerMode: "CLI"
+          configMode: "manual"
+          cliProjectKey: "pruebas-$(msName)"
+          cliProjectName: "pruebas-$(msName)"
+          cliSources: "$(System.DefaultWorkingDirectory)/apps/$(msName)"
           extraProperties: |
             sonar.javascript.lcov.reportPaths=$(System.DefaultWorkingDirectory)/apps/$(msName)/coverage/lcov.info
             sonar.exclusions=**/*.java,**/test/**,**/android/**,**/ios/**,**/coverage/**,**/.nyc_output/**,**/reports/**,**/node_modules/**,**/migrations/**,**/config/**
@@ -92,7 +92,7 @@ jobs:
           variable=$(echo $SONARQUBE_SCANNER_PARAMS | sed -E 's#"sonar\.branch\.name":"[^"]+",##g')
           echo $variable
           echo "##vso[task.setvariable variable=SONARQUBE_SCANNER_PARAMS]$variable"
-        displayName: 'set-variable'
+        displayName: "set-variable"
 
       - script: |
           cd $(System.DefaultWorkingDirectory)/apps/$(msName)
@@ -107,8 +107,8 @@ jobs:
           pnpm install --ignore-scripts
           echo "Dependencias instaladas:"
           npm ls --depth=0 || true
-        displayName: 'Instalar dependencias del microservicio'
-      
+        displayName: "Instalar dependencias del microservicio"
+
       # - script: |
       #     cd $(System.DefaultWorkingDirectory)/apps/$(msName)
       #     #npm run build
@@ -118,26 +118,26 @@ jobs:
       - script: |
           cd $(System.DefaultWorkingDirectory)/apps/$(msName)
           npm run test
-        displayName: 'Test MS $(msName)'
+        displayName: "Test MS $(msName)"
         continueOnError: true
 
       - script: |
           cd $(System.DefaultWorkingDirectory)/apps/$(msName)
           npm run coverage
-        displayName: 'Coverage MS $(msName)'
+        displayName: "Coverage MS $(msName)"
         continueOnError: true
 
       - task: SonarQubeAnalyze@7
-        displayName: 'Sonar Analysis'
+        displayName: "Sonar Analysis"
 
       - task: SonarQubePublish@7
-        displayName: 'Publish Result Static Code Analysis'
+        displayName: "Publish Result Static Code Analysis"
         inputs:
           pollingTimeoutSec: 400
-      
+
       - script: |
           echo "Esperando Quality Gate..."
-    
+
           status=$(curl -s -u "$SONAR_TOKEN:" "$SONAR_HOST_URL/api/qualitygates/project_status?projectKey=pruebas-$(msName)")
           metrics_response=$(curl -s -u "$SONAR_TOKEN:" "$SONAR_HOST_URL/api/measures/component?component=pruebas-$(msName)&metricKeys=coverage,duplicated_lines_density")
 
@@ -154,14 +154,14 @@ jobs:
             echo "✅ El proyecto pasó su Quality Gate."
           fi
         env:
-          SONAR_TOKEN: $(SONAR_TOKEN) 
-          SONAR_HOST_URL: $(SONAR_HOST_URL) 
-        displayName: 'Verificar Quality Gate $(msName)'
+          SONAR_TOKEN: $(SONAR_TOKEN)
+          SONAR_HOST_URL: $(SONAR_HOST_URL)
+        displayName: "Verificar Quality Gate $(msName)"
         continueOnError: true
         condition: and(
-                      succeeded(),
-                      ne(variables['msName'], 'app-administration-vue2'),
-                      ne(variables['msName'], 'app-sellers-vue2'),
-                      ne(variables['Build.SourceBranchName'], 'master'),
-                      ne(variables['Build.SourceBranchName'], 'staging')
-                    )
+          succeeded(),
+          ne(variables['msName'], 'app-administration-vue2'),
+          ne(variables['msName'], 'app-sellers-vue2'),
+          ne(variables['Build.SourceBranchName'], 'master'),
+          ne(variables['Build.SourceBranchName'], 'staging')
+          )

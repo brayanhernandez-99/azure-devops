@@ -1,14 +1,14 @@
 stages:
-- stage: 'change_file_detected'
-  displayName: 'Change File Detected'
-  dependsOn: [] 
-  
-  variables:
-  - template: ../variables/groups-transversal-variables.yml
+  - stage: "change_file_detected"
+    displayName: "Change File Detected"
+    dependsOn: []
 
-  jobs:
-  - ${{ if eq(parameters.typepre, 'back') }}:
-    - template: jobs/changes-file.yml
-  
-  - ${{ if eq(parameters.typepre, 'front') }}:
-    - template: jobs/changes-file-front.yml
+    variables:
+      - template: ../variables/groups-transversal-variables.yml
+
+    jobs:
+      - ${{ if eq(parameters.typepre, 'back') }}:
+          - template: jobs/changes-file.yml
+
+      - ${{ if eq(parameters.typepre, 'front') }}:
+          - template: jobs/changes-file-front.yml

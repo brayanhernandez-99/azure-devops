@@ -7,13 +7,13 @@ parameters:
 
 resources:
   repositories:
-  - repository: self
-    name: $(System.TeamProject)/$(Build.Repository.Name)
-    type: git
-    ref: $(Build.SourceBranch)
+    - repository: self
+      name: $(System.TeamProject)/$(Build.Repository.Name)
+      type: git
+      ref: $(Build.SourceBranch)
 
 stages:
   - ${{ if eq(parameters.typepeline, 'prepipeline') }}:
-    - template: pre-build/pre-build-developmet.yml
-      parameters:
-        typepre: ${{ parameters.typepre }}
+      - template: pre-build/pre-build-developmet.yml
+        parameters:
+          typepre: ${{ parameters.typepre }}

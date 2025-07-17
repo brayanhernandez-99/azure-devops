@@ -18,5 +18,3 @@ stages:
         steps:
           - script: |
               echo "Desplegando ${{ parameters.msName }} en ${{ matrix.clusterName }}"
-
-      

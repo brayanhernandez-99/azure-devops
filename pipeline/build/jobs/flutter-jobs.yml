@@ -1,101 +1,101 @@
 jobs:
   - ${{ if not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')) }}:
-    - deployment: WaitForApproval
-      displayName: 'Esperar aprobación'
-      pool:
-        name: Azure Pipelines
-        vmImage: 'ubuntu-22.04'
-      ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
-        environment: 'Build develop'
-      ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
-        environment: 'Build Staging' 
-      ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'antioquia')) }}:
-        environment: 'Build master antioquia'
-      ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'cap')) }}:
-        environment: 'Build master cap'
-      ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'tolima')) }}:
-        environment: 'Build master tolima'
-      ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'huila')) }}:
-        environment: 'Build master huila'
-      ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'cauca')) }}:
-        environment: 'Build master cauca'
-      strategy:
-        runOnce:
-          deploy:
-            steps:
-              - script: echo "Aprobación recibida. Iniciando despliegues..."
+      - deployment: WaitForApproval
+        displayName: "Esperar aprobación"
+        pool:
+          name: Azure Pipelines
+          vmImage: "ubuntu-22.04"
+        ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
+          environment: "Build develop"
+        ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
+          environment: "Build Staging"
+        ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'antioquia')) }}:
+          environment: "Build master antioquia"
+        ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'cap')) }}:
+          environment: "Build master cap"
+        ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'tolima')) }}:
+          environment: "Build master tolima"
+        ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'huila')) }}:
+          environment: "Build master huila"
+        ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'cauca')) }}:
+          environment: "Build master cauca"
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - script: echo "Aprobación recibida. Iniciando despliegues..."
 
-  - job: 'build_flutter'
+  - job: "build_flutter"
     ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/') }}:
-      displayName: 'Build Flutter Feature'
+      displayName: "Build Flutter Feature"
     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
-      displayName: 'Build Flutter Develop'
+      displayName: "Build Flutter Develop"
     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
-      displayName: 'Build Flutter Staging'
+      displayName: "Build Flutter Staging"
     ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'antioquia')) }}:
-      displayName: 'Build Flutter Antioquia'
+      displayName: "Build Flutter Antioquia"
     ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'cap')) }}:
-      displayName: 'Build Flutter cap'
+      displayName: "Build Flutter cap"
     ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'tolima')) }}:
-      displayName: 'Build Flutter tolima'
+      displayName: "Build Flutter tolima"
     ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'huila')) }}:
-      displayName: 'Build Flutter huila'
+      displayName: "Build Flutter huila"
     ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'cauca')) }}:
-      displayName: 'Build Flutter cauca'
+      displayName: "Build Flutter cauca"
     pool:
-        name: 'Azure Pipelines'
-        vmImage: 'ubuntu-22.04'
+      name: "Azure Pipelines"
+      vmImage: "ubuntu-22.04"
 
     variables:
       versionSpecification: $[coalesce(variables.flutterVersion, '3.24.0')]
       flutterCacheKey: $(Build.SourceVersion)
-      
+
     steps:
       - task: DownloadBuildArtifacts@0
         inputs:
-          artifactName: 'versions'
-          downloadPath: '$(Pipeline.Workspace)/downloaded-versions'
-        displayName: '📥 Descargar artifact de versiones'
-        
-      - script: |
-            ls -R $(Pipeline.Workspace)/downloaded-versions/versions/version-apk
-            VERSION_FILE="$(Pipeline.Workspace)/downloaded-versions/versions/version-apk/version-apk.json"
-            if [[ -f "$VERSION_FILE" ]]; then
-              VERSION=$(jq -r '.version' $VERSION_FILE)
-              BASE_VERSION=$(echo "$VERSION" | cut -d'-' -f1)
-              echo "🚀 Versión detectada para apk: $BASE_VERSION"
-              echo "##vso[task.setvariable variable=msVersion]$BASE_VERSION"
-            else
-              echo "❌ No se encontró archivo de versión para apk"
-              exit 1
-            fi
-        displayName: '📚 Leer versiones de apk'
+          artifactName: "versions"
+          downloadPath: "$(Pipeline.Workspace)/downloaded-versions"
+        displayName: "📥 Descargar artifact de versiones"
 
       - script: |
-            ls -R $(Pipeline.Workspace)/downloaded-versions/versions/version-pubspec-apk
-            VERSION_FILE="$(Pipeline.Workspace)/downloaded-versions/versions/version-pubspec-apk/version-pubspec-apk.json"
-            if [[ -f "$VERSION_FILE" ]]; then
-              VERSION=$(jq -r '.version' $VERSION_FILE)
-              echo "🚀 Versión detectada para apk pub: +$VERSION"
-              echo "##vso[task.setvariable variable=msVersionPubspec]$VERSION"
-            else
-              echo "❌ No se encontró archivo de versión para apk pubspec"
-              exit 1
-            fi
-        displayName: '📚 Leer versiones de apk pubspec'
+          ls -R $(Pipeline.Workspace)/downloaded-versions/versions/version-apk
+          VERSION_FILE="$(Pipeline.Workspace)/downloaded-versions/versions/version-apk/version-apk.json"
+          if [[ -f "$VERSION_FILE" ]]; then
+            VERSION=$(jq -r '.version' $VERSION_FILE)
+            BASE_VERSION=$(echo "$VERSION" | cut -d'-' -f1)
+            echo "🚀 Versión detectada para apk: $BASE_VERSION"
+            echo "##vso[task.setvariable variable=msVersion]$BASE_VERSION"
+          else
+            echo "❌ No se encontró archivo de versión para apk"
+            exit 1
+          fi
+        displayName: "📚 Leer versiones de apk"
+
+      - script: |
+          ls -R $(Pipeline.Workspace)/downloaded-versions/versions/version-pubspec-apk
+          VERSION_FILE="$(Pipeline.Workspace)/downloaded-versions/versions/version-pubspec-apk/version-pubspec-apk.json"
+          if [[ -f "$VERSION_FILE" ]]; then
+            VERSION=$(jq -r '.version' $VERSION_FILE)
+            echo "🚀 Versión detectada para apk pub: +$VERSION"
+            echo "##vso[task.setvariable variable=msVersionPubspec]$VERSION"
+          else
+            echo "❌ No se encontró archivo de versión para apk pubspec"
+            exit 1
+          fi
+        displayName: "📚 Leer versiones de apk pubspec"
 
       - task: JavaToolInstaller@0
         inputs:
-          versionSpec: '17'
-          jdkArchitectureOption: 'x64'
-          jdkSourceOption: 'PreInstalled'
-      
+          versionSpec: "17"
+          jdkArchitectureOption: "x64"
+          jdkSourceOption: "PreInstalled"
+
       - script: |
           echo "version a actualizar: $(msVersion)"
           sed -i "s/^version: .*/version: $(msVersion)+$(msVersionPubspec)/" pubspec.yaml
           cat pubspec.yaml
-        displayName: 'Change version file pubspec'
-      
+        displayName: "Change version file pubspec"
+
       - script: |
           echo "Version a actualizar: $(msVersion)"
           CURRENT_BRANCH=$(echo $(Build.SourceBranch))
@@ -132,7 +132,7 @@ jobs:
 
           jq --arg version "$(msVersion)" --arg environment "$CURRENT_BRANCH_PR" --arg url "$(BASE_URL_FLUTTER)" '.VERSION = $version | .ENVIRONMENT = $environment | .BASE_URL = $url' env.json > tmp.json && mv tmp.json env.json
           cat env.json
-        displayName: 'Change version, environment, url file env.json'
+        displayName: "Change version, environment, url file env.json"
         env:
           RED: ${{ parameters.red }}
 
@@ -169,21 +169,21 @@ jobs:
           echo "New app ID: $NEW_APP_ID"
           sed -i "s|applicationId *= *\"[^\"]*\"|applicationId = \"$NEW_APP_ID\"|" android/app/build.gradle
           cat android/app/build.gradle
-        displayName: 'Change file build.gradle'
+        displayName: "Change file build.gradle"
         env:
           RED: ${{ parameters.red }}
 
       - task: FlutterInstall@0
         inputs:
-          mode: 'auto'
-          channel: 'stable'
-          version: 'custom'
+          mode: "auto"
+          channel: "stable"
+          version: "custom"
           customVersion: $(versionSpecification)
 
       - script: |
           flutter --version
           flutter pub get
-        displayName: 'Flutter Pub Get'
+        displayName: "Flutter Pub Get"
 
       - script: |
           echo "Verificando carpeta assets"
@@ -194,12 +194,12 @@ jobs:
             echo "❌ Error: No se encontraron assets"
             exit 99
           fi
-        displayName: 'Verificar assets'
+        displayName: "Verificar assets"
 
       - script: |
           echo "Descargando Keystore"
           mkdir -p android/app/keystore
-          
+
           aws s3 cp s3://repository-native/app-seller/android/keystore/$(KEY_ALIAS).jks android/app/keystore/            
           if [ -d "android/app/keystore" ] && [ "$(ls -A android/app/keystore/$(KEY_ALIAS).jks)" ]; then    
             echo "✅ Keystore descargado"
@@ -208,7 +208,7 @@ jobs:
             echo "❌ Error: No se descargo el Keystore"
             exit 99
           fi
-        displayName: 'Descargar Keystore'
+        displayName: "Descargar Keystore"
         env:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
@@ -241,15 +241,15 @@ jobs:
 
           echo "✅ File key.properties creado"
           ls -la android/key.properties
-        displayName: 'Asignar Keystore'
+        displayName: "Asignar Keystore"
         env:
           KEY_ALIAS: $(KEY_ALIAS)
           KEY_PASSWORD: $(KEY_PASSWORD)
           STORE_PASSWORD: $(STORE_PASSWORD)
-          
+
       - script: |
           flutter --no-color build apk --no-tree-shake-icons --profile
-        displayName: 'Flutter Build APK'
+        displayName: "Flutter Build APK"
 
       - script: |
           echo "Verificando Build Apk"
@@ -262,7 +262,7 @@ jobs:
             echo "❌ Error: Apk no encontrado"
             exit 99
           fi
-        displayName: 'Verificar Apk'
+        displayName: "Verificar Apk"
 
       - script: |
           echo "Renombrando APK..."
@@ -294,7 +294,7 @@ jobs:
           APKNAME="invictus-$CURRENT_BRANCH_PR-v$(msVersion).apk"
           echo "##vso[task.setvariable variable=apknameclean]$APKNAME"
           ls -l build/app/outputs/flutter-apk
-        displayName: 'Change name file Apk'
+        displayName: "Change name file Apk"
         condition: not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
         env:
           RED: ${{ parameters.red }}
@@ -332,7 +332,7 @@ jobs:
 
           # Subir a S3 la carpeta completa
           aws s3 cp build/app/outputs/flutter-apk/$CURRENT_BRANCH_PR/ s3://repository-native/app-seller/android/$CURRENT_BRANCH_PR/ --recursive --acl public-read
-        displayName: 'Copy Apk Bucket S3'
+        displayName: "Copy Apk Bucket S3"
         condition: not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
         env:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)

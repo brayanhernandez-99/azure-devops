@@ -1,9 +1,9 @@
 jobs:
-  - job: 'build_DockerTest'
-    displayName: 'Build DokerTest'    
+  - job: "build_DockerTest"
+    displayName: "Build DokerTest"
     pool:
-        name: 'Azure Pipelines'
-        vmImage: 'ubuntu-22.04'
+      name: "Azure Pipelines"
+      vmImage: "ubuntu-22.04"
 
     strategy:
       matrix:
@@ -16,85 +16,85 @@ jobs:
 
       - checkout: git://DevOps-templates-UX/pipelines-templates@feature/Inicio-templates
         fetchDepth: 1
-      
+
       - task: DownloadBuildArtifacts@0
         inputs:
-          artifactName: 'versions'
-          downloadPath: '$(Pipeline.Workspace)/downloaded-versions'
-        displayName: '📥 Descargar artifact de versiones'
+          artifactName: "versions"
+          downloadPath: "$(Pipeline.Workspace)/downloaded-versions"
+        displayName: "📥 Descargar artifact de versiones"
 
       - script: |
-            ls -R $(Pipeline.Workspace)/downloaded-versions/versions/$(msName)
-            VERSION_FILE="$(Pipeline.Workspace)/downloaded-versions/versions/$(msName)/version.json"
-            if [[ -f "$VERSION_FILE" ]]; then
-              VERSION=$(jq -r '.version' $VERSION_FILE)
-              echo "🚀 Versión detectada para $(msName): $VERSION"
-              echo "##vso[task.setvariable variable=msVersion]$VERSION"
-            else
-              echo "❌ No se encontró archivo de versión para $(msName)"
-              exit 1
-            fi
-        displayName: '📚 Leer versiones de microservicios'
+          ls -R $(Pipeline.Workspace)/downloaded-versions/versions/$(msName)
+          VERSION_FILE="$(Pipeline.Workspace)/downloaded-versions/versions/$(msName)/version.json"
+          if [[ -f "$VERSION_FILE" ]]; then
+            VERSION=$(jq -r '.version' $VERSION_FILE)
+            echo "🚀 Versión detectada para $(msName): $VERSION"
+            echo "##vso[task.setvariable variable=msVersion]$VERSION"
+          else
+            echo "❌ No se encontró archivo de versión para $(msName)"
+            exit 1
+          fi
+        displayName: "📚 Leer versiones de microservicios"
 
       - script: |
           echo "Compilando microservicio: $(msName)"
           ls -l
         displayName: "Build $(msName)"
-      
-      - script: |
-            echo "build dev docker images"
-            DOCKERFILE_PATH=$(Build.Repository.Name)/apps/$(msName)/Dockerfile
-            echo "Verificando existencia de: $DOCKERFILE_PATH"
 
-            if [ -f "$DOCKERFILE_PATH" ]; then
-              echo "✅ Ya existe el Dockerfile en $DOCKERFILE_PATH"
-              ls -la $(Build.Repository.Name)/apps/$(msName)
-            else
-              echo "⚠️ No existe el Dockerfile. Copiando desde templates..."
-              cp pipelines-templates/pipeline/docker/Dockerfile $(Build.Repository.Name)/apps/$(msName)/Dockerfile
-              echo "✅ Dockerfile copiado exitosamente."
-              ls -la $(Build.Repository.Name)/apps/$(msName)
-            fi
+      - script: |
+          echo "build dev docker images"
+          DOCKERFILE_PATH=$(Build.Repository.Name)/apps/$(msName)/Dockerfile
+          echo "Verificando existencia de: $DOCKERFILE_PATH"
+
+          if [ -f "$DOCKERFILE_PATH" ]; then
+            echo "✅ Ya existe el Dockerfile en $DOCKERFILE_PATH"
+            ls -la $(Build.Repository.Name)/apps/$(msName)
+          else
+            echo "⚠️ No existe el Dockerfile. Copiando desde templates..."
+            cp pipelines-templates/pipeline/docker/Dockerfile $(Build.Repository.Name)/apps/$(msName)/Dockerfile
+            echo "✅ Dockerfile copiado exitosamente."
+            ls -la $(Build.Repository.Name)/apps/$(msName)
+          fi
         displayName: "Check or Copy Dockerfile"
-      
+
       - task: Bash@3
         displayName: Authdocker
         inputs:
-          targetType: 'inline'
+          targetType: "inline"
           script: |
-              export CODEARTIFACT_AUTH_TOKEN=$(aws codeartifact get-authorization-token \
-                --domain matrixtech-npm-repository \
-                --domain-owner $ACCOUNT_ID_DEPLOY \
-                --region $AWS_DEFAULT_REGION \
-                --query authorizationToken \
-                --output text )
-              npm config set //matrixtech-npm-repository-$ACCOUNT_ID_DEPLOY.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com/npm/matrixtech-npm-repository/:_authToken=$CODEARTIFACT_AUTH_TOKEN
-              npm config set registry https://matrixtech-npm-repository-$ACCOUNT_ID_DEPLOY.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com/npm/matrixtech-npm-repository/
-              aws sts get-caller-identity
+            export CODEARTIFACT_AUTH_TOKEN=$(aws codeartifact get-authorization-token \
+              --domain matrixtech-npm-repository \
+              --domain-owner $ACCOUNT_ID_DEPLOY \
+              --region $AWS_DEFAULT_REGION \
+              --query authorizationToken \
+              --output text )
+            npm config set //matrixtech-npm-repository-$ACCOUNT_ID_DEPLOY.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com/npm/matrixtech-npm-repository/:_authToken=$CODEARTIFACT_AUTH_TOKEN
+            npm config set registry https://matrixtech-npm-repository-$ACCOUNT_ID_DEPLOY.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com/npm/matrixtech-npm-repository/
+            aws sts get-caller-identity
 
-              cd $(Build.Repository.Name)/apps/$(msName)
-              echo "//matrixtech-npm-repository-$ACCOUNT_ID_DEPLOY.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com/npm/matrixtech-npm-repository/:_authToken=$CODEARTIFACT_AUTH_TOKEN" > .npmrc
-              echo "registry=https://matrixtech-npm-repository-$ACCOUNT_ID_DEPLOY.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com/npm/matrixtech-npm-repository/" >> .npmrc
+            cd $(Build.Repository.Name)/apps/$(msName)
+            echo "//matrixtech-npm-repository-$ACCOUNT_ID_DEPLOY.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com/npm/matrixtech-npm-repository/:_authToken=$CODEARTIFACT_AUTH_TOKEN" > .npmrc
+            echo "registry=https://matrixtech-npm-repository-$ACCOUNT_ID_DEPLOY.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com/npm/matrixtech-npm-repository/" >> .npmrc
         env:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
-        
+
       - script: |
-            echo "Logging in to ECR..."
-            aws ecr get-login-password --region $AWS_DEFAULT_REGION | \
-            docker login --username AWS --password-stdin $ACCOUNT_ID_DEPLOY.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
-        displayName: 'Login to AWS ECR'
+          echo "Logging in to ECR..."
+          aws ecr get-login-password --region $AWS_DEFAULT_REGION | \
+          docker login --username AWS --password-stdin $ACCOUNT_ID_DEPLOY.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+        displayName: "Login to AWS ECR"
         env:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
-      
+
       - task: Docker@2
-        displayName: 'Build Container Image Development $(msName)'
+        displayName: "Build Container Image Development $(msName)"
         continueOnError: true
         inputs:
-          command: 'build'
-          repository: '$(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/pruebas-pipeline-$(msName)-develop'
-          Dockerfile: '$(Build.Repository.Name)/apps/$(msName)/Dockerfile'
+          command: "build"
+          repository: "$(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/pruebas-pipeline-$(msName)-develop"
+          Dockerfile: "$(Build.Repository.Name)/apps/$(msName)/Dockerfile"
           tags: $(msVersion)

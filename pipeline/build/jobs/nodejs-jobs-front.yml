@@ -1,32 +1,32 @@
 jobs:
   - ${{ if or(eq(variables['Build.SourceBranch'], 'refs/heads/master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')) }}:
-    - deployment: WaitForApproval
-      displayName: 'Esperar aprobación'
-      condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
-      pool:
-        name: Azure Pipelines
-        vmImage: 'ubuntu-22.04'
-      ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'antioquia')) }}:
-        environment: 'Build master antioquia'
-      ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'cap')) }}:
-        environment: 'Build master cap'
-      ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'tolima')) }}:
-        environment: 'Build master tolima'
-      ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'huila')) }}:
-        environment: 'Build master huila'
-      ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'cauca')) }}:
-        environment: 'Build master cauca'
-      strategy:
-        runOnce:
-          deploy:
-            steps:
-              - script: echo "Aprobación recibida. Iniciando despliegues..."
+      - deployment: WaitForApproval
+        displayName: "Esperar aprobación"
+        condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
+        pool:
+          name: Azure Pipelines
+          vmImage: "ubuntu-22.04"
+        ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'antioquia')) }}:
+          environment: "Build master antioquia"
+        ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'cap')) }}:
+          environment: "Build master cap"
+        ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'tolima')) }}:
+          environment: "Build master tolima"
+        ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'huila')) }}:
+          environment: "Build master huila"
+        ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'cauca')) }}:
+          environment: "Build master cauca"
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - script: echo "Aprobación recibida. Iniciando despliegues..."
 
-  - job: 'build_nodejs'
-    displayName: 'Build nodejs'    
+  - job: "build_nodejs"
+    displayName: "Build nodejs"
     pool:
-        name: 'Azure Pipelines'
-        vmImage: 'ubuntu-22.04'
+      name: "Azure Pipelines"
+      vmImage: "ubuntu-22.04"
     variables:
       versionSpecification: $[coalesce(variables.nodejsVersion, '18.x')]
 
@@ -37,7 +37,7 @@ jobs:
             msName: ${{ ms }}
 
     steps:
-      - script: | 
+      - script: |
           if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
             fileselect=app-legacy
             echo "Ruta de archivo del mf: $fileselect"
@@ -48,40 +48,40 @@ jobs:
             echo "##vso[task.setvariable variable=file]$fileselect"
           fi
         displayName: "Select file"
-      
+
       - task: DownloadBuildArtifacts@0
         inputs:
-          artifactName: 'versions'
-          downloadPath: '$(Pipeline.Workspace)/downloaded-versions'
-        displayName: '📥 Descargar artifact de versiones'
-        
+          artifactName: "versions"
+          downloadPath: "$(Pipeline.Workspace)/downloaded-versions"
+        displayName: "📥 Descargar artifact de versiones"
+
       - script: |
-            ls -R $(Pipeline.Workspace)/downloaded-versions/versions/$(msName)
-            VERSION_FILE="$(Pipeline.Workspace)/downloaded-versions/versions/$(msName)/version.json"
-            if [[ -f "$VERSION_FILE" ]]; then
-              VERSION=$(jq -r '.version' $VERSION_FILE)
-              echo "🚀 Versión detectada para $(msName): $VERSION"
-              echo "##vso[task.setvariable variable=msVersion]$VERSION"
-            else
-              echo "❌ No se encontró archivo de versión para $(msName)"
-              exit 1
-            fi
-        displayName: '📚 Leer versiones de microservicios'
-      
+          ls -R $(Pipeline.Workspace)/downloaded-versions/versions/$(msName)
+          VERSION_FILE="$(Pipeline.Workspace)/downloaded-versions/versions/$(msName)/version.json"
+          if [[ -f "$VERSION_FILE" ]]; then
+            VERSION=$(jq -r '.version' $VERSION_FILE)
+            echo "🚀 Versión detectada para $(msName): $VERSION"
+            echo "##vso[task.setvariable variable=msVersion]$VERSION"
+          else
+            echo "❌ No se encontró archivo de versión para $(msName)"
+            exit 1
+          fi
+        displayName: "📚 Leer versiones de microservicios"
+
       - task: NodeTool@0
-        displayName: 'Use Nodejs $(versionSpecification)'
+        displayName: "Use Nodejs $(versionSpecification)"
         inputs:
-          versionSource: 'spec'
-          versionSpec: '$(versionSpecification)'
-        
+          versionSource: "spec"
+          versionSpec: "$(versionSpecification)"
+
       - script: |
           npm install -g pnpm
-        displayName: 'Instalar pnpm'
+        displayName: "Instalar pnpm"
 
       - task: Bash@3
         name: AuthCodeArtifact
         inputs:
-          targetType: 'inline'
+          targetType: "inline"
           script: |
             export CODEARTIFACT_AUTH_TOKEN=$(aws codeartifact get-authorization-token \
               --domain matrixtech-npm-repository \
@@ -114,7 +114,7 @@ jobs:
 
           echo "Archivos .env.local para administration-vue2"
           ls -la app-legacy/app-administration-vue2
-        displayName: 'Generación de .env admin y seller'
+        displayName: "Generación de .env admin y seller"
 
       - script: |
           CURRENT_BRANCH=$(echo $(Build.SourceBranch))
@@ -153,20 +153,20 @@ jobs:
           cat $(System.DefaultWorkingDirectory)/apps/invictus/.env
           echo ""
           cat $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.env
-        displayName: 'Generación de .env invictus'
+        displayName: "Generación de .env invictus"
         env:
           RED: ${{ parameters.red }}
 
       - script: |
-            printenv | grep '^VITE_' > $(System.DefaultWorkingDirectory)/.env
-            ls -la 
-            cat $(System.DefaultWorkingDirectory)/.env
-        displayName: 'Generar env VIT'
+          printenv | grep '^VITE_' > $(System.DefaultWorkingDirectory)/.env
+          ls -la 
+          cat $(System.DefaultWorkingDirectory)/.env
+        displayName: "Generar env VIT"
 
       - script: |
-            echo -e "VITE_APP_VERSION=\$npm_package_version\nVITE_BASE_URL=" > $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.env
-            cat $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.env
-        displayName: 'Copiar env'
+          echo -e "VITE_APP_VERSION=\$npm_package_version\nVITE_BASE_URL=" > $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.env
+          cat $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.env
+        displayName: "Copiar env"
 
       - script: |
           cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
@@ -180,10 +180,10 @@ jobs:
           cat pnpm-workspace.yaml
         displayName: "Comentar app-legacy/*"
         condition: and(
-                      succeeded(),
-                      ne(variables['msName'], 'app-administration-vue2'),
-                      ne(variables['msName'], 'app-sellers-vue2')
-                    )
+          succeeded(),
+          ne(variables['msName'], 'app-administration-vue2'),
+          ne(variables['msName'], 'app-sellers-vue2')
+          )
 
       - script: |
           cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
@@ -192,7 +192,7 @@ jobs:
           pnpm i 
           echo "Dependencias instaladas:"
           npm ls --depth=0 || true
-        displayName: 'Instalar dependencias del microservicio'
+        displayName: "Instalar dependencias del microservicio"
 
       - script: |
           cat $(System.DefaultWorkingDirectory)/app-legacy/app-administration-vue2/.env.local
@@ -210,63 +210,63 @@ jobs:
             pnpm build --filter=...$(msName)
             ls -la $(System.DefaultWorkingDirectory)/$(file)/$(msName)/dist
           fi
-        displayName: 'Compilar dependencias del microservicio'
+        displayName: "Compilar dependencias del microservicio"
         continueOnError: true
-      
+
       - script: |
           echo "Descomentando app-legacy/*"
           sed -i '/# *app-legacy\//s/^  # *//' pnpm-workspace.yaml
         displayName: "Restaurar línea app-legacy/*"
         condition: and(
-                      succeeded(),
-                      ne(variables['msName'], 'app-administration-vue2'),
-                      ne(variables['msName'], 'app-sellers-vue2')
-                    )
-      
+          succeeded(),
+          ne(variables['msName'], 'app-administration-vue2'),
+          ne(variables['msName'], 'app-sellers-vue2')
+          )
+
       - task: JavaToolInstaller@0
         inputs:
-          versionSpec: '17'
-          jdkArchitectureOption: 'x64'
-          jdkSourceOption: 'PreInstalled'
+          versionSpec: "17"
+          jdkArchitectureOption: "x64"
+          jdkSourceOption: "PreInstalled"
         condition: and(
-                      succeeded(),
-                      ne(variables['msName'], 'app-administration-vue2'),
-                      ne(variables['msName'], 'app-sellers-vue2'),
-                      ne(variables['Build.SourceBranchName'], 'master'),
-                      ne(variables['Build.SourceBranchName'], 'staging')
-                    )
+          succeeded(),
+          ne(variables['msName'], 'app-administration-vue2'),
+          ne(variables['msName'], 'app-sellers-vue2'),
+          ne(variables['Build.SourceBranchName'], 'master'),
+          ne(variables['Build.SourceBranchName'], 'staging')
+          )
 
       - task: SonarQubePrepare@7
         inputs:
-          SonarQube: 'SonarQubeConection'
-          scannerMode: 'CLI'
-          configMode: 'manual'
-          cliProjectKey: 'pruebas-microfronted-$(msName)'
-          cliProjectName: 'pruebas-microfronted-$(msName)'
-          cliSources: '$(System.DefaultWorkingDirectory)/$(file)/$(msName)'
+          SonarQube: "SonarQubeConection"
+          scannerMode: "CLI"
+          configMode: "manual"
+          cliProjectKey: "pruebas-microfronted-$(msName)"
+          cliProjectName: "pruebas-microfronted-$(msName)"
+          cliSources: "$(System.DefaultWorkingDirectory)/$(file)/$(msName)"
           extraProperties: |
             sonar.javascript.lcov.reportPaths=$(System.DefaultWorkingDirectory)/$(file)/$(msName)/coverage/lcov.info
             sonar.exclusions=**/test/**,**/coverage/**,**/.nyc_output/**,**/reports/**,sured-plugin/**,**/reports_bck/**,**/node_modules/**,**/dist/**
         condition: and(
-                      succeeded(),
-                      ne(variables['msName'], 'app-administration-vue2'),
-                      ne(variables['msName'], 'app-sellers-vue2'),
-                      ne(variables['Build.SourceBranchName'], 'master'),
-                      ne(variables['Build.SourceBranchName'], 'staging')
-                    )
+          succeeded(),
+          ne(variables['msName'], 'app-administration-vue2'),
+          ne(variables['msName'], 'app-sellers-vue2'),
+          ne(variables['Build.SourceBranchName'], 'master'),
+          ne(variables['Build.SourceBranchName'], 'staging')
+          )
 
       - script: |
           variable=$(echo $SONARQUBE_SCANNER_PARAMS | sed -E 's#"sonar\.branch\.name":"[^"]+",##g')
           echo $variable
           echo "##vso[task.setvariable variable=SONARQUBE_SCANNER_PARAMS]$variable"
-        displayName: 'Set-variable'
+        displayName: "Set-variable"
         condition: and(
-                      succeeded(),
-                      ne(variables['msName'], 'app-administration-vue2'),
-                      ne(variables['msName'], 'app-sellers-vue2'),
-                      ne(variables['Build.SourceBranchName'], 'master'),
-                      ne(variables['Build.SourceBranchName'], 'staging')
-                    )
+          succeeded(),
+          ne(variables['msName'], 'app-administration-vue2'),
+          ne(variables['msName'], 'app-sellers-vue2'),
+          ne(variables['Build.SourceBranchName'], 'master'),
+          ne(variables['Build.SourceBranchName'], 'staging')
+          )
 
       - script: |
           ls -l
@@ -274,15 +274,15 @@ jobs:
           # cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
           # npm run test
           pnpm test --filter=...$(msName)
-        displayName: 'Test MS $(msName)'
+        displayName: "Test MS $(msName)"
         continueOnError: true
         condition: and(
-                      succeeded(),
-                      ne(variables['msName'], 'app-administration-vue2'),
-                      ne(variables['msName'], 'app-sellers-vue2'),
-                      ne(variables['Build.SourceBranchName'], 'master'),
-                      ne(variables['Build.SourceBranchName'], 'staging')
-                    )
+          succeeded(),
+          ne(variables['msName'], 'app-administration-vue2'),
+          ne(variables['msName'], 'app-sellers-vue2'),
+          ne(variables['Build.SourceBranchName'], 'master'),
+          ne(variables['Build.SourceBranchName'], 'staging')
+          )
 
       - script: |
           # cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
@@ -294,41 +294,41 @@ jobs:
 
           tree
           ls -l $(System.DefaultWorkingDirectory)/$(file)/$(msName)/coverage
-        displayName: 'Coverage MS $(msName)'
+        displayName: "Coverage MS $(msName)"
         continueOnError: true
         condition: and(
-                      succeeded(),
-                      ne(variables['msName'], 'app-administration-vue2'),
-                      ne(variables['msName'], 'app-sellers-vue2'),
-                      ne(variables['Build.SourceBranchName'], 'master'),
-                      ne(variables['Build.SourceBranchName'], 'staging')
-                    )
+          succeeded(),
+          ne(variables['msName'], 'app-administration-vue2'),
+          ne(variables['msName'], 'app-sellers-vue2'),
+          ne(variables['Build.SourceBranchName'], 'master'),
+          ne(variables['Build.SourceBranchName'], 'staging')
+          )
 
       - task: SonarQubeAnalyze@7
-        displayName: 'Sonar Analysis'
+        displayName: "Sonar Analysis"
         condition: and(
-                      succeeded(),
-                      ne(variables['msName'], 'app-administration-vue2'),
-                      ne(variables['msName'], 'app-sellers-vue2'),
-                      ne(variables['Build.SourceBranchName'], 'master'),
-                      ne(variables['Build.SourceBranchName'], 'staging')
-                    )
+          succeeded(),
+          ne(variables['msName'], 'app-administration-vue2'),
+          ne(variables['msName'], 'app-sellers-vue2'),
+          ne(variables['Build.SourceBranchName'], 'master'),
+          ne(variables['Build.SourceBranchName'], 'staging')
+          )
 
       - task: SonarQubePublish@7
-        displayName: 'Publish Result Static Code Analysis'
+        displayName: "Publish Result Static Code Analysis"
         inputs:
           pollingTimeoutSec: 400
         condition: and(
-                      succeeded(),
-                      ne(variables['msName'], 'app-administration-vue2'),
-                      ne(variables['msName'], 'app-sellers-vue2'),
-                      ne(variables['Build.SourceBranchName'], 'master'),
-                      ne(variables['Build.SourceBranchName'], 'staging')
-                    )
+          succeeded(),
+          ne(variables['msName'], 'app-administration-vue2'),
+          ne(variables['msName'], 'app-sellers-vue2'),
+          ne(variables['Build.SourceBranchName'], 'master'),
+          ne(variables['Build.SourceBranchName'], 'staging')
+          )
 
       - script: |
           echo "Esperando Quality Gate..."
-    
+
           status=$(curl -s -u "$SONAR_TOKEN:" "$SONAR_HOST_URL/api/qualitygates/project_status?projectKey=pruebas-microfronted-$(msName)")
           metrics_response=$(curl -s -u "$SONAR_TOKEN:" "$SONAR_HOST_URL/api/measures/component?component=pruebas-microfronted-$(msName)&metricKeys=coverage,duplicated_lines_density")
 
@@ -346,20 +346,20 @@ jobs:
           fi
 
         env:
-          SONAR_TOKEN: $(SONAR_TOKEN) 
-          SONAR_HOST_URL: $(SONAR_HOST_URL) 
-        displayName: 'Verificar Quality Gate'
+          SONAR_TOKEN: $(SONAR_TOKEN)
+          SONAR_HOST_URL: $(SONAR_HOST_URL)
+        displayName: "Verificar Quality Gate"
         continueOnError: true
         condition: and(
-                      succeeded(),
-                      ne(variables['msName'], 'app-administration-vue2'),
-                      ne(variables['msName'], 'app-sellers-vue2'),
-                      ne(variables['Build.SourceBranchName'], 'master'),
-                      ne(variables['Build.SourceBranchName'], 'staging')
-                    )
+          succeeded(),
+          ne(variables['msName'], 'app-administration-vue2'),
+          ne(variables['msName'], 'app-sellers-vue2'),
+          ne(variables['Build.SourceBranchName'], 'master'),
+          ne(variables['Build.SourceBranchName'], 'staging')
+          )
 
       - script: |
-          
+
           if [ -d "$(System.DefaultWorkingDirectory)/$(file)/$(msName)/dist" ]; then
             if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
               msName=$(msName)
@@ -374,11 +374,10 @@ jobs:
           else
             echo "No se encontro la carpeta dist, por ende no compilo el proyecto $msName"
           fi
-          
+
         displayName: "Upload S3"
         condition: not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
         env:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVIC)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVIC)
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
-      

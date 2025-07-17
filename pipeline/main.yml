@@ -2,7 +2,7 @@ parameters:
   - name: language
     type: string
     default: default
-    values: 
+    values:
       - nodejs
       - nodejsFront
       - flutter
@@ -11,23 +11,23 @@ parameters:
     type: string
     default: npm
     values:
-    - npm
-    - yarn
-  
+      - npm
+      - yarn
+
   - name: typerelease
     type: string
     default: aws-ecs
-  
+
   - name: apps
     type: object
     default: {}
 
 resources:
   repositories:
-  - repository: self
-    name: $(System.TeamProject)/$(Build.Repository.Name)
-    type: git
-    ref: $(Build.SourceBranch)
+    - repository: self
+      name: $(System.TeamProject)/$(Build.Repository.Name)
+      type: git
+      ref: $(Build.SourceBranch)
 
 stages:
   - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature'), in(variables['Build.SourceBranch'], 'refs/heads/develop')), ne(parameters.language, 'flutter')) }}:
@@ -37,158 +37,158 @@ stages:
           typerelease: ${{ parameters.typerelease }}
           apps: ${{ parameters.apps }}
           red: antioquia
-  
+
   - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/staging'), eq(parameters.typerelease, 'aws-s3')) }}:
-    - template: build/build-developmet.yml
-      parameters:
-        language: ${{ parameters.language }}
-        typerelease: ${{ parameters.typerelease }}
-        apps: ${{ parameters.apps }}
-        red: antioquia
-  
-  - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(parameters.typerelease, 'aws-s3')) }}:
-    - template: build/build-master-front.yml
-      parameters:
-        language: ${{ parameters.language }}
-        typerelease: ${{ parameters.typerelease }}
-        apps: ${{ parameters.apps }}
-        red: antioquia
-    
-  - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(parameters.typerelease, 'aws-s3')) }}:
-    - template: build/build-master-front.yml
-      parameters:
-        language: ${{ parameters.language }}
-        typerelease: ${{ parameters.typerelease }}
-        apps: ${{ parameters.apps }}
-        red: cap
-  
-  - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(parameters.typerelease, 'aws-s3')) }}:
-    - template: build/build-master-front.yml
-      parameters:
-        language: ${{ parameters.language }}
-        typerelease: ${{ parameters.typerelease }}
-        apps: ${{ parameters.apps }}
-        red: tolima
+      - template: build/build-developmet.yml
+        parameters:
+          language: ${{ parameters.language }}
+          typerelease: ${{ parameters.typerelease }}
+          apps: ${{ parameters.apps }}
+          red: antioquia
 
   - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(parameters.typerelease, 'aws-s3')) }}:
-    - template: build/build-master-front.yml
-      parameters:
-        language: ${{ parameters.language }}
-        typerelease: ${{ parameters.typerelease }}
-        apps: ${{ parameters.apps }}
-        red: huila
+      - template: build/build-master-front.yml
+        parameters:
+          language: ${{ parameters.language }}
+          typerelease: ${{ parameters.typerelease }}
+          apps: ${{ parameters.apps }}
+          red: antioquia
 
   - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(parameters.typerelease, 'aws-s3')) }}:
-    - template: build/build-master-front.yml
-      parameters:
-        language: ${{ parameters.language }}
-        typerelease: ${{ parameters.typerelease }}
-        apps: ${{ parameters.apps }}
-        red: cauca
-  
+      - template: build/build-master-front.yml
+        parameters:
+          language: ${{ parameters.language }}
+          typerelease: ${{ parameters.typerelease }}
+          apps: ${{ parameters.apps }}
+          red: cap
+
+  - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(parameters.typerelease, 'aws-s3')) }}:
+      - template: build/build-master-front.yml
+        parameters:
+          language: ${{ parameters.language }}
+          typerelease: ${{ parameters.typerelease }}
+          apps: ${{ parameters.apps }}
+          red: tolima
+
+  - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(parameters.typerelease, 'aws-s3')) }}:
+      - template: build/build-master-front.yml
+        parameters:
+          language: ${{ parameters.language }}
+          typerelease: ${{ parameters.typerelease }}
+          apps: ${{ parameters.apps }}
+          red: huila
+
+  - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(parameters.typerelease, 'aws-s3')) }}:
+      - template: build/build-master-front.yml
+        parameters:
+          language: ${{ parameters.language }}
+          typerelease: ${{ parameters.typerelease }}
+          apps: ${{ parameters.apps }}
+          red: cauca
+
   - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature'), in(variables['Build.SourceBranch'], 'refs/heads/develop', 'refs/heads/staging','refs/heads/master')), eq(parameters.language, 'flutter')) }}:
-    - template: build/build-united.yml
-      parameters:
-        language: ${{ parameters.language }}
-        typerelease: ${{ parameters.typerelease }}
-        red: antioquia
-  
-  - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(parameters.language, 'flutter')) }}:
-    - template: build/build-united.yml
-      parameters:
-        language: ${{ parameters.language }}
-        typerelease: ${{ parameters.typerelease }}
-        red: cap
-  
-  - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(parameters.language, 'flutter')) }}:
-    - template: build/build-united.yml
-      parameters:
-        language: ${{ parameters.language }}
-        typerelease: ${{ parameters.typerelease }}
-        red: tolima
-  
-  - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(parameters.language, 'flutter')) }}:
-    - template: build/build-united.yml
-      parameters:
-        language: ${{ parameters.language }}
-        typerelease: ${{ parameters.typerelease }}
-        red: huila
+      - template: build/build-united.yml
+        parameters:
+          language: ${{ parameters.language }}
+          typerelease: ${{ parameters.typerelease }}
+          red: antioquia
 
   - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(parameters.language, 'flutter')) }}:
-    - template: build/build-united.yml
-      parameters:
-        language: ${{ parameters.language }}
-        typerelease: ${{ parameters.typerelease }}
-        red: cauca
+      - template: build/build-united.yml
+        parameters:
+          language: ${{ parameters.language }}
+          typerelease: ${{ parameters.typerelease }}
+          red: cap
+
+  - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(parameters.language, 'flutter')) }}:
+      - template: build/build-united.yml
+        parameters:
+          language: ${{ parameters.language }}
+          typerelease: ${{ parameters.typerelease }}
+          red: tolima
+
+  - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(parameters.language, 'flutter')) }}:
+      - template: build/build-united.yml
+        parameters:
+          language: ${{ parameters.language }}
+          typerelease: ${{ parameters.typerelease }}
+          red: huila
+
+  - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(parameters.language, 'flutter')) }}:
+      - template: build/build-united.yml
+        parameters:
+          language: ${{ parameters.language }}
+          typerelease: ${{ parameters.typerelease }}
+          red: cauca
 
   - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), in(variables['Build.SourceBranch'], 'refs/heads/staging','refs/heads/master' )), ne(parameters.typerelease, 'aws-s3'), ne(parameters.language, 'flutter')) }}:
-    - template: build/semantic-version-integration.yml
-      parameters:
-        language: ${{ parameters.language }}
-        typerelease: ${{ parameters.typerelease }}
-        apps: ${{ parameters.apps }}
-  
+      - template: build/semantic-version-integration.yml
+        parameters:
+          language: ${{ parameters.language }}
+          typerelease: ${{ parameters.typerelease }}
+          apps: ${{ parameters.apps }}
+
   - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature'), in(variables['Build.SourceBranch'], 'refs/heads/develop', 'refs/heads/staging','refs/heads/master' )), eq(parameters.language, 'flutter')) }}:
-    - template: build/semantic-version-integration.yml
-      parameters:
-        language: ${{ parameters.language }}
-        typerelease: ${{ parameters.typerelease }}
+      - template: build/semantic-version-integration.yml
+        parameters:
+          language: ${{ parameters.language }}
+          typerelease: ${{ parameters.typerelease }}
 
   - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), in(variables['Build.SourceBranch'], 'refs/heads/master' )), eq(parameters.typerelease, 'aws-s3')) }}:
-    - template: build/semantic-version-integration.yml
-      parameters:
-        language: ${{ parameters.language }}
-        typerelease: ${{ parameters.typerelease }}
-        apps: ${{ parameters.apps }}
+      - template: build/semantic-version-integration.yml
+        parameters:
+          language: ${{ parameters.language }}
+          typerelease: ${{ parameters.typerelease }}
+          apps: ${{ parameters.apps }}
 
   - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), in(variables['Build.SourceBranch'], 'refs/heads/develop','refs/heads/staging','refs/heads/master' )), ne(parameters.typerelease, 'aws-s3'), ne(parameters.language, 'flutter')) }}:
-    - template: release/artifacts-managment.yml
-      parameters:
-        language: ${{ parameters.language }}
-        typerelease: ${{ parameters.typerelease }}
-        apps: ${{ parameters.apps }}
-        red: antioquia
-  
+      - template: release/artifacts-managment.yml
+        parameters:
+          language: ${{ parameters.language }}
+          typerelease: ${{ parameters.typerelease }}
+          apps: ${{ parameters.apps }}
+          red: antioquia
+
   - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), in(variables['Build.SourceBranch'], 'refs/heads/develop', 'refs/heads/staging', 'refs/heads/master')), ne(parameters.language, 'flutter')) }}:
-    - template: release/deploy-integration.yml
-      parameters:
-        language: ${{ parameters.language }}
-        typerelease: ${{ parameters.typerelease }}
-        apps: ${{ parameters.apps }}
-        red: antioquia
+      - template: release/deploy-integration.yml
+        parameters:
+          language: ${{ parameters.language }}
+          typerelease: ${{ parameters.typerelease }}
+          apps: ${{ parameters.apps }}
+          red: antioquia
 
   - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/master'), ne(parameters.language, 'flutter')) }}:
-    - template: release/deploy-integration.yml
-      parameters:
-        language: ${{ parameters.language }}
-        typerelease: ${{ parameters.typerelease }}
-        apps: ${{ parameters.apps }}
-        red: cap
-  
-  - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/master'), ne(parameters.language, 'flutter')) }}:
-    - template: release/deploy-integration.yml
-      parameters:
-        language: ${{ parameters.language }}
-        typerelease: ${{ parameters.typerelease }}
-        apps: ${{ parameters.apps }}
-        red: tolima
+      - template: release/deploy-integration.yml
+        parameters:
+          language: ${{ parameters.language }}
+          typerelease: ${{ parameters.typerelease }}
+          apps: ${{ parameters.apps }}
+          red: cap
 
   - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/master'), ne(parameters.language, 'flutter')) }}:
-    - template: release/deploy-integration.yml
-      parameters:
-        language: ${{ parameters.language }}
-        typerelease: ${{ parameters.typerelease }}
-        apps: ${{ parameters.apps }}
-        red: huila
+      - template: release/deploy-integration.yml
+        parameters:
+          language: ${{ parameters.language }}
+          typerelease: ${{ parameters.typerelease }}
+          apps: ${{ parameters.apps }}
+          red: tolima
 
   - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/master'), ne(parameters.language, 'flutter')) }}:
-    - template: release/deploy-integration.yml
-      parameters:
-        language: ${{ parameters.language }}
-        typerelease: ${{ parameters.typerelease }}
-        apps: ${{ parameters.apps }}
-        red: cauca
-  
+      - template: release/deploy-integration.yml
+        parameters:
+          language: ${{ parameters.language }}
+          typerelease: ${{ parameters.typerelease }}
+          apps: ${{ parameters.apps }}
+          red: huila
+
+  - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/master'), ne(parameters.language, 'flutter')) }}:
+      - template: release/deploy-integration.yml
+        parameters:
+          language: ${{ parameters.language }}
+          typerelease: ${{ parameters.typerelease }}
+          apps: ${{ parameters.apps }}
+          red: cauca
+
     # - ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), in(variables['Build.SourceBranch'], 'refs/heads/develop', 'refs/heads/staging', 'refs/heads/master' )) }}:
     #   - ${{ each ms in parameters.apps }}:
     #     - template: release/deploy-integration-prueba.yml

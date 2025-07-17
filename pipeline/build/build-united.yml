@@ -1,49 +1,46 @@
 stages:
-# - stage: 'microservices_developmet'
-#   displayName: 'microservices Developmet'
-#   dependsOn: []
+  # - stage: 'microservices_developmet'
+  #   displayName: 'microservices Developmet'
+  #   dependsOn: []
 
-#   jobs:
-#   - template: ../general/semantic-version-job.yml
+  #   jobs:
+  #   - template: ../general/semantic-version-job.yml
 
-- stage: 'build_unit${{ parameters.red }}'
-  ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/') }}:
-    displayName: 'Build Flutter Feature'
-  ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
-    displayName: 'Build Flutter Development'
-  ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
-    displayName: 'Build Flutter Staging' 
-  ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'antioquia')) }}: 
-    displayName: 'Build Flutter Master Antioquia'
-  ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'cap')) }}: 
-    displayName: 'Build Flutter Master Cap'
-  ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'tolima')) }}: 
-    displayName: 'Build Flutter Master Tolima'
-  ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'huila')) }}: 
-    displayName: 'Build Flutter Master Huila'
-  ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'cauca')) }}: 
-    displayName: 'Build Flutter Master Cauca'
+  - stage: "build_unit${{ parameters.red }}"
+    ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/') }}:
+      displayName: "Build Flutter Feature"
+    ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
+      displayName: "Build Flutter Development"
+    ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
+      displayName: "Build Flutter Staging"
+    ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'antioquia')) }}:
+      displayName: "Build Flutter Master Antioquia"
+    ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'cap')) }}:
+      displayName: "Build Flutter Master Cap"
+    ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'tolima')) }}:
+      displayName: "Build Flutter Master Tolima"
+    ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'huila')) }}:
+      displayName: "Build Flutter Master Huila"
+    ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'cauca')) }}:
+      displayName: "Build Flutter Master Cauca"
 
-  dependsOn: 
-    - 'semantic_version_integration'
-  condition:
-      in(dependencies.semantic_version_integration.result, 'Succeeded', 'SucceededWithIssues')
+    dependsOn:
+      - "semantic_version_integration"
+    condition: in(dependencies.semantic_version_integration.result, 'Succeeded', 'SucceededWithIssues')
 
-  variables:
-  - template: ../variables/groups-transversal-variables.yml
-    parameters:
-      red: ${{ parameters.red }}
+    variables:
+      - template: ../variables/groups-transversal-variables.yml
+        parameters:
+          red: ${{ parameters.red }}
 
-  jobs:
-  - ${{ if eq(parameters.language, 'flutter') }}:
-    - template: jobs/flutter-jobs.yml
-      parameters:
-        red: ${{ parameters.red }}
+    jobs:
+      - ${{ if eq(parameters.language, 'flutter') }}:
+          - template: jobs/flutter-jobs.yml
+            parameters:
+              red: ${{ parameters.red }}
 
-  - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), in(variables['Build.SourceBranch'], 'refs/heads/develop', 'refs/heads/staging','refs/heads/master' )), eq(parameters.red, 'antioquia')) }}:
-    - template: ../general/commit-tag-changeload-flutter.yml
-      parameters:
-        red: ${{ parameters.red }}
-        typerelease: ${{ parameters.typerelease }}
-
-  
+      - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), in(variables['Build.SourceBranch'], 'refs/heads/develop', 'refs/heads/staging','refs/heads/master' )), eq(parameters.red, 'antioquia')) }}:
+          - template: ../general/commit-tag-changeload-flutter.yml
+            parameters:
+              red: ${{ parameters.red }}
+              typerelease: ${{ parameters.typerelease }}
