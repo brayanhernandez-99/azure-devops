@@ -165,7 +165,7 @@ jobs:
           fi
           echo $SOURCE_BRANCH
           if [[ "$BUILD_REASON" == "PullRequest" ]]; then
-            if [[ "$SOURCE_BRANCH" == refs/heads/feature/* || "$SOURCE_BRANCH" == refs/heads/hotfix/* ]]; then
+            if [[ "$SOURCE_BRANCH" == feature/* || "$SOURCE_BRANCH" == hotfix/* ]]; then
               clean_branch=$(echo "$(System.PullRequest.SourceBranch)" | sed 's#refs/heads/##')
               git checkout $clean_branch
               git reset --hard HEAD
