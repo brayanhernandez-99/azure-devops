@@ -160,69 +160,21 @@ jobs:
 
 
       - script: |
-          CURRENT_BRANCH=$(echo $(Build.SourceBranch))
-
-          if [[ "$BUILD_REASON" == "PullRequest" ]]; then
-            clean_branch=$(echo "$(System.PullRequest.SourceBranch)" | sed 's#refs/heads/##')
-            git checkout $clean_branch
-            git reset --hard HEAD
-          fi
-
-          if [[ "$BUILD_REASON" == "PullRequest" || "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
-            cd $(Build.SourcesDirectory)
-            last_real_commit=$(git log --no-merges --pretty=format:%H -n 2 | tail -n1)
-            changed_files=$(git diff --name-only $last_real_commit HEAD)
-            apps=$(echo "$changed_files" | grep "^apps/" | cut -d '/' -f2 | sort -u)
-          else
-            cd $(Build.SourcesDirectory)/apps
-            apps=$(git diff --name-only HEAD~1 HEAD | grep "^apps/" | cut -d '/' -f2 | sort -u)
-          fi
-
-          echo "🔍 Apps modificadas detectadas:"
-          echo "$apps"
-
-          if [ -z "$apps" ]; then
-            echo "❌ No se detectaron cambios en apps. Cancelando ejecución del pipeline."
-            exit 1
-          fi
-
+          echo "🔐 Iniciando sesión con Azure DevOps CLI"
           echo ${AZURE_DEVOPS_CLI_PAT} | az devops login --organization https://dev.azure.com/ux-technology
+
+          echo "⚙️ Configurando organización y proyecto por defecto"
+          az devops configure --defaults organization=https://dev.azure.com/ux-technology project=$(System.TeamProject)
+
+          echo "📦 Ejecutando pipeline con parámetros dinámicos"
+
+          # Simulamos apps detectadas dinámicamente
+          apps='["microservice-promotional","microservice-siga"]'
+
           az pipelines run \
             --name "Pruebas-consumir-template" \
             --branch feature/pruebas-pr \
             --parameters language="nodejs" typerelease="aws-ecs" apps="$apps"
-
-
-
-          # cd $(Build.SourcesDirectory)/pipeline
-
-          # apps_yaml="    apps:\n"
-          # for app in $apps; do
-          #   apps_yaml+="      - $app\n"
-          # done
-
-          # # Reemplazar el bloque `apps:` en main-pipeline.yml
-          # awk -v newapps="$apps_yaml" '
-          #   BEGIN {inside=0}
-          #   /^    apps:/ {inside=1; print newapps; next}
-          #   inside && /^[^ ]/ {inside=0}
-          #   !inside
-          # ' main-pipeline.yml > main-pipeline-updated.yml
-
-          # mv main-pipeline-updated.yml main-pipeline.yml
-
-          # cat main-pipeline.yml
-          # raw_branch=$(Build.SourceBranch)
-          # clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
-
-          # echo $raw_branch
-          # echo $BUILD_REASON
-
-          # if [[ "$BUILD_REASON" == 'PullRequest' ]]; then
-          #   clean_branch=$(echo "$(System.PullRequest.SourceBranch)" | sed 's#refs/heads/##')
-          #   echo $clean_branch
-          #   git fetch origin $clean_branch
-          # fi
 
         name: DetectChangedMS
         env:
