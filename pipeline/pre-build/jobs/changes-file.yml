@@ -160,8 +160,6 @@ jobs:
 
 
       - script: |
-          az extension add --name azure-devops
-
           echo "🔐 Iniciando sesión con Azure DevOps CLI"
           echo ${AZURE_DEVOPS_CLI_PAT} | az devops login --organization https://dev.azure.com/ux-technology
 
@@ -174,9 +172,11 @@ jobs:
           apps='["microservice-promotional","microservice-siga"]'
 
           az pipelines run \
-            --name "Pruebas-consumir-template" \
-            --branch feature/pruebas-pr \
-            --parameters language="nodejs" typerelease="aws-ecs" apps="$apps"
+          --name "Pruebas-consumir-template" \
+          --branch "feature/pruebas-pr" \
+          --parameters language="nodejs" \
+                      typerelease="aws-ecs" \
+                      apps="$apps"
 
         name: DetectChangedMS
         env:
