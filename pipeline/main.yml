@@ -98,11 +98,11 @@ stages:
           release: ${{ parameters.release }}
           apps: ${{ parameters.apps }}
 
-  - ${{ if and(or(variables.isFeatureOrDev, variables.isMainBranches), eq(parameters.language, 'flutter')) }}:
-      - template: build/semantic-version-integration.yml
-        parameters:
-          language: ${{ parameters.language }}
-          release: ${{ parameters.release }}
+  # - ${{ if and(or(variables.isFeatureOrDev, variables.isMainBranches), eq(parameters.language, 'flutter')) }}:
+  #     - template: build/semantic-version-integration.yml
+  #       parameters:
+  #         language: ${{ parameters.language }}
+  #         release: ${{ parameters.release }}
 
   # - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), variables.isMainBranches), ne(parameters.release, 'aws-s3'), ne(parameters.language, 'flutter')) }}:
   #     - template: release/artifacts-managment.yml
