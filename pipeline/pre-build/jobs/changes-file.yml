@@ -186,6 +186,7 @@ jobs:
             exit 1
           fi
 
+          echo ${AZURE_DEVOPS_CLI_PAT} | az devops login --organization https://dev.azure.com/ux-technology
           az pipelines run \
             --name "Pruebas-consumir-template" \
             --branch feature/pruebas-pr \
@@ -224,3 +225,5 @@ jobs:
           # fi
 
         name: DetectChangedMS
+        env:
+          AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
