@@ -168,8 +168,29 @@ jobs:
 
           echo "📦 Ejecutando pipeline con parámetros dinámicos"
 
-          # Simulamos apps detectadas dinámicamente
-          apps=("microservice-promotional" "microservice-siga")
+          CURRENT_BRANCH=$(echo $(Build.SourceBranch))
+
+          if [[ "$BUILD_REASON" == "PullRequest" ]]; then
+            clean_branch=$(echo "$(System.PullRequest.SourceBranch)" | sed 's#refs/heads/##')
+            git checkout $clean_branch
+            git reset --hard HEAD
+          fi
+
+          if [[ "$BUILD_REASON" == "PullRequest" || "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
+            cd $(Build.SourcesDirectory)
+            SOURCE_BRANCH=$(echo "$(System.PullRequest.SourceBranch)" | sed 's#refs/heads/##')
+            TARGET_BRANCH=$(echo "$(System.PullRequest.TargetBranch)" | sed 's#refs/heads/##')
+
+            echo "🔍 Comparando cambios entre $TARGET_BRANCH...$SOURCE_BRANCH"
+            changed_files=$(git diff --name-only "origin/$TARGET_BRANCH"..."origin/$SOURCE_BRANCH")
+            apps=$(echo "$changed_files" | grep "^apps/" | cut -d '/' -f2 | sort -u)
+          else
+            cd $(Build.SourcesDirectory)/apps
+            apps=$(git diff --name-only HEAD~1 HEAD | grep "^apps/" | cut -d '/' -f2 | sort -u)
+          fi
+
+          echo "🔍 Apps modificadas detectadas:"
+          echo "$apps"
           apps_json=$(printf '%s\n' "${apps[@]}" | jq -R . | jq -s .)
 
           az pipelines run \
