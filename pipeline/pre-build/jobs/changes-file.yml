@@ -136,8 +136,8 @@ jobs:
       #     git push origin $clean_branch
       #   name: DetectChangedMS
 
-      # - script: az devops configure --defaults organization='$(System.TeamFoundationCollectionUri)' project='$(System.TeamProject)' --use-git-aliases true
-      #   displayName: "Set default Azure DevOps organization and project"
+      - script: az devops configure --defaults organization='$(System.TeamFoundationCollectionUri)' project='$(System.TeamProject)' --use-git-aliases true
+        displayName: "Set default Azure DevOps organization and project"
 
       # - script: |
       #     raw_branch=$(Build.SourceBranch)
