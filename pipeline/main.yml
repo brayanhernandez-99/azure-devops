@@ -62,7 +62,7 @@ stages:
               redes: antioquia
 
       - ${{ if and(variables.isMaster, eq(parameters.release, 'aws-s3')) }}:
-          - ${{ each red in parameters.redes }}:
+          - ${{ each red in parameters.redeses }}:
           - template: build/build-master-front.yml
             parameters:
               language: ${{ parameters.language }}
@@ -78,7 +78,7 @@ stages:
               redes: antioquia
 
       - ${{ if and(variables.isMaster, eq(parameters.language, 'flutter')) }}:
-          - ${{ each redes in parameters.redes }}:
+          - ${{ each redes in parameters.redeses }}:
               - template: build/build-united.yml
                 parameters:
                   language: ${{ parameters.language }}
@@ -122,7 +122,7 @@ stages:
               redes: antioquia
 
       - ${{ if and(variables.isMaster, ne(parameters.language, 'flutter')) }}:
-          - ${{ each red in parameters.redes }}:
+          - ${{ each red in parameters.redeses }}:
               - template: release/deploy-integration.yml
                 parameters:
                   language: ${{ parameters.language }}
