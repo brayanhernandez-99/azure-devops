@@ -232,7 +232,9 @@ jobs:
                           apps="$apps_json"
             else
               echo "❌ No se ejecuta este pipeline manual para las ramas feature y Hotfix"
+            fi
           fi
+
         name: DetectChangedMS
         env:
           AZURE_DEVOPS_EXT_PAT: $(PAT-AZ)
