@@ -12,4 +12,4 @@ resources:
 stages:
   - template: pre-build/pre-build-developmet.yml
     parameters:
-    type: ${{ parameters.type }}
+      type: ${{ parameters.type }}
