@@ -14,7 +14,7 @@ parameters:
     values:
       - aws-s3
       - aws-ecs
-      - flutter
+      - apk
 
   - name: redes
     type: object
