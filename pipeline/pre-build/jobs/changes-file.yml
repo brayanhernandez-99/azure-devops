@@ -169,7 +169,7 @@ jobs:
           echo "📦 Ejecutando pipeline con parámetros dinámicos"
 
           # Simulamos apps detectadas dinámicamente
-          apps='["microservice-promotional","microservice-siga"]'
+          apps=("microservice-promotional" "microservice-siga")
           apps_json=$(printf '%s\n' "${apps[@]}" | jq -R . | jq -s .)
 
           az pipelines run \
