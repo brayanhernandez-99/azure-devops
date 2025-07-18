@@ -54,6 +54,6 @@ stages:
 
       - ${{ if eq(parameters.language, 'nodejsFront') }}:
           - template: jobs/nodejs-jobs-front.yml
-        parameters:
-          apps: ${{ parameters.apps }}
-          red: ${{ parameters.red }}
+            parameters:
+              apps: ${{ parameters.apps }}
+              red: ${{ parameters.red }}
