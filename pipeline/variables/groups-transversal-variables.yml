@@ -2,6 +2,7 @@ variables:
   - group: trasversal-aws-deployment
   - group: trasversal-azure-devops
 
+  # Feature branch
   - ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/feature') }}:
       - group: trasversal-flutter-feature
       - group: transversal-app-administration-vue2-develop
@@ -9,6 +10,8 @@ variables:
       - group: transversal-app-invictus-microfrontend-develop
       - group: trasversal-aws-devops
       - group: transversal-app-cloudFront-devops
+
+  # Develop branch
   - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
       - group: trasversal-aws-developer
       - group: trasversal-flutter-develop
@@ -18,6 +21,8 @@ variables:
       - group: transversal-app-sellers-vue2-develop
       - group: transversal-app-invictus-microfrontend-develop
     # - group: transversal-app-cloudFront-develop
+
+  # Staging branch
   - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
       - group: trasversal-aws-qa
       - group: trasversal-flutter-qa
@@ -27,6 +32,8 @@ variables:
       - group: transversal-app-sellers-vue2-qa
       - group: transversal-app-invictus-microfrontend-qa
     # - group: transversal-app-cloudFront-qa
+
+  # Master or tags → por red
   - ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'antioquia')) }}:
       - group: trasversal-aws-master-antioquia
       - group: trasversal-flutter-master-antioquia
@@ -36,6 +43,7 @@ variables:
       - group: transversal-app-sellers-vue2-master-antioquia
       - group: transversal-app-invictus-microfrontend-master-antioquia
     # - group: transversal-app-cloudFront-master-antioquia
+
   - ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'cap')) }}:
       - group: trasversal-aws-master-cap
       - group: trasversal-flutter-master-cap
@@ -45,6 +53,7 @@ variables:
       - group: transversal-app-sellers-vue2-master-cap
       - group: transversal-app-invictus-microfrontend-master-cap
     # - group: transversal-app-cloudFront-master-cap
+
   - ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'tolima')) }}:
       - group: trasversal-aws-master-tolima
       - group: trasversal-flutter-master-tolima
@@ -54,6 +63,7 @@ variables:
       - group: transversal-app-administration-vue2-master-tolima
       - group: transversal-app-invictus-microfrontend-master-tolima
     # - group: transversal-app-cloudFront-master-tolima
+
   - ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'huila')) }}:
       - group: trasversal-aws-master-huila
       - group: trasversal-flutter-master-huila
@@ -63,6 +73,7 @@ variables:
       - group: transversal-app-sellers-vue2-master-huila
       - group: transversal-app-invictus-microfrontend-master-huila
     # - group: transversal-app-cloudFront-master-huila
+
   - ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'cauca')) }}:
       - group: trasversal-aws-master-cauca
       - group: trasversal-flutter-master-cauca

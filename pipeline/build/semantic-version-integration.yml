@@ -9,7 +9,7 @@ stages:
   jobs:
   - ${{ if eq(parameters.language, 'nodejs') }}:
     - template: ../general/semantic-version-job-monorepo.yml
-        parameters:
+      parameters:
         apps: ${{ parameters.apps }}
 
   - ${{ if eq(parameters.language, 'nodejsFront') }}:

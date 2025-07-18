@@ -1,10 +1,10 @@
 jobs:
   - job: "commit_tag_version"
-    ${{ if in(parameters.typerelease, 'aws-s3') }}:
+    ${{ if in(parameters.release, 'aws-s3') }}:
       dependsOn:
         - "aws_s3"
       condition: in(dependencies.aws_s3.result, 'Succeeded', 'SucceededWithIssues')
-    ${{ if in(parameters.typerelease, 'aws-ecs') }}:
+    ${{ if in(parameters.release, 'aws-ecs') }}:
       dependsOn:
         - "aws_ecs"
       condition: in(dependencies.aws_ecs.result, 'Succeeded', 'SucceededWithIssues')

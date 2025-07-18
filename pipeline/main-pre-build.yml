@@ -1,8 +1,5 @@
 parameters:
-  - name: typepeline
-    type: string
-
-  - name: typepre
+  - name: type
     type: string
 
 resources:
@@ -13,7 +10,6 @@ resources:
       ref: $(Build.SourceBranch)
 
 stages:
-  - ${{ if eq(parameters.typepeline, 'prepipeline') }}:
-      - template: pre-build/pre-build-developmet.yml
-        parameters:
-          typepre: ${{ parameters.typepre }}
+  - template: pre-build/pre-build-developmet.yml
+    parameters:
+    type: ${{ parameters.type }}

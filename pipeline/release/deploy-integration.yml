@@ -36,20 +36,20 @@ stages:
 
     jobs:
       - ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), in(variables['Build.SourceBranch'], 'refs/heads/develop', 'refs/heads/staging', 'refs/heads/master')) }}:
-          - ${{ if in(parameters.typerelease, 'aws-ecs') }}:
+          - ${{ if in(parameters.release, 'aws-ecs') }}:
               - template: jobs/aws-ecs-jobs.yml
                 parameters:
                   language: ${{ parameters.language }}
-                  typerelease: ${{ parameters.typerelease }}
+                  release: ${{ parameters.release }}
                   apps: ${{ parameters.apps }}
                   red: ${{ parameters.red }}
 
       - ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), in(variables['Build.SourceBranch'], 'refs/heads/develop', 'refs/heads/staging', 'refs/heads/master')) }}:
-          - ${{ if in(parameters.typerelease, 'aws-s3') }}:
+          - ${{ if in(parameters.release, 'aws-s3') }}:
               - template: jobs/aws-s3-jobs.yml
                 parameters:
                   language: ${{ parameters.language }}
-                  typerelease: ${{ parameters.typerelease }}
+                  release: ${{ parameters.release }}
                   apps: ${{ parameters.apps }}
                   red: ${{ parameters.red }}
 
@@ -58,10 +58,4 @@ stages:
             parameters:
               apps: ${{ parameters.apps }}
               red: ${{ parameters.red }}
-              typerelease: ${{ parameters.typerelease }}
-
-    # - ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), in(variables['Build.SourceBranch'], 'refs/heads/develop', 'refs/heads/staging')) }}:
-    #   - template: ../general/commit-tag-changeload.yml
-    #     parameters:
-    #       apps: ${{ parameters.apps }}
-    #       red: ${{ parameters.red }}
+              release: ${{ parameters.release }}

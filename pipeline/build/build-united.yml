@@ -43,4 +43,4 @@ stages:
           - template: ../general/commit-tag-changeload-flutter.yml
             parameters:
               red: ${{ parameters.red }}
-              typerelease: ${{ parameters.typerelease }}
+              release: ${{ parameters.release }}
