@@ -104,27 +104,27 @@ stages:
               language: ${{ parameters.language }}
               release: ${{ parameters.release }}
 
-      - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), variables.isMainBranches), ne(parameters.release, 'aws-s3'), ne(parameters.language, 'flutter')) }}:
-          - template: release/artifacts-managment.yml
-            parameters:
-              language: ${{ parameters.language }}
-              release: ${{ parameters.release }}
-              apps: ${{ parameters.apps }}
-              redes: antioquia
+      # - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), variables.isMainBranches), ne(parameters.release, 'aws-s3'), ne(parameters.language, 'flutter')) }}:
+      #     - template: release/artifacts-managment.yml
+      #       parameters:
+      #         language: ${{ parameters.language }}
+      #         release: ${{ parameters.release }}
+      #         apps: ${{ parameters.apps }}
+      #         redes: antioquia
 
-      - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), variables.isMainBranches), ne(parameters.language, 'flutter')) }}:
-          - template: release/deploy-integration.yml
-            parameters:
-              language: ${{ parameters.language }}
-              release: ${{ parameters.release }}
-              apps: ${{ parameters.apps }}
-              redes: antioquia
+      # - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), variables.isMainBranches), ne(parameters.language, 'flutter')) }}:
+      #     - template: release/deploy-integration.yml
+      #       parameters:
+      #         language: ${{ parameters.language }}
+      #         release: ${{ parameters.release }}
+      #         apps: ${{ parameters.apps }}
+      #         redes: antioquia
 
-      - ${{ if and(variables.isMaster, ne(parameters.language, 'flutter')) }}:
-          - ${{ each red in parameters.redes }}:
-              - template: release/deploy-integration.yml
-                parameters:
-                  language: ${{ parameters.language }}
-                  release: ${{ parameters.release }}
-                  apps: ${{ parameters.apps }}
-                  redes: ${{ red }}
+      # - ${{ if and(variables.isMaster, ne(parameters.language, 'flutter')) }}:
+      #     - ${{ each red in parameters.redes }}:
+      #         - template: release/deploy-integration.yml
+      #           parameters:
+      #             language: ${{ parameters.language }}
+      #             release: ${{ parameters.release }}
+      #             apps: ${{ parameters.apps }}
+      #             redes: ${{ red }}
