@@ -23,7 +23,7 @@ stages:
     variables:
       - template: ../variables/groups-transversal-variables.yml
         parameters:
-          red: ${{ parameters.redes }}
+          redes: ${{ parameters.redes }}
 
     jobs:
       - ${{ if eq(parameters.language, 'nodejs') }}:
@@ -35,4 +35,4 @@ stages:
           - template: jobs/nodejs-jobs-front.yml
             parameters:
               apps: ${{ parameters.apps }}
-              red: ${{ parameters.redes }}
+              redes: ${{ parameters.redes }}

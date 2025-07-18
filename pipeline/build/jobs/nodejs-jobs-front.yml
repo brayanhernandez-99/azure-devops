@@ -155,7 +155,7 @@ jobs:
           cat $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.env
         displayName: "Generación de .env invictus"
         env:
-          RED: ${{ parameters.redes }}
+          redes: ${{ parameters.redes }}
 
       - script: |
           printenv | grep '^VITE_' > $(System.DefaultWorkingDirectory)/.env

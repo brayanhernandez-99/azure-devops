@@ -32,7 +32,7 @@ stages:
     variables:
       - template: ../variables/groups-transversal-variables.yml
         parameters:
-          red: ${{ parameters.redes }}
+          redes: ${{ parameters.redes }}
 
     jobs:
       - ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), in(variables['Build.SourceBranch'], 'refs/heads/develop', 'refs/heads/staging', 'refs/heads/master')) }}:
@@ -42,7 +42,7 @@ stages:
                   language: ${{ parameters.language }}
                   release: ${{ parameters.release }}
                   apps: ${{ parameters.apps }}
-                  red: ${{ parameters.redes }}
+                  redes: ${{ parameters.redes }}
 
       - ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), in(variables['Build.SourceBranch'], 'refs/heads/develop', 'refs/heads/staging', 'refs/heads/master')) }}:
           - ${{ if in(parameters.release, 'aws-s3') }}:
@@ -51,11 +51,11 @@ stages:
                   language: ${{ parameters.language }}
                   release: ${{ parameters.release }}
                   apps: ${{ parameters.apps }}
-                  red: ${{ parameters.redes }}
+                  redes: ${{ parameters.redes }}
 
       - ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.redes, 'antioquia')) }}:
           - template: ../general/commit-tag-changeload.yml
             parameters:
               apps: ${{ parameters.apps }}
-              red: ${{ parameters.redes }}
+              redes: ${{ parameters.redes }}
               release: ${{ parameters.release }}

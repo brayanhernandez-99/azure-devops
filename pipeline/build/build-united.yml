@@ -31,16 +31,16 @@ stages:
     variables:
       - template: ../variables/groups-transversal-variables.yml
         parameters:
-          red: ${{ parameters.redes }}
+          redes: ${{ parameters.redes }}
 
     jobs:
       - ${{ if eq(parameters.language, 'flutter') }}:
           - template: jobs/flutter-jobs.yml
             parameters:
-              red: ${{ parameters.redes }}
+              redes: ${{ parameters.redes }}
 
       - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), in(variables['Build.SourceBranch'], 'refs/heads/develop', 'refs/heads/staging','refs/heads/master' )), eq(parameters.redes, 'antioquia')) }}:
           - template: ../general/commit-tag-changeload-flutter.yml
             parameters:
-              red: ${{ parameters.redes }}
+              redes: ${{ parameters.redes }}
               release: ${{ parameters.release }}

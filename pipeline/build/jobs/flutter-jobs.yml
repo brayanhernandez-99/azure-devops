@@ -134,7 +134,7 @@ jobs:
           cat env.json
         displayName: "Change version, environment, url file env.json"
         env:
-          RED: ${{ parameters.redes }}
+          redes: ${{ parameters.redes }}
 
       - script: |
           CURRENT_BRANCH=$(echo $(Build.SourceBranch))
@@ -171,7 +171,7 @@ jobs:
           cat android/app/build.gradle
         displayName: "Change file build.gradle"
         env:
-          RED: ${{ parameters.redes }}
+          redes: ${{ parameters.redes }}
 
       - task: FlutterInstall@0
         inputs:
@@ -297,7 +297,7 @@ jobs:
         displayName: "Change name file Apk"
         condition: not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
         env:
-          RED: ${{ parameters.redes }}
+          redes: ${{ parameters.redes }}
 
       - script: |
           CURRENT_BRANCH=$(echo $(Build.SourceBranch))
@@ -338,4 +338,4 @@ jobs:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
-          RED: ${{ parameters.redes }}
+          redes: ${{ parameters.redes }}

@@ -56,4 +56,4 @@ stages:
           - template: jobs/nodejs-jobs-front.yml
             parameters:
               apps: ${{ parameters.apps }}
-              red: ${{ parameters.redes }}
+              redes: ${{ parameters.redes }}
