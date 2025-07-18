@@ -61,16 +61,6 @@ jobs:
 
       #   name: DetectChangedMS
 
-
-
-
-
-
-
-
-
-
-
       # - script: |
       #     CURRENT_BRANCH=$(echo $(Build.SourceBranch))
 
@@ -173,7 +163,7 @@ jobs:
             SOURCE_BRANCH=$(echo "$(System.PullRequest.SourceBranch)" | sed 's#refs/heads/##')
             TARGET_BRANCH=$(echo "$(System.PullRequest.TargetBranch)" | sed 's#refs/heads/##')
           fi
-
+          echo $SOURCE_BRANCH
           if [[ "$BUILD_REASON" == "PullRequest" ]]; then
             if [[ "$SOURCE_BRANCH" == refs/heads/feature/* || "$SOURCE_BRANCH" == refs/heads/hotfix/* ]]; then
               clean_branch=$(echo "$(System.PullRequest.SourceBranch)" | sed 's#refs/heads/##')
