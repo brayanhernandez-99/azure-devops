@@ -52,79 +52,79 @@ stages:
           apps: ${{ parameters.apps }}
           redes: antioquia
 
-      - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/staging'), eq(parameters.release, 'aws-s3')) }}:
-          - template: build/build-developmet.yml
+  - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/staging'), eq(parameters.release, 'aws-s3')) }}:
+      - template: build/build-developmet.yml
+        parameters:
+          language: ${{ parameters.language }}
+          release: ${{ parameters.release }}
+          apps: ${{ parameters.apps }}
+          redes: antioquia
+
+  - ${{ if and(variables.isMaster, eq(parameters.release, 'aws-s3')) }}:
+      - ${{ each red in parameters.redeses }}:
+      - template: build/build-master-front.yml
+        parameters:
+          language: ${{ parameters.language }}
+          release: ${{ parameters.release }}
+          apps: ${{ parameters.apps }}
+          redes: ${{ red }}
+
+  - ${{ if and(or(variables.isFeatureOrDev, variables.isStaging), eq(parameters.language, 'flutter')) }}:
+      - template: build/build-united.yml
+        parameters:
+          language: ${{ parameters.language }}
+          release: ${{ parameters.release }}
+          redes: antioquia
+
+  - ${{ if and(variables.isMaster, eq(parameters.language, 'flutter')) }}:
+      - ${{ each redes in parameters.redeses }}:
+          - template: build/build-united.yml
             parameters:
               language: ${{ parameters.language }}
               release: ${{ parameters.release }}
-              apps: ${{ parameters.apps }}
-              redes: antioquia
+              redes: ${{ redes }}
 
-      - ${{ if and(variables.isMaster, eq(parameters.release, 'aws-s3')) }}:
-          - ${{ each red in parameters.redeses }}:
-          - template: build/build-master-front.yml
+  - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), variables.isStaging, variables.isMaster), ne(parameters.release, 'aws-s3'), ne(parameters.language, 'flutter')) }}:
+      - template: build/semantic-version-integration.yml
+        parameters:
+          language: ${{ parameters.language }}
+          release: ${{ parameters.release }}
+          apps: ${{ parameters.apps }}
+
+  - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), variables.isMaster), eq(parameters.release, 'aws-s3')) }}:
+      - template: build/semantic-version-integration.yml
+        parameters:
+          language: ${{ parameters.language }}
+          release: ${{ parameters.release }}
+          apps: ${{ parameters.apps }}
+
+  - ${{ if and(or(variables.isFeatureOrDev, variables.isMainBranches), eq(parameters.language, 'flutter')) }}:
+      - template: build/semantic-version-integration.yml
+        parameters:
+          language: ${{ parameters.language }}
+          release: ${{ parameters.release }}
+
+  - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), variables.isMainBranches), ne(parameters.release, 'aws-s3'), ne(parameters.language, 'flutter')) }}:
+      - template: release/artifacts-managment.yml
+        parameters:
+          language: ${{ parameters.language }}
+          release: ${{ parameters.release }}
+          apps: ${{ parameters.apps }}
+          redes: antioquia
+
+  - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), variables.isMainBranches), ne(parameters.language, 'flutter')) }}:
+      - template: release/deploy-integration.yml
+        parameters:
+          language: ${{ parameters.language }}
+          release: ${{ parameters.release }}
+          apps: ${{ parameters.apps }}
+          redes: antioquia
+
+  - ${{ if and(variables.isMaster, ne(parameters.language, 'flutter')) }}:
+      - ${{ each red in parameters.redes }}:
+          - template: release/deploy-integration.yml
             parameters:
               language: ${{ parameters.language }}
               release: ${{ parameters.release }}
               apps: ${{ parameters.apps }}
               redes: ${{ red }}
-
-      - ${{ if and(or(variables.isFeatureOrDev, variables.isStaging), eq(parameters.language, 'flutter')) }}:
-          - template: build/build-united.yml
-            parameters:
-              language: ${{ parameters.language }}
-              release: ${{ parameters.release }}
-              redes: antioquia
-
-      - ${{ if and(variables.isMaster, eq(parameters.language, 'flutter')) }}:
-          - ${{ each redes in parameters.redeses }}:
-              - template: build/build-united.yml
-                parameters:
-                  language: ${{ parameters.language }}
-                  release: ${{ parameters.release }}
-                  redes: ${{ redes }}
-
-      - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), variables.isStaging, variables.isMaster), ne(parameters.release, 'aws-s3'), ne(parameters.language, 'flutter')) }}:
-          - template: build/semantic-version-integration.yml
-            parameters:
-              language: ${{ parameters.language }}
-              release: ${{ parameters.release }}
-              apps: ${{ parameters.apps }}
-
-      - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), variables.isMaster), eq(parameters.release, 'aws-s3')) }}:
-          - template: build/semantic-version-integration.yml
-            parameters:
-              language: ${{ parameters.language }}
-              release: ${{ parameters.release }}
-              apps: ${{ parameters.apps }}
-
-      - ${{ if and(or(variables.isFeatureOrDev, variables.isMainBranches), eq(parameters.language, 'flutter')) }}:
-          - template: build/semantic-version-integration.yml
-            parameters:
-              language: ${{ parameters.language }}
-              release: ${{ parameters.release }}
-
-      # - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), variables.isMainBranches), ne(parameters.release, 'aws-s3'), ne(parameters.language, 'flutter')) }}:
-      #     - template: release/artifacts-managment.yml
-      #       parameters:
-      #         language: ${{ parameters.language }}
-      #         release: ${{ parameters.release }}
-      #         apps: ${{ parameters.apps }}
-      #         redes: antioquia
-
-      # - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), variables.isMainBranches), ne(parameters.language, 'flutter')) }}:
-      #     - template: release/deploy-integration.yml
-      #       parameters:
-      #         language: ${{ parameters.language }}
-      #         release: ${{ parameters.release }}
-      #         apps: ${{ parameters.apps }}
-      #         redes: antioquia
-
-      # - ${{ if and(variables.isMaster, ne(parameters.language, 'flutter')) }}:
-      #     - ${{ each red in parameters.redes }}:
-      #         - template: release/deploy-integration.yml
-      #           parameters:
-      #             language: ${{ parameters.language }}
-      #             release: ${{ parameters.release }}
-      #             apps: ${{ parameters.apps }}
-      #             redes: ${{ red }}
