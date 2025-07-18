@@ -52,7 +52,6 @@ stages:
           apps: ${{ parameters.apps }}
           redes: antioquia
 
-
       - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/staging'), eq(parameters.release, 'aws-s3')) }}:
           - template: build/build-developmet.yml
             parameters:
@@ -121,11 +120,11 @@ stages:
               apps: ${{ parameters.apps }}
               redes: antioquia
 
-      # - ${{ if and(variables.isMaster, ne(parameters.language, 'flutter')) }}:
-      #     - ${{ each red in parameters.redes }}:
-      #         - template: release/deploy-integration.yml
-      #           parameters:
-      #             language: ${{ parameters.language }}
-      #             release: ${{ parameters.release }}
-      #             apps: ${{ parameters.apps }}
-      #             redes: ${{ red }}
+      - ${{ if and(variables.isMaster, ne(parameters.language, 'flutter')) }}:
+          - ${{ each red in parameters.redes }}:
+              - template: release/deploy-integration.yml
+                parameters:
+                  language: ${{ parameters.language }}
+                  release: ${{ parameters.release }}
+                  apps: ${{ parameters.apps }}
+                  redes: ${{ red }}
