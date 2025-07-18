@@ -167,13 +167,14 @@ jobs:
           az devops configure --defaults organization=https://dev.azure.com/ux-technology project=$(System.TeamProject)
 
           echo "📦 Ejecutando pipeline con parámetros dinámicos"
+          echo "tipo de ejecución: $BUILD_REASON"
 
-          if [[ "$BUILD_REASON" == "PullRequest"]]; then
+          if [[ "$BUILD_REASON" == "PullRequest" ]]; then
             SOURCE_BRANCH=$(echo "$(System.PullRequest.SourceBranch)" | sed 's#refs/heads/##')
             TARGET_BRANCH=$(echo "$(System.PullRequest.TargetBranch)" | sed 's#refs/heads/##')
           fi
 
-          if [[ "$BUILD_REASON" == "PullRequest"]]; then
+          if [[ "$BUILD_REASON" == "PullRequest" ]]; then
             if [[ "$SOURCE_BRANCH" == refs/heads/feature/* || "$SOURCE_BRANCH" == refs/heads/hotfix/* ]]; then
               clean_branch=$(echo "$(System.PullRequest.SourceBranch)" | sed 's#refs/heads/##')
               git checkout $clean_branch
@@ -203,7 +204,6 @@ jobs:
               --parameters language="nodejs" \
                           typerelease="aws-ecs" \
                           apps="$apps_json"
-
             else
               echo "❌ No se ejecuta cuando source branch es stagign o develop solo con hotfix o features"
             fi
