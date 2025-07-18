@@ -84,19 +84,19 @@ stages:
               release: ${{ parameters.release }}
               redes: ${{ redes }}
 
-  - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), variables.isStaging, variables.isMaster), ne(parameters.release, 'aws-s3'), ne(parameters.language, 'flutter')) }}:
-      - template: build/semantic-version-integration.yml
-        parameters:
-          language: ${{ parameters.language }}
-          release: ${{ parameters.release }}
-          apps: ${{ parameters.apps }}
+  # - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), variables.isStaging, variables.isMaster), ne(parameters.release, 'aws-s3'), ne(parameters.language, 'flutter')) }}:
+  #     - template: build/semantic-version-integration.yml
+  #       parameters:
+  #         language: ${{ parameters.language }}
+  #         release: ${{ parameters.release }}
+  #         apps: ${{ parameters.apps }}
 
-  - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), variables.isMaster), eq(parameters.release, 'aws-s3')) }}:
-      - template: build/semantic-version-integration.yml
-        parameters:
-          language: ${{ parameters.language }}
-          release: ${{ parameters.release }}
-          apps: ${{ parameters.apps }}
+  # - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), variables.isMaster), eq(parameters.release, 'aws-s3')) }}:
+  #     - template: build/semantic-version-integration.yml
+  #       parameters:
+  #         language: ${{ parameters.language }}
+  #         release: ${{ parameters.release }}
+  #         apps: ${{ parameters.apps }}
 
   # - ${{ if and(or(variables.isFeatureOrDev, variables.isMainBranches), eq(parameters.language, 'flutter')) }}:
   #     - template: build/semantic-version-integration.yml
