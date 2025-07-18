@@ -52,6 +52,7 @@ stages:
           apps: ${{ parameters.apps }}
           redes: antioquia
 
+
       - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/staging'), eq(parameters.release, 'aws-s3')) }}:
           - template: build/build-developmet.yml
             parameters:

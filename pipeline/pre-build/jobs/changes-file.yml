@@ -167,15 +167,74 @@ jobs:
           az devops configure --defaults organization=https://dev.azure.com/ux-technology project=$(System.TeamProject)
 
           echo "📦 Ejecutando pipeline con parámetros dinámicos"
+          echo "tipo de ejecución: $BUILD_REASON"
 
-          # Simulamos apps detectadas dinámicamente
-          apps='["microservice-promotional","microservice-siga"]'
+          if [[ "$BUILD_REASON" == "PullRequest" ]]; then
+            SOURCE_BRANCH=$(echo "$(System.PullRequest.SourceBranch)" | sed 's#refs/heads/##')
+            TARGET_BRANCH=$(echo "$(System.PullRequest.TargetBranch)" | sed 's#refs/heads/##')
+          fi
 
-          az pipelines run \
-            --name "Pruebas-consumir-template" \
-            --branch feature/pruebas-pr \
-            --parameters language="nodejs" release="aws-ecs" apps="$apps"
+          if [[ "$BUILD_REASON" == "PullRequest" ]]; then
+            if [[ "$SOURCE_BRANCH" == refs/heads/feature/* || "$SOURCE_BRANCH" == refs/heads/hotfix/* ]]; then
+              clean_branch=$(echo "$(System.PullRequest.SourceBranch)" | sed 's#refs/heads/##')
+              git checkout $clean_branch
+              git reset --hard HEAD
+
+              cd $(Build.SourcesDirectory)
+              SOURCE_BRANCH=$(echo "$(System.PullRequest.SourceBranch)" | sed 's#refs/heads/##')
+              TARGET_BRANCH=$(echo "$(System.PullRequest.TargetBranch)" | sed 's#refs/heads/##')
+              CURRENT_BRANCH=$SOURCE_BRANCH
+
+              echo "🔍 Comparando cambios entre $TARGET_BRANCH...$SOURCE_BRANCH"
+              changed_files=$(git diff --name-only "origin/$TARGET_BRANCH"..."origin/$SOURCE_BRANCH")
+              apps=$(echo "$changed_files" | grep "^apps/" | cut -d '/' -f2 | sort -u)
+
+              if [ -z "$apps" ]; then
+                echo "❌ No se detectaron cambios en apps. Cancelando ejecución del pipeline."
+                exit 1
+              fi
+              
+              echo "🔍 Apps modificadas detectadas:"
+              echo "$apps"
+              apps_json=$(printf '%s\n' "${apps[@]}" | jq -R . | jq -s .)
+
+              az pipelines run \
+              --name "$(Build.Repository.Name)" \
+              --branch "$CURRENT_BRANCH" \
+              --parameters language="nodejs" \
+                          typerelease="aws-ecs" \
+                          apps="$apps_json"
+            else
+              echo "❌ No se ejecuta cuando source branch es stagign o develop solo con hotfix o features"
+            fi
+          fi
+          
+          CURRENT_BRANCH=$(echo $(Build.SourceBranch))
+          if [[ "$BUILD_REASON" == "IndividualCI" || "$BUILD_REASON" == "Manual" ]]; then
+            if [[ "$CURRENT_BRANCH" != refs/heads/feature/* && "$CURRENT_BRANCH" != refs/heads/hotfix/* ]]; then
+              cd $(Build.SourcesDirectory)/apps
+              apps=$(git diff --name-only HEAD~1 HEAD | grep "^apps/" | cut -d '/' -f2 | sort -u)
+
+              if [ -z "$apps" ]; then
+                echo "❌ No se detectaron cambios en apps. Cancelando ejecución del pipeline."
+                exit 1
+              fi
+
+              echo "🔍 Apps modificadas detectadas:"
+              echo "$apps"
+              apps_json=$(printf '%s\n' "${apps[@]}" | jq -R . | jq -s .)
+
+              az pipelines run \
+              --name "$(Build.Repository.Name)" \
+              --branch "$CURRENT_BRANCH" \
+              --parameters language="nodejs" \
+                          typerelease="aws-ecs" \
+                          apps="$apps_json"
+            else
+              echo "❌ No se ejecuta este pipeline manual para las ramas feature y Hotfix"
+            fi
+          fi
 
         name: DetectChangedMS
         env:
-          AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
+          AZURE_DEVOPS_EXT_PAT: $(PAT-AZ)
