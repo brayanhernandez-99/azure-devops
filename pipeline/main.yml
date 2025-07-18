@@ -122,7 +122,7 @@ stages:
               redes: antioquia
 
       - ${{ if and(variables.isMaster, ne(parameters.language, 'flutter')) }}:
-          - ${{ each red in parameters.redeses }}:
+          - ${{ each red in parameters.redes }}:
               - template: release/deploy-integration.yml
                 parameters:
                   language: ${{ parameters.language }}
