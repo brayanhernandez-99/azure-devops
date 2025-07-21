@@ -57,8 +57,8 @@ stages:
               echo "apps:     ${{ parameters.apps }}"
               echo "red:      ${{ parameters.red }}"
 
+  # Build para feature, hotfix, develop si NO es Flutter
   - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), eq(variables['Build.SourceBranch'], 'refs/heads/develop')), ne(parameters.language, 'flutter')) }}:
-  #- ${{ if and(or(variables.isFeatureOrHotfix, variables.isDevelop), not(variables.isFlutter)) }}:
       - template: build/build-developmet.yml
         parameters:
           language: ${{ parameters.language }}
@@ -66,8 +66,8 @@ stages:
           apps: ${{ parameters.apps }}
           red: antioquia
 
+  # Build staging con release aws-s3
   - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/staging'), eq(parameters.release, 'aws-s3')) }}:
-  #- ${{ if and(variables.isStaging, variables.isS3) }}:
       - template: build/build-developmet.yml
         parameters:
           language: ${{ parameters.language }}
@@ -75,8 +75,8 @@ stages:
           apps: ${{ parameters.apps }}
           red: antioquia
 
+  # Build master con release aws-s3 (por región)
   - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(parameters.release, 'aws-s3')) }}:
-  #- ${{ if and(variables.isMaster, variables.isS3) }}:
       - ${{ each region in parameters.red }}:
           - template: build/build-master-front.yml
             parameters:
@@ -85,16 +85,16 @@ stages:
               apps: ${{ parameters.apps }}
               red: ${{ region }}
 
+  # Build Flutter para feature, hotfix, develop, staging
   - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), eq(variables['Build.SourceBranch'], 'refs/heads/develop'), eq(variables['Build.SourceBranch'], 'refs/heads/staging')), eq(parameters.language, 'flutter')) }}:
-  #- ${{ if and(or(variables.isFeatureOrHotfix, variables.isDevelop, variables.isStaging), variables.isFlutter) }}:
       - template: build/build-united.yml
         parameters:
           language: ${{ parameters.language }}
           release: ${{ parameters.release }}
           red: antioquia
 
+  # Build Flutter en master (por región)
   - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(parameters.language, 'flutter')) }}:
-  #- ${{ if and(variables.isMaster, variables.isFlutter) }}:
       - ${{ each region in parameters.red }}:
           - template: build/build-united.yml
             parameters:
@@ -102,31 +102,31 @@ stages:
               release: ${{ parameters.release }}
               red: ${{ region }}
 
+  # Build semantic version si es tag, staging o master y no es Flutter ni aws-s3
   - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), eq(variables['Build.SourceBranch'], 'refs/heads/staging'), eq(variables['Build.SourceBranch'], 'refs/heads/master')), and(ne(parameters.release, 'aws-s3'), ne(parameters.language, 'flutter'))) }}:
-  #- ${{ if and(or(variables.isTag, variables.isStaging, variables.isMaster), not(variables.isS3), not(variables.isFlutter)) }}:
       - template: build/semantic-version-integration.yml
         parameters:
           language: ${{ parameters.language }}
           release: ${{ parameters.release }}
           apps: ${{ parameters.apps }}
 
+  # Build semantic version para Flutter en feature, hotfix, develop, staging, master
   - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), eq(variables['Build.SourceBranch'], 'refs/heads/develop'), eq(variables['Build.SourceBranch'], 'refs/heads/staging'), eq(variables['Build.SourceBranch'], 'refs/heads/master')), eq(parameters.language, 'flutter')) }}:
-  #- ${{ if and(or(variables.isFeatureOrHotfix, variables.isDevelop, variables.isStaging, variables.isMaster), variables.isFlutter) }}:
       - template: build/semantic-version-integration.yml
         parameters:
           language: ${{ parameters.language }}
           release: ${{ parameters.release }}
 
+  # Build semantic version si es tag o master con aws-s3
   - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), eq(variables['Build.SourceBranch'], 'refs/heads/master')), eq(parameters.release, 'aws-s3')) }}:
-  #- ${{ if and(or(variables.isTag, variables.isMaster), variables.isS3) }}:
       - template: build/semantic-version-integration.yml
         parameters:
           language: ${{ parameters.language }}
           release: ${{ parameters.release }}
           apps: ${{ parameters.apps }}
 
+  # Release artifact si NO es Flutter ni aws-s3, y es tag, develop, staging, master
   - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), eq(variables['Build.SourceBranch'], 'refs/heads/develop'), eq(variables['Build.SourceBranch'], 'refs/heads/staging'), eq(variables['Build.SourceBranch'], 'refs/heads/master')), and(ne(parameters.release, 'aws-s3'), ne(parameters.language, 'flutter'))) }}:
-  #- ${{ if and(or(variables.isTag, variables.isDevelop, variables.isStaging, variables.isMaster), not(variables.isS3), not(variables.isFlutter)) }}:
       - template: release/artifacts-managment.yml
         parameters:
           language: ${{ parameters.language }}
@@ -134,8 +134,8 @@ stages:
           apps: ${{ parameters.apps }}
           red: antioquia
 
+  # Deploy integración si NO es Flutter y es tag, develop, staging
   - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), eq(variables['Build.SourceBranch'], 'refs/heads/develop'), eq(variables['Build.SourceBranch'], 'refs/heads/staging')), ne(parameters.language, 'flutter')) }}:
-  #- ${{ if and(or(variables.isTag, variables.isDevelop, variables.isStaging), not(variables.isFlutter)) }}:
       - template: release/deploy-integration.yml
         parameters:
           language: ${{ parameters.language }}
@@ -143,8 +143,8 @@ stages:
           apps: ${{ parameters.apps }}
           red: antioquia
 
+  # Deploy integración master si NO es Flutter (por región)
   - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/master'), ne(parameters.language, 'flutter')) }}:
-  #- ${{ if and(variables.isMaster, not(variables.isFlutter)) }}:
       - ${{ each region in parameters.red }}:
           - template: release/deploy-integration.yml
             parameters:
