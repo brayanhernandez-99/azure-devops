@@ -1,22 +1,21 @@
 stages:
-- stage: 'semantic_version_integration'
-  displayName: 'semantic-version-integration'
-  dependsOn: [] 
+  - stage: "semantic_version_integration"
+    displayName: "semantic-version-integration"
+    dependsOn: []
 
-  variables:
-  - template: ../variables/groups-transversal-variables.yml
+    variables:
+      - template: ../variables/groups-transversal-variables.yml
 
-  jobs:
-  - ${{ if eq(parameters.language, 'nodejs') }}:
-    - template: ../general/semantic-version-job-monorepo.yml
-      parameters:
-        apps: ${{ parameters.apps }}
+    jobs:
+      - ${{ if eq(parameters.language, 'nodejs') }}:
+          - template: ../general/semantic-version-job-monorepo.yml
+            parameters:
+              apps: ${{ parameters.apps }}
 
-  - ${{ if eq(parameters.language, 'nodejsFront') }}:
-    - template: ../general/semantic-version-job-monorepo-front.yml
-      parameters:
-        apps: ${{ parameters.apps }}
+      - ${{ if eq(parameters.language, 'nodejsFront') }}:
+          - template: ../general/semantic-version-job-monorepo-front.yml
+            parameters:
+              apps: ${{ parameters.apps }}
 
-  - ${{ if eq(parameters.language, 'flutter') }}:
-    - template: ../general/semantic-version-job.yml
-
+      - ${{ if eq(parameters.language, 'flutter') }}:
+          - template: ../general/semantic-version-job.yml
