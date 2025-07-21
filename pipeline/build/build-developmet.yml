@@ -15,22 +15,22 @@ stages:
             parameters:
               apps: ${{ parameters.apps }}
 
-  - stage: "build_developmet_${{ parameters.redes }}"
+  - stage: "build_developmet_${{ parameters.red }}"
     ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/feature') }}:
       displayName: "Build Development Feature"
     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
       displayName: "Build Development"
     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
       displayName: "Build Development Staging"
-    ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.redes, 'antioquia')) }}:
+    ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'antioquia')) }}:
       displayName: "Build Development Master Antioquia"
-    ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.redes, 'cap')) }}:
+    ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'cap')) }}:
       displayName: "Build Development Master Cap"
-    ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.redes, 'tolima')) }}:
+    ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'tolima')) }}:
       displayName: "Build Development Master Tolima"
-    ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.redes, 'huila')) }}:
+    ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'huila')) }}:
       displayName: "Build Development Master Huila"
-    ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.redes, 'cauca')) }}:
+    ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'cauca')) }}:
       displayName: "Build Development Master Cauca"
 
     ${{ if ne(variables['Build.SourceBranch'], 'refs/heads/master') }}:
@@ -56,4 +56,4 @@ stages:
           - template: jobs/nodejs-jobs-front.yml
             parameters:
               apps: ${{ parameters.apps }}
-              redes: ${{ parameters.redes }}
+              red: ${{ parameters.red }}

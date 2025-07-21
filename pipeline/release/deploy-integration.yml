@@ -1,18 +1,18 @@
 stages:
-  - stage: "deploy_integration_${{ parameters.redes }}"
+  - stage: "deploy_integration_${{ parameters.red }}"
     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
       displayName: "Deploy Integration Development"
     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
       displayName: "Deploy Integration Staging"
-    ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.redes, 'antioquia')) }}:
+    ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'antioquia')) }}:
       displayName: "Deploy Integration Master Antioquia"
-    ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.redes, 'cap')) }}:
+    ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'cap')) }}:
       displayName: "Deploy Integration Master Cap"
-    ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.redes, 'tolima')) }}:
+    ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'tolima')) }}:
       displayName: "Deploy Integration Master Tolima"
-    ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.redes, 'huila')) }}:
+    ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'huila')) }}:
       displayName: "Deploy Integration Master Huila"
-    ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.redes, 'cauca')) }}:
+    ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'cauca')) }}:
       displayName: "Deploy Integration Master Cauca"
 
     ${{ if eq(parameters.language, 'nodejs') }}:
@@ -22,8 +22,8 @@ stages:
 
     ${{ if eq(parameters.language, 'nodejsFront') }}:
       dependsOn:
-        - "build_developmet_${{ parameters.redes }}"
-      condition: in(dependencies.build_developmet_${{ parameters.redes }}.result, 'Succeeded', 'SucceededWithIssues')
+        - "build_developmet_${{ parameters.red }}"
+      condition: in(dependencies.build_developmet_${{ parameters.red }}.result, 'Succeeded', 'SucceededWithIssues')
 
     pool:
       name: "Azure Pipelines"
@@ -32,7 +32,7 @@ stages:
     variables:
       - template: ../variables/groups-transversal-variables.yml
         parameters:
-          redes: ${{ parameters.redes }}
+          red: ${{ parameters.red }}
 
     jobs:
       - ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), in(variables['Build.SourceBranch'], 'refs/heads/develop', 'refs/heads/staging', 'refs/heads/master')) }}:
@@ -42,7 +42,7 @@ stages:
                   language: ${{ parameters.language }}
                   release: ${{ parameters.release }}
                   apps: ${{ parameters.apps }}
-                  redes: ${{ parameters.redes }}
+                  red: ${{ parameters.red }}
 
       - ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), in(variables['Build.SourceBranch'], 'refs/heads/develop', 'refs/heads/staging', 'refs/heads/master')) }}:
           - ${{ if in(parameters.release, 'aws-s3') }}:
@@ -51,11 +51,11 @@ stages:
                   language: ${{ parameters.language }}
                   release: ${{ parameters.release }}
                   apps: ${{ parameters.apps }}
-                  redes: ${{ parameters.redes }}
+                  red: ${{ parameters.red }}
 
-      - ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.redes, 'antioquia')) }}:
+      - ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'antioquia')) }}:
           - template: ../general/commit-tag-changeload.yml
             parameters:
               apps: ${{ parameters.apps }}
-              redes: ${{ parameters.redes }}
+              red: ${{ parameters.red }}
               release: ${{ parameters.release }}
