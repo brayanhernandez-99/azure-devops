@@ -13,6 +13,7 @@ jobs:
         ${{ each ms in parameters.apps }}:
           ${{ ms }}:
             msName: ${{ ms }}
+    
     steps:
       - checkout: self
         fetchDepth: 0
