@@ -83,7 +83,7 @@ stages:
           release: ${{ parameters.release }}
           red: antioquia
 
-  - ${{ if and(or(variables.isMaster), variables.isFlutter) }}:
+  - ${{ if and(variables.isMaster, variables.isFlutter) }}:
       - ${{ each region in parameters.red }}:
           - template: build/build-united.yml
             parameters:
