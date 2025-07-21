@@ -24,7 +24,7 @@ stages:
       displayName: "Build Development"
     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
       displayName: "Build Development Staging"
-    ${{ if and(or(eq(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))) }}:
+    ${{ if and(or(eq(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')) ) }}:
       displayName: "Build Development Master ${{ parameters.red }}"
 
     ${{ if ne(variables['Build.SourceBranch'], 'refs/heads/master') }}:
