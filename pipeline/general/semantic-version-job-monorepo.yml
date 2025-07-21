@@ -1,4 +1,6 @@
 jobs:
+  - ${{ each ms in parameters.apps }}:
+
   - job: "semantic_version"
     displayName: "Semantic Version"
     pool:
@@ -8,12 +10,12 @@ jobs:
     variables:
       - template: ../variables/groups-transversal-variables.yml
 
-    strategy:
-      matrix:
-        ${{ each ms in parameters.apps }}:
-          ${{ ms }}:
-            msName: ${{ ms }}
-    
+    # strategy:
+    #   matrix:
+    #     ${{ each ms in parameters.apps }}:
+    #       ${{ ms }}:
+    #         msName: ${{ ms }}
+
     steps:
       - checkout: self
         fetchDepth: 0
