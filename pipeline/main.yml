@@ -2,7 +2,7 @@ parameters:
   # Parameters of Build
   - name: language
     type: string
-    default: default
+    #default: default
     values:
       - nodejs
       - nodejsFront
@@ -17,8 +17,8 @@ parameters:
       - apk
 
   - name: redes
-    type: object
-    default:
+    type: array
+    values:
       - antioquia
       - cap
       - tolima
@@ -61,7 +61,7 @@ stages:
           redes: antioquia
 
   - ${{ if and(variables.isMaster, eq(parameters.release, 'aws-s3')) }}:
-      - ${{ each red in parameters.redeses }}:
+      - ${{ each red in parameters.redes }}:
       - template: build/build-master-front.yml
         parameters:
           language: ${{ parameters.language }}
@@ -77,7 +77,7 @@ stages:
           redes: antioquia
 
   - ${{ if and(variables.isMaster, eq(parameters.language, 'flutter')) }}:
-      - ${{ each redes in parameters.redeses }}:
+      - ${{ each redes in parameters.redes }}:
           - template: build/build-united.yml
             parameters:
               language: ${{ parameters.language }}
