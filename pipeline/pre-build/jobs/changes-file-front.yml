@@ -218,16 +218,15 @@ jobs:
               echo "$apps"
               apps_json=$(printf '%s\n' "${apps[@]}" | jq -R . | jq -s .)
 
-              az pipelines run \
-              --name "$(Build.Repository.Name)" \
-              --branch "$CURRENT_BRANCH" \
-              --parameters language="nodejsFront" \
-                          release="aws-s3" \
-                          apps="$apps_json"
-              
-              run_id=$(echo "$pipeline_output" | jq -r '.id')
+              pipeline_output=$(az pipelines run \
+                --name "$(Build.Repository.Name)" \
+                --branch "$CURRENT_BRANCH" \
+                --parameters language="nodejs" release="aws-ecs" apps="$apps_json" \
+                --output json)
+              echo $pipeline_output
 
-              pipeline_url="https://dev.azure.com/ux-technology/Invictus/_build/results?buildId=${run_id}"
+              run_id=$(echo "$pipeline_output" | jq -r '.id')
+              pipeline_url="https://dev.azure.com/ux-technology/Invictus/_build/results?buildId=$run_id"
               echo "🔗 URL del pipeline: $pipeline_url"
               
             else
@@ -255,16 +254,15 @@ jobs:
               echo "$apps"
               apps_json=$(printf '%s\n' "${apps[@]}" | jq -R . | jq -s .)
 
-              az pipelines run \
-              --name "$(Build.Repository.Name)" \
-              --branch "$CURRENT_BRANCH" \
-              --parameters language="nodejsFront" \
-                          release="aws-s3" \
-                          apps="$apps_json"
+              pipeline_output=$(az pipelines run \
+                --name "$(Build.Repository.Name)" \
+                --branch "$CURRENT_BRANCH" \
+                --parameters language="nodejs" release="aws-ecs" apps="$apps_json" \
+                --output json)
+              echo $pipeline_output
 
               run_id=$(echo "$pipeline_output" | jq -r '.id')
-
-              pipeline_url="https://dev.azure.com/ux-technology/Invictus/_build/results?buildId=${run_id}"
+              pipeline_url="https://dev.azure.com/ux-technology/Invictus/_build/results?buildId=$run_id"
               echo "🔗 URL del pipeline: $pipeline_url"
 
             else
