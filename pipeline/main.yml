@@ -36,13 +36,13 @@ resources:
 
 variables:
   # Branch Flags
-  isFeatureOrHotfix: ${{ or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')) }}
-  isDevelop: ${{ eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}
-  isStaging: ${{ eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}
-  isMaster: ${{ eq(variables['Build.SourceBranch'], 'refs/heads/master') }}
-  isTag: ${{ startsWith(variables['Build.SourceBranch'], 'refs/tags/') }}
-  isFlutter: ${{ eq(parameters.language, 'flutter') }}
-  isS3: ${{ eq(parameters.release, 'aws-s3') }}
+  # isFeatureOrHotfix: ${{ or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')) }}
+  # isDevelop: ${{ eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}
+  # isStaging: ${{ eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}
+  # isMaster: ${{ eq(variables['Build.SourceBranch'], 'refs/heads/master') }}
+  # isTag: ${{ startsWith(variables['Build.SourceBranch'], 'refs/tags/') }}
+  # isFlutter: ${{ eq(parameters.language, 'flutter') }}
+  # isS3: ${{ eq(parameters.release, 'aws-s3') }}
 
 stages:
 
