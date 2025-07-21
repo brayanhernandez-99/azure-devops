@@ -98,9 +98,13 @@ jobs:
           AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
         displayName: "ID Pull Request"
         condition: and(
-          succeeded(),
-          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'),
-          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'))
+            succeeded(),
+            not(
+              or(
+                startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'),
+                startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')
+              )
+            )
           )
 
       - script: |
@@ -116,9 +120,13 @@ jobs:
           AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
         displayName: "Detalles Commits Pull Request"
         condition: and(
-          succeeded(),
-          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'),
-          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'))
+            succeeded(),
+            not(
+              or(
+                startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'),
+                startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')
+              )
+            )
           )
 
       - script: |
@@ -292,8 +300,12 @@ jobs:
           git push origin version/$clean_branch
         displayName: "Actualizar versión y push $(msName)"
         condition: and(
-          succeeded(),
-          ne(variables['Build.SourceBranchName'], 'master'),
-          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'),
-          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'))
+            succeeded(),
+            ne(variables['Build.SourceBranchName'], 'master'),
+            not(
+              or(
+                startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'),
+                startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')
+              )
+            )
           )
