@@ -6,7 +6,7 @@ jobs:
         pool:
           name: Azure Pipelines
           vmImage: "ubuntu-22.04"
-        ${{ if and(or(eq(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))) }}:
+        ${{ if or(eq(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')) }}:
           displayName: "Build Flutter Master ${{ parameters.red }}"
         strategy:
           runOnce:

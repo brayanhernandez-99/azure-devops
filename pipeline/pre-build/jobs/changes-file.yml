@@ -197,7 +197,7 @@ jobs:
               
               run_id=$(echo "$pipeline_output" | jq -r '.id')
 
-              pipeline_url="https://dev.azure.com/ux-technology/Invictus/_build/results?buildId=${run_id}"
+              pipeline_url="https://dev.azure.com/ux-technology/Invictus/_build/results?buildId=run_id"
               echo "🔗 URL del pipeline: $pipeline_url"
               
             else
@@ -229,7 +229,7 @@ jobs:
               
               run_id=$(echo "$pipeline_output" | jq -r '.id')
 
-              pipeline_url="https://dev.azure.com/ux-technology/Invictus/_build/results?buildId=${run_id}"
+              pipeline_url="https://dev.azure.com/ux-technology/Invictus/_build/results?buildId=run_id"
               echo "🔗 URL del pipeline: $pipeline_url"
 
             else

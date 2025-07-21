@@ -4,7 +4,7 @@ stages:
       displayName: "Deploy Integration Develop"
     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
       displayName: "Deploy Integration Staging"
-    ${{ if and(or(eq(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))) }}:
+    ${{ if or(eq(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')) }}:
       displayName: "Deploy Integration Master ${{ parameters.red }}"
 
     ${{ if eq(parameters.language, 'nodejs') }}:

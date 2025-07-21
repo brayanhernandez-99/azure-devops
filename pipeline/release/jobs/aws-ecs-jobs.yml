@@ -8,7 +8,7 @@ jobs:
       environment: "Deploy Develop"
     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
       environment: "Deploy Staging"
-    ${{ if and(or(eq(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))) }}:
+    ${{ if or(eq(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')) }}:
       displayName: "Deploy Master ${{ parameters.red }}"
     strategy:
       runOnce:
@@ -22,7 +22,7 @@ jobs:
       displayName: "AWS ECS Develop"
     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
       displayName: "AWS ECS Staging"
-    ${{ if and(or(eq(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))) }}:
+    ${{ if or(eq(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')) }}:
       displayName: "AWS ECS Master ${{ parameters.red }}"
 
     pool:

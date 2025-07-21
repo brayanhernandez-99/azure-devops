@@ -9,7 +9,7 @@ jobs:
           environment: "Build develop"
         ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
           environment: "Build Staging"
-        ${{ if and(or(eq(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))) }}:
+        ${{ if or(eq(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')) }}:
           displayName: "Build Flutter Master ${{ parameters.red }}"
         strategy:
           runOnce:
@@ -24,7 +24,7 @@ jobs:
       displayName: "Build Flutter Develop"
     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
       displayName: "Build Flutter Staging"
-    ${{ if and(or(eq(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))) }}:
+    ${{ if or(eq(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')) }}:
       displayName: "Build Flutter Master ${{ parameters.red }}"
 
     pool:
