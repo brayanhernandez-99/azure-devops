@@ -91,12 +91,12 @@ stages:
   #             release: ${{ parameters.release }}
   #             red: ${{ region }}
 
-  # - ${{ if and(or(variables.isTag, variables.isStaging, variables.isMaster), not(variables.isS3), not(variables.isFlutter)) }}:
-  #     - template: build/semantic-version-integration.yml
-  #       parameters:
-  #         language: ${{ parameters.language }}
-  #         release: ${{ parameters.release }}
-  #         apps: ${{ parameters.apps }}
+  - ${{ if and(or(variables.isTag, variables.isStaging, variables.isMaster), not(variables.isS3), not(variables.isFlutter)) }}:
+      - template: build/semantic-version-integration.yml
+        parameters:
+          language: ${{ parameters.language }}
+          release: ${{ parameters.release }}
+          apps: ${{ parameters.apps }}
 
   # - ${{ if and(or(variables.isFeatureOrHotfix, variables.isDevelop, variables.isStaging, variables.isMaster), variables.isFlutter) }}:
   #     - template: build/semantic-version-integration.yml
