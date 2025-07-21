@@ -104,12 +104,12 @@ stages:
   #         language: ${{ parameters.language }}
   #         release: ${{ parameters.release }}
 
-  # - ${{ if and(or(variables.isTag, variables.isMaster), variables.isS3) }}:
-  #     - template: build/semantic-version-integration.yml
-  #       parameters:
-  #         language: ${{ parameters.language }}
-  #         release: ${{ parameters.release }}
-  #         apps: ${{ parameters.apps }}
+  - ${{ if and(or(variables.isTag, variables.isMaster), variables.isS3) }}:
+      - template: build/semantic-version-integration.yml
+        parameters:
+          language: ${{ parameters.language }}
+          release: ${{ parameters.release }}
+          apps: ${{ parameters.apps }}
 
   # - ${{ if and(or(variables.isTag, variables.isDevelop, variables.isStaging, variables.isMaster), not(variables.isS3), not(variables.isFlutter)) }}:
   #     - template: release/artifacts-managment.yml
