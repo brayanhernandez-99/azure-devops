@@ -192,7 +192,7 @@ jobs:
               --name "$(Build.Repository.Name)" \
               --branch "$CURRENT_BRANCH" \
               --parameters language="nodejs" \
-                          typerelease="aws-ecs" \
+                          release="aws-ecs" \
                           apps="$apps_json"
               
               run_id=$(echo "$pipeline_output" | jq -r '.id')
@@ -224,7 +224,7 @@ jobs:
               --name "$(Build.Repository.Name)" \
               --branch "$CURRENT_BRANCH" \
               --parameters language="nodejs" \
-                          typerelease="aws-ecs" \
+                          release="aws-ecs" \
                           apps="$apps_json"
               
               run_id=$(echo "$pipeline_output" | jq -r '.id')
