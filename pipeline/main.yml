@@ -34,7 +34,7 @@ resources:
       type: git
       ref: $(Build.SourceBranch)
 
-variables:
+#variables:
   # Branch Flags
   # isFeatureOrHotfix: ${{ or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')) }}
   # isDevelop: ${{ eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}
