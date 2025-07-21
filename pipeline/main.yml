@@ -45,17 +45,6 @@ variables:
   isS3: ${{ eq(parameters.release, 'aws-s3') }}
 
 stages:
-  - stage: diagnostic
-    displayName: Diagnostic
-    jobs:
-      - job: printVars
-        steps:
-          - script: |
-              echo "Branch: $(Build.SourceBranch)"
-              echo "language: ${{ parameters.language }}"
-              echo "release:  ${{ parameters.release }}"
-              echo "apps:     ${{ parameters.apps }}"
-              echo "red:      ${{ parameters.red }}"
 
   # Build para feature, hotfix, develop si NO es Flutter
   - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), eq(variables['Build.SourceBranch'], 'refs/heads/develop')), ne(parameters.language, 'flutter')) }}:
