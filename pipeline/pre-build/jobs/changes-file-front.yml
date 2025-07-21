@@ -222,7 +222,7 @@ jobs:
               --name "$(Build.Repository.Name)" \
               --branch "$CURRENT_BRANCH" \
               --parameters language="nodejsFront" \
-                          typerelease="aws-s3" \
+                          release="aws-s3" \
                           apps="$apps_json"
               
               run_id=$(echo "$pipeline_output" | jq -r '.id')
@@ -259,7 +259,7 @@ jobs:
               --name "$(Build.Repository.Name)" \
               --branch "$CURRENT_BRANCH" \
               --parameters language="nodejsFront" \
-                          typerelease="aws-s3" \
+                          release="aws-s3" \
                           apps="$apps_json"
 
               run_id=$(echo "$pipeline_output" | jq -r '.id')
