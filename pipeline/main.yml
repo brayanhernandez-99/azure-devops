@@ -48,7 +48,7 @@ variables:
   isMaster: ${{ eq(variables['Build.SourceBranch'], 'refs/heads/master') }}
   isTag: ${{ startsWith(variables['Build.SourceBranch'], 'refs/tags/') }}
   isFlutter: ${{ eq(parameters.language, 'flutter') }}
-  isS3: ${{ eq(parameters.typerelease, 'aws-s3') }}
+  isS3: ${{ eq(parameters.release, 'aws-s3') }}
 
 stages:
   - ${{ if and(or(variables.isFeatureOrHotfix, variables.isDevelop), not(variables.isFlutter)) }}:

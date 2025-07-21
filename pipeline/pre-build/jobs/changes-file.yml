@@ -202,7 +202,7 @@ jobs:
               --name "$(Build.Repository.Name)" \
               --branch "$CURRENT_BRANCH" \
               --parameters language="nodejs" \
-                          typerelease="aws-ecs" \
+                          release="aws-ecs" \
                           apps="$apps_json"
             else
               echo "❌ No se ejecuta cuando source branch es stagign o develop solo con hotfix o features"
@@ -228,7 +228,7 @@ jobs:
               --name "$(Build.Repository.Name)" \
               --branch "$CURRENT_BRANCH" \
               --parameters language="nodejs" \
-                          typerelease="aws-ecs" \
+                          release="aws-ecs" \
                           apps="$apps_json"
             else
               echo "❌ No se ejecuta este pipeline manual para las ramas feature y Hotfix"
