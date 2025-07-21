@@ -34,18 +34,7 @@ resources:
       type: git
       ref: $(Build.SourceBranch)
 
-#variables:
-  # Branch Flags
-  # isFeatureOrHotfix: ${{ or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')) }}
-  # isDevelop: ${{ eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}
-  # isStaging: ${{ eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}
-  # isMaster: ${{ eq(variables['Build.SourceBranch'], 'refs/heads/master') }}
-  # isTag: ${{ startsWith(variables['Build.SourceBranch'], 'refs/tags/') }}
-  # isFlutter: ${{ eq(parameters.language, 'flutter') }}
-  # isS3: ${{ eq(parameters.release, 'aws-s3') }}
-
 stages:
-
   # Build para feature, hotfix, develop si NO es Flutter
   - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), eq(variables['Build.SourceBranch'], 'refs/heads/develop')), ne(parameters.language, 'flutter')) }}:
       - template: build/build-developmet.yml
