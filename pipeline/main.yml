@@ -2,10 +2,6 @@ parameters:
   # Parameters of Build
   - name: language
     type: string
-<<<<<<< HEAD
-=======
-    #default: default
->>>>>>> 6a41751512a55e8edb2a86ec3e27baec4b719122
     values:
       - nodejs
       - nodejsFront
@@ -20,7 +16,7 @@ parameters:
 
   - name: red
     type: object
-    values:
+    default:
       - antioquia
       - cap
       - tolima
@@ -71,7 +67,6 @@ stages:
           apps: ${{ parameters.apps }}
           red: antioquia
 
-<<<<<<< HEAD
   - ${{ if and(variables.isMaster, variables.isS3) }}:
       - ${{ each region in parameters.red }}:
           - template: build/build-master-front.yml
@@ -80,16 +75,6 @@ stages:
               release: ${{ parameters.release }}
               apps: ${{ parameters.apps }}
               red: ${{ region }}
-=======
-  - ${{ if and(variables.isMaster, eq(parameters.release, 'aws-s3')) }}:
-      - ${{ each red in parameters.redes }}:
-      - template: build/build-master-front.yml
-        parameters:
-          language: ${{ parameters.language }}
-          release: ${{ parameters.release }}
-          apps: ${{ parameters.apps }}
-          redes: ${{ red }}
->>>>>>> 6a41751512a55e8edb2a86ec3e27baec4b719122
 
   - ${{ if and(or(variables.isFeatureOrHotfix, variables.isDevelop, variables.isStaging), variables.isFlutter) }}:
       - template: build/build-united.yml
@@ -98,33 +83,15 @@ stages:
           release: ${{ parameters.release }}
           red: antioquia
 
-<<<<<<< HEAD
   - ${{ if and(or(variables.isMaster), variables.isFlutter) }}:
       - ${{ each region in parameters.red }}:
-=======
-  - ${{ if and(variables.isMaster, eq(parameters.language, 'flutter')) }}:
-      - ${{ each redes in parameters.redes }}:
->>>>>>> 6a41751512a55e8edb2a86ec3e27baec4b719122
           - template: build/build-united.yml
             parameters:
               language: ${{ parameters.language }}
               release: ${{ parameters.release }}
-<<<<<<< HEAD
               red: ${{ region }}
 
   - ${{ if and(or(variables.isTag, variables.isStaging, variables.isMaster), not(variables.isS3), not(variables.isFlutter)) }}:
-=======
-              redes: ${{ redes }}
-  
-  - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), variables.isStaging, variables.isMaster), ne(parameters.release, 'aws-s3'), ne(parameters.language, 'flutter')) }}:
-      - template: build/semantic-version-integration.yml
-        parameters:
-          language: ${{ parameters.language }}
-          release: ${{ parameters.release }}
-          apps: ${{ parameters.apps }}
-          
-  - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), variables.isMaster), eq(parameters.release, 'aws-s3')) }}:
->>>>>>> 6a41751512a55e8edb2a86ec3e27baec4b719122
       - template: build/semantic-version-integration.yml
         parameters:
           language: ${{ parameters.language }}
