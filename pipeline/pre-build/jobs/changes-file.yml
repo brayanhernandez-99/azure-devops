@@ -61,16 +61,6 @@ jobs:
 
       #   name: DetectChangedMS
 
-
-
-
-
-
-
-
-
-
-
       # - script: |
       #     CURRENT_BRANCH=$(echo $(Build.SourceBranch))
 
@@ -173,7 +163,7 @@ jobs:
             SOURCE_BRANCH=$(echo "$(System.PullRequest.SourceBranch)" | sed 's#refs/heads/##')
             TARGET_BRANCH=$(echo "$(System.PullRequest.TargetBranch)" | sed 's#refs/heads/##')
           fi
-
+          echo $SOURCE_BRANCH
           if [[ "$BUILD_REASON" == "PullRequest" ]]; then
             if [[ "$SOURCE_BRANCH" == feature/* || "$SOURCE_BRANCH" == hotfix/* ]]; then
               clean_branch=$(echo "$(System.PullRequest.SourceBranch)" | sed 's#refs/heads/##')
@@ -202,8 +192,14 @@ jobs:
               --name "$(Build.Repository.Name)" \
               --branch "$CURRENT_BRANCH" \
               --parameters language="nodejs" \
-                          release="aws-ecs" \
+                          typerelease="aws-ecs" \
                           apps="$apps_json"
+              
+              run_id=$(echo "$pipeline_output" | jq -r '.id')
+
+              pipeline_url="https://dev.azure.com/ux-technology/Invictus/_build/results?buildId=${run_id}"
+              echo "🔗 URL del pipeline: $pipeline_url"
+              
             else
               echo "❌ No se ejecuta cuando source branch es stagign o develop solo con hotfix o features"
             fi
@@ -228,8 +224,14 @@ jobs:
               --name "$(Build.Repository.Name)" \
               --branch "$CURRENT_BRANCH" \
               --parameters language="nodejs" \
-                          release="aws-ecs" \
+                          typerelease="aws-ecs" \
                           apps="$apps_json"
+              
+              run_id=$(echo "$pipeline_output" | jq -r '.id')
+
+              pipeline_url="https://dev.azure.com/ux-technology/Invictus/_build/results?buildId=${run_id}"
+              echo "🔗 URL del pipeline: $pipeline_url"
+
             else
               echo "❌ No se ejecuta este pipeline manual para las ramas feature y Hotfix"
             fi

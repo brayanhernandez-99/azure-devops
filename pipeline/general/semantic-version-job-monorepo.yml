@@ -50,7 +50,13 @@ jobs:
             fi
           fi
         displayName: "Validar que feature esté actualizada y sin cambios relevantes ignorados"
-        condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
+        condition: and(
+            succeeded(),
+            or(
+              startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'),
+              startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')
+            )
+          )
 
       - script: |
           REPO_ID=$(curl -s -u ":$AZURE_DEVOPS_CLI_PAT" \
@@ -92,7 +98,15 @@ jobs:
         env:
           AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
         displayName: "ID Pull Request"
-        condition: not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
+        condition: and(
+            succeeded(),
+            not(
+              or(
+                startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'),
+                startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')
+              )
+            )
+          )
 
       - script: |
           echo "Pull Request ID recuperado: $(ultimoPR)"
@@ -106,17 +120,30 @@ jobs:
         env:
           AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
         displayName: "Detalles Commits Pull Request"
-        condition: not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
+        condition: and(
+            succeeded(),
+            not(
+              or(
+                startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'),
+                startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')
+              )
+            )
+          )
 
       - script: |
           cd $(System.DefaultWorkingDirectory)/apps/$(msName)
           CURRENT_BRANCH=$(echo $(Build.SourceBranch))
           echo $CURRENT_BRANCH
 
-          if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|master|staging|feature/.+)$ ]]; then
+          if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|master|staging|feature/.+|hotfix/.+)$ ]]; then
 
             if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
               clean_branch=develop
+              echo $clean_branch
+            fi
+
+            if [[ "$CURRENT_BRANCH" == refs/heads/hotfix/* ]]; then
+              clean_branch=master
               echo $clean_branch
             fi
 
@@ -147,6 +174,13 @@ jobs:
             if [[ "$CURRENT_BRANCH" == refs/heads/master ]]; then
               COMMITS=$(echo "$(filteredCommits)" | tr '|' '\n')
               echo "Commits de la rama staging a master:"
+              echo $COMMITS
+            fi
+
+            if [[ "$CURRENT_BRANCH" == refs/heads/hotfix/* ]]; then
+              BASE=$(git merge-base HEAD origin/master)
+              COMMITS=$(git log --pretty=format:"%s" $BASE..HEAD | grep -vi "Auto-generated pipeline config")
+              echo "Commits de la rama hotfix"
               echo $COMMITS
             fi
 
@@ -231,6 +265,16 @@ jobs:
               echo "🚀 Próxima versión : $NEXT_VERSION"
             fi
 
+            if [[ "$CURRENT_BRANCH" == refs/heads/hotfix/* ]]; then
+              git checkout version/$clean_branch
+              VERSION_ACTUAL_MASTER=$(jq -r .version package.json)
+
+              NEXT_BASE_VERSION=$(bump_version "$VERSION_ACTUAL_MASTER" "$RELEASE_TYPE")
+              NEXT_VERSION="$NEXT_BASE_VERSION"
+              echo "📌 Anterior versión : $VERSION_ACTUAL_MASTER"
+              echo "🚀 Próxima versión : $NEXT_VERSION"
+            fi
+
             mkdir -p $(Build.ArtifactStagingDirectory)/$(msName)
             touch $(Build.ArtifactStagingDirectory)/$(msName)/version.json
             echo "{ \"ms\": \"$(msName)\", \"version\": \"$NEXT_VERSION\" }" > $(Build.ArtifactStagingDirectory)/$(msName)/version.json
@@ -264,7 +308,12 @@ jobs:
           git push origin version/$clean_branch
         displayName: "Actualizar versión y push $(msName)"
         condition: and(
-          succeeded(),
-          ne(variables['Build.SourceBranchName'], 'master'),
-          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
+            succeeded(),
+            ne(variables['Build.SourceBranchName'], 'master'),
+            not(
+              or(
+                startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'),
+                startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')
+              )
+            )
           )
