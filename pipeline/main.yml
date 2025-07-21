@@ -59,79 +59,79 @@ stages:
           apps: ${{ parameters.apps }}
           red: antioquia
 
-  - ${{ if and(variables.isStaging, variables.isS3) }}:
-      - template: build/build-developmet.yml
-        parameters:
-          language: ${{ parameters.language }}
-          release: ${{ parameters.release }}
-          apps: ${{ parameters.apps }}
-          red: antioquia
+  # - ${{ if and(variables.isStaging, variables.isS3) }}:
+  #     - template: build/build-developmet.yml
+  #       parameters:
+  #         language: ${{ parameters.language }}
+  #         release: ${{ parameters.release }}
+  #         apps: ${{ parameters.apps }}
+  #         red: antioquia
 
-  - ${{ if and(variables.isMaster, variables.isS3) }}:
-      - ${{ each region in parameters.red }}:
-          - template: build/build-master-front.yml
-            parameters:
-              language: ${{ parameters.language }}
-              release: ${{ parameters.release }}
-              apps: ${{ parameters.apps }}
-              red: ${{ region }}
+  # - ${{ if and(variables.isMaster, variables.isS3) }}:
+  #     - ${{ each region in parameters.red }}:
+  #         - template: build/build-master-front.yml
+  #           parameters:
+  #             language: ${{ parameters.language }}
+  #             release: ${{ parameters.release }}
+  #             apps: ${{ parameters.apps }}
+  #             red: ${{ region }}
 
-  - ${{ if and(or(variables.isFeatureOrHotfix, variables.isDevelop, variables.isStaging), variables.isFlutter) }}:
-      - template: build/build-united.yml
-        parameters:
-          language: ${{ parameters.language }}
-          release: ${{ parameters.release }}
-          red: antioquia
+  # - ${{ if and(or(variables.isFeatureOrHotfix, variables.isDevelop, variables.isStaging), variables.isFlutter) }}:
+  #     - template: build/build-united.yml
+  #       parameters:
+  #         language: ${{ parameters.language }}
+  #         release: ${{ parameters.release }}
+  #         red: antioquia
 
-  - ${{ if and(variables.isMaster, variables.isFlutter) }}:
-      - ${{ each region in parameters.red }}:
-          - template: build/build-united.yml
-            parameters:
-              language: ${{ parameters.language }}
-              release: ${{ parameters.release }}
-              red: ${{ region }}
+  # - ${{ if and(variables.isMaster, variables.isFlutter) }}:
+  #     - ${{ each region in parameters.red }}:
+  #         - template: build/build-united.yml
+  #           parameters:
+  #             language: ${{ parameters.language }}
+  #             release: ${{ parameters.release }}
+  #             red: ${{ region }}
 
-  - ${{ if and(or(variables.isTag, variables.isStaging, variables.isMaster), not(variables.isS3), not(variables.isFlutter)) }}:
-      - template: build/semantic-version-integration.yml
-        parameters:
-          language: ${{ parameters.language }}
-          release: ${{ parameters.release }}
-          apps: ${{ parameters.apps }}
+  # - ${{ if and(or(variables.isTag, variables.isStaging, variables.isMaster), not(variables.isS3), not(variables.isFlutter)) }}:
+  #     - template: build/semantic-version-integration.yml
+  #       parameters:
+  #         language: ${{ parameters.language }}
+  #         release: ${{ parameters.release }}
+  #         apps: ${{ parameters.apps }}
 
-  - ${{ if and(or(variables.isFeatureOrHotfix, variables.isDevelop, variables.isStaging, variables.isMaster), variables.isFlutter) }}:
-      - template: build/semantic-version-integration.yml
-        parameters:
-          language: ${{ parameters.language }}
-          release: ${{ parameters.release }}
+  # - ${{ if and(or(variables.isFeatureOrHotfix, variables.isDevelop, variables.isStaging, variables.isMaster), variables.isFlutter) }}:
+  #     - template: build/semantic-version-integration.yml
+  #       parameters:
+  #         language: ${{ parameters.language }}
+  #         release: ${{ parameters.release }}
 
-  - ${{ if and(or(variables.isTag, variables.isMaster), variables.isS3) }}:
-      - template: build/semantic-version-integration.yml
-        parameters:
-          language: ${{ parameters.language }}
-          release: ${{ parameters.release }}
-          apps: ${{ parameters.apps }}
+  # - ${{ if and(or(variables.isTag, variables.isMaster), variables.isS3) }}:
+  #     - template: build/semantic-version-integration.yml
+  #       parameters:
+  #         language: ${{ parameters.language }}
+  #         release: ${{ parameters.release }}
+  #         apps: ${{ parameters.apps }}
 
-  - ${{ if and(or(variables.isTag, variables.isDevelop, variables.isStaging, variables.isMaster), not(variables.isS3), not(variables.isFlutter)) }}:
-      - template: release/artifacts-managment.yml
-        parameters:
-          language: ${{ parameters.language }}
-          release: ${{ parameters.release }}
-          apps: ${{ parameters.apps }}
-          red: antioquia
+  # - ${{ if and(or(variables.isTag, variables.isDevelop, variables.isStaging, variables.isMaster), not(variables.isS3), not(variables.isFlutter)) }}:
+  #     - template: release/artifacts-managment.yml
+  #       parameters:
+  #         language: ${{ parameters.language }}
+  #         release: ${{ parameters.release }}
+  #         apps: ${{ parameters.apps }}
+  #         red: antioquia
 
-  - ${{ if and(or(variables.isTag, variables.isDevelop, variables.isStaging), not(variables.isFlutter)) }}:
-      - template: release/deploy-integration.yml
-        parameters:
-          language: ${{ parameters.language }}
-          release: ${{ parameters.release }}
-          apps: ${{ parameters.apps }}
-          red: antioquia
+  # - ${{ if and(or(variables.isTag, variables.isDevelop, variables.isStaging), not(variables.isFlutter)) }}:
+  #     - template: release/deploy-integration.yml
+  #       parameters:
+  #         language: ${{ parameters.language }}
+  #         release: ${{ parameters.release }}
+  #         apps: ${{ parameters.apps }}
+  #         red: antioquia
 
-  - ${{ if and(variables.isMaster, not(variables.isFlutter)) }}:
-      - ${{ each region in parameters.red }}:
-          - template: release/deploy-integration.yml
-            parameters:
-              language: ${{ parameters.language }}
-              release: ${{ parameters.release }}
-              apps: ${{ parameters.apps }}
-              red: ${{ region }}
+  # - ${{ if and(variables.isMaster, not(variables.isFlutter)) }}:
+  #     - ${{ each region in parameters.red }}:
+  #         - template: release/deploy-integration.yml
+  #           parameters:
+  #             language: ${{ parameters.language }}
+  #             release: ${{ parameters.release }}
+  #             apps: ${{ parameters.apps }}
+  #             red: ${{ region }}
