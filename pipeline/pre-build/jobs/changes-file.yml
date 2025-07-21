@@ -188,16 +188,16 @@ jobs:
               echo "$apps"
               apps_json=$(printf '%s\n' "${apps[@]}" | jq -R . | jq -s .)
 
-              az pipelines run \
+              pipeline_output=$(az pipelines run \
               --name "$(Build.Repository.Name)" \
               --branch "$CURRENT_BRANCH" \
               --parameters language="nodejs" \
-                          release="aws-ecs" \
-                          apps="$apps_json"
-              
+                          typerelease="aws-ecs" \
+                          apps="$apps_json" \ 
+              --output json)
+              echo $pipeline_output
+
               run_id=$(echo "$pipeline_output" | jq -r '.id')
-              echo $run_id
-              
               pipeline_url="https://dev.azure.com/ux-technology/Invictus/_build/results?buildId=$run_id"
               echo "🔗 URL del pipeline: $pipeline_url"
               
@@ -221,16 +221,16 @@ jobs:
               echo "$apps"
               apps_json=$(printf '%s\n' "${apps[@]}" | jq -R . | jq -s .)
 
-              az pipelines run \
+              pipeline_output=$(az pipelines run \
               --name "$(Build.Repository.Name)" \
               --branch "$CURRENT_BRANCH" \
               --parameters language="nodejs" \
-                          release="aws-ecs" \
-                          apps="$apps_json"
-              
-              run_id=$(echo "$pipeline_output" | jq -r '.id')
-              echo $run_id
+                          typerelease="aws-ecs" \
+                          apps="$apps_json" \ 
+              --output json)
+              echo $pipeline_output
 
+              run_id=$(echo "$pipeline_output" | jq -r '.id')
               pipeline_url="https://dev.azure.com/ux-technology/Invictus/_build/results?buildId=$run_id"
               echo "🔗 URL del pipeline: $pipeline_url"
 
