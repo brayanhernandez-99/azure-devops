@@ -189,12 +189,10 @@ jobs:
               apps_json=$(printf '%s\n' "${apps[@]}" | jq -R . | jq -s .)
 
               pipeline_output=$(az pipelines run \
-              --name "$(Build.Repository.Name)" \
-              --branch "$CURRENT_BRANCH" \
-              --parameters language="nodejs" \
-                          typerelease="aws-ecs" \
-                          apps="$apps_json" \ 
-              --output json)
+                --name "$(Build.Repository.Name)" \
+                --branch "$CURRENT_BRANCH" \
+                --parameters language="nodejs" typerelease="aws-ecs" apps="$apps_json" \
+                --output json)
               echo $pipeline_output
 
               run_id=$(echo "$pipeline_output" | jq -r '.id')
@@ -222,12 +220,10 @@ jobs:
               apps_json=$(printf '%s\n' "${apps[@]}" | jq -R . | jq -s .)
 
               pipeline_output=$(az pipelines run \
-              --name "$(Build.Repository.Name)" \
-              --branch "$CURRENT_BRANCH" \
-              --parameters language="nodejs" \
-                          typerelease="aws-ecs" \
-                          apps="$apps_json" \ 
-              --output json)
+                --name "$(Build.Repository.Name)" \
+                --branch "$CURRENT_BRANCH" \
+                --parameters language="nodejs" typerelease="aws-ecs" apps="$apps_json" \
+                --output json)
               echo $pipeline_output
 
               run_id=$(echo "$pipeline_output" | jq -r '.id')
