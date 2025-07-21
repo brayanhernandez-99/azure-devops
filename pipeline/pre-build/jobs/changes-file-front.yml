@@ -221,7 +221,7 @@ jobs:
               pipeline_output=$(az pipelines run \
                 --name "$(Build.Repository.Name)" \
                 --branch "$CURRENT_BRANCH" \
-                --parameters language="nodejs" release="aws-ecs" apps="$apps_json" \
+                --parameters language="nodejs" release="aws-s3" apps="$apps_json" \
                 --output json)
               echo $pipeline_output
 
@@ -257,7 +257,7 @@ jobs:
               pipeline_output=$(az pipelines run \
                 --name "$(Build.Repository.Name)" \
                 --branch "$CURRENT_BRANCH" \
-                --parameters language="nodejs" release="aws-ecs" apps="$apps_json" \
+                --parameters language="nodejs" release="aws-s3" apps="$apps_json" \
                 --output json)
               echo $pipeline_output
 
