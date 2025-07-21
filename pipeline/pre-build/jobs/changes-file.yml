@@ -194,6 +194,12 @@ jobs:
               --parameters language="nodejs" \
                           typerelease="aws-ecs" \
                           apps="$apps_json"
+              
+              run_id=$(echo "$pipeline_output" | jq -r '.id')
+
+              pipeline_url="https://dev.azure.com/ux-technology/Invictus/_build/results?buildId=${run_id}"
+              echo "🔗 URL del pipeline: $pipeline_url"
+              
             else
               echo "❌ No se ejecuta cuando source branch es stagign o develop solo con hotfix o features"
             fi
@@ -220,6 +226,12 @@ jobs:
               --parameters language="nodejs" \
                           typerelease="aws-ecs" \
                           apps="$apps_json"
+              
+              run_id=$(echo "$pipeline_output" | jq -r '.id')
+
+              pipeline_url="https://dev.azure.com/ux-technology/Invictus/_build/results?buildId=${run_id}"
+              echo "🔗 URL del pipeline: $pipeline_url"
+
             else
               echo "❌ No se ejecuta este pipeline manual para las ramas feature y Hotfix"
             fi
