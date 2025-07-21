@@ -83,8 +83,8 @@ stages:
               language: ${{ parameters.language }}
               release: ${{ parameters.release }}
               redes: ${{ redes }}
-
-  - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), or(variables.isStaging, variables.isMaster)), ne(parameters.release, 'aws-s3'), ne(parameters.language, 'flutter')) }}:
+  
+  - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), variables.isStaging, variables.isMaster), ne(parameters.release, 'aws-s3'), ne(parameters.language, 'flutter')) }}:
       - template: build/semantic-version-integration.yml
         parameters:
           language: ${{ parameters.language }}
