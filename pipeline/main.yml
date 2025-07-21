@@ -17,7 +17,7 @@ parameters:
       - apk
 
   - name: redes
-    type: array
+    type: object
     values:
       - antioquia
       - cap
