@@ -218,7 +218,7 @@ jobs:
               --name "$(Build.Repository.Name)" \
               --branch "$CURRENT_BRANCH" \
               --parameters language="nodejs" \
-                          release="aws-ecs" \
+                          typerelease="aws-ecs" \
                           apps="$apps_json"
             else
               echo "❌ No se ejecuta este pipeline manual para las ramas feature y Hotfix"
