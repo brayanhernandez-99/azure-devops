@@ -161,7 +161,6 @@ jobs:
       #       echo $raw_branch
       #     fi
 
-      #     az devops login --organization https://dev.azure.com/ux-technology
       #     echo $(Build.SourceBranch)
       #     az pipelines run --name "$(Build.Repository.Name)" \
       #       --branch "$raw_branch" \
@@ -173,9 +172,6 @@ jobs:
 
 
       - script: |
-          echo "🔐 Iniciando sesión con Azure DevOps CLI"
-          az devops login --organization https://dev.azure.com/ux-technology
-
           echo "⚙️ Configurando organización y proyecto por defecto"
           az devops configure --defaults organization=https://dev.azure.com/ux-technology project=$(System.TeamProject)
 
