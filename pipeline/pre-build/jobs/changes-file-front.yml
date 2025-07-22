@@ -174,8 +174,6 @@ jobs:
 
       - script: |
           echo "🔐 Iniciando sesión con Azure DevOps CLI"
-          echo "🔐 Token recibido: ${#AZURE_DEVOPS_EXT_PAT} caracteres"
-
           az devops login --organization https://dev.azure.com/ux-technology
 
           echo "⚙️ Configurando organización y proyecto por defecto"
