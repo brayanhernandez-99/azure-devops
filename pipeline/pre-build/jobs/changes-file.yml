@@ -179,20 +179,23 @@ jobs:
               fi
               
               echo "🔍 Apps modificadas detectadas:"
-              echo "$apps"
-              apps_json=$(printf '%s\n' "${apps[@]}" | jq -R . | jq -s .)
+              echo "${apps[@]}"
+              apps-json=$(printf '%s\n' "${apps[@]}" | jq -R . | jq -s .)
+              language=${{ parameters.language }}
+              release=${{ parameters.release }}
 
               pipeline_output=$(az pipelines run \
                 --name "$(Build.Repository.Name)" \
                 --branch "$CURRENT_BRANCH" \
-                --parameters language="nodejs" release="aws-ecs" apps="$apps_json" \
+                --parameters language="$language" release="$release" apps="$apps-json" \
                 --output json)
               echo $pipeline_output
 
-              run_id=$(echo "$pipeline_output" | jq -r '.id')
-              pipeline_url="https://dev.azure.com/ux-technology/Invictus/_build/results?buildId=$run_id"
-              echo "🔗 URL del pipeline: $pipeline_url"
-
+              run_id=$(echo "$pipeline_output" | jq -r '.id')              
+              echo -e "\n🔗 URL del pipeline: https://dev.azure.com/ux-technology/Invictus/_build/results?buildId=$run_id"
+              echo " - Language: $language"
+              echo " - Release: $release"
+              echo " - Apps: $apps-json"
             else
               echo "❌ No se ejecuta cuando source branch es stagign o develop solo con hotfix o features"
             fi
@@ -210,20 +213,23 @@ jobs:
               fi
 
               echo "🔍 Apps modificadas detectadas:"
-              echo "$apps"
-              apps_json=$(printf '%s\n' "${apps[@]}" | jq -R . | jq -s .)
+              echo "${apps[@]}"
+              apps-json=$(printf '%s\n' "${apps[@]}" | jq -R . | jq -s .)
+              language="${LANGUAGE}"
+              release="${RELEASE}"
 
               pipeline_output=$(az pipelines run \
                 --name "$(Build.Repository.Name)" \
                 --branch "$CURRENT_BRANCH" \
-                --parameters language="nodejs" release="aws-ecs" apps="$apps_json" \
+                --parameters language="$language" release="$release" apps="$apps-json" \
                 --output json)
               echo $pipeline_output
 
-              run_id=$(echo "$pipeline_output" | jq -r '.id')
-              pipeline_url="https://dev.azure.com/ux-technology/Invictus/_build/results?buildId=$run_id"
-              echo "🔗 URL del pipeline: $pipeline_url"
-
+              run_id=$(echo "$pipeline_output" | jq -r '.id')              
+              echo -e "\n🔗 URL del pipeline: https://dev.azure.com/ux-technology/Invictus/_build/results?buildId=$run_id"
+              echo " - Language: $language"
+              echo " - Release: $release"
+              echo " - Apps: $apps-json"
             else
               echo "❌ No se ejecuta este pipeline manual para las ramas feature y Hotfix"
             fi
@@ -232,3 +238,5 @@ jobs:
         name: DetectChangedMS
         env:
           AZURE_DEVOPS_EXT_PAT: $(PAT-AZ)
+          LANGUAGE: ${{ parameters.language }}
+          RELEASE: ${{ parameters.release }}
