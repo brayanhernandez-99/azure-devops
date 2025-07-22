@@ -174,7 +174,7 @@ jobs:
 
       - script: |
           echo "🔐 Iniciando sesión con Azure DevOps CLI"
-          az devops login --organization https://dev.azure.com/ux-technology AZURE_DEVOPS_EXT_PAT
+          az devops login --organization https://dev.azure.com/ux-technology
 
           echo "⚙️ Configurando organización y proyecto por defecto"
           az devops configure --defaults organization=https://dev.azure.com/ux-technology project=$(System.TeamProject)
