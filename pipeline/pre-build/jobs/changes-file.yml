@@ -146,9 +146,7 @@ jobs:
       #   env:
       #     AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
       #   displayName: "Trigger pipeline"
-
-
-
+      
       - script: |
           echo "🔐 Iniciando sesión con Azure DevOps CLI"
           az devops login --organization https://dev.azure.com/ux-technology
