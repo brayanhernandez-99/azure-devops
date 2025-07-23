@@ -19,7 +19,7 @@ jobs:
           else
             echo "✅ Commit válido para rama de desarrollo: $(Build.SourceBranchName)"
           fi
-        displayName: Validar automatico o normal
+        displayName: "🧩 Validate Commit (Auto/Manual)"
 
       # - script: |
       #     cd $(Build.SourcesDirectory)/apps
@@ -59,7 +59,7 @@ jobs:
       #     git commit -m "Auto-generated pipeline config ${BUILD_BUILDID}"
       #     git push origin $clean_branch
 
-      #   name: DetectChangedMS
+      #   name: "🔍 Detect Changed MS"
 
       # - script: |
       #     CURRENT_BRANCH=$(echo $(Build.SourceBranch))
@@ -124,10 +124,10 @@ jobs:
       #     git add main-pipeline.yml
       #     git commit -m "Auto-generated pipeline config ${BUILD_BUILDID}"
       #     git push origin $clean_branch
-      #   name: DetectChangedMS
+      #   name: "🔍 Detect Changed MS"
 
       - script: az devops configure --defaults organization='$(System.TeamFoundationCollectionUri)' project='$(System.TeamProject)' --use-git-aliases true
-        displayName: "Set default Azure DevOps organization and project"
+        displayName: "Set Azure DevOps organization"
 
       # - script: |
       #     raw_branch=$(Build.SourceBranch)
@@ -232,7 +232,7 @@ jobs:
             fi
           fi
 
-        name: DetectChangedMS
+        name: "🔍 Detect Changed MS"
         env:
           AZURE_DEVOPS_EXT_PAT: $(PAT-AZ)
           language: ${{ parameters.language }}
