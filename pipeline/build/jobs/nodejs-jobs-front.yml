@@ -136,14 +136,14 @@ jobs:
           fi
 
           echo -e "\n🛠 Generando .env.local para invictus"
-          echo "Beanch: $CURRENT_BRANCH_PR"
-          printenv | grep '^INVICTUS_' | sed 's/^INVICTUS_//' > $(System.DefaultWorkingDirectory)/apps/invictus/.env.$CURRENT_BRANCH_PR
-          # cat apps/invictus/.env.$CURRENT_BRANCH_PR
+          echo "Branch: $CURRENT_BRANCH_PR"
 
+          printenv | grep '^INVICTUS_' | sed 's/^INVICTUS_//' > $(System.DefaultWorkingDirectory)/apps/invictus/.env.$CURRENT_BRANCH_PR
           cp -R apps/invictus/.env.$CURRENT_BRANCH_PR $(System.DefaultWorkingDirectory)/apps/invictus/.env
           cp -R apps/invictus/.env.$CURRENT_BRANCH_PR $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.env
           cat $(System.DefaultWorkingDirectory)/apps/invictus/.env
-          echo ""
+
+          echo -e "\n🛠 Generando .env para $(msName)"
           cat $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.env
         displayName: "Generate .env invictus"
         env:
@@ -182,11 +182,15 @@ jobs:
 
       - script: |
           cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
-          # npm install --ignore-scripts
-          # pnpm i --ignore-scripts
-          pnpm i 
-          echo "Dependencias instaladas:"
-          npm ls --depth=0 || true
+          if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
+            npm i
+            echo "Dependencias instaladas:"
+            npm ls --depth=0 || true
+          else
+            pnpm i
+            echo "Dependencias instaladas:"
+            pnpm list --depth=0 || true
+          fi
         displayName: "Install microservice dependencies"
 
       - script: |
@@ -196,8 +200,8 @@ jobs:
             cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
             msName=$(msName)
             msName=${msName%-vue2}
+
             echo "Name MS:$msName"
-            # pnpm run build --filter=...$msName
             npm run build
             ls -la $(System.DefaultWorkingDirectory)/$(file)/$(msName)/dist
           else
@@ -266,7 +270,6 @@ jobs:
           )
 
       - script: |
-          # npm run test
           pnpm test --filter=...$(msName)
         displayName: "Test MS:$(msName)"
         continueOnError: true
@@ -279,7 +282,6 @@ jobs:
           )
 
       - script: |
-          # npm run coverage
           pnpm coverage --filter=...$(msName)
           ls -la $(System.DefaultWorkingDirectory)/$(file)/$(msName)/coverage
         displayName: "Coverage MS:$(msName)"
@@ -346,7 +348,6 @@ jobs:
           )
 
       - script: |
-
           if [ -d "$(System.DefaultWorkingDirectory)/$(file)/$(msName)/dist" ]; then
             if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
               msName=$(msName)
@@ -355,13 +356,10 @@ jobs:
             else 
               msName=$(msName)
             fi
-
             aws s3 cp ./$(file)/$(msName)/dist s3://mf-prueba-$msName-$(ACCOUNT_ID_INVIC)/$(msVersion)/ --recursive
-            # echo $msName $(ACCOUNT_ID_INVIC) $(msVersion)
           else
             echo "No se encontro la carpeta dist, por ende no compilo el proyecto $msName"
           fi
-
         displayName: "📦 Upload S3"
         condition: not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
         env:
