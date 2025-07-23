@@ -151,13 +151,13 @@ jobs:
           az devops configure --defaults organization=https://dev.azure.com/ux-technology project=$(System.TeamProject)
 
           echo "📦 Ejecutando pipeline con parámetros dinámicos"
-          echo "tipo de ejecución: $BUILD_REASON"
+          echo "Tipo de ejecución: $BUILD_REASON"
 
           if [[ "$BUILD_REASON" == "PullRequest" ]]; then
             SOURCE_BRANCH=$(echo "$(System.PullRequest.SourceBranch)" | sed 's#refs/heads/##')
             TARGET_BRANCH=$(echo "$(System.PullRequest.TargetBranch)" | sed 's#refs/heads/##')
           fi
-          echo $SOURCE_BRANCH
+          echo "Branch: $SOURCE_BRANCH"
           if [[ "$BUILD_REASON" == "PullRequest" ]]; then
             if [[ "$SOURCE_BRANCH" == feature/* || "$SOURCE_BRANCH" == hotfix/* ]]; then
               clean_branch=$(echo "$(System.PullRequest.SourceBranch)" | sed 's#refs/heads/##')
@@ -169,7 +169,7 @@ jobs:
               TARGET_BRANCH=$(echo "$(System.PullRequest.TargetBranch)" | sed 's#refs/heads/##')
               CURRENT_BRANCH=$SOURCE_BRANCH
 
-              echo "🔍 Comparando cambios entre $TARGET_BRANCH...$SOURCE_BRANCH"
+              echo -e"\n🔍 Comparando cambios entre: $TARGET_BRANCH ... $SOURCE_BRANCH"
               changed_files=$(git diff --name-only "origin/$TARGET_BRANCH"..."origin/$SOURCE_BRANCH")
               apps=$(echo "$changed_files" | grep "^apps/" | cut -d '/' -f2 | sort -u)
 
@@ -182,6 +182,8 @@ jobs:
               echo "${apps[@]}"
               apps_json=$(printf '%s\n' "${apps[@]}" | jq -R . | jq -s .)
 
+
+              echo -e "\n🔗 Creando ejecucion pipeline"
               pipeline_output=$(az pipelines run \
                 --name "$(Build.Repository.Name)" \
                 --branch "$CURRENT_BRANCH" \
@@ -190,7 +192,7 @@ jobs:
               echo $pipeline_output
 
               run_id=$(echo "$pipeline_output" | jq -r '.id')              
-              echo -e "\n🔗 URL del pipeline: https://dev.azure.com/ux-technology/Invictus/_build/results?buildId=$run_id"
+              echo " - Url: https://dev.azure.com/ux-technology/Invictus/_build/results?buildId=$run_id"
               echo " - Language: $language"
               echo " - Release: $release"
             else
@@ -213,6 +215,7 @@ jobs:
               echo "${apps[@]}"
               apps_json=$(printf '%s\n' "${apps[@]}" | jq -R . | jq -s .)
 
+              echo -e "\n🔗 Creando ejecucion pipeline"
               pipeline_output=$(az pipelines run \
                 --name "$(Build.Repository.Name)" \
                 --branch "$CURRENT_BRANCH" \
@@ -221,7 +224,7 @@ jobs:
               echo $pipeline_output
 
               run_id=$(echo "$pipeline_output" | jq -r '.id')              
-              echo -e "\n🔗 URL del pipeline: https://dev.azure.com/ux-technology/Invictus/_build/results?buildId=$run_id"
+              echo " - Url: https://dev.azure.com/ux-technology/Invictus/_build/results?buildId=$run_id"
               echo " - Language: $language"
               echo " - Release: $release"
             else
