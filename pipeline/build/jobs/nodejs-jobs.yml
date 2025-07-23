@@ -23,7 +23,7 @@ jobs:
         inputs:
           artifactName: "versions"
           downloadPath: "$(Pipeline.Workspace)/downloaded-versions"
-        displayName: "📥 Descargar artifact de versiones"
+        displayName: "📥 Download Version Artifact"
 
       - script: |
           ls -R $(Pipeline.Workspace)/downloaded-versions/versions/$(msName)
@@ -36,17 +36,17 @@ jobs:
             echo "❌ No se encontró archivo de versión para $(msName)"
             exit 1
           fi
-        displayName: "📚 Leer versiones de microservicios"
+        displayName: "📖 Read Microservice Versions"
 
       - task: NodeTool@0
-        displayName: "Use Nodejs $(versionSpecification)"
+        displayName: "🔧 Use Nodejs $(versionSpecification)"
         inputs:
           versionSource: "spec"
           versionSpec: "$(versionSpecification)"
 
       - script: |
           npm install -g pnpm
-        displayName: "Instalar pnpm"
+        displayName: "⚙️ Install pnpm"
 
       - task: Bash@3
         name: AuthCodeArtifact
@@ -92,13 +92,13 @@ jobs:
           variable=$(echo $SONARQUBE_SCANNER_PARAMS | sed -E 's#"sonar\.branch\.name":"[^"]+",##g')
           echo $variable
           echo "##vso[task.setvariable variable=SONARQUBE_SCANNER_PARAMS]$variable"
-        displayName: "set-variable"
+        displayName: "Set-Variable"
 
       - script: |
           cd $(System.DefaultWorkingDirectory)/apps/$(msName)
           echo "🔧 Actualizando versión en apps/$(msName)/package.json a $(msVersion)"
           jq --arg version "$(msVersion)" '.version = $version' package.json > tmp.json && mv tmp.json package.json
-        displayName: "Version temporal para compilar"
+        displayName: "🧪 Temporary version for build"
 
       - script: |
           echo "Estás en la carpeta: $(System.DefaultWorkingDirectory)/apps/$(msName)"
@@ -107,7 +107,7 @@ jobs:
           pnpm install --ignore-scripts
           echo "Dependencias instaladas:"
           npm ls --depth=0 || true
-        displayName: "Instalar dependencias del microservicio"
+        displayName: "Install microservice dependencies"
 
       # - script: |
       #     cd $(System.DefaultWorkingDirectory)/apps/$(msName)
@@ -118,13 +118,13 @@ jobs:
       - script: |
           cd $(System.DefaultWorkingDirectory)/apps/$(msName)
           npm run test
-        displayName: "Test MS $(msName)"
+        displayName: "Test MS:$(msName)"
         continueOnError: true
 
       - script: |
           cd $(System.DefaultWorkingDirectory)/apps/$(msName)
           npm run coverage
-        displayName: "Coverage MS $(msName)"
+        displayName: "Coverage MS:$(msName)"
         continueOnError: true
 
       - task: SonarQubeAnalyze@7
@@ -156,7 +156,7 @@ jobs:
         env:
           SONAR_TOKEN: $(SONAR_TOKEN)
           SONAR_HOST_URL: $(SONAR_HOST_URL)
-        displayName: "Verificar Quality Gate $(msName)"
+        displayName: "🔍 Verify Quality Gate MS:$(msName)"
         continueOnError: true
         condition: and(
           succeeded(),

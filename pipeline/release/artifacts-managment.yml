@@ -39,7 +39,7 @@ stages:
                 inputs:
                   artifactName: "versions"
                   downloadPath: "$(Pipeline.Workspace)/downloaded-versions"
-                displayName: "📥 Descargar artifact de versiones"
+                displayName: "📥 Download Version Artifact"
 
               - script: |
                   ls -R $(Pipeline.Workspace)/downloaded-versions/versions/$(msName)
@@ -52,7 +52,7 @@ stages:
                     echo "❌ No se encontró archivo de versión para $(msName)"
                     exit 1
                   fi
-                displayName: "📚 Leer versiones de microservicios"
+                displayName: "📖 Read Microservice Versions"
 
               - script: |
                   echo "build dev docker images"
@@ -162,7 +162,7 @@ stages:
                 inputs:
                   artifactName: "versions"
                   downloadPath: "$(Pipeline.Workspace)/downloaded-versions"
-                displayName: "📥 Descargar artifact de versiones"
+                displayName: "📥 Download Version Artifact"
 
               - script: |
                   ls -R $(Pipeline.Workspace)/downloaded-versions/versions/$(msName)
@@ -175,7 +175,7 @@ stages:
                     echo "❌ No se encontró archivo de versión para $(msName)"
                     exit 1
                   fi
-                displayName: "📚 Leer versiones de microservicios"
+                displayName: "📖 Read Microservice Versions"
 
               - script: |
                   echo "build qa docker images"
@@ -285,7 +285,7 @@ stages:
                 inputs:
                   artifactName: "versions"
                   downloadPath: "$(Pipeline.Workspace)/downloaded-versions"
-                displayName: "📥 Descargar artifact de versiones"
+                displayName: "📥 Download Version Artifact"
 
               - script: |
                   ls -R $(Pipeline.Workspace)/downloaded-versions/versions/$(msName)
@@ -298,7 +298,7 @@ stages:
                     echo "❌ No se encontró archivo de versión para $(msName)"
                     exit 1
                   fi
-                displayName: "📚 Leer versiones de microservicios"
+                displayName: "📖 Read Microservice Versions"
 
               - script: |
                   echo "build qa docker images"

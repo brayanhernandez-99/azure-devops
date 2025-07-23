@@ -21,11 +21,11 @@ jobs:
       - script: |
           if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
             fileselect=app-legacy
-            echo "ruta de archivo del mf: $fileselect"
+            echo "Ruta de archivo del mf: $fileselect"
             echo "##vso[task.setvariable variable=file]$fileselect"
           else
             fileselect=apps
-            echo "ruta de archivo del mf: $fileselect"
+            echo "Ruta de archivo del mf: $fileselect"
             echo "##vso[task.setvariable variable=file]$fileselect"
           fi
         displayName: "Select file"
@@ -60,7 +60,7 @@ jobs:
               exit 1
             fi
           fi
-        displayName: "Validar que feature esté actualizada y sin cambios relevantes ignorados"
+        displayName: "Validate feature branch is up to date"
         condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
 
       - script: |
@@ -117,7 +117,7 @@ jobs:
           echo "##vso[task.setvariable variable=filteredCommits]$SAFE_COMMITS"
         env:
           AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
-        displayName: "Detalles Commits Pull Request"
+        displayName: "Details of Pull Request Commits"
         condition: not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
 
       - script: |
@@ -229,7 +229,9 @@ jobs:
                 # Las bases son diferentes, solo incrementa el prerelease
                 NEXT_VERSION="$BASE_VERSION_BRANCH-$clean_branch.$((CURRENT_PRERELEASE + 1))"
               fi
-              echo "📌 anterior versión : $VERSION_ACTUAL"
+
+              echo -e "\n🔍 Versiones Detectadas"
+              echo "📌 Anterior versión : $VERSION_ACTUAL"
               echo "🚀 Próxima versión : $NEXT_VERSION"
             fi
 
@@ -239,6 +241,8 @@ jobs:
 
               NEXT_BASE_VERSION=$(bump_version "$VERSION_ACTUAL_MASTER" "$RELEASE_TYPE")
               NEXT_VERSION="$NEXT_BASE_VERSION"
+
+              echo -e "\n🔍 Versiones Detectadas"
               echo "📌 Anterior versión : $VERSION_ACTUAL_MASTER"
               echo "🚀 Próxima versión : $NEXT_VERSION"
             fi
@@ -249,7 +253,7 @@ jobs:
 
             echo "##vso[task.setvariable variable=cleanNEXT_VERSION]$NEXT_VERSION"
           fi
-        displayName: Detect next version
+        displayName: "🔍 Detect next version"
         name: SemanticJob
 
       - task: PublishBuildArtifacts@1
@@ -257,7 +261,7 @@ jobs:
           PathtoPublish: "$(Build.ArtifactStagingDirectory)"
           ArtifactName: "versions"
           publishLocation: "Container"
-        displayName: "📦 Publicar artifact de versiones por MS"
+        displayName: "📦 Publish Versioned Artifacts by Microservice"
 
       - script: |
           raw_branch=$(Build.SourceBranch)
@@ -275,7 +279,7 @@ jobs:
           git add package.json
           git commit -m "chore($(msName)): bump version to $(cleanNEXT_VERSION)"
           git push origin version/$clean_branch
-        displayName: "Actualizar versión y push $(msName)"
+        displayName: "Update version and push MS:$(msName)"
         condition: and(
           succeeded(),
           ne(variables['Build.SourceBranchName'], 'master'),

@@ -45,7 +45,7 @@ jobs:
         inputs:
           artifactName: "versions"
           downloadPath: "$(Pipeline.Workspace)/downloaded-versions"
-        displayName: "📥 Descargar artifact de versiones"
+        displayName: "📥 Download Version Artifact"
 
       - script: |
           ls -R $(Pipeline.Workspace)/downloaded-versions/versions/$(msName)
@@ -58,17 +58,17 @@ jobs:
             echo "❌ No se encontró archivo de versión para $(msName)"
             exit 1
           fi
-        displayName: "📚 Leer versiones de microservicios"
+        displayName: "📖 Read Microservice Versions"
 
       - task: NodeTool@0
-        displayName: "Use Nodejs $(versionSpecification)"
+        displayName: "🔧 Use Nodejs $(versionSpecification)"
         inputs:
           versionSource: "spec"
           versionSpec: "$(versionSpecification)"
 
       - script: |
           npm install -g pnpm
-        displayName: "Instalar pnpm"
+        displayName: "⚙️ Install pnpm"
 
       - task: Bash@3
         name: AuthCodeArtifact
@@ -106,7 +106,7 @@ jobs:
 
           echo "Archivos .env.local para administration-vue2"
           ls -la app-legacy/app-administration-vue2
-        displayName: "Generación de .env admin y seller"
+        displayName: "Generate .env admin & seller"
 
       - script: |
           CURRENT_BRANCH=$(echo $(Build.SourceBranch))
@@ -145,7 +145,7 @@ jobs:
           cat $(System.DefaultWorkingDirectory)/apps/invictus/.env
           echo ""
           cat $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.env
-        displayName: "Generación de .env invictus"
+        displayName: "Generate .env invictus"
         env:
           red: ${{ parameters.red }}
 
@@ -153,24 +153,24 @@ jobs:
           printenv | grep '^VITE_' > $(System.DefaultWorkingDirectory)/.env
           ls -la 
           cat $(System.DefaultWorkingDirectory)/.env
-        displayName: "Generar env VIT"
+        displayName: "Generate .env VIT"
 
       - script: |
           echo -e "VITE_APP_VERSION=\$npm_package_version\nVITE_BASE_URL=" > $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.env
           cat $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.env
-        displayName: "Copiar env"
+        displayName: "Copy .env"
 
       - script: |
           cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
           echo "🔧 Actualizando versión en $(file)/$(msName)/package.json a $(msVersion)"
           jq --arg version "$(msVersion)" '.version = $version' package.json > tmp.json && mv tmp.json package.json
-        displayName: "Version temporal para compilar"
+        displayName: "🧪 Temporary version for build"
 
       - script: |
           echo "Comentando app-legacy/*"
           sed -i '/app-legacy\//s/^/  # /' pnpm-workspace.yaml
           cat pnpm-workspace.yaml
-        displayName: "Comentar app-legacy/*"
+        displayName: "💬 Comment app-legacy/*"
         condition: and(
           succeeded(),
           ne(variables['msName'], 'app-administration-vue2'),
@@ -184,7 +184,7 @@ jobs:
           pnpm i 
           echo "Dependencias instaladas:"
           npm ls --depth=0 || true
-        displayName: "Instalar dependencias del microservicio"
+        displayName: "Install microservice dependencies"
 
       - script: |
           cat $(System.DefaultWorkingDirectory)/app-legacy/app-administration-vue2/.env.local
@@ -202,13 +202,13 @@ jobs:
             pnpm build --filter=...$(msName)
             ls -la $(System.DefaultWorkingDirectory)/$(file)/$(msName)/dist
           fi
-        displayName: "Compilar dependencias del microservicio"
+        displayName: "Build microservice dependencies"
         continueOnError: true
 
       - script: |
           echo "Descomentando app-legacy/*"
           sed -i '/# *app-legacy\//s/^  # *//' pnpm-workspace.yaml
-        displayName: "Restaurar línea app-legacy/*"
+        displayName: "💬 Uncomment app-legacy/*"
         condition: and(
           succeeded(),
           ne(variables['msName'], 'app-administration-vue2'),
@@ -251,7 +251,7 @@ jobs:
           variable=$(echo $SONARQUBE_SCANNER_PARAMS | sed -E 's#"sonar\.branch\.name":"[^"]+",##g')
           echo $variable
           echo "##vso[task.setvariable variable=SONARQUBE_SCANNER_PARAMS]$variable"
-        displayName: "Set-variable"
+        displayName: "Set-Variable"
         condition: and(
           succeeded(),
           ne(variables['msName'], 'app-administration-vue2'),
@@ -266,7 +266,7 @@ jobs:
           # cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
           # npm run test
           pnpm test --filter=...$(msName)
-        displayName: "Test MS $(msName)"
+        displayName: "Test MS:$(msName)"
         continueOnError: true
         condition: and(
           succeeded(),
@@ -286,7 +286,7 @@ jobs:
 
           tree
           ls -l $(System.DefaultWorkingDirectory)/$(file)/$(msName)/coverage
-        displayName: "Coverage MS $(msName)"
+        displayName: "Coverage MS:$(msName)"
         continueOnError: true
         condition: and(
           succeeded(),
@@ -340,7 +340,7 @@ jobs:
         env:
           SONAR_TOKEN: $(SONAR_TOKEN)
           SONAR_HOST_URL: $(SONAR_HOST_URL)
-        displayName: "Verificar Quality Gate"
+        displayName: "🔍 Verify Quality Gate"
         continueOnError: true
         condition: and(
           succeeded(),
@@ -367,7 +367,7 @@ jobs:
             echo "No se encontro la carpeta dist, por ende no compilo el proyecto $msName"
           fi
 
-        displayName: "Upload S3"
+        displayName: "📦 Upload S3"
         condition: not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
         env:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVIC)

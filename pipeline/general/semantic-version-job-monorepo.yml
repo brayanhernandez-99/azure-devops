@@ -49,7 +49,7 @@ jobs:
               exit 1
             fi
           fi
-        displayName: "Validar que feature esté actualizada y sin cambios relevantes ignorados"
+        displayName: "Validate feature branch is up to date"
         condition: and(
             succeeded(),
             or(
@@ -119,7 +119,7 @@ jobs:
           echo "##vso[task.setvariable variable=filteredCommits]$SAFE_COMMITS"
         env:
           AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
-        displayName: "Detalles Commits Pull Request"
+        displayName: "Details of Pull Request Commits"
         condition: and(
             succeeded(),
             not(
@@ -281,7 +281,7 @@ jobs:
 
             echo "##vso[task.setvariable variable=cleanNEXT_VERSION]$NEXT_VERSION"
           fi
-        displayName: Detect next version
+        displayName: "🔍 Detect next version"
         name: SemanticJob
 
       - task: PublishBuildArtifacts@1
@@ -289,7 +289,7 @@ jobs:
           PathtoPublish: "$(Build.ArtifactStagingDirectory)"
           ArtifactName: "versions"
           publishLocation: "Container"
-        displayName: "📦 Publicar artifact de versiones por MS"
+        displayName: "📦 Publish Versioned Artifacts by Microservice"
 
       - script: |
           raw_branch=$(Build.SourceBranch)
@@ -306,7 +306,7 @@ jobs:
           git add package.json
           git commit -m "chore($(msName)): bump version to $(cleanNEXT_VERSION)"
           git push origin version/$clean_branch
-        displayName: "Actualizar versión y push $(msName)"
+        displayName: "Update version and push MS:$(msName)"
         condition: and(
             succeeded(),
             ne(variables['Build.SourceBranchName'], 'master'),
