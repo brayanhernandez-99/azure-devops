@@ -39,7 +39,7 @@ jobs:
             echo "Ruta de archivo del mf: $fileselect"
             echo "##vso[task.setvariable variable=file]$fileselect"
           fi
-        displayName: "Select file"
+        displayName: "🧾 Select file"
 
       - task: DownloadBuildArtifacts@0
         inputs:
@@ -58,7 +58,7 @@ jobs:
             echo "❌ No se encontró archivo de versión para $(msName)"
             exit 1
           fi
-        displayName: "📖 Read Microservice Versions"
+        displayName: "📝 Read Microservice Versions"
 
       - task: NodeTool@0
         displayName: "🔧 Use Nodejs $(versionSpecification)"
@@ -93,7 +93,7 @@ jobs:
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
 
       - script: |
-          echo "🛠 Generando .env.local para administration-vue2"
+          echo -e "\n🛠 Generando .env.local para administration-vue2"
           printenv | grep '^ADMIN_' | sed 's/^ADMIN_//' > $(System.DefaultWorkingDirectory)/app-legacy/app-administration-vue2/.env.local
           cat $(System.DefaultWorkingDirectory)/app-legacy/app-administration-vue2/.env.local
 
@@ -135,8 +135,8 @@ jobs:
             CURRENT_BRANCH_PR=prd-cauca
           fi
 
-          echo "🛠 Generando .env.local para invictus"
-          echo $CURRENT_BRANCH_PR
+          echo -e "\n🛠 Generando .env.local para invictus"
+          echo "Beanch: $CURRENT_BRANCH_PR"
           printenv | grep '^INVICTUS_' | sed 's/^INVICTUS_//' > $(System.DefaultWorkingDirectory)/apps/invictus/.env.$CURRENT_BRANCH_PR
           # cat apps/invictus/.env.$CURRENT_BRANCH_PR
 
@@ -150,9 +150,12 @@ jobs:
           red: ${{ parameters.red }}
 
       - script: |
+          echo -e "\n🛠 Generando .env para VIT"
           printenv | grep '^VITE_' > $(System.DefaultWorkingDirectory)/.env
-          ls -la 
           cat $(System.DefaultWorkingDirectory)/.env
+
+          echo -e "\n📁 Archivos .env VIT"
+          ls -la
         displayName: "Generate .env VIT"
 
       - script: |
@@ -208,6 +211,7 @@ jobs:
       - script: |
           echo "Descomentando app-legacy/*"
           sed -i '/# *app-legacy\//s/^  # *//' pnpm-workspace.yaml
+          cat pnpm-workspace.yaml
         displayName: "💬 Uncomment app-legacy/*"
         condition: and(
           succeeded(),
@@ -248,10 +252,11 @@ jobs:
           )
 
       - script: |
-          variable=$(echo $SONARQUBE_SCANNER_PARAMS | sed -E 's#"sonar\.branch\.name":"[^"]+",##g')
-          echo $variable
-          echo "##vso[task.setvariable variable=SONARQUBE_SCANNER_PARAMS]$variable"
-        displayName: "Set-Variable"
+          response=$(echo $SONARQUBE_SCANNER_PARAMS | sed -E 's#"sonar\.branch\.name":"[^"]+",##g')
+          json=$(echo "$response" | sed 's/"sonar.token":\*\*\*/"sonar.token":"***"/')
+          echo "$json" | jq
+          echo "##vso[task.setvariable variable=SONARQUBE_SCANNER_PARAMS]$response"
+        displayName: "Set-Variable SONARQUBE_SCANNER_PARAMS"
         condition: and(
           succeeded(),
           ne(variables['msName'], 'app-administration-vue2'),
@@ -261,9 +266,6 @@ jobs:
           )
 
       - script: |
-          ls -l
-          pwd
-          # cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
           # npm run test
           pnpm test --filter=...$(msName)
         displayName: "Test MS:$(msName)"
@@ -277,15 +279,9 @@ jobs:
           )
 
       - script: |
-          # cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
-          pwd
           # npm run coverage
           pnpm coverage --filter=...$(msName)
-
-          #pnpm coverage
-
-          tree
-          ls -l $(System.DefaultWorkingDirectory)/$(file)/$(msName)/coverage
+          ls -la $(System.DefaultWorkingDirectory)/$(file)/$(msName)/coverage
         displayName: "Coverage MS:$(msName)"
         continueOnError: true
         condition: and(
@@ -336,7 +332,6 @@ jobs:
           else
             echo "✅ El proyecto pasó su Quality Gate."
           fi
-
         env:
           SONAR_TOKEN: $(SONAR_TOKEN)
           SONAR_HOST_URL: $(SONAR_HOST_URL)
