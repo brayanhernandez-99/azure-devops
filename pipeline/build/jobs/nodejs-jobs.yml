@@ -103,10 +103,9 @@ jobs:
       - script: |
           echo "Estás en la carpeta: $(System.DefaultWorkingDirectory)/apps/$(msName)"
           cd $(System.DefaultWorkingDirectory)/apps/$(msName)
-          # npm install --ignore-scripts
           pnpm install --ignore-scripts
           echo "Dependencias instaladas:"
-          npm ls --depth=0 || true
+          pnpm ls --depth=0 || true
         displayName: "Install microservice dependencies"
 
       # - script: |
@@ -117,13 +116,13 @@ jobs:
 
       - script: |
           cd $(System.DefaultWorkingDirectory)/apps/$(msName)
-          npm run test
+          pnpm run test
         displayName: "Test MS:$(msName)"
         continueOnError: true
 
       - script: |
           cd $(System.DefaultWorkingDirectory)/apps/$(msName)
-          npm run coverage
+          pnpm run coverage
         displayName: "Coverage MS:$(msName)"
         continueOnError: true
 
