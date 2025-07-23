@@ -102,7 +102,7 @@ jobs:
             clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
 
             COMMITS=$(echo "$(filteredCommits)" | tr '|' '\n')
-            echo "Commits de la rama staging a master:"
+            echo "📝 Commits de la rama staging a master:"
             echo $COMMITS
             
             IS_MAJOR=0

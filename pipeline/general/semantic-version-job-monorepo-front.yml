@@ -140,25 +140,25 @@ jobs:
             if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
               BASE=$(git merge-base HEAD origin/master)
               COMMITS=$(git log --pretty=format:"%s" $BASE..HEAD | grep -vi "Auto-generated pipeline config")
-              echo "Commits de la rama feature"
+              echo "📝 Commits de la rama feature"
               echo $COMMITS
             fi
 
             if [[ "$CURRENT_BRANCH" == refs/heads/develop ]]; then
               COMMITS=$(echo "$(filteredCommits)" | tr '|' '\n')
-              echo "Commits de la rama feature a develop:"
+              echo "📝 Commits de la rama feature a develop:"
               echo $COMMITS
             fi
 
             if [[ "$CURRENT_BRANCH" == refs/heads/staging ]]; then
               COMMITS=$(echo "$(filteredCommits)" | tr '|' '\n')
-              echo "Commits de la rama pre/staging a staging:"
+              echo "📝 Commits de la rama pre/staging a staging:"
               echo $COMMITS
             fi
 
             if [[ "$CURRENT_BRANCH" == refs/heads/master ]]; then
               COMMITS=$(echo "$(filteredCommits)" | tr '|' '\n')
-              echo "Commits de la rama staging a master:"
+              echo "📝 Commits de la rama staging a master:"
               echo $COMMITS
             fi
 

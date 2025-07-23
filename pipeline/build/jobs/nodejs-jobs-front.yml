@@ -32,11 +32,11 @@ jobs:
       - script: |
           if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
             fileselect=app-legacy
-            echo "Ruta de archivo del mf: $fileselect"
+            echo "Ruta de archivo del ms: $fileselect"
             echo "##vso[task.setvariable variable=file]$fileselect"
           else
             fileselect=apps
-            echo "Ruta de archivo del mf: $fileselect"
+            echo "Ruta de archivo del ms: $fileselect"
             echo "##vso[task.setvariable variable=file]$fileselect"
           fi
         displayName: "🧾 Select file"
