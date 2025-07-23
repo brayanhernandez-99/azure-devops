@@ -66,7 +66,7 @@ jobs:
       #     git commit -m "Auto-generated pipeline config ${BUILD_BUILDID}"
       #     git push origin $clean_branch
 
-      #   name: "🔍 Detect Changed MS"
+      #   displayName: "🔍 Detect Changed MS"
 
       # - script: |
       #     CURRENT_BRANCH=$(echo $(Build.SourceBranch))
@@ -146,7 +146,7 @@ jobs:
       #     git commit -m "Auto-generated pipeline config ${BUILD_BUILDID}"
       #     git push origin $clean_branch
 
-      #   name: "🔍 Detect Changed MS"
+      #   displayName: "🔍 Detect Changed MS"
       #   env:
       #     AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
 
@@ -268,7 +268,7 @@ jobs:
             fi
           fi
 
-        name: "🔍 Detect Changed MS"
+        displayName: "🔍 Detect Changed MS"
         env:
           AZURE_DEVOPS_EXT_PAT: $(PAT-AZ)
           language: ${{ parameters.language }}
