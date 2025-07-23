@@ -182,15 +182,9 @@ jobs:
 
       - script: |
           cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
-          if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
-            npm i
-            echo "Dependencias instaladas:"
-            npm ls --depth=0 || true
-          else
             pnpm i
-            echo "Dependencias instaladas:"
+            echo -e "\n📋 Dependencias instaladas:"
             pnpm list --depth=0 || true
-          fi
         displayName: "Install microservice dependencies"
 
       - script: |
