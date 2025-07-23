@@ -104,7 +104,8 @@ jobs:
           echo "Estás en la carpeta: $(System.DefaultWorkingDirectory)/apps/$(msName)"
           cd $(System.DefaultWorkingDirectory)/apps/$(msName)
           pnpm install --ignore-scripts
-          echo "Dependencias instaladas:"
+          
+          echo -e "\n📋 Dependencias instaladas:"
           pnpm ls --depth=0 || true
         displayName: "Install microservice dependencies"
 
