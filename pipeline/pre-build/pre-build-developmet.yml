@@ -12,8 +12,9 @@ stages:
             parameters:
               language: nodejs
               release: aws-ecs
+
       - ${{ if eq(parameters.type, 'front') }}:
           - template: jobs/changes-file-front.yml
             parameters:
-              language: nodejsFronts
+              language: nodejsFront
               release: aws-s3
