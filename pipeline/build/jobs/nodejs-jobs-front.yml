@@ -101,10 +101,10 @@ jobs:
           printenv | grep '^SELLERS_' | sed 's/^SELLERS_//' > $(System.DefaultWorkingDirectory)/app-legacy/app-sellers-vue2/.env.local
           cat app-legacy/app-sellers-vue2/.env.local
 
-          echo "Archivos .env.local para sellers-vue2"
+          echo -e "\n🗂️ Archivos .env.local para sellers-vue2"
           ls -la app-legacy/app-sellers-vue2
 
-          echo "Archivos .env.local para administration-vue2"
+          echo -e "\n🗂️ Archivos .env.local para administration-vue2"
           ls -la app-legacy/app-administration-vue2
         displayName: "Generate .env admin & seller"
 
@@ -193,7 +193,7 @@ jobs:
             cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
             msName=$(msName)
             msName=${msName%-vue2}
-            echo $msName
+            echo "Name MS:$msName"
             # pnpm run build --filter=...$msName
             npm run build
             ls -la $(System.DefaultWorkingDirectory)/$(file)/$(msName)/dist
