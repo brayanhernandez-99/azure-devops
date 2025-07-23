@@ -169,7 +169,7 @@ jobs:
               TARGET_BRANCH=$(echo "$(System.PullRequest.TargetBranch)" | sed 's#refs/heads/##')
               CURRENT_BRANCH=$SOURCE_BRANCH
 
-              echo -e"\n🔍 Comparando cambios entre: $TARGET_BRANCH ... $SOURCE_BRANCH"
+              echo -e "\n🔍 Comparando cambios entre: $TARGET_BRANCH ... $SOURCE_BRANCH"
               changed_files=$(git diff --name-only "origin/$TARGET_BRANCH"..."origin/$SOURCE_BRANCH")
               apps=$(echo "$changed_files" | grep "^apps/" | cut -d '/' -f2 | sort -u)
 
