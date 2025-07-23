@@ -151,7 +151,7 @@ jobs:
       #     AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
 
       - script: az devops configure --defaults organization='$(System.TeamFoundationCollectionUri)' project='$(System.TeamProject)' --use-git-aliases true
-        displayName: "Set Azure DevOps organization"
+        displayName: "⚙️ Set Azure DevOps organization"
 
       # - script: |
       #     raw_branch=$(Build.SourceBranch)
