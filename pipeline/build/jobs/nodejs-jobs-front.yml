@@ -171,7 +171,7 @@ jobs:
 
       - script: |
           echo "Comentando app-legacy/*"
-          sed -i '/app-legacy\//s/^/  # /' pnpm-workspace.yaml
+          sed -i '/app-legacy\//s/  -/  # -/' pnpm-workspace.yaml
           cat pnpm-workspace.yaml
         displayName: "💬 Comment app-legacy/*"
         condition: and(
@@ -208,7 +208,7 @@ jobs:
 
       - script: |
           echo "Descomentando app-legacy/*"
-          sed -i '/# *app-legacy\//s/^  # *//' pnpm-workspace.yaml
+          sed -i '/# *- *"app-legacy\//s/  # -/  -/' pnpm-workspace.yaml
           cat pnpm-workspace.yaml
         displayName: "💬 Uncomment app-legacy/*"
         condition: and(
