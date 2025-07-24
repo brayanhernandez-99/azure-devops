@@ -181,8 +181,9 @@ jobs:
           if [[ "$BUILD_REASON" == "PullRequest" ]]; then
             SOURCE_BRANCH=$(echo "$(System.PullRequest.SourceBranch)" | sed 's#refs/heads/##')
             TARGET_BRANCH=$(echo "$(System.PullRequest.TargetBranch)" | sed 's#refs/heads/##')
+            echo "Branch: $SOURCE_BRANCH"
           fi
-          echo "Branch: $SOURCE_BRANCH"
+
           if [[ "$BUILD_REASON" == "PullRequest" ]]; then
             if [[ "$SOURCE_BRANCH" == feature/* || "$SOURCE_BRANCH" == hotfix/* ]]; then
               clean_branch=$(echo "$(System.PullRequest.SourceBranch)" | sed 's#refs/heads/##')
