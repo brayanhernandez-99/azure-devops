@@ -120,21 +120,17 @@ jobs:
               CLUSTER=$(msName)-cluster
               SERVICES=$(msName)-fg-service
           fi
-
           if { [[ "$(cleanMsName)" == "raffle" ]] && [[ "$RED" == "cap" || "$RED" == "antioquia" ]]; }; then
               CLUSTER=raffles-ms-cluster
               SERVICES=raffles-ms-fg-service
           fi
-
           if { [[ "$(cleanMsName)" == "notifier" ]] && [[ "$RED" == "cap" || "$RED" == "antioquia" ]]; }; then
               CLUSTER=msnotifier-cluster
               SERVICES=msnotifier-fg-service
           fi
-
           if { [[ "$(cleanMsName)" == "raffle" ]] && ! [[ "$RED" == "cap" || "$RED" == "antioquia" ]]; }; then
               SERVICES=raffles
           fi
-
           echo $CLUSTER
           echo $SERVICES
 
@@ -214,9 +210,8 @@ jobs:
             ephemeralStorage,
             runtimePlatform
           } | with_entries(select(.value != null))' new-taskdef-$(cleanMsName).json > new-taskdef-$(cleanMsName)-ecs.json
-
+          
           cat new-taskdef-$(cleanMsName)-ecs.json
-
         displayName: "🧹 Clean up attributes"
 
       # - script: |
