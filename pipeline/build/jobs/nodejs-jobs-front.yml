@@ -67,13 +67,12 @@ jobs:
           versionSpec: "$(versionSpecification)"
 
       - task: Cache@2
-        displayName: "🔁 Restore global pnpm cache"
         inputs:
-          key: 'global-pnpm | "$(Agent.OS)"'
+          key: 'pnpm-store | "$(Agent.OS)" | global'
           restoreKeys: |
-            global-pnpm
+            pnpm-store | "$(Agent.OS)"
           path: ~/.pnpm-store
-        continueOnError: true
+        displayName: "🔁 Restore pnpm global cache"
 
       - script: |
           npm install -g pnpm
@@ -191,10 +190,16 @@ jobs:
 
       - script: |
           cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
-            pnpm i
-            echo -e "\n📋 Dependencias instaladas:"
-            pnpm list --depth=0 || true
+          pnpm i
+          echo -e "\n📋 Dependencias instaladas:"
+          pnpm list --depth=0 || true
         displayName: "Install microservice dependencies"
+
+      - task: Cache@2
+        inputs:
+          key: 'pnpm-store | "$(Agent.OS)" | global'
+          path: ~/.pnpm-store
+        displayName: "💾 Save pnpm global cache"
 
       - script: |
           cat $(System.DefaultWorkingDirectory)/app-legacy/app-administration-vue2/.env.local
