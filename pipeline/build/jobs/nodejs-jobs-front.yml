@@ -65,13 +65,13 @@ jobs:
         inputs:
           versionSource: "spec"
           versionSpec: "$(versionSpecification)"
-          
+
       - task: Cache@2
-        displayName: "🔁 Restore pnpm cache"
+        displayName: "🔁 Restore global pnpm cache"
         inputs:
-          key: 'pnpm-store | "$(Agent.OS)" | pnpm-lock.yaml'
+          key: 'global-pnpm | "$(Agent.OS)"'
           restoreKeys: |
-            pnpm-store | "$(Agent.OS)"
+            global-pnpm
           path: ~/.pnpm-store
         continueOnError: true
 
