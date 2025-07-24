@@ -105,6 +105,7 @@ jobs:
               echo "❌ Imagen no encontrada: $REPO_NAME:$IMAGE_TAG"
               exit 1
             fi
+          displayName: "🔍 Verify image in ECR"
         env:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
@@ -147,7 +148,7 @@ jobs:
             
           echo "TaskDef ARN: $arn"
           echo "##vso[task.setvariable variable=taskDefinitionArn]$arn"
-        displayName: "Obtener task definition ARN"
+        displayName: "Get ARN Task Definition"
         env:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVIC)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVIC)
@@ -161,7 +162,7 @@ jobs:
 
           FAMILY=$(echo $ARN | cut -d'/' -f2 | cut -d':' -f1)
           echo "##vso[task.setvariable variable=taskFamily]$FAMILY"
-        displayName: "Extraer family desde ARN"
+        displayName: "Extract family from ARN"
 
       - script: |
           export AWS_ACCESS_KEY_ID
@@ -174,7 +175,7 @@ jobs:
             --query 'taskDefinition' \
             > taskdef.json
           cat taskdef.json
-        displayName: "Obtener definición de la task actual"
+        displayName: "Get current task definition"
         env:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVIC)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVIC)
@@ -191,7 +192,7 @@ jobs:
 
           echo "Imagen actualizada con nuevo tag: $newTag"
           cat new-taskdef-$(cleanMsName).json
-        displayName: "Cambio de tag Images task"
+        displayName: "📝 Update image tag in task definition"
 
       - script: |
           jq '{
@@ -216,7 +217,7 @@ jobs:
 
           cat new-taskdef-$(cleanMsName)-ecs.json
 
-        displayName: "Delete attributes"
+        displayName: "🧹 Clean up attributes"
 
       # - script: |
       #     export AWS_ACCESS_KEY_ID
