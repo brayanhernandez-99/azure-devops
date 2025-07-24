@@ -44,6 +44,15 @@ jobs:
           versionSource: "spec"
           versionSpec: "$(versionSpecification)"
 
+      - task: Cache@2
+        displayName: "🔁 Restore pnpm cache"
+        inputs:
+          key: 'pnpm-store | "$(Agent.OS)" | pnpm-lock.yaml'
+          restoreKeys: |
+            pnpm-store | "$(Agent.OS)"
+          path: ~/.pnpm-store
+        continueOnError: true
+
       - script: |
           npm install -g pnpm
         displayName: "⚙️ Install pnpm"
