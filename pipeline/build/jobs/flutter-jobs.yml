@@ -54,7 +54,7 @@ jobs:
             echo "❌ No se encontró archivo de versión para apk"
             exit 1
           fi
-        displayName: "📚 Leer versiones de apk"
+        displayName: "📚 Read apk versions"
 
       - script: |
           ls -R $(Pipeline.Workspace)/downloaded-versions/versions/version-pubspec-apk
@@ -67,7 +67,7 @@ jobs:
             echo "❌ No se encontró archivo de versión para apk pubspec"
             exit 1
           fi
-        displayName: "📚 Leer versiones de apk pubspec"
+        displayName: "📚 Read apk pubspec versions"
 
       - task: JavaToolInstaller@0
         inputs:
@@ -179,7 +179,7 @@ jobs:
             echo "❌ Error: No se encontraron assets"
             exit 99
           fi
-        displayName: "Verificar assets"
+        displayName: "✔️ Verify assets"
 
       - script: |
           echo "Descargando Keystore"
@@ -193,7 +193,7 @@ jobs:
             echo "❌ Error: No se descargo el Keystore"
             exit 99
           fi
-        displayName: "Descargar Keystore"
+        displayName: "📥 Download Keystore"
         env:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
@@ -226,7 +226,7 @@ jobs:
 
           echo "✅ File key.properties creado"
           ls -la android/key.properties
-        displayName: "Asignar Keystore"
+        displayName: "🔐 Assign Keystore"
         env:
           KEY_ALIAS: $(KEY_ALIAS)
           KEY_PASSWORD: $(KEY_PASSWORD)
@@ -247,7 +247,7 @@ jobs:
             echo "❌ Error: Apk no encontrado"
             exit 99
           fi
-        displayName: "Verificar Apk"
+        displayName: "✔️ Verify apk"
 
       - script: |
           echo "Renombrando APK..."
