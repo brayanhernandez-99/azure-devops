@@ -32,7 +32,6 @@ jobs:
       vmImage: "macos-latest"
 
     variables:
-      #JAVA_HOME: /Library/Java/JavaVirtualMachines/temurin-17.0.7.jdk/Contents/Home
       ANDROID_HOME: /Users/runner/Library/Android/sdk
       flutterCacheKey: $(Build.SourceVersion)
       versionSpecification: "3.24.0"
@@ -176,7 +175,6 @@ jobs:
           JAVA_HOME=$(/usr/libexec/java_home -v 17)
           echo -e "\n☕ JAVA_HOME: $JAVA_HOME"
           java -version
-          ls -la "$JAVA_HOME"
 
           echo -e "\n🔍 Buscando apksigner..."
           find "$ANDROID_HOME" -name apksigner
