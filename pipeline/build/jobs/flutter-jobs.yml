@@ -250,7 +250,7 @@ jobs:
             echo -e "\n🔐 SHA-1 Apk: $SHA1_APK"
             echo "🔐 SHA-1 Flutter: $SHA1_FLUTTER"
             echo "🔐 SHA-1 Certificado:"
-            $ANDROID_HOME/build-tools/34.0.0/apksigner verify --print-certs build/app/outputs/flutter-apk/app-profile.apk | grep -A 10 "Signer #"
+            $ANDROID_HOME/build-tools/34.0.0/apksigner verify --print-certs build/app/outputs/flutter-apk/app-profile.apk | grep -A 5 "Signer #"
           else
             echo "❌ Error: Apk no encontrado"
             exit 99
