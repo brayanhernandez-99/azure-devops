@@ -32,10 +32,10 @@ jobs:
       vmImage: "macos-latest"
 
     variables:
-      JAVA_HOME: /Library/Java/JavaVirtualMachines/temurin-17.jdk/Contents/Home
+      JAVA_HOME: /Library/Java/JavaVirtualMachines/temurin-17.0.7.jdk/Contents/Home
       ANDROID_HOME: /Users/runner/Library/Android/sdk
-      versionSpecification: "3.24.0"
       flutterCacheKey: $(Build.SourceVersion)
+      versionSpecification: "3.24.0"
 
     steps:
       - task: FlutterInstall@0
