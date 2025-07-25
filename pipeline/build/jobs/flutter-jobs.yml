@@ -223,8 +223,8 @@ jobs:
           echo "storeFile=keystore/$KEY_ALIAS.jks" >> android/key.properties
 
           echo "✅ File key.properties creado"
-          cat android/key.properties | sed -E 's/^(keyPassword|storePassword)=.*/\1=*** /'
           ls -la android/key.properties
+          cat android/key.properties | sed -E 's/^(keyPassword|storePassword)=.*/\1=*** /'
         displayName: "🔐 Assign Keystore"
         env:
           KEY_ALIAS: $(KEY_ALIAS)
