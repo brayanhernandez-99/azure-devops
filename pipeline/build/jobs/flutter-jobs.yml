@@ -78,8 +78,9 @@ jobs:
         displayName: "📚 Read apk pubspec versions"
 
       - script: |
-          echo "version a actualizar: $(msVersion)"
-          sed -i "s/^version: .*/version: $(msVersion)+$(msVersionPubspec)/" pubspec.yaml
+          echo "Version a actualizar: $(msVersion)"
+          sed -i '' "s/^version: .*/version: ${msVersion}+${msVersionPubspec}/" pubspec.yaml
+
           cat pubspec.yaml
         displayName: "Change version file pubspec"
 
