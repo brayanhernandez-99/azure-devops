@@ -29,13 +29,21 @@ jobs:
 
     pool:
       name: "Azure Pipelines"
-      vmImage: "ubuntu-22.04"
+      vmImage: "macos-latest"
 
     variables:
-      versionSpecification: $[coalesce(variables.flutterVersion, '3.24.0')]
-      flutterCacheKey: $(Build.SourceVersion)
+      ANDROID_HOME: $(Agent.ToolsDirectory)/android-sdk
+      JAVA_HOME: $(JAVA_HOME_17_X64)
 
     steps:
+      - task: FlutterInstall@0
+        inputs:
+          mode: "auto"
+          channel: "stable"
+          version: "custom"
+          versionSpecification: $[coalesce(variables.flutterVersion, '3.24.0')]
+          flutterCacheKey: $(Build.SourceVersion)
+
       - task: DownloadBuildArtifacts@0
         inputs:
           artifactName: "versions"
@@ -68,12 +76,6 @@ jobs:
             exit 1
           fi
         displayName: "📚 Read apk pubspec versions"
-
-      - task: JavaToolInstaller@0
-        inputs:
-          versionSpec: "17"
-          jdkArchitectureOption: "x64"
-          jdkSourceOption: "PreInstalled"
 
       - script: |
           echo "version a actualizar: $(msVersion)"
@@ -158,17 +160,14 @@ jobs:
         env:
           red: ${{ parameters.red }}
 
-      - task: FlutterInstall@0
-        inputs:
-          mode: "auto"
-          channel: "stable"
-          version: "custom"
-          customVersion: $(versionSpecification)
-
       - script: |
+          echo "✔️ Verificando..."
+          echo $ANDROID_HOME
+          ls -la $ANDROID_HOME
+          find $ANDROID_HOME -name apksigner
           flutter --version
           flutter pub get
-        displayName: "Flutter Pub Get"
+        displayName: "🧩 Flutter: Get Dependencies"
 
       - script: |
           echo "Verificando carpeta assets"
