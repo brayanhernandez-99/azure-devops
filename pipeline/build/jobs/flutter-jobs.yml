@@ -45,11 +45,11 @@ jobs:
           version: "custom"
           customVersion: $(versionSpecification)
 
-      - task: JavaToolInstaller@0
-        inputs:
-          versionSpec: '17'
-          jdkArchitectureOption: 'x64'
-          jdkSourceOption: 'PreInstalled'
+      # - task: JavaToolInstaller@0
+      #   inputs:
+      #     versionSpec: '17'
+      #     jdkArchitectureOption: 'x64'
+      #     jdkSourceOption: 'PreInstalled'
 
       - task: DownloadBuildArtifacts@0
         inputs:
@@ -267,7 +267,7 @@ jobs:
             echo "SHA-1 Apk: $SHA1_APK"
             echo "SHA-1 Flutter: $SHA1_FLUTTER"
             echo "SHA-1 Certificado:"
-            apksigner verify --print-certs build/app/outputs/flutter-apk/app-profile.apk
+            $ANDROID_HOME/build-tools/34.0.0/apksigner verify  --print-certs build/app/outputs/flutter-apk/app-profile.apk
           else
             echo "❌ Error: Apk no encontrado"
             exit 99
