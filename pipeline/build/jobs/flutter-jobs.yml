@@ -34,6 +34,8 @@ jobs:
     variables:
       ANDROID_HOME: $(Agent.ToolsDirectory)/android-sdk
       JAVA_HOME: $(JAVA_HOME_17_X64)
+      versionSpecification: $[coalesce(variables.flutterVersion, '3.24.0')]
+      flutterCacheKey: $(Build.SourceVersion)
 
     steps:
       - task: FlutterInstall@0
@@ -41,8 +43,7 @@ jobs:
           mode: "auto"
           channel: "stable"
           version: "custom"
-          versionSpecification: "3.24.0"
-          flutterCacheKey: "$(Build.SourceVersion)"
+          customVersion: $(versionSpecification)
 
       - task: DownloadBuildArtifacts@0
         inputs:
