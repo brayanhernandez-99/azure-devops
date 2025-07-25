@@ -32,9 +32,9 @@ jobs:
       vmImage: "macos-latest"
 
     variables:
-      ANDROID_HOME: $(Agent.ToolsDirectory)/android-sdk
-      JAVA_HOME: $(JAVA_HOME_17_X64)
-      versionSpecification: $[coalesce(variables.flutterVersion, '3.24.0')]
+      JAVA_HOME: /Library/Java/JavaVirtualMachines/temurin-17.jdk/Contents/Home
+      ANDROID_HOME: /Users/runner/Library/Android/sdk
+      versionSpecification: "3.24.0"
       flutterCacheKey: $(Build.SourceVersion)
 
     steps:
