@@ -41,8 +41,8 @@ jobs:
           mode: "auto"
           channel: "stable"
           version: "custom"
-          versionSpecification: $[coalesce(variables.flutterVersion, '3.24.0')]
-          flutterCacheKey: $(Build.SourceVersion)
+          versionSpecification: "3.24.0"
+          flutterCacheKey: "$(Build.SourceVersion)"
 
       - task: DownloadBuildArtifacts@0
         inputs:
