@@ -223,8 +223,8 @@ jobs:
           echo "storeFile=keystore/$KEY_ALIAS.jks" >> android/key.properties
 
           echo "✅ File key.properties creado"
-          ls -la android/key.properties
           cat android/key.properties | sed -E 's/^(keyPassword|storePassword)=.*/\1=*** /'
+          ls -la android/key.properties
         displayName: "🔐 Assign Keystore"
         env:
           KEY_ALIAS: $(KEY_ALIAS)
@@ -243,14 +243,13 @@ jobs:
           echo "Verificando Build Apk"
           if [ -d "build/app/outputs/flutter-apk" ] && [ "$(ls -A build/app/outputs/flutter-apk)" ]; then
             echo "✅ Apk encontrado"
-            SHA1_APK=$(sha1sum build/app/outputs/flutter-apk/app-profile.apk | awk '{print $1}')
+            SHA1_APK=$(shasum -a 1 build/app/outputs/flutter-apk/app-profile.apk | awk '{print $1}')
             SHA1_FLUTTER=$(cut -d ' ' -f1 build/app/outputs/flutter-apk/app-profile.apk.sha1)
             ls -la build/app/outputs/flutter-apk
 
-            echo -e "\n🔐 Listado SHA-1"
-            echo "SHA-1 Apk: $SHA1_APK"
-            echo "SHA-1 Flutter: $SHA1_FLUTTER"
-            echo "SHA-1 Certificado:"
+            echo "🔐 SHA-1 Apk: $SHA1_APK"
+            echo "🔐 SHA-1 Flutter: $SHA1_FLUTTER"
+            echo "🔐 SHA-1 Certificado:"
             $ANDROID_HOME/build-tools/34.0.0/apksigner verify  --print-certs build/app/outputs/flutter-apk/app-profile.apk
           else
             echo "❌ Error: Apk no encontrado"
