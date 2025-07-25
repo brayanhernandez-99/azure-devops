@@ -168,7 +168,17 @@ jobs:
           ls -la "$ANDROID_HOME"
 
           echo -e "\n☕ JAVA_HOME: $JAVA_HOME"
-          ls -la "$JAVA_HOME"
+          JAVA_HOME=$(/usr/libexec/java_home -v 17)
+          echo "##vso[task.setvariable variable=JAVA_HOME]$JAVA_HOME"
+          export PATH=$JAVA_HOME/bin:$PATH
+          echo "JAVA_HOME: $JAVA_HOME"
+          java -version
+
+          JAVA_HOME=$(/usr/libexec/java_home -v 17)
+          echo "##vso[task.setvariable variable=JAVA_HOME]$JAVA_HOME"
+          export PATH=$JAVA_HOME/bin:$PATH
+          java -version
+
 
           echo -e "\n🔍 Buscando apksigner..."
           find "$ANDROID_HOME" -name apksigner
