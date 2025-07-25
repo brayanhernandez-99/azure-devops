@@ -44,12 +44,6 @@ jobs:
           version: "custom"
           customVersion: $(versionSpecification)
 
-      # - task: JavaToolInstaller@0
-      #   inputs:
-      #     versionSpec: '17'
-      #     jdkArchitectureOption: 'x64'
-      #     jdkSourceOption: 'PreInstalled'
-
       - task: DownloadBuildArtifacts@0
         inputs:
           artifactName: "versions"
@@ -168,20 +162,8 @@ jobs:
 
       - script: |
           echo "✔️ Verificando entorno Flutter y Android SDK..."
-
-          echo -e "\n📦 ANDROID_HOME: $ANDROID_HOME"
-          ls -la "$ANDROID_HOME"
-
-          JAVA_HOME=$(/usr/libexec/java_home -v 17)
-          echo -e "\n☕ JAVA_HOME: $JAVA_HOME"
-          java -version
-
-          echo -e "\n🔍 Buscando apksigner..."
-          find "$ANDROID_HOME" -name apksigner
-
-          echo -e "\n🌀 Flutter versión:"
-          flutter --version
-
+          echo -e "\n📦 ANDROID_HOME: $ANDROID_HOME" && ls -la "$ANDROID_HOME"
+          echo -e "\n🌀 Flutter versión:" && flutter --version
           echo -e "\n📥 Ejecutando flutter pub get..."
           flutter pub get
         displayName: "🌀 Flutter: Get Dependencies"
@@ -250,6 +232,10 @@ jobs:
           STORE_PASSWORD: $(STORE_PASSWORD)
 
       - script: |
+          echo -e "\n☕ JAVA_HOME: $JAVA_HOME" && java -version
+          echo -e "\n🌀 Flutter versión:" && flutter --version
+
+          echo -e "\n🌀Ejecutando Build Flutter: flutter --no-color build apk --no-tree-shake-icons --profile"
           flutter --no-color build apk --no-tree-shake-icons --profile
         displayName: "⚙️ Flutter Build APK"
 
