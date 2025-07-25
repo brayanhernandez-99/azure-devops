@@ -32,7 +32,7 @@ jobs:
       vmImage: "macos-latest"
 
     variables:
-      JAVA_HOME: /Library/Java/JavaVirtualMachines/temurin-17.0.7.jdk/Contents/Home
+      #JAVA_HOME: /Library/Java/JavaVirtualMachines/temurin-17.0.7.jdk/Contents/Home
       ANDROID_HOME: /Users/runner/Library/Android/sdk
       flutterCacheKey: $(Build.SourceVersion)
       versionSpecification: "3.24.0"
@@ -44,6 +44,12 @@ jobs:
           channel: "stable"
           version: "custom"
           customVersion: $(versionSpecification)
+
+      - task: JavaToolInstaller@0
+        inputs:
+          versionSpec: '17'
+          jdkArchitectureOption: 'x64'
+          jdkSourceOption: 'PreInstalled'
 
       - task: DownloadBuildArtifacts@0
         inputs:
@@ -167,12 +173,12 @@ jobs:
           echo -e "\n📦 ANDROID_HOME: $ANDROID_HOME"
           ls -la "$ANDROID_HOME"
 
-          echo -e "\n☕ JAVA_HOME: $JAVA_HOME"
-          JAVA_HOME=$(/usr/libexec/java_home -v 17)
-          echo "##vso[task.setvariable variable=JAVA_HOME]$JAVA_HOME"
-          export PATH=$JAVA_HOME/bin:$PATH
-          echo "JAVA_HOME: $JAVA_HOME"
-          java -version
+          # echo -e "\n☕ JAVA_HOME: $JAVA_HOME"
+          # JAVA_HOME=$(/usr/libexec/java_home -v 17)
+          # echo "##vso[task.setvariable variable=JAVA_HOME]$JAVA_HOME"
+          # export PATH=$JAVA_HOME/bin:$PATH
+          # echo "JAVA_HOME: $JAVA_HOME"
+          # java -version
 
           JAVA_HOME=$(/usr/libexec/java_home -v 17)
           echo "##vso[task.setvariable variable=JAVA_HOME]$JAVA_HOME"
