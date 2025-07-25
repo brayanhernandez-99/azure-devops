@@ -162,13 +162,23 @@ jobs:
           red: ${{ parameters.red }}
 
       - script: |
-          echo "✔️ Verificando..."
-          echo $ANDROID_HOME
-          ls -la $ANDROID_HOME
-          find $ANDROID_HOME -name apksigner
+          echo "✔️ Verificando entorno Flutter y Android SDK..."
+
+          echo -e "\n📦 ANDROID_HOME: $ANDROID_HOME"
+          ls -la "$ANDROID_HOME"
+
+          echo -e "\n☕ JAVA_HOME: $JAVA_HOME"
+          ls -la "$JAVA_HOME"
+
+          echo -e "\n🔍 Buscando apksigner..."
+          find "$ANDROID_HOME" -name apksigner
+
+          echo -e "\n🌀 Flutter versión:"
           flutter --version
+
+          echo -e "\n📥 Ejecutando flutter pub get..."
           flutter pub get
-        displayName: "🧩 Flutter: Get Dependencies"
+        displayName: "🌀 Flutter: Get Dependencies"
 
       - script: |
           echo "Verificando carpeta assets"
