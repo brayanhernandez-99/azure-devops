@@ -79,7 +79,7 @@ jobs:
 
       - script: |
           echo "Version a actualizar: $(msVersion)"
-          sed -i '' "s/^version: .*/version: ${msVersion}+${msVersionPubspec}/" pubspec.yaml
+          sed -i '' "s/^version: .*/version: $(msVersion)+$(msVersionPubspec)/" pubspec.yaml
 
           cat pubspec.yaml
         displayName: "Change version file pubspec"
