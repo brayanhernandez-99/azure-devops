@@ -240,7 +240,7 @@ jobs:
           echo -e "\n☕ JAVA_HOME: $JAVA_HOME" && java -version
           echo -e "\n🌀 Flutter versión:" && flutter --version
 
-          echo -e "\n🌀Ejecutando Build Flutter: flutter --no-color build apk --no-tree-shake-icons --profile"
+          echo -e "\n🌀Ejecutando Build Flutter: flutter --no-color build apk --no-tree-shake-icons --release"
           flutter --no-color build apk --no-tree-shake-icons --release
         displayName: "⚙️ Flutter Build APK"
 
