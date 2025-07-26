@@ -242,7 +242,7 @@ jobs:
           echo -e "\n🌀 Flutter versión:" && flutter --version
 
           echo -e "\n🌀Ejecutando Build Flutter: flutter --no-color build apk --no-tree-shake-icons --profile"
-          flutter --no-color build apk --no-tree-shake-icons --profile
+          flutter --no-color build apk --no-tree-shake-icons --release
         displayName: "⚙️ Flutter Build APK"
 
       - script: |
