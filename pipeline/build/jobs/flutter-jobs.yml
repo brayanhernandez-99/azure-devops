@@ -85,8 +85,9 @@ jobs:
         displayName: "Change version file pubspec"
 
       - script: |
-          echo "Version a actualizar: $(msVersion)"
           CURRENT_BRANCH=$(echo $(Build.SourceBranch))
+          echo "Version a actualizar: $(msVersion)"
+          echo "Branch Actual: $CURRENT_BRANCH"
 
           case "$CURRENT_BRANCH" in
             refs/heads/develop | refs/heads/feature/*)
