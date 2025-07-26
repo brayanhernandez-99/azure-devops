@@ -225,7 +225,6 @@ jobs:
           echo "keyAlias=$KEY_ALIAS" >> android/key.properties
           echo "keyPassword=$ESCAPED_KEY_PASSWORD" >> android/key.properties
           echo "storePassword=$ESCAPED_STORE_PASSWORD" >> android/key.properties
-          #echo "storeFile=android/app/keystore/$KEY_ALIAS.jks" >> android/key.properties
           echo "storeFile=keystore/$KEY_ALIAS.jks" >> android/key.properties
 
           echo "✅ File key.properties creado"
