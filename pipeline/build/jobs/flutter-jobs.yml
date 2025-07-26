@@ -97,7 +97,7 @@ jobs:
               CURRENT_BRANCH_PR="QA"
               ;;
             refs/heads/master)
-              case "$RED" in
+              case "$red" in
                 "antioquia")
                   CURRENT_BRANCH_PR="PRD-GANA"
                   ;;
