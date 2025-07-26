@@ -98,14 +98,24 @@ jobs:
               ;;
             refs/heads/master)
               case "$RED" in
-                "antioquia") CURRENT_BRANCH_PR="PRD-GANA" ;;
-                "cap")       CURRENT_BRANCH_PR="PRD-CAP" ;;
-                "tolima")    CURRENT_BRANCH_PR="PRD-SEAPTO" ;;
-                "huila")     CURRENT_BRANCH_PR="PRD-SUCHANCE" ;;
-                "cauca")     CURRENT_BRANCH_PR="PRD-ACERTEMOS" ;;
-                *) 
-                  echo "⚠️ Región $RED no reconocida para master"; 
-                  exit 99 
+                "antioquia")
+                  CURRENT_BRANCH_PR="PRD-GANA"
+                  ;;
+                "cap")
+                  CURRENT_BRANCH_PR="PRD-CAP"
+                  ;;
+                "tolima")
+                  CURRENT_BRANCH_PR="PRD-SEAPTO"
+                  ;;
+                "huila")
+                  CURRENT_BRANCH_PR="PRD-SUCHANCE"
+                  ;;
+                "cauca")
+                  CURRENT_BRANCH_PR="PRD-ACERTEMOS"
+                  ;;
+                *)
+                  echo "⚠️ Región $RED no reconocida para master"
+                  exit 99
                   ;;
               esac
               ;;
