@@ -116,7 +116,7 @@ jobs:
               ;;
           esac
 
-          echo -e "\nVERSION: $(msVersion)""
+          echo -e "\nVERSION: $(msVersion)"
           echo "ENVIRONMENT: $CURRENT_BRANCH_PR"
           echo "URL: $(BASE_URL_FLUTTER)"
 
