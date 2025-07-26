@@ -10,7 +10,7 @@ jobs:
         ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
           environment: "Build Staging"
         ${{ if or(eq(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')) }}:
-          displayName: "Build Flutter Master ${{ parameters.red }}"
+          environment: "Build master ${{ parameters.red }}"
         strategy:
           runOnce:
             deploy:
