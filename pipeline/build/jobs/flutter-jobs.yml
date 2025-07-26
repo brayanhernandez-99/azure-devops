@@ -116,9 +116,9 @@ jobs:
               ;;
           esac
 
-          echo VERSION: $(msVersion)
-          echo ENVIRONMENT: $CURRENT_BRANCH_PR
-          echo URL: $(BASE_URL_FLUTTER)
+          echo -e "\nVERSION: $(msVersion)""
+          echo "ENVIRONMENT: $CURRENT_BRANCH_PR"
+          echo "URL: $(BASE_URL_FLUTTER)"
 
           jq --arg version "$(msVersion)" --arg environment "$CURRENT_BRANCH_PR" --arg url "$(BASE_URL_FLUTTER)" '.VERSION = $version | .ENVIRONMENT = $environment | .BASE_URL = $url' env.json > tmp.json && mv tmp.json env.json
           cat env.json
