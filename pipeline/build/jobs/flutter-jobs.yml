@@ -88,6 +88,9 @@ jobs:
           CURRENT_BRANCH=$(echo $(Build.SourceBranch))
           echo "Version a actualizar: $(msVersion)"
           echo "Branch Actual: $CURRENT_BRANCH"
+          echo "Red: $(red)"
+          echo "Red: $red"
+          echo "Red: ${{ parameters.red }}"
 
           case "$CURRENT_BRANCH" in
             refs/heads/develop | refs/heads/feature/*)
@@ -114,7 +117,7 @@ jobs:
                   CURRENT_BRANCH_PR="PRD-ACERTEMOS"
                   ;;
                 *)
-                  echo "⚠️ Región $RED no reconocida para master"
+                  echo "⚠️ Región $red no reconocida para master"
                   exit 99
                   ;;
               esac
