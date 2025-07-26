@@ -92,26 +92,26 @@ jobs:
 
           case "$CURRENT_BRANCH" in
             refs/heads/develop | refs/heads/feature/*)
-              CURRENT_BRANCH_PR="DEV"
+              CURRENT_BRANCH_PR="dev"
               ;;
             refs/heads/staging)
-              CURRENT_BRANCH_PR="QA"
+              CURRENT_BRANCH_PR="qa"
               ;;
             refs/heads/master)
               case "$red" in
-                "antioquia") CURRENT_BRANCH_PR="PRD-GANA" ;;
-                "cap")       CURRENT_BRANCH_PR="PRD-CAP" ;;
-                "tolima")    CURRENT_BRANCH_PR="PRD-SEAPTO" ;;
-                "huila")     CURRENT_BRANCH_PR="PRD-SUCHANCE" ;;
-                "cauca")     CURRENT_BRANCH_PR="PRD-ACERTEMOS" ;;
+                "antioquia") CURRENT_BRANCH_PR="prd-gana" ;;
+                "cap")       CURRENT_BRANCH_PR="prd-cap" ;;
+                "tolima")    CURRENT_BRANCH_PR="prd-seapto" ;;
+                "huila")     CURRENT_BRANCH_PR="prd-suchance" ;;
+                "cauca")     CURRENT_BRANCH_PR="prd-acertemos" ;;
                 *) 
-                  echo "⚠️ Región $red no reconocida para master"; 
+                  echo "⚠️ Región [$red] no reconocida para master"; 
                   exit 99 
                   ;;
               esac
               ;;
             *)
-              echo "⚠️ Rama $CURRENT_BRANCH no reconocida"
+              echo "⚠️ Rama [$CURRENT_BRANCH] no reconocida"
               exit 99
               ;;
           esac
@@ -133,26 +133,26 @@ jobs:
 
           case "$CURRENT_BRANCH" in
             refs/heads/develop | refs/heads/feature/*)
-              CURRENT_BRANCH_PR="DEV"
+              CURRENT_BRANCH_PR="dev"
               ;;
             refs/heads/staging)
-              CURRENT_BRANCH_PR="QA"
+              CURRENT_BRANCH_PR="qa"
               ;;
             refs/heads/master)
               case "$red" in
-                "antioquia") CURRENT_BRANCH_PR="GANA" ;;
-                "cap")       CURRENT_BRANCH_PR="CAP" ;;
-                "tolima")    CURRENT_BRANCH_PR="SEAPTO" ;;
-                "huila")     CURRENT_BRANCH_PR="SUCHANCE" ;;
-                "cauca")     CURRENT_BRANCH_PR="ACERTEMOS" ;;
+                "antioquia") CURRENT_BRANCH_PR="gana" ;;
+                "cap")       CURRENT_BRANCH_PR="cap" ;;
+                "tolima")    CURRENT_BRANCH_PR="seapto" ;;
+                "huila")     CURRENT_BRANCH_PR="suchance" ;;
+                "cauca")     CURRENT_BRANCH_PR="acertemos" ;;
                 *)           
-                  echo "⚠️ Región $red no reconocida para master"; 
+                  echo "⚠️ Región [$red] no reconocida para master"; 
                   exit 99 
                   ;;
               esac
               ;;
             *)
-              echo "⚠️ Rama $CURRENT_BRANCH no reconocida"
+              echo "⚠️ Rama [$CURRENT_BRANCH] no reconocida"
               exit 99 
               ;;
           esac
@@ -161,6 +161,7 @@ jobs:
           echo "New app ID: $NEW_APP_ID"
           sed -i '' "s|applicationId *= *\"[^\"]*\"|applicationId = \"$NEW_APP_ID\"|" android/app/build.gradle
 
+          echo -e "\n Archivo Build.gradle"
           cat android/app/build.gradle
         displayName: "Change file build.gradle"
         env:
@@ -283,11 +284,11 @@ jobs:
                 "tolima")    CURRENT_BRANCH_PR="prd-seapto" ;;
                 "huila")     CURRENT_BRANCH_PR="prd-suchance" ;;
                 "cauca")     CURRENT_BRANCH_PR="prd-acertemos" ;;
-                *)           echo "⚠️ Región $red no reconocida para master"; exit 1 ;;
+                *)           echo "⚠️ Región [$red] no reconocida para master"; exit 1 ;;
               esac
               ;;
             *)
-              echo "⚠️ Rama $CURRENT_BRANCH no reconocida"; exit 1
+              echo "⚠️ Rama [$CURRENT_BRANCH] no reconocida"; exit 1
               ;;
           esac
 
@@ -320,11 +321,11 @@ jobs:
                 "tolima")    CURRENT_BRANCH_PR="prd-seapto" ;;
                 "huila")     CURRENT_BRANCH_PR="prd-suchance" ;;
                 "cauca")     CURRENT_BRANCH_PR="prd-acertemos" ;;
-                *)           echo "⚠️ Región $red no reconocida para master"; exit 1 ;;
+                *)           echo "⚠️ Región [$red] no reconocida para master"; exit 1 ;;
               esac
               ;;
             *)
-              echo "⚠️ Rama $CURRENT_BRANCH no reconocida"; exit 1
+              echo "⚠️ Rama [$CURRENT_BRANCH] no reconocida"; exit 1
               ;;
           esac
           mkdir -p build/app/outputs/flutter-apk/$CURRENT_BRANCH_PR
