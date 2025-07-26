@@ -88,9 +88,7 @@ jobs:
           CURRENT_BRANCH=$(echo $(Build.SourceBranch))
           echo "Version a actualizar: $(msVersion)"
           echo "Branch Actual: $CURRENT_BRANCH"
-          echo "Red: $(red)"
           echo "Red: $red"
-          echo "Red: ${{ parameters.red }}"
 
           case "$CURRENT_BRANCH" in
             refs/heads/develop | refs/heads/feature/*)
@@ -101,30 +99,20 @@ jobs:
               ;;
             refs/heads/master)
               case "$red" in
-                "antioquia")
-                  CURRENT_BRANCH_PR="PRD-GANA"
-                  ;;
-                "cap")
-                  CURRENT_BRANCH_PR="PRD-CAP"
-                  ;;
-                "tolima")
-                  CURRENT_BRANCH_PR="PRD-SEAPTO"
-                  ;;
-                "huila")
-                  CURRENT_BRANCH_PR="PRD-SUCHANCE"
-                  ;;
-                "cauca")
-                  CURRENT_BRANCH_PR="PRD-ACERTEMOS"
-                  ;;
-                *)
-                  echo "⚠️ Región $red no reconocida para master"
-                  exit 99
+                "antioquia") CURRENT_BRANCH_PR="GANA" ;;
+                "cap")       CURRENT_BRANCH_PR="CAP" ;;
+                "tolima")    CURRENT_BRANCH_PR="SEAPTO" ;;
+                "huila")     CURRENT_BRANCH_PR="SUCHANCE" ;;
+                "cauca")     CURRENT_BRANCH_PR="ACERTEMOS" ;;
+                *)           
+                  echo "⚠️ Región $red no reconocida para master"; 
+                  exit 99 
                   ;;
               esac
               ;;
             *)
               echo "⚠️ Rama $CURRENT_BRANCH no reconocida"
-              exit 99
+              exit 99 
               ;;
           esac
 
@@ -140,6 +128,9 @@ jobs:
 
       - script: |
           CURRENT_BRANCH=$(echo $(Build.SourceBranch))
+          echo "Version a actualizar: $(msVersion)"
+          echo "Branch Actual: $CURRENT_BRANCH"
+          echo "Red: $red"
 
           case "$CURRENT_BRANCH" in
             refs/heads/develop | refs/heads/feature/*)
@@ -149,14 +140,14 @@ jobs:
               CURRENT_BRANCH_PR="QA"
               ;;
             refs/heads/master)
-              case "$RED" in
+              case "$red" in
                 "antioquia") CURRENT_BRANCH_PR="GANA" ;;
                 "cap")       CURRENT_BRANCH_PR="CAP" ;;
                 "tolima")    CURRENT_BRANCH_PR="SEAPTO" ;;
                 "huila")     CURRENT_BRANCH_PR="SUCHANCE" ;;
                 "cauca")     CURRENT_BRANCH_PR="ACERTEMOS" ;;
                 *)           
-                  echo "⚠️ Región $RED no reconocida para master"; 
+                  echo "⚠️ Región $red no reconocida para master"; 
                   exit 99 
                   ;;
               esac
