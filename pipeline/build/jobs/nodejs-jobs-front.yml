@@ -7,7 +7,7 @@ jobs:
           name: Azure Pipelines
           vmImage: "ubuntu-22.04"
         ${{ if or(eq(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')) }}:
-          displayName: "Build Flutter Master ${{ parameters.red }}"
+          environment: "Build master ${{ parameters.red }}"
         strategy:
           runOnce:
             deploy:
