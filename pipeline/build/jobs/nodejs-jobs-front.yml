@@ -189,10 +189,11 @@ jobs:
 
       - script: |
           cat $(System.DefaultWorkingDirectory)/app-legacy/app-administration-vue2/.env.local
-          echo -e "\nName MS:$(msName)"
-
           if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
             cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
+            msName=$(msName)
+            msName=${msName%-vue2}
+            echo "Name MS:$msName"
             npm run build
             ls -la $(System.DefaultWorkingDirectory)/$(file)/$(msName)/dist
           else
