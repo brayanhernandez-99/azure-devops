@@ -110,7 +110,7 @@ jobs:
         displayName: "ID Pull Request"
         condition: and(succeeded(),
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
-          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'))))
+          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
 
       - script: |
           echo "Pull Request ID recuperado: $(ultimoPR)"
