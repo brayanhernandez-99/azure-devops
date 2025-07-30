@@ -268,6 +268,18 @@ jobs:
               echo "🚀 Próxima versión : $NEXT_VERSION"
             fi
 
+            if [[ "$CURRENT_BRANCH" == refs/heads/hotfix/* ]]; then
+              git checkout version/$clean_branch
+              VERSION_ACTUAL_MASTER=$(jq -r .version package.json)
+
+              NEXT_BASE_VERSION=$(bump_version "$VERSION_ACTUAL_MASTER" "$RELEASE_TYPE")
+              NEXT_VERSION="$NEXT_BASE_VERSION"
+
+              echo -e "\n🔍 Versiones Detectadas"
+              echo "📌 Anterior versión : $VERSION_ACTUAL_MASTER"
+              echo "🚀 Próxima versión : $NEXT_VERSION"
+            fi
+
             mkdir -p $(Build.ArtifactStagingDirectory)/$(msName)
             touch $(Build.ArtifactStagingDirectory)/$(msName)/version.json
             echo "{ \"ms\": \"$(msName)\", \"version\": \"$NEXT_VERSION\" }" > $(Build.ArtifactStagingDirectory)/$(msName)/version.json
