@@ -110,12 +110,6 @@ jobs:
           pnpm ls --depth=0 || true
         displayName: "Install microservice dependencies"
 
-      # - script: |
-      #     cd $(System.DefaultWorkingDirectory)/apps/$(msName)
-      #     #npm run build
-      #     # ./node_modules/.bin/env-cmd -f .env.local node -e "require('./handlers/container-handler.js').entrypoint()"
-      #   displayName: 'Build'
-
       - script: |
           cd $(System.DefaultWorkingDirectory)/apps/$(msName)
           pnpm run test
@@ -159,10 +153,8 @@ jobs:
           SONAR_HOST_URL: $(SONAR_HOST_URL)
         displayName: "🔍 Verify Quality Gate MS:$(msName)"
         continueOnError: true
-        condition: and(
-          succeeded(),
+        condition: and(succeeded(),
           ne(variables['msName'], 'app-administration-vue2'),
           ne(variables['msName'], 'app-sellers-vue2'),
           ne(variables['Build.SourceBranchName'], 'master'),
-          ne(variables['Build.SourceBranchName'], 'staging')
-          )
+          ne(variables['Build.SourceBranchName'], 'staging'))
