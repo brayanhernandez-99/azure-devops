@@ -353,7 +353,9 @@ jobs:
             echo "No se encontro la carpeta dist, por ende no compilo el proyecto $msName"
           fi
         displayName: "📦 Upload S3"
-        condition: not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
+        condition: and(
+          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
+          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
         env:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVIC)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVIC)
