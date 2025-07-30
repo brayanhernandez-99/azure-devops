@@ -281,7 +281,12 @@ jobs:
           git push origin version/$clean_branch
         displayName: "Update version and push MS:$(msName)"
         condition: and(
-          succeeded(),
-          ne(variables['Build.SourceBranchName'], 'master'),
-          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
+            succeeded(),
+            ne(variables['Build.SourceBranchName'], 'master'),
+            not(
+              or(
+                startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'),
+                startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')
+              )
+            )
           )
