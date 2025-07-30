@@ -3,7 +3,7 @@ variables:
   - group: trasversal-azure-devops
 
   # Feature branch
-  - ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/feature') }}:
+  - ${{ if or( startsWith(variables['Build.SourceBranch'], 'refs/heads/feature'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix')) }}:
       - group: trasversal-flutter-feature
       - group: transversal-app-administration-vue2-develop
       - group: transversal-app-sellers-vue2-develop
