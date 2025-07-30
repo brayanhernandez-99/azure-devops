@@ -134,10 +134,16 @@ jobs:
           echo $CURRENT_BRANCH
 
 
-          if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|master|staging|feature/.+)$ ]]; then
+          if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|master|staging|feature/.+|hotfix/.+)$ ]]; then
 
             if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
               clean_branch=develop
+              echo $clean_branch
+            fi
+
+            if [[ "$CURRENT_BRANCH" == refs/heads/hotfix/* ]]; then
+              clean_branch=master
+              echo $clean_branch
             fi
 
             if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|staging|master)$ ]]; then
@@ -152,6 +158,13 @@ jobs:
               echo $COMMITS
             fi
 
+            if [[ "$CURRENT_BRANCH" == refs/heads/hotfix/* ]]; then
+              BASE=$(git merge-base HEAD origin/master)
+              COMMITS=$(git log --pretty=format:"%s" $BASE..HEAD | grep -vi "Auto-generated pipeline config")
+              echo "📝 Commits de la rama hotfix"
+              echo $COMMITS
+            fi
+            
             if [[ "$CURRENT_BRANCH" == refs/heads/develop ]]; then
               COMMITS=$(echo "$(filteredCommits)" | tr '|' '\n')
               echo "📝 Commits de la rama feature a develop:"
