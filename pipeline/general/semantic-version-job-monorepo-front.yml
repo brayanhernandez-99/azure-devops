@@ -61,7 +61,9 @@ jobs:
             fi
           fi
         displayName: "Validate feature branch is up to date"
-        condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
+        condition: and(succeeded(), or(
+          startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'),
+          startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
 
       - script: |
           REPO_ID=$(curl -s -u ":$AZURE_DEVOPS_CLI_PAT" \
@@ -72,7 +74,9 @@ jobs:
         env:
           AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
         displayName: "ID Repositorio"
-        condition: not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
+        condition: and(
+          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
+          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
 
       - script: |
           echo "id del repositorio $(Build.Repository.Name) = $(repoID)"
@@ -104,7 +108,9 @@ jobs:
         env:
           AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
         displayName: "ID Pull Request"
-        condition: not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
+        condition: and(succeeded(),
+          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
+          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'))))
 
       - script: |
           echo "Pull Request ID recuperado: $(ultimoPR)"
@@ -118,7 +124,9 @@ jobs:
         env:
           AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
         displayName: "Details of Pull Request Commits"
-        condition: not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
+        condition: and(succeeded(),
+          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
+          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
 
       - script: |
           cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
@@ -280,13 +288,7 @@ jobs:
           git commit -m "chore($(msName)): bump version to $(cleanNEXT_VERSION)"
           git push origin version/$clean_branch
         displayName: "Update version and push MS:$(msName)"
-        condition: and(
-            succeeded(),
-            ne(variables['Build.SourceBranchName'], 'master'),
-            not(
-              or(
-                startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'),
-                startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')
-              )
-            )
-          )
+        condition: and(succeeded(),
+          ne(variables['Build.SourceBranchName'], 'master'),
+          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
+          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
