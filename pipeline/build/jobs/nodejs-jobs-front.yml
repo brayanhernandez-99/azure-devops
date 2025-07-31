@@ -202,7 +202,6 @@ jobs:
             ls -la $(System.DefaultWorkingDirectory)/$(file)/$(msName)/dist
           fi
         displayName: "Build microservice dependencies"
-        continueOnError: true
 
       - script: |
           echo "Descomentando app-legacy/*"
