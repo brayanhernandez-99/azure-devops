@@ -8,7 +8,7 @@ jobs:
         ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
           environment: "Build develop"
         ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
-          environment: "Build Staging"
+          environment: "Build staging"
         ${{ if or(eq(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')) }}:
           environment: "Build master ${{ parameters.red }}"
         strategy:
@@ -104,6 +104,7 @@ jobs:
                 "tolima")    CURRENT_BRANCH_PR="prd-seapto" ;;
                 "huila")     CURRENT_BRANCH_PR="prd-suchance" ;;
                 "cauca")     CURRENT_BRANCH_PR="prd-acertemos" ;;
+                "boyaca")    CURRENT_BRANCH_PR="prd-jer" ;;
                 *) 
                   echo "⚠️ Región [$red] no reconocida para master"; 
                   exit 99 
@@ -145,6 +146,7 @@ jobs:
                 "tolima")    CURRENT_BRANCH_PR="seapto" ;;
                 "huila")     CURRENT_BRANCH_PR="suchance" ;;
                 "cauca")     CURRENT_BRANCH_PR="acertemos" ;;
+                "boyaca")    CURRENT_BRANCH_PR="jer" ;;
                 *)           
                   echo "⚠️ Región [$red] no reconocida para master"; 
                   exit 99 
@@ -284,6 +286,7 @@ jobs:
                 "tolima")    CURRENT_BRANCH_PR="prd-seapto" ;;
                 "huila")     CURRENT_BRANCH_PR="prd-suchance" ;;
                 "cauca")     CURRENT_BRANCH_PR="prd-acertemos" ;;
+                "boyaca")    CURRENT_BRANCH_PR="prd-jer" ;;
                 *)           echo "⚠️ Región [$red] no reconocida para master"; exit 1 ;;
               esac
               ;;
@@ -321,6 +324,7 @@ jobs:
                 "tolima")    CURRENT_BRANCH_PR="prd-seapto" ;;
                 "huila")     CURRENT_BRANCH_PR="prd-suchance" ;;
                 "cauca")     CURRENT_BRANCH_PR="prd-acertemos" ;;
+                "boyaca")    CURRENT_BRANCH_PR="prd-jer" ;;
                 *)           echo "⚠️ Región [$red] no reconocida para master"; exit 1 ;;
               esac
               ;;

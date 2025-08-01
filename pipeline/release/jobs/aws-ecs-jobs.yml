@@ -5,9 +5,9 @@ jobs:
       name: Azure Pipelines
       vmImage: "ubuntu-22.04"
     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
-      environment: "Deploy Develop"
+      environment: "Deploy develop"
     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
-      environment: "Deploy Staging"
+      environment: "Deploy staging"
     ${{ if or(eq(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')) }}:
       environment: "Deploy master ${{ parameters.red }}"
     strategy:

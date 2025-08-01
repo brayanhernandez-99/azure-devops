@@ -134,6 +134,9 @@ jobs:
           if [[ "$CURRENT_BRANCH" == "refs/heads/master" && "$RED" == "cauca" ]]; then
             CURRENT_BRANCH_PR=prd-cauca
           fi
+          if [[ "$CURRENT_BRANCH" == "refs/heads/master" && "$RED" == "boyaca" ]]; then
+            CURRENT_BRANCH_PR=prd-boyaca
+          fi
 
           echo -e "\n🛠 Generando .env.local para invictus"
           echo "Branch: $CURRENT_BRANCH_PR"
