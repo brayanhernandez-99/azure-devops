@@ -83,5 +83,7 @@ variables:
       - group: transversal-app-sellers-vue2-master-cauca
       - group: transversal-app-invictus-microfrontend-master-cauca
     # - group: transversal-app-cloudFront-master-cauca
+  - ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'boyaca')) }}:
+      # - group: trasversal-aws-master-cauca
 
   - template: pipeline/vars-azure-pipeline.yml@self

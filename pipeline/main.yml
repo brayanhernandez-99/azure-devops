@@ -1,5 +1,4 @@
 parameters:
-  # Parameters of Build
   - name: language
     type: string
     values:
@@ -22,6 +21,7 @@ parameters:
       - tolima
       - huila
       - cauca
+      - boyaca
 
   - name: apps
     type: object
