@@ -53,18 +53,33 @@ jobs:
         inputs:
           targetType: "inline"
           script: |
-            export CODEARTIFACT_AUTH_TOKEN=$(aws codeartifact get-authorization-token \
+            echo "🔐 Obteniendo token de AWS CodeArtifact..."
+            token=$(aws codeartifact get-authorization-token \
               --domain matrixtech-npm-repository \
-              --domain-owner $ACCOUNT_ID_DEPLOY \
-              --region $AWS_DEFAULT_REGION \
+              --domain-owner "$ACCOUNT_ID_DEPLOY" \
+              --region "$AWS_DEFAULT_REGION" \
               --query authorizationToken \
-              --output text )
-            npm config set //matrixtech-npm-repository-$ACCOUNT_ID_DEPLOY.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com/npm/matrixtech-npm-repository/:_authToken=$CODEARTIFACT_AUTH_TOKEN
-            npm config set registry https://matrixtech-npm-repository-861262569826.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com/npm/matrixtech-npm-repository/
-            aws sts get-caller-identity
+              --output text)
 
-            echo "//matrixtech-npm-repository-$ACCOUNT_ID_DEPLOY.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com/npm/matrixtech-npm-repository/:_authToken=$CODEARTIFACT_AUTH_TOKEN" > apps/$(msName)/.npmrc
-            echo "registry=https://matrixtech-npm-repository-$ACCOUNT_ID_DEPLOY.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com/npm/matrixtech-npm-repository/" >> apps/$(msName)/.npmrc
+            REPO_DOMAIN="matrixtech-npm-repository-$ACCOUNT_ID_DEPLOY.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com"
+            REPO_PATH="npm/matrixtech-npm-repository"
+            REPO_URL="https://$REPO_DOMAIN/$REPO_PATH"
+
+            echo -e "\n⚙️ Configurando npm..."
+            npm config set "//$REPO_DOMAIN/$REPO_PATH/:_authToken" "$token"
+            npm config set registry "$REPO_URL"
+
+            echo "⚙️ Verificando identidad de AWS..."
+            aws sts get-caller-identity
+            
+            npmrc="$(file)/$(msName)/.npmrc"
+            echo "⚙️ Generando archivo .npmrc en: $npmrc/"
+            cat <<EOF > "$npmrc"
+            //$REPO_DOMAIN/$REPO_PATH/:_authToken=$token
+            registry=$REPO_URL
+            EOF
+            cat $npmrc
+          displayName: "🔐 Setup CodeArtifact & npm config"
         env:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
