@@ -20,7 +20,6 @@ venv/
 *.user
 
 # Ignorar salidas de build
-build/
 dist/
 out/
 bin/
