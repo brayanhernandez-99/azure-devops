@@ -87,20 +87,20 @@ jobs:
             REPO_PATH="npm/matrixtech-npm-repository"
             REPO_URL="https://$REPO_DOMAIN/$REPO_PATH"
 
-            echo -e "\n⚙️ Configurando npm..."
+            echo "Configurando npm..."
             npm config set "//$REPO_DOMAIN/$REPO_PATH/:_authToken" "$token"
             npm config set registry "$REPO_URL"
 
-            echo "⚙️ Verificando identidad de AWS..."
+            echo "Verificando identidad de AWS..."
             aws sts get-caller-identity
             
-            npmrc="$(file)/$(msName)/.npmrc"
-            echo "⚙️ Generando archivo .npmrc en: $npmrc/"
-            cat <<EOF > "$npmrc"
+            npmrcPath="$(file)/$(msName)/.npmrc"
+            echo "Generando archivo .npmrcPath en: $npmrcPath/"
+            cat <<EOF > "$npmrcPath"
             //$REPO_DOMAIN/$REPO_PATH/:_authToken=$token
             registry=$REPO_URL
             EOF
-            cat $npmrc
+            ls -la $npmrcPath
         displayName: "🔐 Setup CodeArtifact & npm config"
         env:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
@@ -124,41 +124,9 @@ jobs:
         displayName: "Generate .env admin & seller"
 
       - script: |
-          CURRENT_BRANCH=$(echo $(Build.SourceBranch))
-          if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
-            CURRENT_BRANCH_PR=dev
-          fi
-          if [[ "$CURRENT_BRANCH" == refs/heads/develop ]]; then
-            CURRENT_BRANCH_PR=dev
-          fi
-          if [[ "$CURRENT_BRANCH" == refs/heads/staging ]]; then
-            CURRENT_BRANCH_PR=qa
-          fi
-          if [[ "$CURRENT_BRANCH" == "refs/heads/master" && "$RED" == "antioquia" ]]; then
-            CURRENT_BRANCH_PR=prd-gana
-          fi
-          if [[ "$CURRENT_BRANCH" == "refs/heads/master" && "$RED" == "cap" ]]; then
-            CURRENT_BRANCH_PR=cap-gana
-          fi
-          if [[ "$CURRENT_BRANCH" == "refs/heads/master" && "$RED" == "tolima" ]]; then
-            CURRENT_BRANCH_PR=prd-tolima
-          fi
-          if [[ "$CURRENT_BRANCH" == "refs/heads/master" && "$RED" == "huila" ]]; then
-            CURRENT_BRANCH_PR=prd-huila
-          fi
-          if [[ "$CURRENT_BRANCH" == "refs/heads/master" && "$RED" == "cauca" ]]; then
-            CURRENT_BRANCH_PR=prd-cauca
-          fi
-          if [[ "$CURRENT_BRANCH" == "refs/heads/master" && "$RED" == "boyaca" ]]; then
-            CURRENT_BRANCH_PR=prd-boyaca
-          fi
-
-          echo -e "\n🛠 Generando .env.local para invictus"
-          echo "Branch: $CURRENT_BRANCH_PR"
-
-          printenv | grep '^INVICTUS_' | sed 's/^INVICTUS_//' > $(System.DefaultWorkingDirectory)/apps/invictus/.env.$CURRENT_BRANCH_PR
-          cp -R apps/invictus/.env.$CURRENT_BRANCH_PR $(System.DefaultWorkingDirectory)/apps/invictus/.env
-          cp -R apps/invictus/.env.$CURRENT_BRANCH_PR $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.env
+          echo -e "\n🛠 Generando .env.local para invictus"          
+          printenv | grep '^INVICTUS_' | sed 's/^INVICTUS_//' > $(System.DefaultWorkingDirectory)/apps/invictus/.env
+          cp $(System.DefaultWorkingDirectory)/apps/invictus/.env $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.env
           cat $(System.DefaultWorkingDirectory)/apps/invictus/.env
 
           echo -e "\n🛠 Generando .env para $(msName)"

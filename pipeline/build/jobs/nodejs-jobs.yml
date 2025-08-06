@@ -65,20 +65,20 @@ jobs:
             REPO_PATH="npm/matrixtech-npm-repository"
             REPO_URL="https://$REPO_DOMAIN/$REPO_PATH"
 
-            echo -e "\n⚙️ Configurando npm..."
+            echo "Configurando npm..."
             npm config set "//$REPO_DOMAIN/$REPO_PATH/:_authToken" "$token"
             npm config set registry "$REPO_URL"
 
-            echo "⚙️ Verificando identidad de AWS..."
+            echo "Verificando identidad de AWS..."
             aws sts get-caller-identity
             
-            npmrc="$(file)/$(msName)/.npmrc"
-            echo "⚙️ Generando archivo .npmrc en: $npmrc/"
-            cat <<EOF > "$npmrc"
+            npmrcPath="$(file)/$(msName)/.npmrc"
+            echo "Generando archivo .npmrcPath en: $npmrcPath/"
+            cat <<EOF > "$npmrcPath"
             //$REPO_DOMAIN/$REPO_PATH/:_authToken=$token
             registry=$REPO_URL
             EOF
-            cat $npmrc
+            ls -la $npmrcPath
           displayName: "🔐 Setup CodeArtifact & npm config"
         env:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
