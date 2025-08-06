@@ -39,7 +39,7 @@ jobs:
         displayName: "📖 Read Microservice Versions"
 
       - task: NodeTool@0
-        displayName: "🔧 Use Nodejs $(versionSpecification)"
+        displayName: "🔧 Install Nodejs $(versionSpecification)"
         inputs:
           versionSource: "spec"
           versionSpec: "$(versionSpecification)"
