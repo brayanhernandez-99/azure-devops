@@ -1,0 +1,132 @@
+jobs:
+  - ${{ if not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')) }}:
+      - deployment: WaitForApproval
+        displayName: "Esperar aprobación"
+        pool:
+          name: Azure Pipelines
+          vmImage: "ubuntu-22.04"
+        ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
+          environment: "Build develop"
+        ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
+          environment: "Build staging"
+        ${{ if or(eq(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')) }}:
+          environment: "Build master ${{ parameters.red }}"
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - script: echo "Aprobación recibida. Iniciando despliegues..."
+
+  - job: "build_electron_windows"
+    ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/') }}:
+      displayName: "Build Electron Feature"
+    ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
+      displayName: "Build Electron Develop"
+    ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
+      displayName: "Build Electron Staging"
+    ${{ if or(eq(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')) }}:
+      displayName: "Build Electron Master ${{ parameters.red }}"
+    pool:
+      name: "Azure Pipelines"
+      vmImage: "windows-latest"
+    variables:
+      versionNode: $[coalesce(variables.versionNode, '18.x')]
+      versionPython: $[coalesce(variables.versionPython, '3.11')]
+
+    steps:
+      - task: DownloadBuildArtifacts@0
+        inputs:
+          artifactName: "versions"
+          downloadPath: "$(Pipeline.Workspace)/downloaded-versions"
+        displayName: "📥 Download Version Artifact"
+
+      - task: PowerShell@2
+        inputs:
+          targetType: 'inline'
+          script: |
+            $ErrorActionPreference = "Stop"
+            $versionFile = "$(Pipeline.Workspace)\downloaded-versions\versions\version-exe\version-exe.json"
+            if (Test-Path $versionFile) {
+              $json = Get-Content $versionFile | ConvertFrom-Json
+              $version = $json.version
+              $baseVersion = $version.Split('-')[0]
+              Write-Host "🚀 Versión detectada para .exe: $baseVersion"
+              Write-Host "##vso[task.setvariable variable=version]$baseVersion"
+            } else {
+              Write-Host "❌ No se encontró archivo de versión para .exe"
+              exit 1
+            }
+        displayName: "📚 Read exe versions"
+
+      - task: PowerShell@2
+        name: AuthCodeArtifact
+        inputs:
+          targetType: 'inline'
+          script: |
+            Write-Host "🔐 Obteniendo token de AWS CodeArtifact..."
+            $token = aws codeartifact get-authorization-token `
+              --domain matrixtech-npm-repository `
+              --domain-owner $env:ACCOUNT_ID_DEPLOY `
+              --region $env:AWS_DEFAULT_REGION `
+              --query authorizationToken `
+              --output text
+
+            $repoDomain = "matrixtech-npm-repository-$ACCOUNT_ID_DEPLOY.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com"
+            $repoPath = "npm/matrixtech-npm-repository"
+            $repoUrl = "https://$repoDomain/$repoPath"
+
+            Write-Host "Configurando npm..."
+            npm config set "//$repoDomain/$repoPath/:_authToken" $token
+            npm config set registry $repoUrl
+            
+            Write-Host "Verificando identidad de AWS..."
+            aws sts get-caller-identity
+            
+            $npmrcPath = "$(file)\$(msName)\.npmrc"
+            Write-Host "Generando archivo .npmrc en: $npmrcPath"
+            @"
+            //$repoDomain/$repoPath/:_authToken=$token
+            registry=$repoUrl
+            "@ | Set-Content -Encoding UTF8 -Path $npmrcPath
+            Get-ChildItem $npmrcPath | Format-List
+            Get-Content $npmrcPath
+          displayName: "🔐 Setup CodeArtifact & npm config"
+        env:
+          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
+          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+
+      - script: |
+          Write-Host "⚙️ Generando .env"
+          $currentBranch = "$(Build.SourceBranch)"
+          $red = "$red"
+
+
+
+          @"
+          DOMAIN_ADMIN=$BASE_URL_ELECTRON_ADMIN
+          DOMAIN_SELLER=$BASE_URL_ELECTRON_SELLERS
+          TARGET=windows
+          TARGET_ENVIRONMENT=dev
+          "@ | Set-Content -Encoding UTF8 .env
+
+          Write-Host "📁 Archivo .env"
+          Get-Content .env
+          Get-Item .env | Format-List
+        displayName: "⚙️ Generate .env"
+
+      - task: UsePythonVersion@0
+        inputs:
+          versionSpec: "$(versionPython)"
+          addToPath: true
+        displayName: '🔧 Install Python "$(versionPython)"'
+
+      - task: NodeTool@0
+        displayName: "🔧 Install Nodejs $(versionNode)"
+        inputs:
+          versionSource: "spec"
+          versionSpec: "$(versionNode)"
+
+      - script: |
+          npm install -g pnpm
+        displayName: "⚙️ Install pnpm"
