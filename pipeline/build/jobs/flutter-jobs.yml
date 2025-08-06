@@ -26,7 +26,6 @@ jobs:
       displayName: "Build Flutter Staging"
     ${{ if or(eq(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')) }}:
       displayName: "Build Flutter Master ${{ parameters.red }}"
-
     pool:
       name: "Azure Pipelines"
       vmImage: "macos-latest"
