@@ -55,7 +55,7 @@ jobs:
             echo "🚀 Versión detectada para $(msName): $VERSION"
             echo "##vso[task.setvariable variable=msVersion]$VERSION"
           else
-            echo "❌ No se encontró archivo de versión para $(msName)"
+            echo "❌ No se encontró archivo de versión para [$(msName)]"
             exit 1
           fi
         displayName: "📝 Read Microservice Versions"

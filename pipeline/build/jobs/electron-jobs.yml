@@ -31,7 +31,7 @@ jobs:
       vmImage: "windows-latest"
     variables:
       versionNode: $[coalesce(variables.versionNode, '18.x')]
-      versionPython: $[coalesce(variables.versionPython, '3.11')]
+      versionPython: $[coalesce(variables.versionPython, '3.11.4')]
 
     steps:
       - task: DownloadBuildArtifacts@0
@@ -42,7 +42,7 @@ jobs:
 
       - task: PowerShell@2
         inputs:
-          targetType: 'inline'
+          targetType: "inline"
           script: |
             $ErrorActionPreference = "Stop"
             $versionFile = "$(Pipeline.Workspace)\downloaded-versions\versions\version-exe\version-exe.json"
@@ -54,16 +54,18 @@ jobs:
               Write-Host "##vso[task.setvariable variable=version]$baseVersion"
             } else {
               Write-Host "❌ No se encontró archivo de versión para .exe"
-              exit 1
+              exit 99
             }
         displayName: "📚 Read exe versions"
 
       - task: PowerShell@2
         name: AuthCodeArtifact
         inputs:
-          targetType: 'inline'
+          targetType: "inline"
           script: |
+            $ErrorActionPreference = "Stop"
             Write-Host "🔐 Obteniendo token de AWS CodeArtifact..."
+
             $token = aws codeartifact get-authorization-token `
               --domain matrixtech-npm-repository `
               --domain-owner $env:ACCOUNT_ID_DEPLOY `
@@ -71,49 +73,95 @@ jobs:
               --query authorizationToken `
               --output text
 
-            $repoDomain = "matrixtech-npm-repository-$ACCOUNT_ID_DEPLOY.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com"
+            if (-not $token) {
+              Write-Error "❌ No se pudo obtener el token de AWS CodeArtifact"
+              exit 99
+            }
+
+            $repoDomain = "matrixtech-npm-repository-$($env:ACCOUNT_ID_DEPLOY).d.codeartifact.$($env:AWS_DEFAULT_REGION).amazonaws.com"
             $repoPath = "npm/matrixtech-npm-repository"
             $repoUrl = "https://$repoDomain/$repoPath"
 
             Write-Host "Configurando npm..."
             npm config set "//$repoDomain/$repoPath/:_authToken" $token
             npm config set registry $repoUrl
-            
+
             Write-Host "Verificando identidad de AWS..."
             aws sts get-caller-identity
-            
+
             $npmrcPath = "$(file)\$(msName)\.npmrc"
             Write-Host "Generando archivo .npmrc en: $npmrcPath"
             @"
             //$repoDomain/$repoPath/:_authToken=$token
             registry=$repoUrl
             "@ | Set-Content -Encoding UTF8 -Path $npmrcPath
+
+            Write-Host "📁 Contenido del archivo .npmrc:"
             Get-ChildItem $npmrcPath | Format-List
             Get-Content $npmrcPath
-          displayName: "🔐 Setup CodeArtifact & npm config"
+        displayName: "🔐 Setup CodeArtifact & npm config"
         env:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
 
-      - script: |
-          Write-Host "⚙️ Generando .env"
-          $currentBranch = "$(Build.SourceBranch)"
-          $red = "$red"
+      - task: PowerShell@2
+        inputs:
+          targetType: "inline"
+          script: |
+            $ErrorActionPreference = "Stop"
+            Write-Host "⚙️ Generando .env"
+            $currentBranch="$(Build.SourceBranch)"
 
+            $environment = "unknown"
+            switch -Wildcard ($currentBranch) {
+              "refs/heads/feature/*" { $environment = "dev"; break }
+              "refs/heads/hotfix/*"  { $environment = "dev"; break }
+              "refs/heads/develop"   { $environment = "dev"; break }
+              "refs/heads/staging"   { $environment = "qa"; break }
+              "refs/heads/master"    { $environment = "production"; break }
+              default                { $environment = "unknown" }
+            }
 
+            if ($environment -ne "unknown") {
+              @"
+              DOMAIN_ADMIN=$BASE_URL_ELECTRON_ADMIN
+              DOMAIN_SELLER=$BASE_URL_ELECTRON_SELLERS
+              TARGET=windows
+              TARGET_ENVIRONMENT=$environment
+              "@ | Set-Content -Encoding UTF8 .env
 
-          @"
-          DOMAIN_ADMIN=$BASE_URL_ELECTRON_ADMIN
-          DOMAIN_SELLER=$BASE_URL_ELECTRON_SELLERS
-          TARGET=windows
-          TARGET_ENVIRONMENT=dev
-          "@ | Set-Content -Encoding UTF8 .env
+              Write-Host "📁 Archivo .env"
+              Get-Content .env
+              Get-Item .env | Format-List
+            } else {
+              Write-Host "❌ No se encontró una rama valida, branch [$environment]."
+              exit 99
+            }
+          displayName: "⚙️ Generate .env"
 
-          Write-Host "📁 Archivo .env"
-          Get-Content .env
-          Get-Item .env | Format-List
-        displayName: "⚙️ Generate .env"
+      - task: PowerShell@2
+        inputs:
+          targetType: "inline"
+          script: |
+            $ErrorActionPreference = "Stop"
+            $packagePath = "$(Build.SourcesDirectory)\package.json"
+            $newVersion = "$(version)"
+
+            if (Test-Path $packagePath) {
+              Write-Host "📦 Modificando versión en package.json: $newVersion"
+
+              $packageJson = Get-Content $packagePath -Raw | ConvertFrom-Json
+              $packageJson.version = $newVersion
+              $packageJson | ConvertTo-Json -Depth 10 | Set-Content -Encoding UTF8 $packagePath
+
+              Write-Host "✅ Versión actualizada correctamente."
+              Get-Content $packagePath | ForEach-Object { Write-Host $_ }
+            } else {
+              Write-Host "❌ No se encontró el archivo package.json en la ruta [$packagePath]"
+              exit 99
+            }
+        displayName: "📝 Update package.json version"
 
       - task: UsePythonVersion@0
         inputs:
@@ -127,6 +175,9 @@ jobs:
           versionSource: "spec"
           versionSpec: "$(versionNode)"
 
-      - script: |
-          npm install -g pnpm
+      - task: PowerShell@2
+        inputs:
+          targetType: "inline"
+          script: |
+            npm install -g pnpm
         displayName: "⚙️ Install pnpm"

@@ -133,7 +133,6 @@ jobs:
           CURRENT_BRANCH=$(echo $(Build.SourceBranch))
           echo $CURRENT_BRANCH
 
-
           if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|master|staging|feature/.+|hotfix/.+)$ ]]; then
 
             if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
