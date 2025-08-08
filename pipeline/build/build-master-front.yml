@@ -18,12 +18,12 @@ stages:
           red: ${{ parameters.red }}
 
     jobs:
-      - ${{ if eq(parameters.language, 'nodejsBackend') }}:
+      - ${{ if eq(parameters.release, 'aws-ecs') }}:
           - template: jobs/job-backend.yml
             parameters:
               apps: ${{ parameters.apps }}
 
-      - ${{ if eq(parameters.language, 'nodejsFrontend') }}:
+      - ${{ if eq(parameters.release, 'aws-s3') }}:
           - template: jobs/job-frontend.yml
             parameters:
               apps: ${{ parameters.apps }}

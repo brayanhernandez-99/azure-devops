@@ -7,12 +7,12 @@ stages:
     ${{ if or(eq(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')) }}:
       displayName: "Deploy Integration Master ${{ parameters.red }}"
 
-    ${{ if eq(parameters.language, 'nodejsBackend') }}:
+    ${{ if eq(parameters.release, 'aws-ecs') }}:
       dependsOn:
         - "artifacts_managment"
       condition: in(dependencies.artifacts_managment.result, 'Succeeded', 'SucceededWithIssues')
 
-    ${{ if eq(parameters.language, 'nodejsFrontend') }}:
+    ${{ if eq(parameters.release, 'aws-s3') }}:
       dependsOn:
         - "build_developmet_${{ parameters.red }}"
       condition: in(dependencies.build_developmet_${{ parameters.red }}.result, 'Succeeded', 'SucceededWithIssues')
@@ -31,7 +31,6 @@ stages:
           - ${{ if in(parameters.release, 'aws-ecs') }}:
               - template: jobs/aws-ecs-jobs.yml
                 parameters:
-                  language: ${{ parameters.language }}
                   release: ${{ parameters.release }}
                   apps: ${{ parameters.apps }}
                   red: ${{ parameters.red }}
@@ -40,7 +39,6 @@ stages:
           - ${{ if in(parameters.release, 'aws-s3') }}:
               - template: jobs/aws-s3-jobs.yml
                 parameters:
-                  language: ${{ parameters.language }}
                   release: ${{ parameters.release }}
                   apps: ${{ parameters.apps }}
                   red: ${{ parameters.red }}

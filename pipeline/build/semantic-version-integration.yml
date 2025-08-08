@@ -7,15 +7,15 @@ stages:
       - template: ../variables/groups-transversal-variables.yml
 
     jobs:
-      - ${{ if eq(parameters.language, 'nodejsBackend') }}:
+      - ${{ if eq(parameters.release, 'aws-ecs') }}:
           - template: ../general/semantic-version-backend.yml
             parameters:
               apps: ${{ parameters.apps }}
 
-      - ${{ if eq(parameters.language, 'nodejsFrontend') }}:
+      - ${{ if eq(parameters.release, 'aws-s3') }}:
           - template: ../general/semantic-version-frontend.yml
             parameters:
               apps: ${{ parameters.apps }}
 
-      - ${{ if eq(parameters.language, 'flutter') }}:
+      - ${{ if eq(parameters.release, 'apk') }}:
           - template: ../general/semantic-version-flutter.yml

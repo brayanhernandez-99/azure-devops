@@ -52,8 +52,7 @@ pipelines-templates/
 
 ## Parámetros principales
 
-- `language`: Define el lenguaje/plataforma (`nodejsBackend`, `nodejsFrontend`, `flutter`).
-- `release`: Tipo de release (`aws-s3`, `aws-ecs`, `apk`).
+- `release`: Tipo de release (`aws-s3`, `aws-ecs`, `apk`, `exe`).
 - `red`: Lista de regiones para despliegue (por defecto: antioquia, cap, tolima, huila, cauca, boyaca).
 - `apps`: Objeto para definir aplicaciones específicas.
 

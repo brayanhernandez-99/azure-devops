@@ -64,13 +64,12 @@ jobs:
               pipeline_output=$(az pipelines run \
                 --name "$(Build.Repository.Name)" \
                 --branch "$CURRENT_BRANCH" \
-                --parameters language="$language" release="$release" apps="$apps_json" \
+                --parameters release="$release" apps="$apps_json" \
                 --output json)
               echo $pipeline_output
 
               run_id=$(echo "$pipeline_output" | jq -r '.id')              
               echo " - Url: https://dev.azure.com/ux-technology/Invictus/_build/results?buildId=$run_id"
-              echo " - Language: $language"
               echo " - Release: $release"
             else
               echo "❌ No se ejecuta cuando source branch es stagign o develop solo con hotfix o features"
@@ -96,13 +95,12 @@ jobs:
               pipeline_output=$(az pipelines run \
                 --name "$(Build.Repository.Name)" \
                 --branch "$CURRENT_BRANCH" \
-                --parameters language="$language" release="$release" apps="$apps_json" \
+                --parameters release="$release" apps="$apps_json" \
                 --output json)
               echo $pipeline_output
 
               run_id=$(echo "$pipeline_output" | jq -r '.id')              
               echo " - Url: https://dev.azure.com/ux-technology/Invictus/_build/results?buildId=$run_id"
-              echo " - Language: $language"
               echo " - Release: $release"
             else
               echo "❌ No se ejecuta este pipeline manual para las ramas feature y Hotfix"
@@ -112,5 +110,4 @@ jobs:
         displayName: "🔍 Detect Changed MS"
         env:
           AZURE_DEVOPS_EXT_PAT: $(PAT-AZ)
-          language: ${{ parameters.language }}
           release: ${{ parameters.release }}
