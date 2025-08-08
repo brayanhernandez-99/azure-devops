@@ -67,8 +67,10 @@ jobs:
               echo "${apps[@]}"
               apps_json=$(printf '%s\n' "${apps[@]}" | jq -R . | jq -s .)
 
-              echo -e "\n🔗 Creando ejecucion pipeline"
+              ##$(Build.Repository.Name)
               pipelineToRun="pipeline-apps-micro-frontend-invictus"
+              
+              echo -e "\n🔗 Creando ejecucion pipeline"
               pipeline_output=$(az pipelines run \
                 --name "$pipelineToRun" \
                 --branch "$CURRENT_BRANCH" \
@@ -104,8 +106,10 @@ jobs:
               echo "${apps[@]}"
               apps_json=$(printf '%s\n' "${apps[@]}" | jq -R . | jq -s .)
 
-              echo -e "\n🔗 Creando ejecucion pipeline"
+              ##$(Build.Repository.Name)
               pipelineToRun="pipeline-apps-micro-frontend-invictus"
+              
+              echo -e "\n🔗 Creando ejecucion pipeline"
               pipeline_output=$(az pipelines run \
                 --name "$pipelineToRun" \
                 --branch "$CURRENT_BRANCH" \
