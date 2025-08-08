@@ -1,6 +1,6 @@
 stages:
   - stage: "change_file_detected"
-    displayName: "Change File Detected"
+    displayName: "Detect Changed Files"
     dependsOn: []
 
     variables:

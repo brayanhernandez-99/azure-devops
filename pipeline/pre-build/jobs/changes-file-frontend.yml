@@ -1,6 +1,6 @@
 jobs:
   - job: "change_file"
-    displayName: "Change File"
+    displayName: "🔍 Detect Changed Files MS"
     pool:
       name: "Azure Pipelines"
       VmImage: ubuntu-22.04
@@ -68,8 +68,9 @@ jobs:
               apps_json=$(printf '%s\n' "${apps[@]}" | jq -R . | jq -s .)
 
               echo -e "\n🔗 Creando ejecucion pipeline"
+              pipelineToRun="pipeline-apps-micro-frontend-invictus"
               pipeline_output=$(az pipelines run \
-                --name "$(Build.Repository.Name)" \
+                --name "$pipelineToRun" \
                 --branch "$CURRENT_BRANCH" \
                 --parameters release="$release" apps="$apps_json" \
                 --output json)
@@ -104,8 +105,9 @@ jobs:
               apps_json=$(printf '%s\n' "${apps[@]}" | jq -R . | jq -s .)
 
               echo -e "\n🔗 Creando ejecucion pipeline"
+              pipelineToRun="pipeline-apps-micro-frontend-invictus"
               pipeline_output=$(az pipelines run \
-                --name "$(Build.Repository.Name)" \
+                --name "$pipelineToRun" \
                 --branch "$CURRENT_BRANCH" \
                 --parameters release="$release" apps="$apps_json" \
                 --output json)
@@ -118,8 +120,7 @@ jobs:
               echo "❌ No se ejecuta este pipeline manual para las ramas feature y Hotfix"
             fi
           fi
-
-        displayName: "🔍 Detect Changed MS"
+        displayName: "🔍 Detect Changed Files MS"
         env:
           AZURE_DEVOPS_EXT_PAT: $(PAT-AZ)
           release: ${{ parameters.release }}
