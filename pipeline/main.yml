@@ -2,8 +2,8 @@ parameters:
   - name: language
     type: string
     values:
-      - nodejs
-      - nodejsFront
+      - nodejsBackend
+      - nodejsFrontend
       - flutter
       - electron
 

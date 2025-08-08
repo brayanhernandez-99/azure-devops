@@ -7,12 +7,12 @@ stages:
     ${{ if or(eq(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')) }}:
       displayName: "Deploy Integration Master ${{ parameters.red }}"
 
-    ${{ if eq(parameters.language, 'nodejs') }}:
+    ${{ if eq(parameters.language, 'nodejsBackend') }}:
       dependsOn:
         - "artifacts_managment"
       condition: in(dependencies.artifacts_managment.result, 'Succeeded', 'SucceededWithIssues')
 
-    ${{ if eq(parameters.language, 'nodejsFront') }}:
+    ${{ if eq(parameters.language, 'nodejsFrontend') }}:
       dependsOn:
         - "build_developmet_${{ parameters.red }}"
       condition: in(dependencies.build_developmet_${{ parameters.red }}.result, 'Succeeded', 'SucceededWithIssues')
