@@ -19,8 +19,8 @@ pipelines-templates/
     │   └── jobs/
     │       ├── electron-jobs.yml
     │       ├── flutter-jobs.yml
-    │       ├── nodejs-jobs-front.yml
-    │       └── nodejs-jobs.yml
+    │       ├── nodejs-jobs-frontend.yml
+    │       └── nodejs-jobs-backend.yml
     ├── docker/
     │   └── Dockerfile
     ├── general/
