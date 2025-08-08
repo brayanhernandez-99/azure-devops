@@ -17,10 +17,10 @@ pipelines-templates/
     │   ├── build-united.yml
     │   ├── semantic-version-integration.yml
     │   └── jobs/
-    │       ├── electron-jobs.yml
-    │       ├── flutter-jobs.yml
-    │       ├── nodejs-jobs-frontend.yml
-    │       └── nodejs-jobs-backend.yml
+    │       ├── job-electron.yml
+    │       ├── job-flutter.yml
+    │       ├── job-frontend.yml
+    │       └── job-backend.yml
     ├── docker/
     │   └── Dockerfile
     ├── general/

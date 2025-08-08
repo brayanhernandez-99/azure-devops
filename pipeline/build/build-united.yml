@@ -20,7 +20,7 @@ stages:
 
     jobs:
       - ${{ if eq(parameters.language, 'flutter') }}:
-          - template: jobs/flutter-jobs.yml
+          - template: jobs/job-flutter.yml
             parameters:
               red: ${{ parameters.red }}
 

@@ -42,12 +42,12 @@ stages:
 
     jobs:
       - ${{ if eq(parameters.language, 'nodejs') }}:
-          - template: jobs/nodejs-jobs-backend.yml
+          - template: jobs/job-backend.yml
             parameters:
               apps: ${{ parameters.apps }}
 
       - ${{ if eq(parameters.language, 'nodejsFront') }}:
-          - template: jobs/nodejs-jobs-frontend.yml
+          - template: jobs/job-frontend.yml
             parameters:
               apps: ${{ parameters.apps }}
               red: ${{ parameters.red }}
