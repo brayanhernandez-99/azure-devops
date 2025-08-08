@@ -10,11 +10,9 @@ stages:
       - ${{ if eq(parameters.type, 'backend') }}:
           - template: jobs/changes-file-backend.yml
             parameters:
-              language: nodejsBackend
               release: aws-ecs
 
       - ${{ if eq(parameters.type, 'frontend') }}:
           - template: jobs/changes-file-frontend.yml
             parameters:
-              language: nodejsFrontend
               release: aws-s3

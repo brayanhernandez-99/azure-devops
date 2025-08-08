@@ -1,12 +1,4 @@
 parameters:
-  - name: language
-    type: string
-    values:
-      - nodejsBackend
-      - nodejsFrontend
-      - flutter
-      - electron
-
   - name: release
     type: string
     values:
