@@ -7,12 +7,12 @@ stages:
       - template: ../variables/groups-transversal-variables.yml
 
     jobs:
-      - ${{ if eq(parameters.release, 'backend') }}:
+      - ${{ if eq(parameters.release, 'aws-ecs') }}:
           - template: jobs/changes-file-backend.yml
             parameters:
               release: aws-ecs
 
-      - ${{ if eq(parameters.release, 'frontend') }}:
+      - ${{ if eq(parameters.release, 'aws-s3') }}:
           - template: jobs/changes-file-frontend.yml
             parameters:
               release: aws-s3
