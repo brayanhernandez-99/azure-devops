@@ -73,7 +73,7 @@ jobs:
             aws sts get-caller-identity
             
             npmrcPath="$(file)/$(msName)/.npmrc"
-            echo "Generando archivo .npmrcPath en: $npmrcPath/"
+            echo "Generando archivo .npmrcPath en: $npmrcPath"
             cat <<EOF > "$npmrcPath"
             //$REPO_DOMAIN/$REPO_PATH/:_authToken=$token
             registry=$REPO_URL
