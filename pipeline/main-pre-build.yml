@@ -1,6 +1,11 @@
 parameters:
-  - name: type
+  - name: release
     type: string
+    values:
+      - aws-s3
+      - aws-ecs
+      - apk
+      - exe
 
 resources:
   repositories:
