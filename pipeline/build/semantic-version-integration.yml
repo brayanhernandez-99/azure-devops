@@ -8,14 +8,14 @@ stages:
 
     jobs:
       - ${{ if eq(parameters.language, 'nodejs') }}:
-          - template: ../general/semantic-version-job-monorepo.yml
+          - template: ../general/semantic-version-backend.yml
             parameters:
               apps: ${{ parameters.apps }}
 
       - ${{ if eq(parameters.language, 'nodejsFront') }}:
-          - template: ../general/semantic-version-job-monorepo-front.yml
+          - template: ../general/semantic-version-frontend.yml
             parameters:
               apps: ${{ parameters.apps }}
 
       - ${{ if eq(parameters.language, 'flutter') }}:
-          - template: ../general/semantic-version-job.yml
+          - template: ../general/semantic-version-flutter.yml

@@ -1,11 +1,4 @@
 stages:
-  # - stage: 'microservices_developmet'
-  #   displayName: 'microservices Developmet'
-  #   dependsOn: []
-
-  #   jobs:
-  #   - template: ../general/semantic-version-job.yml
-
   - stage: "build_unit${{ parameters.red }}"
     ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/') }}:
       displayName: "Build Flutter Feature"

@@ -26,9 +26,9 @@ pipelines-templates/
     ├── general/
     │   ├── commit-tag-changeload-flutter.yml
     │   ├── commit-tag-changeload.yml
-    │   ├── semantic-version-job-monorepo-front.yml
-    │   ├── semantic-version-job-monorepo.yml
-    │   └── semantic-version-job.yml
+    │   ├── semantic-version-frontend.yml
+    │   ├── semantic-version-backend.yml
+    │   └── semantic-version-flutter.yml
     ├── pre-build/
     │   ├── pre-build-developmet.yml
     │   └── jobs/
