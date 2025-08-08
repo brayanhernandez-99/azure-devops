@@ -17,4 +17,4 @@ resources:
 stages:
   - template: pre-build/pre-build-developmet.yml
     parameters:
-      type: ${{ parameters.type }}
+      release: ${{ parameters.release }}
