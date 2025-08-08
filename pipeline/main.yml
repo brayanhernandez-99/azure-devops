@@ -55,8 +55,6 @@ stages:
         parameters:
           release: ${{ parameters.release }}
 
-
-
   # Build para feature, hotfix, develop si NO es Flutter y NO es electron
   - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), eq(variables['Build.SourceBranch'], 'refs/heads/develop')), ne(parameters.release, 'apk')), ne(parameters.release, 'exe') }}:
       - template: build/build-developmet.yml
@@ -111,9 +109,6 @@ stages:
             parameters:
               release: ${{ parameters.release }}
               red: ${{ region }}
-
-
-
 
   # Release artifact si NO es Flutter ni aws-s3, y es tag, develop, staging, master
   - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), eq(variables['Build.SourceBranch'], 'refs/heads/develop'), eq(variables['Build.SourceBranch'], 'refs/heads/staging'), eq(variables['Build.SourceBranch'], 'refs/heads/master')), and(ne(parameters.release, 'aws-s3'), ne(parameters.release, 'apk'))) }}:
