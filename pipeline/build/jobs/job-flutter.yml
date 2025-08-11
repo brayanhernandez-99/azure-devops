@@ -4,12 +4,14 @@ jobs:
         displayName: "Esperar aprobación"
         pool:
           vmImage: "ubuntu-22.04"
-        ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
-          environment: "Build develop"
-        ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
-          environment: "Build staging"
-        ${{ if or(eq(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')) }}:
-          environment: "Build master ${{ parameters.red }}"
+          environment: ${{ variables.environmentName }}
+        variables:
+          ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
+            environmentName: "Build develop"
+          ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
+            environmentName: "Build staging"
+          ${{ if or(eq(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')) }}:
+            environmentName: "Build master ${{ parameters.red }}"
         strategy:
           runOnce:
             deploy:
@@ -17,34 +19,36 @@ jobs:
                 - script: echo "Aprobación recibida. Iniciando despliegues..."
 
   - job: "build_flutter"
-    ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/') }}:
-      displayName: "Build Flutter Feature"
-    ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
-      displayName: "Build Flutter Develop"
-    ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
-      displayName: "Build Flutter Staging"
-    ${{ if or(eq(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')) }}:
-      displayName: "Build Flutter Master ${{ parameters.red }}"
+    displayName: ${{ variables.jobDisplayName }}
     pool:
       vmImage: "macos-latest"
     variables:
       ANDROID_HOME: /Users/runner/Library/Android/sdk
       flutterCacheKey: $(Build.SourceVersion)
-      versionSpecification: $[coalesce(variables.flutterVersion, '3.x.x')]
+      versionFlutter: $[coalesce(variables.flutterVersion, '3.x.x')]
+      ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/') }}:
+        jobDisplayName: "Build Flutter Feature"
+      ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
+        jobDisplayName: "Build Flutter Develop"
+      ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
+        jobDisplayName: "Build Flutter Staging"
+      ${{ if or(eq(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')) }}:
+        jobDisplayName: "Build Flutter Master ${{ parameters.red }}"
 
     steps:
       - task: FlutterInstall@0
+        displayName: "🔧 Install Flutter $(versionFlutter)"
         inputs:
           mode: "auto"
           channel: "stable"
           version: "custom"
-          customVersion: $(versionSpecification)
+          customVersion: $(versionFlutter)
 
       - task: DownloadBuildArtifacts@0
+        displayName: "📥 Download Version Artifact"
         inputs:
           artifactName: "versions"
           downloadPath: "$(Pipeline.Workspace)/downloaded-versions"
-        displayName: "📥 Download Version Artifact"
 
       - script: |
           ls -R $(Pipeline.Workspace)/downloaded-versions/versions/version-apk

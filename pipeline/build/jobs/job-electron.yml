@@ -4,14 +4,14 @@ jobs:
         displayName: "Esperar aprobación"
         pool:
           vmImage: "ubuntu-22.04"
-          environment : ${{ variables.environmentName }}
+          environment: ${{ variables.environmentName }}
         variables:
           ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
-            environmentName: 'Build develop'
+            environmentName: "Build develop"
           ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
-            environmentName: 'Build staging'
+            environmentName: "Build staging"
           ${{ if or(eq(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')) }}:
-            environmentName: 'Build master ${{ parameters.red }}'
+            environmentName: "Build master ${{ parameters.red }}"
         strategy:
           runOnce:
             deploy:
@@ -26,13 +26,13 @@ jobs:
       versionNode: $[coalesce(variables.versionNode, '18.x')]
       versionPython: $[coalesce(variables.versionPython, '3.x.x')]
       ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/') }}:
-        jobDisplayName: 'Build Electron Feature'
+        jobDisplayName: "Build Electron Feature"
       ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
-        jobDisplayName: 'Build Electron Develop'
+        jobDisplayName: "Build Electron Develop"
       ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
-        jobDisplayName: 'Build Electron Staging'
+        jobDisplayName: "Build Electron Staging"
       ${{ if or(eq(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')) }}:
-        jobDisplayName: 'Build Electron Master ${{ parameters.red }}'
+        jobDisplayName: "Build Electron Master ${{ parameters.red }}"
 
     steps:
       - task: DownloadBuildArtifacts@0
@@ -126,8 +126,8 @@ jobs:
 
             if ($environment -ne "unknown") {
             @"
-            DOMAIN_ADMIN=$(BASE_URL_ELECTRON_ADMIN)
-            DOMAIN_SELLER=$(BASE_URL_ELECTRON_SELLERS)
+            DOMAIN_ADMIN="$(BASE_URL_ELECTRON_ADMIN)"
+            DOMAIN_SELLER="$(BASE_URL_ELECTRON_SELLERS)"
             TARGET=windows
             TARGET_ENVIRONMENT=$environment
             "@ | Set-Content -Encoding UTF8 .env
