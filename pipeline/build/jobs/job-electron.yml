@@ -23,8 +23,8 @@ jobs:
     pool:
       vmImage: "windows-latest"
     variables:
-      versionNode: $[coalesce(variables.versionNode, '18.x')]
-      versionPython: $[coalesce(variables.versionPython, '3.x.x')]
+      versionNode: $[coalesce(variables.nodeVersion, '18.x')]
+      versionPython: $[coalesce(variables.pythonVersion, '3.x')]
       ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/') }}:
         jobDisplayName: "Build Electron Feature"
       ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:

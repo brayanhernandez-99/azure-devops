@@ -18,7 +18,7 @@ jobs:
     pool:
       vmImage: "ubuntu-22.04"
     variables:
-      versionSpecification: $[coalesce(variables.nodejsVersion, '18.x')]
+      versionNode: $[coalesce(variables.nodeVersion, '18.x')]
 
     strategy:
       matrix:
@@ -59,10 +59,10 @@ jobs:
         displayName: "📝 Read Microservice Versions"
 
       - task: NodeTool@0
-        displayName: "🔧 Install Nodejs $(versionSpecification)"
+        displayName: "🔧 Install Nodejs $(versionNode)"
         inputs:
           versionSource: "spec"
-          versionSpec: "$(versionSpecification)"
+          versionSpec: "$(versionNode)"
 
       - script: |
           npm install -g pnpm

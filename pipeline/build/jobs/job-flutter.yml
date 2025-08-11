@@ -25,7 +25,7 @@ jobs:
     variables:
       ANDROID_HOME: /Users/runner/Library/Android/sdk
       flutterCacheKey: $(Build.SourceVersion)
-      versionFlutter: $[coalesce(variables.flutterVersion, '3.x.x')]
+      versionFlutter: $[coalesce(variables.flutterVersion, '3.x')]
       ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/') }}:
         jobDisplayName: "Build Flutter Feature"
       ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
