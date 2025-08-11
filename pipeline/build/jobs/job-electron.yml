@@ -80,13 +80,13 @@ jobs:
               exit 99
             }
 
-            $repoDomain = "matrixtech-npm-repository-$($env:ACCOUNT_ID_DEPLOY).d.codeartifact.$($env:AWS_DEFAULT_REGION).amazonaws.com"
-            $repoPath = "npm/matrixtech-npm-repository"
-            $repoUrl = "https://$repoDomain/$repoPath"
+            # $repoDomain = "matrixtech-npm-repository-$($env:ACCOUNT_ID_DEPLOY).d.codeartifact.$($env:AWS_DEFAULT_REGION).amazonaws.com"
+            # $repoPath = "npm/matrixtech-npm-repository"
+            # $repoUrl = "https://$repoDomain/$repoPath"
 
-            Write-Host "Configurando npm..."
-            npm config set "//$repoDomain/$repoPath/:_authToken" $token
-            npm config set registry $repoUrl
+            # Write-Host "Configurando npm..."
+            # npm config set "//$repoDomain/$repoPath/:_authToken" $token
+            # npm config set registry $repoUrl
 
             Write-Host "Verificando identidad de AWS..."
             aws sts get-caller-identity
@@ -97,7 +97,7 @@ jobs:
             registry=$repoUrl
             "@ | Set-Content -Encoding UTF8 -Path $npmrcPath
 
-            Write-Host "📁 Contenido del archivo .npmrc:"
+            Write-Host "`n📁 Contenido del archivo .npmrc:"
             Get-Item $npmrcPath | Select-Object Name, FullName, Length, LastWriteTime, Mode
         env:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
