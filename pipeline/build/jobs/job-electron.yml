@@ -23,12 +23,15 @@ jobs:
     variables:
       versionNode: $[coalesce(variables.versionNode, '18.x')]
       versionPython: $[coalesce(variables.versionPython, '3.x.x')]
-      jobDisplayName: ${{ 
-      if startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/') }}: 'Build Electron Feature'
-      ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}: 'Build Electron Develop'
-      ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}: 'Build Electron Staging'
-      ${{ if or(eq(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')) }}: 'Build Electron Master ${{ parameters.red }}'
-      
+      ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/') }}:
+        jobDisplayName: 'Build Electron Feature'
+      ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
+        jobDisplayName: 'Build Electron Develop'
+      ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
+        jobDisplayName: 'Build Electron Staging'
+      ${{ if or(eq(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')) }}:
+        jobDisplayName: 'Build Electron Master ${{ parameters.red }}'
+
     steps:
       - task: DownloadBuildArtifacts@0
         displayName: "📥 Download Version Artifact"
