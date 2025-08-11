@@ -92,7 +92,6 @@ jobs:
             aws sts get-caller-identity
 
             $npmrcPath = Join-Path "$(System.DefaultWorkingDirectory)" ".npmrc"
-            Write-Host "Generando archivo .npmrc en: $npmrcPath"
             @"
             //$repoDomain/$repoPath/:_authToken=$token
             registry=$repoUrl
@@ -126,12 +125,12 @@ jobs:
             Write-Host "⚙️ Environment: $environment"
 
             if ($environment -ne "unknown") {
-              @"
-              DOMAIN_ADMIN=${{ variables.BASE_URL_ELECTRON_ADMIN }}
-              DOMAIN_SELLER=${{ variables.BASE_URL_ELECTRON_SELLERS }}
-              TARGET=windows
-              TARGET_ENVIRONMENT=$environment
-              "@ | Set-Content -Encoding UTF8 .env
+            @"
+            DOMAIN_ADMIN=$BASE_URL_ELECTRON_ADMIN
+            DOMAIN_SELLER=$BASE_URL_ELECTRON_SELLERS
+            TARGET=windows
+            TARGET_ENVIRONMENT=$environment
+            "@ | Set-Content -Encoding UTF8 .env
 
               Write-Host "📁 Archivo .env"
               Get-Item .env
