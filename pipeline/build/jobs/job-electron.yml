@@ -123,18 +123,18 @@ jobs:
               "refs/heads/master"    { $environment = "production"; break }
               default                { $environment = "unknown" }
             }
+            Write-Host "⚙️ Environment: $environment"
 
             if ($environment -ne "unknown") {
-            @"
-            DOMAIN_ADMIN="$(BASE_URL_ELECTRON_ADMIN)"
-            DOMAIN_SELLER="$(BASE_URL_ELECTRON_SELLERS)"
-            TARGET=windows
-            TARGET_ENVIRONMENT=$environment
-            "@ | Set-Content -Encoding UTF8 .env
+              @"
+              DOMAIN_ADMIN=${{ variables.BASE_URL_ELECTRON_ADMIN }}
+              DOMAIN_SELLER=${{ variables.BASE_URL_ELECTRON_SELLERS }}
+              TARGET=windows
+              TARGET_ENVIRONMENT=$environment
+              "@ | Set-Content -Encoding UTF8 .env
 
               Write-Host "📁 Archivo .env"
-              Get-Content .env
-              Get-Item .env | Format-List
+              Get-Item .env
             } else {
               Write-Host "❌ No se encontró una rama valida, branch [$environment]."
               exit 99
