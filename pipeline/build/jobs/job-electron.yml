@@ -68,17 +68,21 @@ jobs:
             $ErrorActionPreference = "Stop"
             Write-Host "🔐 Obteniendo token de AWS CodeArtifact..."
 
-            $token = aws codeartifact get-authorization-token `
-              --domain matrixtech-npm-repository `
-              --domain-owner $env:ACCOUNT_ID_DEPLOY `
-              --region $env:AWS_DEFAULT_REGION `
-              --query authorizationToken `
-              --output text
 
-            if (-not $token) {
-              Write-Error "❌ No se pudo obtener el token de AWS CodeArtifact"
-              exit 99
-            }
+            aws codeartifact login --region us-east-1 --tool npm --repository matrixtech-npm-repository --domain matrixtech-npm-repository
+
+
+            # $token = aws codeartifact get-authorization-token `
+            #   --domain matrixtech-npm-repository `
+            #   --domain-owner $env:ACCOUNT_ID_DEPLOY `
+            #   --region $env:AWS_DEFAULT_REGION `
+            #   --query authorizationToken `
+            #   --output text
+
+            # if (-not $token) {
+            #   Write-Error "❌ No se pudo obtener el token de AWS CodeArtifact"
+            #   exit 99
+            # }
 
             # $repoDomain = "matrixtech-npm-repository-$($env:ACCOUNT_ID_DEPLOY).d.codeartifact.$($env:AWS_DEFAULT_REGION).amazonaws.com"
             # $repoPath = "npm/matrixtech-npm-repository"
@@ -88,8 +92,8 @@ jobs:
             # npm config set "//$repoDomain/$repoPath/:_authToken" $token
             # npm config set registry $repoUrl
 
-            # Write-Host "Verificando identidad de AWS..."
-            # aws sts get-caller-identity
+            Write-Host "Verificando identidad de AWS..."
+            aws sts get-caller-identity
 
             # $npmrcPath = Join-Path "$(System.DefaultWorkingDirectory)" ".npmrc"
             # @"
