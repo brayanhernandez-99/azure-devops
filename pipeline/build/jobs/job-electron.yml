@@ -89,7 +89,7 @@ jobs:
             Write-Host "Verificando identidad de AWS..."
             aws sts get-caller-identity
 
-            $npmrcPath = "$(file)\$(msName)\.npmrc"
+            $npmrcPath = Join-Path "$(System.DefaultWorkingDirectory)" ".npmrc"
             Write-Host "Generando archivo .npmrc en: $npmrcPath"
             @"
             //$repoDomain/$repoPath/:_authToken=$token
