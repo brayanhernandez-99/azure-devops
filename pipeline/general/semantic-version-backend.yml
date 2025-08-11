@@ -80,13 +80,10 @@ jobs:
             CURRENT_BRANCH_PR=$(echo $(Build.SourceBranch))
           fi
 
-          curl -s -u ":$AZURE_DEVOPS_CLI_PAT" \
-            "https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories/$(repoID)/pullrequests?searchCriteria.status=completed&searchCriteria.targetRefName=$CURRENT_BRANCH_PR&api-version=5.0" \
-            | jq '.value[0]'
-
-          PR_ID=$(curl -s -u ":$AZURE_DEVOPS_CLI_PAT" \
-            "https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories/$(repoID)/pullrequests?searchCriteria.status=completed&searchCriteria.targetRefName=$CURRENT_BRANCH_PR&api-version=5.0" \
-            | jq '.value[0].pullRequestId')
+          URL="https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories/$(repoID)/pullrequests?searchCriteria.status=completed&searchCriteria.targetRefName=$CURRENT_BRANCH_PR&api-version=5.0"
+          response=$(curl -s -u ":$AZURE_DEVOPS_CLI_PAT" "$URL")
+          echo "$response" | jq '.value[0]'
+          PR_ID=$(echo "$response" | jq -r '.value[0].pullRequestId')
 
           echo "id del pr $PR_ID"
           echo "##vso[task.setvariable variable=ultimoPR]$PR_ID"

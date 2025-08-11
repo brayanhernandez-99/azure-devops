@@ -222,8 +222,8 @@ jobs:
             fi
 
             mkdir -p $(Build.ArtifactStagingDirectory)/version-electron
-            touch $(Build.ArtifactStagingDirectory)/version-electron/version-electron.json
-            echo "{ \"ms\": \"exe\", \"version\": \"$NEXT_VERSION\" }" > $(Build.ArtifactStagingDirectory)/version-electron/version-electron.json
+            touch $(Build.ArtifactStagingDirectory)/version-electron/version.json
+            echo "{ \"release\": \"exe\", \"version\": \"$NEXT_VERSION\" }" > $(Build.ArtifactStagingDirectory)/version-electron/version.json
 
             echo "##vso[task.setvariable variable=cleanNEXT_VERSION]$NEXT_VERSION"
           fi

@@ -45,7 +45,7 @@ jobs:
           targetType: "inline"
           script: |
             $ErrorActionPreference = "Stop"
-            $versionFile = "$(Pipeline.Workspace)\downloaded-versions\versions\version-exe\version-exe.json"
+            $versionFile = "$(Pipeline.Workspace)\downloaded-versions\versions\version-electron\version.json"
             if (Test-Path $versionFile) {
               $json = Get-Content $versionFile | ConvertFrom-Json
               $version = $json.version

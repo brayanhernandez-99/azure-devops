@@ -51,7 +51,7 @@ jobs:
 
       - script: |
           ls -R $(Pipeline.Workspace)/downloaded-versions/versions/version-apk
-          VERSION_FILE="$(Pipeline.Workspace)/downloaded-versions/versions/version-apk/version-apk.json"
+          VERSION_FILE="$(Pipeline.Workspace)/downloaded-versions/versions/version-apk/version.json"
           if [[ -f "$VERSION_FILE" ]]; then
             VERSION=$(jq -r '.version' $VERSION_FILE)
             BASE_VERSION=$(echo "$VERSION" | cut -d'-' -f1)
@@ -65,7 +65,7 @@ jobs:
 
       - script: |
           ls -R $(Pipeline.Workspace)/downloaded-versions/versions/version-pubspec-apk
-          VERSION_FILE="$(Pipeline.Workspace)/downloaded-versions/versions/version-pubspec-apk/version-pubspec-apk.json"
+          VERSION_FILE="$(Pipeline.Workspace)/downloaded-versions/versions/version-pubspec-apk/version.json"
           if [[ -f "$VERSION_FILE" ]]; then
             VERSION=$(jq -r '.version' $VERSION_FILE)
             echo "🚀 Versión detectada para apk pub: +$VERSION"
