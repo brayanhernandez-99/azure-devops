@@ -4,7 +4,6 @@ jobs:
         displayName: "Esperar aprobación"
         condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
         pool:
-          name: Azure Pipelines
           vmImage: "ubuntu-22.04"
         ${{ if or(eq(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')) }}:
           environment: "Build master ${{ parameters.red }}"
@@ -17,7 +16,6 @@ jobs:
   - job: "build_nodejs"
     displayName: "Build nodejs"
     pool:
-      name: "Azure Pipelines"
       vmImage: "ubuntu-22.04"
     variables:
       versionSpecification: $[coalesce(variables.nodejsVersion, '18.x')]

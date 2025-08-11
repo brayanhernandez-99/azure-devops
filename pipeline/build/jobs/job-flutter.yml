@@ -3,7 +3,6 @@ jobs:
       - deployment: WaitForApproval
         displayName: "Esperar aprobación"
         pool:
-          name: Azure Pipelines
           vmImage: "ubuntu-22.04"
         ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
           environment: "Build develop"
@@ -27,9 +26,7 @@ jobs:
     ${{ if or(eq(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')) }}:
       displayName: "Build Flutter Master ${{ parameters.red }}"
     pool:
-      name: "Azure Pipelines"
       vmImage: "macos-latest"
-
     variables:
       ANDROID_HOME: /Users/runner/Library/Android/sdk
       flutterCacheKey: $(Build.SourceVersion)
