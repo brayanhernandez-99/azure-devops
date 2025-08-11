@@ -124,10 +124,10 @@ jobs:
             }
             if ($environment -ne "unknown") {
             @"
-            DOMAIN_ADMIN=$(BASE_URL_ELECTRON_ADMIN)
-            DOMAIN_SELLER=$(BASE_URL_ELECTRON_SELLERS)
-            TARGET=windows
-            TARGET_ENVIRONMENT=$environment
+            DOMAIN_ADMIN="$(BASE_URL_ELECTRON_ADMIN)"
+            DOMAIN_SELLER="$(BASE_URL_ELECTRON_SELLERS)"
+            TARGET="windows"
+            TARGET_ENVIRONMENT="$environment"
             "@ | Set-Content -Encoding UTF8 .env
 
               Write-Host "📁 Archivo .env"
