@@ -88,17 +88,17 @@ jobs:
             # npm config set "//$repoDomain/$repoPath/:_authToken" $token
             # npm config set registry $repoUrl
 
-            Write-Host "Verificando identidad de AWS..."
-            aws sts get-caller-identity
+            # Write-Host "Verificando identidad de AWS..."
+            # aws sts get-caller-identity
 
-            $npmrcPath = Join-Path "$(System.DefaultWorkingDirectory)" ".npmrc"
-            @"
-            //$repoDomain/$repoPath/:_authToken=$token
-            registry=$repoUrl
-            "@ | Set-Content -Encoding UTF8 -Path $npmrcPath
+            # $npmrcPath = Join-Path "$(System.DefaultWorkingDirectory)" ".npmrc"
+            # @"
+            # //$repoDomain/$repoPath/:_authToken=$token
+            # registry=$repoUrl
+            # "@ | Set-Content -Encoding UTF8 -Path $npmrcPath
 
-            Write-Host "`n📁 Contenido del archivo .npmrc:"
-            Get-Item $npmrcPath | Select-Object Name, FullName, Length, LastWriteTime, Mode
+            # Write-Host "`n📁 Contenido del archivo .npmrc:"
+            # Get-Item $npmrcPath | Select-Object Name, FullName, Length, LastWriteTime, Mode
         env:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
