@@ -111,7 +111,7 @@ stages:
               red: ${{ region }}
 
   # Release artifact si NO es Flutter ni aws-s3, y es tag, develop, staging, master
-  - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), eq(variables['Build.SourceBranch'], 'refs/heads/develop'), eq(variables['Build.SourceBranch'], 'refs/heads/staging'), eq(variables['Build.SourceBranch'], 'refs/heads/master')), ne(parameters.release, 'aws-s3'), ne(parameters.release, 'apk')) }}:
+  - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), eq(variables['Build.SourceBranch'], 'refs/heads/develop'), eq(variables['Build.SourceBranch'], 'refs/heads/staging'), eq(variables['Build.SourceBranch'], 'refs/heads/master')), ne(parameters.release, 'aws-s3'), ne(parameters.release, 'apk'), ne(parameters.release, 'exe')) }}:
       - template: release/artifacts-managment.yml
         parameters:
           release: ${{ parameters.release }}
