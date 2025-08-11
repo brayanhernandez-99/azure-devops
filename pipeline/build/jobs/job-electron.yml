@@ -97,8 +97,7 @@ jobs:
             "@ | Set-Content -Encoding UTF8 -Path $npmrcPath
 
             Write-Host "📁 Contenido del archivo .npmrc:"
-            Get-ChildItem $npmrcPath | Format-List
-            Get-Content $npmrcPath
+            Get-Item $npmrcPath | Select-Object Name, FullName, Length, LastWriteTime, Mode
         displayName: "🔐 Setup CodeArtifact & npm config"
         env:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
@@ -125,8 +124,8 @@ jobs:
 
             if ($environment -ne "unknown") {
               @"
-              DOMAIN_ADMIN=$BASE_URL_ELECTRON_ADMIN
-              DOMAIN_SELLER=$BASE_URL_ELECTRON_SELLERS
+              DOMAIN_ADMIN=$(BASE_URL_ELECTRON_ADMIN)
+              DOMAIN_SELLER=$(BASE_URL_ELECTRON_SELLERS)
               TARGET=windows
               TARGET_ENVIRONMENT=$environment
               "@ | Set-Content -Encoding UTF8 .env
