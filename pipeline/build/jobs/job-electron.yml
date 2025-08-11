@@ -122,25 +122,23 @@ jobs:
               "refs/heads/master"    { $environment = "production"; break }
               default                { $environment = "unknown" }
             }
-            Write-Host "⚙️ Environment: $environment"
-
             if ($environment -ne "unknown") {
-            @"
-            DOMAIN_ADMIN=$BASE_URL_ELECTRON_ADMIN
-            DOMAIN_SELLER=$BASE_URL_ELECTRON_SELLERS
-            TARGET=windows
-            TARGET_ENVIRONMENT=$environment
-            "@ | Set-Content -Encoding UTF8 .env
+              @"
+              DOMAIN_ADMIN=$BASE_URL_ELECTRON_ADMIN
+              DOMAIN_SELLER=$BASE_URL_ELECTRON_SELLERS
+              TARGET=windows
+              TARGET_ENVIRONMENT=$environment
+              "@ | Set-Content -Encoding UTF8 .env
 
               Write-Host "📁 Archivo .env"
-              Get-Item .env
+              Get-Content .env
             } else {
               Write-Host "❌ No se encontró una rama valida, branch [$environment]."
               exit 99
             }
 
       - task: PowerShell@2
-        displayName: "📝 Update package.json version"
+        displayName: "📝 Update version in package.json"
         inputs:
           targetType: "inline"
           script: |
@@ -180,3 +178,14 @@ jobs:
           targetType: "inline"
           script: |
             npm install -g pnpm
+
+      - task: PowerShell@2
+        displayName: ⚙️ "Install dependencies"
+        inputs:
+          targetType: "inline"
+          script: |
+            Write-Host "📦 Instalando dependencias"
+            pnpm i
+            
+            Write-Host "`n📦 Dependencias instaladas:"
+            pnpm list --depth=0 || true
