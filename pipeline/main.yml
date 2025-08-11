@@ -57,7 +57,7 @@ stages:
 
   # Build para feature, hotfix, develop si NO es Flutter y NO es electron
   - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), eq(variables['Build.SourceBranch'], 'refs/heads/develop')), ne(parameters.release, 'apk'), ne(parameters.release, 'exe')) }}:
-      - template: build/build-developmet.yml
+      - template: build/build-development.yml
         parameters:
           release: ${{ parameters.release }}
           apps: ${{ parameters.apps }}
@@ -65,7 +65,7 @@ stages:
 
   # Build staging con release aws-s3
   - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/staging'), eq(parameters.release, 'aws-s3')) }}:
-      - template: build/build-developmet.yml
+      - template: build/build-development.yml
         parameters:
           release: ${{ parameters.release }}
           apps: ${{ parameters.apps }}

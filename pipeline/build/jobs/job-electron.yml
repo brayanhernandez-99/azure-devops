@@ -186,6 +186,7 @@ jobs:
           script: |
             Write-Host "📦 Instalando dependencias"
             pnpm i
-            
+  
             Write-Host "`n📦 Dependencias instaladas:"
-            pnpm list --depth=0 || true
+            pnpm list --depth=0
+
