@@ -98,7 +98,6 @@ jobs:
 
             Write-Host "📁 Contenido del archivo .npmrc:"
             Get-Item $npmrcPath | Select-Object Name, FullName, Length, LastWriteTime, Mode
-            Get-Item $npmrcPath | Select-Object Name, FullName, Length, LastWriteTime, Mode
         displayName: "🔐 Setup CodeArtifact & npm config"
         env:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
