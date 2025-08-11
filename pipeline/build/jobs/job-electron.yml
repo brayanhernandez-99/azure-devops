@@ -173,15 +173,22 @@ jobs:
           versionSpec: "$(versionNode)"
 
       - task: PowerShell@2
+        displayName: "⚙️ Install pnpm"
+        inputs:
+          targetType: "inline"
+          script: |
+            npm install -g pnpm
+
+      - task: PowerShell@2
         displayName: "⚙️ Install dependencies"
         inputs:
           targetType: "inline"
           script: |
             Write-Host "📦 Instalando dependencias"
-            npm i
+            pnpm i
   
             Write-Host "`n📦 Dependencias instaladas:"
-            npm list --depth=0
+            pnpm list --depth=0
 
       - task: PowerShell@2
         displayName: "Build electron"
