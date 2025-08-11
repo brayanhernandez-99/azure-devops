@@ -161,7 +161,7 @@ jobs:
             }
 
       - task: UsePythonVersion@0
-        displayName: '🔧 Install Python "$(versionPython)"'
+        displayName: "🔧 Install Python $(versionPython)"
         inputs:
           versionSpec: "$(versionPython)"
           addToPath: true
@@ -180,7 +180,7 @@ jobs:
             npm install -g pnpm
 
       - task: PowerShell@2
-        displayName: ⚙️ "Install dependencies"
+        displayName: "⚙️ Install dependencies"
         inputs:
           targetType: "inline"
           script: |
@@ -190,3 +190,10 @@ jobs:
             Write-Host "`n📦 Dependencias instaladas:"
             pnpm list --depth=0
 
+      - task: PowerShell@2
+        displayName: "Build electron"
+        inputs:
+          targetType: " inline"
+          script: |
+            Write-Host "📦 Compilando aplicacion electron en windows"
+            npm run build
