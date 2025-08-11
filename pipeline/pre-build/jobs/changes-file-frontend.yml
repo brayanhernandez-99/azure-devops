@@ -67,12 +67,9 @@ jobs:
               echo "${apps[@]}"
               apps_json=$(printf '%s\n' "${apps[@]}" | jq -R . | jq -s .)
 
-              ##$(Build.Repository.Name)
-              pipelineToRun="pipeline-apps-micro-frontend-invictus"
-              
               echo -e "\n🔗 Creando ejecucion pipeline"
               pipeline_output=$(az pipelines run \
-                --name "$pipelineToRun" \
+                --name "$(Build.Repository.Name)" \
                 --branch "$CURRENT_BRANCH" \
                 --parameters release="$release" apps="$apps_json" \
                 --output json)
@@ -105,13 +102,10 @@ jobs:
               echo "🔍 Apps modificadas detectadas:"
               echo "${apps[@]}"
               apps_json=$(printf '%s\n' "${apps[@]}" | jq -R . | jq -s .)
-
-              ##$(Build.Repository.Name)
-              pipelineToRun="pipeline-apps-micro-frontend-invictus"
               
               echo -e "\n🔗 Creando ejecucion pipeline"
               pipeline_output=$(az pipelines run \
-                --name "$pipelineToRun" \
+                --name "$(Build.Repository.Name)" \
                 --branch "$CURRENT_BRANCH" \
                 --parameters release="$release" apps="$apps_json" \
                 --output json)

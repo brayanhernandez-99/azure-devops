@@ -33,7 +33,7 @@ jobs:
     variables:
       ANDROID_HOME: /Users/runner/Library/Android/sdk
       flutterCacheKey: $(Build.SourceVersion)
-      versionSpecification: "3.24.0"
+      versionSpecification: $[coalesce(variables.flutterVersion, '3.x.x')]
 
     steps:
       - task: FlutterInstall@0
