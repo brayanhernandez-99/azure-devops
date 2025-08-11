@@ -14,7 +14,7 @@ pipelines-templates/
     ├── build/
     │   ├── build-developmet.yml
     │   ├── build-master-front.yml
-    │   ├── build-united.yml
+    │   ├── build-flutter.yml
     │   ├── semantic-version-integration.yml
     │   └── jobs/
     │       ├── job-electron.yml

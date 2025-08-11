@@ -1,13 +1,13 @@
 stages:
   - stage: "build_unit${{ parameters.red }}"
     ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/') }}:
-      displayName: "Build Flutter Feature"
+      displayName: "Build Electron Feature"
     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
-      displayName: "Build Flutter Develop"
+      displayName: "Build Electron Develop"
     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
-      displayName: "Build Flutter Staging"
+      displayName: "Build Electron Staging"
     ${{ if or(eq(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')) }}:
-      displayName: "Build Flutter Master ${{ parameters.red }}"
+      displayName: "Build Electron Master ${{ parameters.red }}"
 
     dependsOn:
       - "semantic_version_integration"
@@ -19,18 +19,13 @@ stages:
           red: ${{ parameters.red }}
 
     jobs:
-      - ${{ if eq(parameters.release, 'apk') }}:
-          - template: jobs/job-flutter.yml
-            parameters:
-              red: ${{ parameters.red }}
-
       - ${{ if eq(parameters.release, 'exe') }}:
           - template: jobs/job-electron.yml
             parameters:
               red: ${{ parameters.red }}
 
-      - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), in(variables['Build.SourceBranch'], 'refs/heads/develop', 'refs/heads/staging','refs/heads/master' )), eq(parameters.red, 'antioquia')) }}:
-          - template: ../general/commit-tag-changeload-flutter.yml
-            parameters:
-              red: ${{ parameters.red }}
-              release: ${{ parameters.release }}
+      # - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), in(variables['Build.SourceBranch'], 'refs/heads/develop', 'refs/heads/staging','refs/heads/master' )), eq(parameters.red, 'antioquia')) }}:
+      #     - template: ../general/commit-tag-changeload-flutter.yml
+      #       parameters:
+      #         red: ${{ parameters.red }}
+      #         release: ${{ parameters.release }}

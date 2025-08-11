@@ -82,14 +82,14 @@ stages:
 
   # Build Flutter para feature, hotfix, develop, staging
   - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), eq(variables['Build.SourceBranch'], 'refs/heads/develop'), eq(variables['Build.SourceBranch'], 'refs/heads/staging')), eq(parameters.release, 'apk')) }}:
-      - template: build/build-united.yml
+      - template: build/build-flutter.yml
         parameters:
           release: ${{ parameters.release }}
           red: antioquia
 
   # Build Electron para feature, hotfix, develop, staging
   - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), eq(variables['Build.SourceBranch'], 'refs/heads/develop'), eq(variables['Build.SourceBranch'], 'refs/heads/staging')), eq(parameters.release, 'exe')) }}:
-      - template: build/build-united.yml
+      - template: build/build-electron.yml
         parameters:
           release: ${{ parameters.release }}
           red: antioquia
@@ -97,7 +97,7 @@ stages:
   # Build Flutter en master (por región)
   - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(parameters.release, 'apk')) }}:
       - ${{ each region in parameters.red }}:
-          - template: build/build-united.yml
+          - template: build/build-flutter.yml
             parameters:
               release: ${{ parameters.release }}
               red: ${{ region }}
@@ -105,7 +105,7 @@ stages:
   # Build Electron en master (por región)
   - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(parameters.release, 'exe')) }}:
       - ${{ each region in parameters.red }}:
-          - template: build/build-united.yml
+          - template: build/build-electron.yml
             parameters:
               release: ${{ parameters.release }}
               red: ${{ region }}

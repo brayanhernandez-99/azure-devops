@@ -1,0 +1,31 @@
+stages:
+  - stage: "build_unit${{ parameters.red }}"
+    ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/') }}:
+      displayName: "Build Flutter Feature"
+    ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
+      displayName: "Build Flutter Develop"
+    ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
+      displayName: "Build Flutter Staging"
+    ${{ if or(eq(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')) }}:
+      displayName: "Build Flutter Master ${{ parameters.red }}"
+
+    dependsOn:
+      - "semantic_version_integration"
+    condition: in(dependencies.semantic_version_integration.result, 'Succeeded', 'SucceededWithIssues')
+
+    variables:
+      - template: ../variables/groups-transversal-variables.yml
+        parameters:
+          red: ${{ parameters.red }}
+
+    jobs:
+      - ${{ if eq(parameters.release, 'apk') }}:
+          - template: jobs/job-flutter.yml
+            parameters:
+              red: ${{ parameters.red }}
+
+      - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), in(variables['Build.SourceBranch'], 'refs/heads/develop', 'refs/heads/staging','refs/heads/master' )), eq(parameters.red, 'antioquia')) }}:
+          - template: ../general/commit-tag-changeload-flutter.yml
+            parameters:
+              red: ${{ parameters.red }}
+              release: ${{ parameters.release }}
