@@ -1,0 +1,43 @@
+jobs:
+  # - ${{ if not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')) }}:
+  #     - deployment: WaitForApproval
+  #       displayName: "Esperar aprobación"
+  #       pool:
+  #         vmImage: "ubuntu-22.04"
+  #         environment: ${{ variables.environmentName }}
+  #       variables:
+  #         ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
+  #           environmentName: "Build develop"
+  #         ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
+  #           environmentName: "Build staging"
+  #         ${{ if or(eq(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')) }}:
+  #           environmentName: "Build master ${{ parameters.red }}"
+  #       strategy:
+  #         runOnce:
+  #           deploy:
+  #             steps:
+  #               - script: echo "Aprobación recibida. Iniciando despliegues..."
+
+  - job: "build_iac"
+    displayName: "Build iac"
+    pool:
+      name: "Azure Pipelines"
+      vmImage: "ubuntu-22.04"
+  
+    variables:
+      versionTerraform: $[coalesce(variables.versionTerraform, '1.6.0')]
+
+    steps:
+
+      - task: TerraformInstaller@0
+        inputs:
+          terraformVersion: $(versionTerraform)
+
+      - script: |
+          sudo apt-get update -y
+          sudo apt-get install -y unzip
+          curl -LO https://github.com/gruntwork-io/terragrunt/releases/latest/download/terragrunt_linux_amd64
+          chmod +x terragrunt_linux_amd64
+          sudo mv terragrunt_linux_amd64 /usr/local/bin/terragrunt
+          terragrunt --version
+        displayName: "Instalar Terragrunt"

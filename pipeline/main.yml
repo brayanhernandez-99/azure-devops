@@ -6,6 +6,7 @@ parameters:
       - aws-ecs
       - apk
       - exe
+      - iac
 
   - name: red
     type: object
@@ -134,3 +135,9 @@ stages:
               release: ${{ parameters.release }}
               apps: ${{ parameters.apps }}
               red: ${{ region }}
+
+  # Build version para IAC en feature, hotfix, develop, staging, master
+  - ${{ if and(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), eq(parameters.release, 'iac')) }}:
+      - template: build/build-iac.yml
+        parameters:
+          release: ${{ parameters.release }}
