@@ -29,7 +29,7 @@ jobs:
 
     steps:
 
-      - task: TerraformInstaller@0
+      - task: TerraformInstaller@1
         inputs:
           terraformVersion: $(TerraformVersion)
 
