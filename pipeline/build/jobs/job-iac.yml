@@ -46,7 +46,7 @@ jobs:
           echo "Plan"
           terragrunt run-all plan --terragrunt-non-interactive
         displayName: "Plan"
-        workingDirectory: $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/boyaca/astro/aws-service-sqs
+        workingDirectory: $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/boyaca/astro/aws-service-s3
         env:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVIC)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVIC)
