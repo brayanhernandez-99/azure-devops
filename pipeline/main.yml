@@ -57,7 +57,7 @@ stages:
           release: ${{ parameters.release }}
 
   # Build para feature, hotfix, develop si NO es Flutter y NO es electron
-  - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), eq(variables['Build.SourceBranch'], 'refs/heads/develop')), ne(parameters.release, 'apk'), ne(parameters.release, 'exe')) }}:
+  - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), eq(variables['Build.SourceBranch'], 'refs/heads/develop')), ne(parameters.release, 'apk'), ne(parameters.release, 'exe'), ne(parameters.release, 'iac')) }}:
       - template: build/build-development.yml
         parameters:
           release: ${{ parameters.release }}
@@ -112,7 +112,7 @@ stages:
               red: ${{ region }}
 
   # Release artifact si NO es Flutter ni aws-s3, y es tag, develop, staging, master
-  - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), eq(variables['Build.SourceBranch'], 'refs/heads/develop'), eq(variables['Build.SourceBranch'], 'refs/heads/staging'), eq(variables['Build.SourceBranch'], 'refs/heads/master')), ne(parameters.release, 'aws-s3'), ne(parameters.release, 'apk'), ne(parameters.release, 'exe')) }}:
+  - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), eq(variables['Build.SourceBranch'], 'refs/heads/develop'), eq(variables['Build.SourceBranch'], 'refs/heads/staging'), eq(variables['Build.SourceBranch'], 'refs/heads/master')), ne(parameters.release, 'aws-s3'), ne(parameters.release, 'apk'), ne(parameters.release, 'exe'), ne(parameters.release, 'iac')) }}:
       - template: release/artifacts-managment.yml
         parameters:
           release: ${{ parameters.release }}
@@ -120,7 +120,7 @@ stages:
           red: antioquia
 
   # Deploy integración si NO es Flutter, No es Electron y es tag, develop, staging
-  - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), eq(variables['Build.SourceBranch'], 'refs/heads/develop'), eq(variables['Build.SourceBranch'], 'refs/heads/staging')), ne(parameters.release, 'apk'), ne(parameters.release, 'exe')) }}:
+  - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), eq(variables['Build.SourceBranch'], 'refs/heads/develop'), eq(variables['Build.SourceBranch'], 'refs/heads/staging')), ne(parameters.release, 'apk'), ne(parameters.release, 'exe'), ne(parameters.release, 'iac')) }}:
       - template: release/deploy-integration.yml
         parameters:
           release: ${{ parameters.release }}
@@ -128,7 +128,7 @@ stages:
           red: antioquia
 
   # Deploy integración master si NO es Flutter, No es Electron (por región)
-  - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/master'), ne(parameters.release, 'apk'), ne(parameters.release, 'exe')) }}:
+  - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/master'), ne(parameters.release, 'apk'), ne(parameters.release, 'exe'), ne(parameters.release, 'iac')) }}:
       - ${{ each region in parameters.red }}:
           - template: release/deploy-integration.yml
             parameters:
