@@ -23,7 +23,7 @@ jobs:
     pool:
       vmImage: "windows-latest"
     variables:
-      PWD: $(Build.SourcesDirectory)
+      #PWD: $(Build.SourcesDirectory)
       versionNode: $[coalesce(variables.nodeVersion, '18.x')]
       versionPython: $[coalesce(variables.pythonVersion, '3.x')]
       ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/') }}:
@@ -199,12 +199,21 @@ jobs:
           targetType: " inline"
           script: |
             Write-Host "📦 Ejecutando build..."
-            $vc = 'C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsall.bat'
-            if (-not (Test-Path $vc)) {
-              Write-Error "No se encontró vcvarsall: $vc"
-              exit 1
-            }
-            & cmd.exe /c "`"$vc`" x64 && npm run build"
+            pnpm run build"
+
+      # - task: PowerShell@2
+      #   displayName: "📦 Build electron"
+      #   continueOnError: true
+      #   inputs:
+      #     targetType: " inline"
+      #     script: |
+      #       Write-Host "📦 Ejecutando build..."
+      #       $vc = 'C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsall.bat'
+      #       if (-not (Test-Path $vc)) {
+      #         Write-Error "No se encontró vcvarsall: $vc"
+      #         exit 99
+      #       }
+      #       & cmd.exe /c "`"$vc`" x64 && pnpm run build"
 
       # - task: PowerShell@2
       #   displayName: "🔍 Validate Build"
