@@ -187,10 +187,10 @@ jobs:
           targetType: "inline"
           script: |
             Write-Host "📦 Instalando dependencias"
-            pnpm i
+            npm i
   
             Write-Host "`n📦 Dependencias instaladas:"
-            pnpm list --depth=0
+            npm list --depth=0
 
       - task: PowerShell@2
         displayName: "📦 Build electron"
@@ -199,7 +199,7 @@ jobs:
           targetType: " inline"
           script: |
             Write-Host "📦 Ejecutando build..."
-            pnpm run build
+            npm run build
 
       # - task: PowerShell@2
       #   displayName: "📦 Build electron"
