@@ -97,7 +97,7 @@ jobs:
             registry=$repoUrl
             "@ | Set-Content -Encoding UTF8 -Path $npmrcPath
 
-            Write-Host "`n📁 Contenido del archivo .npmrc:"
+            Write-Host "`n✅ Archivo .npmrc creado correctamente"
             Get-Item $npmrcPath | Select-Object Name, FullName, Length, LastWriteTime, Mode
         env:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
