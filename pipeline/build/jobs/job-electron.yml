@@ -199,7 +199,7 @@ jobs:
           targetType: " inline"
           script: |
             Write-Host "📦 Ejecutando build..."
-            pnpm run build"
+            pnpm run build
 
       # - task: PowerShell@2
       #   displayName: "📦 Build electron"
