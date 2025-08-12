@@ -1,5 +1,5 @@
 stages:
-  - stage: "build_unit${{ parameters.red }}"
+  - stage: "build_unit_${{ parameters.red }}"
     ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/') }}:
       displayName: "Build Flutter Feature"
     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:

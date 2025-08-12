@@ -23,6 +23,7 @@ jobs:
     pool:
       vmImage: "windows-latest"
     variables:
+      #PWD: $(Build.SourcesDirectory)
       versionNode: $[coalesce(variables.nodeVersion, '18.x')]
       versionPython: $[coalesce(variables.pythonVersion, '3.x')]
       ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/') }}:
@@ -92,13 +93,12 @@ jobs:
             aws sts get-caller-identity
 
             $npmrcPath = Join-Path "$(System.DefaultWorkingDirectory)" ".npmrc"
-            Write-Host "Generando archivo .npmrc en: $npmrcPath"
             @"
             //$repoDomain/$repoPath/:_authToken=$token
             registry=$repoUrl
             "@ | Set-Content -Encoding UTF8 -Path $npmrcPath
 
-            Write-Host "📁 Contenido del archivo .npmrc:"
+            Write-Host "`n✅ Archivo .npmrc creado correctamente"
             Get-Item $npmrcPath | Select-Object Name, FullName, Length, LastWriteTime, Mode
         env:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
@@ -111,7 +111,7 @@ jobs:
           targetType: "inline"
           script: |
             $ErrorActionPreference = "Stop"
-            Write-Host "⚙️ Generando .env"
+            Write-Host "📁 Generando .env"
             $currentBranch="$(Build.SourceBranch)"
 
             $environment = "unknown"
@@ -123,25 +123,24 @@ jobs:
               "refs/heads/master"    { $environment = "production"; break }
               default                { $environment = "unknown" }
             }
-            Write-Host "⚙️ Environment: $environment"
-
             if ($environment -ne "unknown") {
-              @"
-              DOMAIN_ADMIN=${{ variables.BASE_URL_ELECTRON_ADMIN }}
-              DOMAIN_SELLER=${{ variables.BASE_URL_ELECTRON_SELLERS }}
-              TARGET=windows
-              TARGET_ENVIRONMENT=$environment
-              "@ | Set-Content -Encoding UTF8 .env
+            @"
+            DOMAIN_ADMIN="$(BASE_URL_ELECTRON_ADMIN)"
+            DOMAIN_SELLER="$(BASE_URL_ELECTRON_SELLERS)"
+            TARGET="windows"
+            TARGET_ENVIRONMENT="$environment"
+            "@ | Set-Content -Encoding UTF8 .env
 
-              Write-Host "📁 Archivo .env"
-              Get-Item .env
+              Write-Host "##vso[task.setvariable variable=environment]$environment"
+              Write-Host "`n✅ Archivo .env creado correctamente"
+              Get-Content .env
             } else {
               Write-Host "❌ No se encontró una rama valida, branch [$environment]."
               exit 99
             }
 
       - task: PowerShell@2
-        displayName: "📝 Update package.json version"
+        displayName: "📝 Update version in package.json"
         inputs:
           targetType: "inline"
           script: |
@@ -156,7 +155,7 @@ jobs:
               $packageJson.version = $newVersion
               $packageJson | ConvertTo-Json -Depth 10 | Set-Content -Encoding UTF8 $packagePath
 
-              Write-Host "✅ Versión actualizada correctamente."
+              Write-Host "`n✅ Version en package.json actualizada correctamente."
               Get-Content $packagePath | ForEach-Object { Write-Host $_ }
             } else {
               Write-Host "❌ No se encontró el archivo package.json en la ruta [$packagePath]"
@@ -164,7 +163,7 @@ jobs:
             }
 
       - task: UsePythonVersion@0
-        displayName: '🔧 Install Python "$(versionPython)"'
+        displayName: "🔧 Use Python $(versionPython)"
         inputs:
           versionSpec: "$(versionPython)"
           addToPath: true
@@ -181,3 +180,70 @@ jobs:
           targetType: "inline"
           script: |
             npm install -g pnpm
+
+      - task: PowerShell@2
+        displayName: "⚙️ Install dependencies"
+        inputs:
+          targetType: "inline"
+          script: |
+            Write-Host "📦 Instalando dependencias"
+            npm i
+  
+            Write-Host "`n📦 Dependencias instaladas:"
+            npm list --depth=0
+
+      - task: PowerShell@2
+        displayName: "📦 Build electron"
+        continueOnError: true
+        inputs:
+          targetType: " inline"
+          script: |
+            Write-Host "📦 Ejecutando build..."
+            npm run build
+
+      # - task: PowerShell@2
+      #   displayName: "📦 Build electron"
+      #   continueOnError: true
+      #   inputs:
+      #     targetType: " inline"
+      #     script: |
+      #       Write-Host "📦 Ejecutando build..."
+      #       $vc = 'C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsall.bat'
+      #       if (-not (Test-Path $vc)) {
+      #         Write-Error "No se encontró vcvarsall: $vc"
+      #         exit 99
+      #       }
+      #       & cmd.exe /c "`"$vc`" x64 && pnpm run build"
+
+      # - task: PowerShell@2
+      #   displayName: "🔍 Validate Build"
+      #   continueOnError: true
+      #   inputs:
+      #     targetType: " inline"
+      #     script: |
+      #       $ErrorActionPreference = "Continue"
+      #       Write-Host "📝 Validando build electron..."
+      #       basePath = "$(Build.SourcesDirectory)\release\$(version)\$(environment)"
+      #       Write-Host "`n📂 Ruta de validación: $basePath"
+
+      #       $allFound = $true
+      #       $filesToCheck = @(
+      #         "InvictusUX Setup $(version).exe",
+      #         "InvictusUX Setup $(version).exe.blockmap",
+      #         "latest.yml"
+      #       )
+            
+      #       foreach ($file in $filesToCheck) {
+      #         $fullPath = Join-Path $basePath $file
+      #         if (Test-Path $fullPath) {
+      #           Write-Host "✅ Encontrado: $fullPath"
+      #         } else {
+      #           Write-Host "❌ Faltante: $fullPath"
+      #           $allFound = $false
+      #         }
+      #       }
+
+      #       if (-not $allFound) {
+      #         Write-Error "Uno o más archivos requeridos no se encontraron."
+      #         exit 99
+      #       }
