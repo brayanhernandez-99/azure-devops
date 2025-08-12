@@ -242,3 +242,8 @@ jobs:
           script: |
             Get-Content .\src\env.json -Encoding Byte -TotalCount 3
             (Get-Content .\src\env.json -Encoding Byte)[0..2]
+
+            Write-Host "`n🔍 Verificar C++"
+            cl /?
+            g++ --version
+            clang --version
