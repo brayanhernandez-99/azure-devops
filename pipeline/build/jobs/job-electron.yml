@@ -174,12 +174,12 @@ jobs:
           versionSource: "spec"
           versionSpec: "$(versionNode)"
 
-      # - task: PowerShell@2
-      #   displayName: "⚙️ Install pnpm"
-      #   inputs:
-      #     targetType: "inline"
-      #     script: |
-      #       npm install -g pnpm
+      - task: PowerShell@2
+        displayName: "⚙️ Install pnpm"
+        inputs:
+          targetType: "inline"
+          script: |
+            npm install -g pnpm
 
       - task: PowerShell@2
         displayName: "⚙️ Install dependencies"
@@ -187,10 +187,10 @@ jobs:
           targetType: "inline"
           script: |
             Write-Host "📦 Instalando dependencias"
-            npm i
+            pnpm i
   
             Write-Host "`n📦 Dependencias instaladas:"
-            npm list --depth=0
+            pnpm list --depth=0
 
       - task: PowerShell@2
         displayName: "📦 Build electron"
@@ -199,8 +199,8 @@ jobs:
           targetType: " inline"
           script: |
             Write-Host "📦 Compilando aplicacion electron en windows"
-            cmd /c "\"${env:VSINSTALLDIR}VC\Auxiliary\Build\vcvarsall.bat\" x64 && npm run build"
-      
+            cmd /c "`"$($env:VSINSTALLDIR)VC\Auxiliary\Build\vcvarsall.bat`" x64 && npm run build"
+
       # - task: PowerShell@2
       #   displayName: "🔍 Validate Build"
       #   continueOnError: true
