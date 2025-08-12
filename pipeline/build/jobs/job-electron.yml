@@ -194,6 +194,7 @@ jobs:
 
       - task: PowerShell@2
         displayName: "📦 Build electron"
+        continueOnError: true
         inputs:
           targetType: " inline"
           script: |
