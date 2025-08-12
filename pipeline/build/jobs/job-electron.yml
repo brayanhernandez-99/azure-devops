@@ -23,7 +23,6 @@ jobs:
     pool:
       vmImage: "windows-latest"
     variables:
-      #PWD: $(Build.SourcesDirectory)
       versionNode: $[coalesce(variables.nodeVersion, '18.x')]
       versionPython: $[coalesce(variables.pythonVersion, '3.x')]
       ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/') }}:
@@ -187,10 +186,10 @@ jobs:
           targetType: "inline"
           script: |
             Write-Host "📦 Instalando dependencias"
-            npm i
+            pnpm i
   
             Write-Host "`n📦 Dependencias instaladas:"
-            npm list --depth=0
+            pnpm list --depth=0
 
       - task: PowerShell@2
         displayName: "📦 Build electron"
@@ -199,7 +198,18 @@ jobs:
           targetType: " inline"
           script: |
             Write-Host "📦 Ejecutando build..."
-            npm run build
+            pnpm run build
+
+            $envJsonPath = "$(Build.SourcesDirectory)\src\env.json"
+            $directoryPath = Split-Path $envJsonPath
+
+            Write-Host "`nListando archivos en: $directoryPath"
+            Get-ChildItem -Path $directoryPath | ForEach-Object {
+                Write-Host $_.Name
+            }
+
+            Write-Host "`nContenido de env.json:"
+            Get-Content -Path $envJsonPath | ForEach-Object { Write-Host $_ }
 
       # - task: PowerShell@2
       #   displayName: "📦 Build electron"
