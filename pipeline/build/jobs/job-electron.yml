@@ -199,8 +199,8 @@ jobs:
           targetType: " inline"
           script: |
             Write-Host "📦 Compilando aplicacion electron en windows"
-            cmd /c '"C:\Program Files\Microsoft Visual Studio\2022\BuildTools\VC\Auxiliary\Build\vcvarsall.bat" x64 && npm run build'
-
+            cmd /c "\"${env:VSINSTALLDIR}VC\Auxiliary\Build\vcvarsall.bat\" x64 && npm run build"
+      
       # - task: PowerShell@2
       #   displayName: "🔍 Validate Build"
       #   continueOnError: true
