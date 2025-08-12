@@ -41,3 +41,12 @@ jobs:
           sudo mv terragrunt_linux_amd64 /usr/local/bin/terragrunt
           terragrunt --version
         displayName: "Instalar Terragrunt"
+
+      - script: |
+          echo "Plan"
+          terragrunt run-all plan --terragrunt-non-interactive
+        displayName: "Plan"
+        env:
+          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVIC)
+          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVIC)
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
