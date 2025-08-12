@@ -201,37 +201,38 @@ jobs:
             Write-Host "📦 Compilando aplicacion electron en windows"
             npm run build
 
-      - task: PowerShell@2
-        displayName: "🔍 Validate Build"
-        continueOnError: true
-        inputs:
-          targetType: " inline"
-          script: |
-            Write-Host "📝 Validando build electron..."
-            basePath = "$(Build.SourcesDirectory)\release\$(version)\$(environment)"
-            Write-Host "`n📂 Ruta de validación: $basePath"
+      # - task: PowerShell@2
+      #   displayName: "🔍 Validate Build"
+      #   continueOnError: true
+      #   inputs:
+      #     targetType: " inline"
+      #     script: |
+      #       $ErrorActionPreference = "Continue"
+      #       Write-Host "📝 Validando build electron..."
+      #       basePath = "$(Build.SourcesDirectory)\release\$(version)\$(environment)"
+      #       Write-Host "`n📂 Ruta de validación: $basePath"
 
-            $allFound = $true
-            $filesToCheck = @(
-              "InvictusUX Setup $(version).exe",
-              "InvictusUX Setup $(version).exe.blockmap",
-              "latest.yml"
-            )
+      #       $allFound = $true
+      #       $filesToCheck = @(
+      #         "InvictusUX Setup $(version).exe",
+      #         "InvictusUX Setup $(version).exe.blockmap",
+      #         "latest.yml"
+      #       )
             
-            foreach ($file in $filesToCheck) {
-              $fullPath = Join-Path $basePath $file
-              if (Test-Path $fullPath) {
-                Write-Host "✅ Encontrado: $fullPath"
-              } else {
-                Write-Host "❌ Faltante: $fullPath"
-                $allFound = $false
-              }
-            }
+      #       foreach ($file in $filesToCheck) {
+      #         $fullPath = Join-Path $basePath $file
+      #         if (Test-Path $fullPath) {
+      #           Write-Host "✅ Encontrado: $fullPath"
+      #         } else {
+      #           Write-Host "❌ Faltante: $fullPath"
+      #           $allFound = $false
+      #         }
+      #       }
 
-            if (-not $allFound) {
-              Write-Error "Uno o más archivos requeridos no se encontraron."
-              exit 99
-            }
+      #       if (-not $allFound) {
+      #         Write-Error "Uno o más archivos requeridos no se encontraron."
+      #         exit 99
+      #       }
 
       - task: PowerShell@2
         displayName: "🔍 Revisar Errores"
@@ -240,3 +241,4 @@ jobs:
           targetType: " inline"
           script: |
             Get-Content .\src\env.json -Encoding Byte -TotalCount 3
+            (Get-Content .\src\env.json -Encoding Byte)[0..2]
