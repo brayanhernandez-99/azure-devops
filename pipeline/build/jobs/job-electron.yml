@@ -200,17 +200,24 @@ jobs:
           script: |
             Write-Host "📦 Iniciando build Electron (buscando Visual Studio)..."
 
+            # Obtener ProgramFiles(x86) de forma segura
+            $programFilesX86 = ${env:ProgramFiles(x86)}
+            if (-not $programFilesX86 -or $programFilesX86 -eq '') {
+              $programFilesX86 = [Environment]::GetFolderPath([Environment+SpecialFolder]::ProgramFilesX86)
+            }
+            Write-Host "ProgramFiles(x86) = '$programFilesX86'"
+
             # 1) Intentar usar VSINSTALLDIR si existe
             $vsInstall = $env:VSINSTALLDIR
             Write-Host "VSINSTALLDIR (env) = '$vsInstall'"
 
             # 2) Si no existe, buscar vswhere y usarlo
             if (-not $vsInstall -or $vsInstall -eq '') {
-              $vswherePath = Join-Path $env:'ProgramFiles(x86)' 'Microsoft Visual Studio\Installer\vswhere.exe'
+              $vswherePath = Join-Path $programFilesX86 'Microsoft Visual Studio\Installer\vswhere.exe'
               if (Test-Path $vswherePath) {
                 Write-Host "vswhere encontrado en: $vswherePath. Buscando instalación con componentes C++..."
                 $vsInstall = & "$vswherePath" -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath 2>$null
-                $vsInstall = $vsInstall.Trim()
+                if ($vsInstall) { $vsInstall = $vsInstall.Trim() }
                 Write-Host "vswhere devolvió: '$vsInstall'"
               } else {
                 Write-Host "vswhere NO encontrado en: $vswherePath"
@@ -220,11 +227,11 @@ jobs:
             # 3) Si sigue vacio, probar rutas comunes (BuildTools/2022, Enterprise, 2019)
             if (-not $vsInstall -or $vsInstall -eq '') {
               $candidates = @(
-                "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2022\BuildTools",
-                "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2022\Enterprise",
-                "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2022\Professional",
-                "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2019\BuildTools",
-                "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2019\Enterprise"
+                "${programFilesX86}\Microsoft Visual Studio\2022\BuildTools",
+                "${programFilesX86}\Microsoft Visual Studio\2022\Enterprise",
+                "${programFilesX86}\Microsoft Visual Studio\2022\Professional",
+                "${programFilesX86}\Microsoft Visual Studio\2019\BuildTools",
+                "${programFilesX86}\Microsoft Visual Studio\2019\Enterprise"
               )
               foreach ($c in $candidates) {
                 if (Test-Path $c) {
@@ -258,7 +265,6 @@ jobs:
             # 5) Ejecutar todo en el mismo cmd para mantener las variables
             $cmdLine = '"' + $vcvarsall + '" x64 && npm ci && npm run build'
             Write-Host "Ejecutando: cmd /c $cmdLine"
-            # Ejecutar y propagar código de salida
             & cmd.exe /c $cmdLine
             if ($LASTEXITCODE -ne 0) {
               Write-Error "El comando falló con código $LASTEXITCODE"
