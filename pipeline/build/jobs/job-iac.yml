@@ -25,13 +25,13 @@ jobs:
       vmImage: "ubuntu-22.04"
   
     variables:
-      versionTerraform: $[coalesce(variables.versionTerraform, '1.6.0')]
+      TerraformVersion: $[coalesce(variables.versionTerraform, '1.6.0')]
 
     steps:
 
       - task: TerraformInstaller@0
         inputs:
-          terraformVersion: $(versionTerraform)
+          terraformVersion: $(TerraformVersion)
 
       - script: |
           sudo apt-get update -y
