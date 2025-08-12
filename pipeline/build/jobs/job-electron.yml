@@ -247,17 +247,3 @@ jobs:
       #         Write-Error "Uno o más archivos requeridos no se encontraron."
       #         exit 99
       #       }
-
-      - task: PowerShell@2
-        displayName: "🔍 Revisar Errores"
-        continueOnError: true
-        inputs:
-          targetType: " inline"
-          script: |
-            Get-Content .\src\env.json -Encoding Byte -TotalCount 3
-            (Get-Content .\src\env.json -Encoding Byte)[0..2]
-
-            Write-Host "`n🔍 Verificar C++"
-            cl /?
-            g++ --version
-            clang --version
