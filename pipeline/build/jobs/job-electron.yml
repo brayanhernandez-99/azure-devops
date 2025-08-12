@@ -163,7 +163,7 @@ jobs:
             }
 
       - task: UsePythonVersion@0
-        displayName: "🔧 Install Python $(versionPython)"
+        displayName: "🔧 Use Python $(versionPython)"
         inputs:
           versionSpec: "$(versionPython)"
           addToPath: true
@@ -199,7 +199,7 @@ jobs:
           targetType: " inline"
           script: |
             Write-Host "📦 Compilando aplicacion electron en windows"
-            npm run build
+            cmd /c '"C:\Program Files\Microsoft Visual Studio\2022\BuildTools\VC\Auxiliary\Build\vcvarsall.bat" x64 && npm run build'
 
       # - task: PowerShell@2
       #   displayName: "🔍 Validate Build"
