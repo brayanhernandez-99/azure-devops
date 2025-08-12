@@ -198,79 +198,13 @@ jobs:
         inputs:
           targetType: " inline"
           script: |
-            Write-Host "📦 Iniciando build Electron (buscando Visual Studio)..."
-
-            # Obtener ProgramFiles(x86) de forma segura
-            $programFilesX86 = ${env:ProgramFiles(x86)}
-            if (-not $programFilesX86 -or $programFilesX86 -eq '') {
-              $programFilesX86 = [Environment]::GetFolderPath([Environment+SpecialFolder]::ProgramFilesX86)
-            }
-            Write-Host "ProgramFiles(x86) = '$programFilesX86'"
-
-            # 1) Intentar usar VSINSTALLDIR si existe
-            $vsInstall = $env:VSINSTALLDIR
-            Write-Host "VSINSTALLDIR (env) = '$vsInstall'"
-
-            # 2) Si no existe, buscar vswhere y usarlo
-            if (-not $vsInstall -or $vsInstall -eq '') {
-              $vswherePath = Join-Path $programFilesX86 'Microsoft Visual Studio\Installer\vswhere.exe'
-              if (Test-Path $vswherePath) {
-                Write-Host "vswhere encontrado en: $vswherePath. Buscando instalación con componentes C++..."
-                $vsInstall = & "$vswherePath" -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath 2>$null
-                if ($vsInstall) { $vsInstall = $vsInstall.Trim() }
-                Write-Host "vswhere devolvió: '$vsInstall'"
-              } else {
-                Write-Host "vswhere NO encontrado en: $vswherePath"
-              }
-            }
-
-            # 3) Si sigue vacio, probar rutas comunes (BuildTools/2022, Enterprise, 2019)
-            if (-not $vsInstall -or $vsInstall -eq '') {
-              $candidates = @(
-                "${programFilesX86}\Microsoft Visual Studio\2022\BuildTools",
-                "${programFilesX86}\Microsoft Visual Studio\2022\Enterprise",
-                "${programFilesX86}\Microsoft Visual Studio\2022\Professional",
-                "${programFilesX86}\Microsoft Visual Studio\2019\BuildTools",
-                "${programFilesX86}\Microsoft Visual Studio\2019\Enterprise"
-              )
-              foreach ($c in $candidates) {
-                if (Test-Path $c) {
-                  Write-Host "Encontrado candidato VS: $c"
-                  $vsInstall = $c
-                  break
-                }
-              }
-            }
-
-            if (-not $vsInstall -or $vsInstall -eq '') {
-              Write-Error "No se pudo localizar Visual Studio en el agente (VSINSTALLDIR vacío, vswhere no disponible y no se encontraron rutas comunes)."
+            Write-Host "📦 Ejecutando build..."
+            $vc = 'C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsall.bat'
+            if (-not (Test-Path $vc)) {
+              Write-Error "No se encontró vcvarsall: $vc"
               exit 1
             }
-
-            # 4) Componer ruta a vcvarsall y verificar
-            $vcvarsall = Join-Path $vsInstall 'VC\Auxiliary\Build\vcvarsall.bat'
-            Write-Host "Probando vcvarsall en: $vcvarsall"
-            if (-not (Test-Path $vcvarsall)) {
-              # también probar vsdevcmd
-              $vsdevcmd = Join-Path $vsInstall 'Common7\Tools\VsDevCmd.bat'
-              if (Test-Path $vsdevcmd) {
-                Write-Host "vcvarsall no existe, pero vsdevcmd sí: $vsdevcmd"
-                $vcvarsall = $vsdevcmd
-              } else {
-                Write-Error "No se encontró vcvarsall.bat ni VsDevCmd.bat en la instalación de VS: $vsInstall"
-                exit 1
-              }
-            }
-
-            # 5) Ejecutar todo en el mismo cmd para mantener las variables
-            $cmdLine = '"' + $vcvarsall + '" x64 && npm ci && npm run build'
-            Write-Host "Ejecutando: cmd /c $cmdLine"
-            & cmd.exe /c $cmdLine
-            if ($LASTEXITCODE -ne 0) {
-              Write-Error "El comando falló con código $LASTEXITCODE"
-              exit $LASTEXITCODE
-            }
-            Write-Host "✅ Build finalizó correctamente."
+            & cmd.exe /c "`"$vc`" x64 && npm run build"
 
       # - task: PowerShell@2
       #   displayName: "🔍 Validate Build"
