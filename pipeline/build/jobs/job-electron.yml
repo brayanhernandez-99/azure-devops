@@ -23,6 +23,7 @@ jobs:
     pool:
       vmImage: "windows-latest"
     variables:
+      PWD: $(Build.SourcesDirectory)
       versionNode: $[coalesce(variables.nodeVersion, '18.x')]
       versionPython: $[coalesce(variables.pythonVersion, '3.x')]
       ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/') }}:
