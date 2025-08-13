@@ -203,6 +203,15 @@ jobs:
             Write-Host "`nContenido de env.json:"
             Get-Content -Path "$(Build.SourcesDirectory)\src\env.json" | ForEach-Object { Write-Host $_ }
 
+            # Leer los bytes iniciales del archivo
+            $bytes = [System.IO.File]::ReadAllBytes($filePath)
+
+            if ($bytes.Length -ge 3 -and $bytes[0] -eq 0xEF -and $bytes[1] -eq 0xBB -and $bytes[2] -eq 0xBF) {
+                Write-Host "*** Detectado BOM UTF-8 en env.json"
+            } else {
+                Write-Host "*** No hay BOM en env.json"
+            }
+            
       # - task: PowerShell@2
       #   displayName: "📦 Build electron"
       #   continueOnError: true
