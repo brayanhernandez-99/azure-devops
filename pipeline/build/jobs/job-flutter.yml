@@ -78,9 +78,9 @@ jobs:
           region="unknown"
 
           case "$CURRENT_BRANCH" in
-            refs/heads/develop) environment="dev"; region="dev"; ;;
             refs/heads/feature/*) environment="dev"; region="dev"; ;;
             refs/heads/hotfix/*) environment="dev"; region="dev"; ;;
+            refs/heads/develop) environment="dev"; region="dev"; ;;
             refs/heads/staging) environment="qa"; region="qa"; ;;
             refs/heads/master) 
               case "$red" in
