@@ -55,7 +55,7 @@ jobs:
               Write-Host "🚀 Versión detectada para .exe: $baseVersion"
               Write-Host "##vso[task.setvariable variable=version]$baseVersion"
             } else {
-              Write-Host "❌ No se encontró archivo de versión para .exe"
+              Write-Host "`n❌ No se encontró archivo de versión para .exe"
               exit 99
             }
 
@@ -76,7 +76,7 @@ jobs:
               --output text
 
             if (-not $token) {
-              Write-Error "❌ No se pudo obtener el token de AWS CodeArtifact"
+              Write-Error "`n❌ No se pudo obtener el token de AWS CodeArtifact"
               exit 99
             }
 
@@ -115,12 +115,19 @@ jobs:
 
             $environment = "unknown"
             switch -Wildcard ($currentBranch) {
-              "refs/heads/feature/*" { $environment = "dev"; break }
-              "refs/heads/hotfix/*"  { $environment = "dev"; break }
-              "refs/heads/develop"   { $environment = "dev"; break }
-              "refs/heads/staging"   { $environment = "qa"; break }
-              "refs/heads/master"    { $environment = "production"; break }
-              default                { $environment = "unknown" }
+              "refs/heads/feature/*" | "refs/heads/hotfix/*" | "refs/heads/develop" { $environment = "dev"; $region = "dev"; break }
+              "refs/heads/staging" { $environment = "qa"; $region = "qa"; break }
+              "refs/heads/master" {
+                  switch ($env:red) {
+                      "antioquia" { $environment = "production"; $region = "matrixtech"; break }
+                      "cap"       { $environment = "production"; $region = "cap"; break }
+                      "tolima"    { $environment = "production"; $region = "seapto"; break }
+                      "huila"     { $environment = "production"; $region = "suchance"; break }
+                      "cauca"     { $environment = "production"; $region = "acertemos"; break }
+                      "boyaca"    { $environment = "production"; $region = "jer"; break }
+                  }
+                  break
+              }
             }
             if ($environment -ne "unknown") {
             @"
@@ -134,9 +141,11 @@ jobs:
               Write-Host "`n✅ Archivo .env creado correctamente"
               Get-Content .env
             } else {
-              Write-Host "❌ No se encontró una rama valida, branch [$environment]."
+              Write-Host "`n❌ No se encontró una rama valida, branch [$environment]."
               exit 99
             }
+        env:
+          red: ${{ parameters.red }}
 
       - task: PowerShell@2
         displayName: "📝 Update version in package.json"
@@ -186,63 +195,72 @@ jobs:
           targetType: "inline"
           script: |
             Write-Host "📦 Instalando dependencias"
-            npm i
+            pnpm i
   
             Write-Host "`n📦 Dependencias instaladas:"
-            npm list --depth=0
+            pnpm list --depth=0
 
       - task: PowerShell@2
         displayName: "📦 Build electron"
-        continueOnError: true
         inputs:
           targetType: " inline"
           script: |
             Write-Host "📦 Ejecutando build..."
-            npm run build
+            pnpm run build
 
-      # - task: PowerShell@2
-      #   displayName: "📦 Build electron"
-      #   continueOnError: true
-      #   inputs:
-      #     targetType: " inline"
-      #     script: |
-      #       Write-Host "📦 Ejecutando build..."
-      #       $vc = 'C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsall.bat'
-      #       if (-not (Test-Path $vc)) {
-      #         Write-Error "No se encontró vcvarsall: $vc"
-      #         exit 99
-      #       }
-      #       & cmd.exe /c "`"$vc`" x64 && pnpm run build"
+      - task: PowerShell@2
+        displayName: "🔍 Validate Build"
+        inputs:
+          targetType: " inline"
+          script: |
+            $ErrorActionPreference = "Stop"
+            Write-Host "📝 Validando build electron..."
 
-      # - task: PowerShell@2
-      #   displayName: "🔍 Validate Build"
-      #   continueOnError: true
-      #   inputs:
-      #     targetType: " inline"
-      #     script: |
-      #       $ErrorActionPreference = "Continue"
-      #       Write-Host "📝 Validando build electron..."
-      #       basePath = "$(Build.SourcesDirectory)\release\$(version)\$(environment)"
-      #       Write-Host "`n📂 Ruta de validación: $basePath"
+            $basePath = "$(Build.SourcesDirectory)\release\$(environment)\$(version)"
+            New-Item -ItemType Directory -Path $basePath\$(region) -Force | Out-Null
+            $allFound = $true
 
-      #       $allFound = $true
-      #       $filesToCheck = @(
-      #         "InvictusUX Setup $(version).exe",
-      #         "InvictusUX Setup $(version).exe.blockmap",
-      #         "latest.yml"
-      #       )
-            
-      #       foreach ($file in $filesToCheck) {
-      #         $fullPath = Join-Path $basePath $file
-      #         if (Test-Path $fullPath) {
-      #           Write-Host "✅ Encontrado: $fullPath"
-      #         } else {
-      #           Write-Host "❌ Faltante: $fullPath"
-      #           $allFound = $false
-      #         }
-      #       }
+            $filesToCopy = @(
+              "InvictusUX Setup $(version).exe",
+              "InvictusUX Setup $(version).exe.blockmap",
+              "latest.yml"
+            )
 
-      #       if (-not $allFound) {
-      #         Write-Error "Uno o más archivos requeridos no se encontraron."
-      #         exit 99
-      #       }
+            foreach ($file in $filesToCopy) {
+              $sourcePath = Join-Path "$basePath" $file
+              $destinationPath = Join-Path "$basePath\$(region)" $file
+
+              if (Test-Path $sourcePath) {
+                Copy-Item -Path $sourcePath -Destination $destinationPath -Force
+                Write-Host "📂 Copiado: $file -> $destinationPath"
+              } else {
+                Write-Host "⚠️ Archivo no encontrado $file -> $sourcePath"
+                $allFound = $false
+              }
+            }
+
+            if (-not $allFound) {
+              Write-Error "`n❌ Error: archivos requeridos no encontrados."
+              exit 99
+            } 
+          
+            Write-Host "`n📂 Directorio: $basePath\$(region)"
+            Get-ChildItem "$basePath\$(region)" -Force | Select-Object Mode, LastWriteTime, Length, Name | Format-Table -AutoSize
+      
+      - task: PowerShell@2
+        displayName: "📤 Upload Bucket S3"
+        inputs:
+          targetType: " inline"
+          script: |
+            $ErrorActionPreference = "Stop"
+            Write-Host "📦 Cargando al Bucket S3..."
+
+            $basePath = "$(Build.SourcesDirectory)\release\$(environment)\$(version)\$(region)"
+            Write-Host "`n📂 Archivos a cargar:"
+            Get-ChildItem "$basePath" -Force | Select-Object Mode, LastWriteTime, Length, Name | Format-Table -AutoSize
+
+            aws s3 cp "$basePath" "s3://e-remote/invictus-electron/windows/" --recursive --acl public-read
+        env:
+          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
+          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
