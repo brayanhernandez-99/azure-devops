@@ -198,11 +198,7 @@ jobs:
           targetType: " inline"
           script: |
             Write-Host "📦 Ejecutando build..."
-            npm run deletebom
             npm run build
-
-            Write-Host "`nContenido de env.json:"
-            Get-Content -Path "$(Build.SourcesDirectory)\src\env.json" | ForEach-Object { Write-Host $_ }
 
       # - task: PowerShell@2
       #   displayName: "📦 Build electron"
