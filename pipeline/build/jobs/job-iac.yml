@@ -66,7 +66,7 @@ jobs:
           echo "destroy"
           terragrunt run-all destroy --terragrunt-non-interactive
         displayName: "destroy"
-        workingDirectory: $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/devops/initial-infrastructure/aws-service-s3
+        workingDirectory: $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/devops/initial-infrastructure/aws-service-vpc
         env:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVIC)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVIC)
