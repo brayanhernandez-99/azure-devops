@@ -270,8 +270,8 @@ jobs:
               BUILD_NUMBER_VERSION_MASTER="${VERSION_ACTUAL_MASTER#*+}"
 
               echo -e "\n🔍 Versiones Detectadas"
-              echo "Actual: $BUILD_NUMBER_VERSION_ACTUAL"
-              echo "Master: $BUILD_NUMBER_VERSION_MASTER"
+              echo "📌 Actual: $BUILD_NUMBER_VERSION_ACTUAL"
+              echo "📌 Master: $BUILD_NUMBER_VERSION_MASTER"
 
               if [[ $BUILD_NUMBER_VERSION_ACTUAL == $BUILD_NUMBER_VERSION_MASTER ]]; then 
                 NEW_BUILD_NUMBER=$((BUILD_NUMBER_VERSION_ACTUAL + 1))
@@ -280,7 +280,7 @@ jobs:
               elif [[ $BUILD_NUMBER_VERSION_ACTUAL < $BUILD_NUMBER_VERSION_MASTER ]]; then 
                 NEW_BUILD_NUMBER=$((BUILD_NUMBER_VERSION_MASTER + 1))
               fi
-              echo "Nuevo Build: +$NEW_BUILD_NUMBER"
+              echo "🚀 Nuevo Build: +$NEW_BUILD_NUMBER"
             fi
 
             if [[ "$CURRENT_BRANCH" == refs/heads/master ]]; then
