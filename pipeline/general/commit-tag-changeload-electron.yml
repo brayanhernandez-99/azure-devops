@@ -214,6 +214,7 @@ jobs:
                 # Las bases son diferentes, solo incrementa el prerelease
                 NEXT_VERSION="$BASE_VERSION_BRANCH-$clean_branch.$((CURRENT_PRERELEASE + 1))"
               fi
+              echo -e "\n🔍 Versiones Detectadas"
               echo "📌 Anterior versión : $VERSION_ACTUAL"
               echo "🚀 Próxima versión : $NEXT_VERSION"
             fi
@@ -221,9 +222,10 @@ jobs:
             if [[ "$CURRENT_BRANCH" == refs/heads/master ]]; then
               git checkout version/$clean_branch
               VERSION_ACTUAL_MASTER=$(jq -r .VERSION env.json)
-
               NEXT_BASE_VERSION=$(bump_version "$VERSION_ACTUAL_MASTER" "$RELEASE_TYPE")
               NEXT_VERSION="$NEXT_BASE_VERSION"
+
+              echo -e "\n🔍 Versiones Detectadas"
               echo "📌 Anterior versión : $VERSION_ACTUAL_MASTER"
               echo "🚀 Próxima versión : $NEXT_VERSION"
             fi
@@ -286,6 +288,7 @@ jobs:
               BUILD_NUMBER_VERSION_MASTER="${VERSION_ACTUAL_MASTER#*+}"
               NEW_BUILD_NUMBER=$((BUILD_NUMBER_VERSION_MASTER + 1))
 
+              echo -e "\n🔍 Versiones Detectadas"
               echo "📌 Anterior versión : +$BUILD_NUMBER_VERSION_MASTER"
               echo "🚀 Próxima versión : +$NEW_BUILD_NUMBER"
             fi
