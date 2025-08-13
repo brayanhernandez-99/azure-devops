@@ -114,20 +114,23 @@ jobs:
             $currentBranch="$(Build.SourceBranch)"
 
             $environment = "unknown"
+            $region = "unknown"
+            
             switch -Wildcard ($currentBranch) {
-              "refs/heads/feature/*" | "refs/heads/hotfix/*" | "refs/heads/develop" { $environment = "dev"; $region = "dev"; break }
-              "refs/heads/staging" { $environment = "qa"; $region = "qa"; break }
-              "refs/heads/master" {
-                  switch ($env:red) {
-                      "antioquia" { $environment = "production"; $region = "matrixtech"; break }
-                      "cap"       { $environment = "production"; $region = "cap"; break }
-                      "tolima"    { $environment = "production"; $region = "seapto"; break }
-                      "huila"     { $environment = "production"; $region = "suchance"; break }
-                      "cauca"     { $environment = "production"; $region = "acertemos"; break }
-                      "boyaca"    { $environment = "production"; $region = "jer"; break }
-                  }
-                  break
-              }
+                "refs/heads/feature/*" { $environment = "dev"; $region = "dev" }
+                "refs/heads/hotfix/*"  { $environment = "dev"; $region = "dev" }
+                "refs/heads/develop"   { $environment = "dev"; $region = "dev" }
+                "refs/heads/staging"   { $environment = "qa"; $region = "qa" }
+                "refs/heads/master" {
+                    switch ($env:red) {
+                        "antioquia" { $environment = "production"; $region = "matrixtech" }
+                        "cap"       { $environment = "production"; $region = "cap" }
+                        "tolima"    { $environment = "production"; $region = "seapto" }
+                        "huila"     { $environment = "production"; $region = "suchance" }
+                        "cauca"     { $environment = "production"; $region = "acertemos" }
+                        "boyaca"    { $environment = "production"; $region = "jer" }
+                    }
+                }
             }
             if ($environment -ne "unknown") {
             @"
