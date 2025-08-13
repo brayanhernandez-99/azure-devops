@@ -36,13 +36,6 @@ jobs:
         jobDisplayName: "Build Flutter Master ${{ parameters.red }}"
 
     steps:
-      - task: FlutterInstall@0
-        displayName: "🔧 Install Flutter $(versionFlutter)"
-        inputs:
-          mode: "auto"
-          channel: "stable"
-          version: "custom"
-          customVersion: $(versionFlutter)
 
       - task: DownloadBuildArtifacts@0
         displayName: "📥 Download Version Artifact"
@@ -95,7 +88,7 @@ jobs:
                 "boyaca")    environment="prd-jer"; region="jer"; ;;
               esac ;;
           esac
-          
+
           if [ "$environment" = "unknown" ] || [ "$region" = "unknown" ]; then
             echo "⚠️ Environment [$environment] no reconocido"
             echo "⚠️ Región [$region"] no reconocida"; 
@@ -219,6 +212,14 @@ jobs:
           KEY_PASSWORD: $(KEY_PASSWORD)
           STORE_PASSWORD: $(STORE_PASSWORD)
 
+      - task: FlutterInstall@0
+        displayName: "🔧 Install Flutter $(versionFlutter)"
+        inputs:
+          mode: "auto"
+          channel: "stable"
+          version: "custom"
+          customVersion: $(versionFlutter)
+
       - script: |
           echo -e "\n☕ JAVA_HOME: $JAVA_HOME" && java -version
           echo -e "\n🌀 Flutter versión:" && flutter --version
@@ -261,7 +262,7 @@ jobs:
 
           echo -e "\n📁 APK generados:"
           ls -l build/app/outputs/flutter-apk
-        displayName: "Change name file Apk"
+        displayName: "📝 Change name file Apk"
         env:
           red: ${{ parameters.red }}
 
