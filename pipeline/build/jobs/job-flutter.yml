@@ -95,7 +95,7 @@ jobs:
 
           if [ "$environment" = "unknown" ] || [ "$region" = "unknown" ]; then
             echo "⚠️ Environment [$environment] no reconocido"
-            echo "⚠️ Región [$region"] no reconocida"
+            echo "⚠️ Región [$region] no reconocida"
             exit 99
           fi
 
