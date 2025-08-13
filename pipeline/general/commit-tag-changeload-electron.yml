@@ -269,6 +269,7 @@ jobs:
               BUILD_NUMBER_VERSION_ACTUAL="${VERSION_ACTUAL#*+}"
               BUILD_NUMBER_VERSION_MASTER="${VERSION_ACTUAL_MASTER#*+}"
 
+              echo -e "\n🔍 Versiones Detectadas"
               echo "Actual: $BUILD_NUMBER_VERSION_ACTUAL"
               echo "Master: $BUILD_NUMBER_VERSION_MASTER"
 
