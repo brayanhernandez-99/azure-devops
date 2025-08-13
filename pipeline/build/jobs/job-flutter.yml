@@ -260,10 +260,7 @@ jobs:
           
           APK_NAME="invictus-$(environment)-v$(msVersion).apk"
           echo "##vso[task.setvariable variable=apk-name]$APK_NAME"
-          
-          ###
-          echo "Test APK Name: $(apk-name)"
-
+        
           echo -e "\n📁 APK generados:"
           ls -l build/app/outputs/flutter-apk
         displayName: "📝 Change name file Apk"
