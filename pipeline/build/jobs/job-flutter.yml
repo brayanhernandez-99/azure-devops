@@ -83,44 +83,19 @@ jobs:
           region="unknown"
 
           case "$CURRENT_BRANCH" in
-            refs/heads/develop | refs/heads/feature/*)
-              environment="dev"
-              region="dev"
-              ;;
-            refs/heads/staging)
-              environment="qa"
-              region="qa"
-              ;;
-            refs/heads/master)
+            refs/heads/develop | refs/heads/feature/*) environment="dev"; region="dev"; ;;
+            refs/heads/staging) environment="qa"; region="qa"; ;;
+            refs/heads/master) 
               case "$red" in
-                "antioquia")
-                  environment="prd-gana"
-                  region="gana"
-                  ;;
-                "cap")
-                  environment="prd-cap"
-                  region="cap"
-                  ;;
-                "tolima")
-                  environment="prd-seapto"
-                  region="seapto"
-                  ;;
-                "huila")
-                  environment="prd-suchance"
-                  region="suchance"
-                  ;;
-                "cauca")
-                  environment="prd-acertemos"
-                  region="acertemos"
-                  ;;
-                "boyaca")
-                  environment="prd-jer"
-                  region="jer"
-                  ;;
-              esac
-              ;;
+                "antioquia") environment="prd-gana"; region="gana"; ;;
+                "cap")       environment="prd-cap";  region="cap"; ;;
+                "tolima")    environment="prd-seapto"; region="septo"; ;;
+                "huila")     environment="prd-suchance"; region="suchance"; ;;
+                "cauca")     environment="prd-acertemos"; region="acertemos"; ;;
+                "boyaca")    environment="prd-jer"; region="jer"; ;;
+              esac ;;
           esac
-
+          
           if [ "$environment" = "unknown" ] || [ "$region" = "unknown" ]; then
             echo "⚠️ Environment [$environment] no reconocido"
             echo "⚠️ Región [$region"] no reconocida"; 
