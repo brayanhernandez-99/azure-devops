@@ -198,6 +198,7 @@ jobs:
           targetType: " inline"
           script: |
             Write-Host "📦 Ejecutando build..."
+            npm run deletebom
             npm run build
 
             Write-Host "`nContenido de env.json:"
