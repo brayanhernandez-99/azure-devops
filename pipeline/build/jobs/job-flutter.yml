@@ -301,7 +301,7 @@ jobs:
           ls -l build/app/outputs/flutter-apk/$(environment)
 
           aws s3 cp build/app/outputs/flutter-apk/$(environment) s3://repository-native/app-seller/android/$(environment) --recursive --acl public-read
-        displayName: "Copy Apk Bucket S3"
+        displayName: "📤 Upload Bucket S3"
         condition: not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
         env:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
