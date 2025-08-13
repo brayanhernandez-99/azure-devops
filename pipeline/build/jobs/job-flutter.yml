@@ -146,6 +146,14 @@ jobs:
         env:
           red: ${{ parameters.red }}
 
+      - task: FlutterInstall@0
+        displayName: "🔧 Install Flutter $(versionFlutter)"
+        inputs:
+          mode: "auto"
+          channel: "stable"
+          version: "custom"
+          customVersion: $(versionFlutter)
+          
       - script: |
           echo "✔️ Verificando entorno Flutter y Android SDK..."
           echo -e "\n📦 ANDROID_HOME: $ANDROID_HOME" && ls -la "$ANDROID_HOME"
@@ -215,14 +223,6 @@ jobs:
           KEY_ALIAS: $(KEY_ALIAS)
           KEY_PASSWORD: $(KEY_PASSWORD)
           STORE_PASSWORD: $(STORE_PASSWORD)
-
-      - task: FlutterInstall@0
-        displayName: "🔧 Install Flutter $(versionFlutter)"
-        inputs:
-          mode: "auto"
-          channel: "stable"
-          version: "custom"
-          customVersion: $(versionFlutter)
 
       - script: |
           echo -e "\n☕ JAVA_HOME: $JAVA_HOME" && java -version
