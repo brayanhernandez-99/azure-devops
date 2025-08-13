@@ -52,7 +52,7 @@ jobs:
               $json = Get-Content $versionFile | ConvertFrom-Json
               $version = $json.version
               $baseVersion = $version.Split('-')[0]
-              Write-Host "🚀 Versión detectada para .exe: $baseVersion"
+              Write-Host "`n🚀 Versión detectada para .exe: $baseVersion"
               Write-Host "##vso[task.setvariable variable=version]$baseVersion"
             } else {
               Write-Host "`n❌ No se encontró archivo de versión para .exe"
@@ -115,7 +115,7 @@ jobs:
 
             $environment = "unknown"
             $region = "unknown"
-            
+
             switch -Wildcard ($currentBranch) {
                 "refs/heads/feature/*" { $environment = "dev"; $region = "dev" }
                 "refs/heads/hotfix/*"  { $environment = "dev"; $region = "dev" }

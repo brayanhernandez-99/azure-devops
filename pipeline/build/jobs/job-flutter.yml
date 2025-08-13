@@ -50,7 +50,7 @@ jobs:
           if [[ -f "$VERSION_FILE" ]]; then
             VERSION=$(jq -r '.version' $VERSION_FILE)
             BASE_VERSION=$(echo "$VERSION" | cut -d'-' -f1)
-            echo "🚀 Versión detectada para apk: $BASE_VERSION"
+            echo -e "\n🚀 Versión detectada para apk: $BASE_VERSION"
             echo "##vso[task.setvariable variable=msVersion]$BASE_VERSION"
           else
             echo "❌ No se encontró archivo de versión para apk"
@@ -64,7 +64,7 @@ jobs:
           VERSION_FILE="$(Pipeline.Workspace)/downloaded-versions/versions/version-pubspec-apk/version.json"
           if [[ -f "$VERSION_FILE" ]]; then
             VERSION=$(jq -r '.version' $VERSION_FILE)
-            echo "🚀 Versión detectada para apk pub: +$VERSION"
+            echo -e "\n🚀 Versión detectada para apk pub: +$VERSION"
             echo "##vso[task.setvariable variable=msVersionPubspec]$VERSION"
           else
             echo "❌ No se encontró archivo de versión para apk pubspec"
@@ -78,7 +78,9 @@ jobs:
           region="unknown"
 
           case "$CURRENT_BRANCH" in
-            refs/heads/develop | refs/heads/feature/*) environment="dev"; region="dev"; ;;
+            refs/heads/develop) environment="dev"; region="dev"; ;;
+            refs/heads/feature/*) environment="dev"; region="dev"; ;;
+            refs/heads/hotfix/*) environment="dev"; region="dev"; ;;
             refs/heads/staging) environment="qa"; region="qa"; ;;
             refs/heads/master) 
               case "$red" in
