@@ -229,8 +229,15 @@ jobs:
             )
 
             foreach ($file in $filesToCopy) {
+              $newFileName = $file
+             
+              switch -Wildcard ($file) {
+                "InvictusUX Setup $($env:version).exe"          { $newFileName = "invictus-$($env:region)-v$($env:version).exe" }
+                "InvictusUX Setup $($env:version).exe.blockmap" { $newFileName = "invictus-$($env:region)-v$($env:version).exe.blockmap" }
+              }
+
               $sourcePath = Join-Path "$basePath" $file
-              $destinationPath = Join-Path "$basePath\$($env:region)" $file
+              $destinationPath = Join-Path "$basePath\$($env:region)" $newFileName
 
               if (Test-Path $sourcePath) {
                 Copy-Item -Path $sourcePath -Destination $destinationPath -Force
@@ -244,11 +251,11 @@ jobs:
             if (-not $allFound) {
               Write-Error "`n❌ Error: archivos requeridos no encontrados."
               exit 99
-            } 
+            } else {
+              Write-Host "`n📂 Directorio: $basePath\$($env:region)"
+              Get-ChildItem "$basePath\$($env:region)" -Force | Select-Object Mode, LastWriteTime, Length, Name | Format-Table -AutoSize
+            }
           
-            Write-Host "`n📂 Directorio: $basePath\$($env:region)"
-            Get-ChildItem "$basePath\$($env:region)" -Force | Select-Object Mode, LastWriteTime, Length, Name | Format-Table -AutoSize
-      
       - task: PowerShell@2
         displayName: "📤 Upload Bucket S3"
         inputs:
