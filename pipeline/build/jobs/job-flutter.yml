@@ -19,23 +19,20 @@ jobs:
                 - script: echo "Aprobación recibida. Iniciando despliegues..."
 
   - job: "build_flutter"
-    displayName: ${{ variables.jobDisplayName }}
+    ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/') }}:
+      displayName: "Build Jobs Flutter Feature"
+    ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
+      displayName: "Build Jobs Flutter Develop"
+    ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
+      displayName: "Build Jobs Flutter Staging"
+    ${{ if or(eq(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')) }}:
+      displayName: "Build Jobs Flutter Master ${{ parameters.red }}"
     pool:
       vmImage: "macos-latest"
     variables:
       ANDROID_HOME: /Users/runner/Library/Android/sdk
       flutterCacheKey: $(Build.SourceVersion)
       versionFlutter: $[coalesce(variables.flutterVersion, '3.x')]
-      ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/') }}:
-        jobDisplayName: "Build Flutter Hotfix"
-      ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/') }}:
-        jobDisplayName: "Build Flutter Feature"
-      ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
-        jobDisplayName: "Build Flutter Develop"
-      ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
-        jobDisplayName: "Build Flutter Staging"
-      ${{ if or(eq(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')) }}:
-        jobDisplayName: "Build Flutter Master ${{ parameters.red }}"
 
     steps:
 
