@@ -218,7 +218,7 @@ jobs:
             $ErrorActionPreference = "Stop"
             Write-Host "📝 Validando build electron..."
 
-            $basePath = "$(Build.SourcesDirectory)\release\$($env:environment)\$($env:region)"
+            $basePath = "$(Build.SourcesDirectory)\release\$($env:environment)\$($env:version)"
             New-Item -ItemType Directory -Path $basePath\$($env:region) -Force | Out-Null
             $allFound = $true 
 
