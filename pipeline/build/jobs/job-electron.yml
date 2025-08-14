@@ -208,7 +208,7 @@ jobs:
           targetType: " inline"
           script: |
             Write-Host "📦 Ejecutando build..."
-            pnpm run build
+            npm run build
 
       - task: PowerShell@2
         displayName: "🔍 Validate Build"
@@ -222,24 +222,21 @@ jobs:
             New-Item -ItemType Directory -Path $basePath\$($env:region) -Force | Out-Null
             $allFound = $true 
 
-            $filesToCopy = @{
-              "InvictusUX Setup $($env:version).exe"          = "invictus-$($env:region)-$($env:version).exe"
-              "InvictusUX Setup $($env:version).exe.blockmap" = "invictus-$($env:region)-$($env:version).exe.blockmap"
-              "latest.yml"                                    = "latest.yml"
-            }
+            $filesToCopy = @(
+              "InvictusUX Setup $($env:version).exe",
+              "InvictusUX Setup $($env:version).exe.blockmap",
+              "latest.yml"
+            )
 
-            foreach ($file in $filesToCopy.GetEnumerator()) {
-              $fileName    = $file.Key
-              $newFileName = $file.Value
-
-              $sourcePath = Join-Path "$basePath" $fileName
-              $destinationPath = Join-Path "$basePath\$($env:region)" $newFileName
+            foreach ($file in $filesToCopy) {
+              $sourcePath      = Join-Path "$basePath" $file
+              $destinationPath = Join-Path "$basePath\$($env:region)" $file
 
               if (Test-Path $sourcePath) {
                 Copy-Item -Path $sourcePath -Destination $destinationPath -Force
-                Write-Host "📂 Copiado: $fileName -> $destinationPath"
+                Write-Host "📂 Copiado: $file -> $destinationPath"
               } else {
-                Write-Host "⚠️ Archivo no encontrado $fileName -> $sourcePath"
+                Write-Host "⚠️ Archivo no encontrado $file -> $sourcePath"
                 $allFound = $false
               }
             }
@@ -251,7 +248,49 @@ jobs:
               Write-Host "`n📂 Directorio: $basePath\$($env:region)"
               Get-ChildItem "$basePath\$($env:region)" -Force | Select-Object Mode, LastWriteTime, Length, Name | Format-Table -AutoSize
             }
-          
+
+      # - task: PowerShell@2
+      #   displayName: "🔍 Validate Build"
+      #   inputs:
+      #     targetType: " inline"
+      #     script: |
+      #       $ErrorActionPreference = "Stop"
+      #       Write-Host "📝 Validando build electron..."
+
+      #       $basePath = "$(Build.SourcesDirectory)\release\$($env:environment)\$($env:version)"
+      #       New-Item -ItemType Directory -Path $basePath\$($env:region) -Force | Out-Null
+      #       $allFound = $true 
+
+      #       $filesToCopy = @{
+      #         "InvictusUX Setup $($env:version).exe"          = "invictus-$($env:region)-$($env:version).exe"
+      #         "InvictusUX Setup $($env:version).exe.blockmap" = "invictus-$($env:region)-$($env:version).exe.blockmap"
+      #         "latest.yml"                                    = "latest.yml"
+      #       }
+
+      #       foreach ($file in $filesToCopy.GetEnumerator()) {
+      #         $fileName    = $file.Key
+      #         $newFileName = $file.Value
+
+      #         $sourcePath = Join-Path "$basePath" $fileName
+      #         $destinationPath = Join-Path "$basePath\$($env:region)" $newFileName
+
+      #         if (Test-Path $sourcePath) {
+      #           Copy-Item -Path $sourcePath -Destination $destinationPath -Force
+      #           Write-Host "📂 Copiado: $fileName -> $destinationPath"
+      #         } else {
+      #           Write-Host "⚠️ Archivo no encontrado $fileName -> $sourcePath"
+      #           $allFound = $false
+      #         }
+      #       }
+
+      #       if (-not $allFound) {
+      #         Write-Error "`n❌ Error: archivos requeridos no encontrados."
+      #         exit 99
+      #       } else {
+      #         Write-Host "`n📂 Directorio: $basePath\$($env:region)"
+      #         Get-ChildItem "$basePath\$($env:region)" -Force | Select-Object Mode, LastWriteTime, Length, Name | Format-Table -AutoSize
+      #       }
+
       - task: PowerShell@2
         displayName: "📤 Upload Bucket S3"
         inputs:
@@ -261,7 +300,7 @@ jobs:
             Write-Host "📦 Cargando al Bucket S3..."
 
             $basePath = "$(Build.SourcesDirectory)\release\$($env:environment)\$($env:version)\$($env:region)"
-            Write-Host "`n📂 Archivos a cargar:"
+            Write-Host "`n📂 Archivos a cargar: $basePath"
             Get-ChildItem "$basePath" -Force | Select-Object Mode, LastWriteTime, Length, Name | Format-Table -AutoSize
 
             aws s3 cp "$basePath" "s3://e-remote/invictus-electron/windows/$($env:region)" --recursive --acl public-read
