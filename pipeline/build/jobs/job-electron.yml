@@ -52,10 +52,10 @@ jobs:
               $json = Get-Content $versionFile | ConvertFrom-Json
               $version = $json.version
               $baseVersion = $version.Split('-')[0]
-              Write-Host "🚀 Versión detectada para .exe: $baseVersion"
+              Write-Host "`n🚀 Versión detectada para .exe: $baseVersion"
               Write-Host "##vso[task.setvariable variable=version]$baseVersion"
             } else {
-              Write-Host "❌ No se encontró archivo de versión para .exe"
+              Write-Host "`n❌ No se encontró archivo de versión para .exe"
               exit 99
             }
 
@@ -76,7 +76,7 @@ jobs:
               --output text
 
             if (-not $token) {
-              Write-Error "❌ No se pudo obtener el token de AWS CodeArtifact"
+              Write-Error "`n❌ No se pudo obtener el token de AWS CodeArtifact"
               exit 99
             }
 
@@ -114,13 +114,23 @@ jobs:
             $currentBranch="$(Build.SourceBranch)"
 
             $environment = "unknown"
+            $region = "unknown"
+
             switch -Wildcard ($currentBranch) {
-              "refs/heads/feature/*" { $environment = "dev"; break }
-              "refs/heads/hotfix/*"  { $environment = "dev"; break }
-              "refs/heads/develop"   { $environment = "dev"; break }
-              "refs/heads/staging"   { $environment = "qa"; break }
-              "refs/heads/master"    { $environment = "production"; break }
-              default                { $environment = "unknown" }
+                "refs/heads/feature/*" { $environment = "dev"; $region = "dev" }
+                "refs/heads/hotfix/*"  { $environment = "dev"; $region = "dev" }
+                "refs/heads/develop"   { $environment = "dev"; $region = "dev" }
+                "refs/heads/staging"   { $environment = "qa"; $region = "qa" }
+                "refs/heads/master" {
+                    switch ($env:red) {
+                        "antioquia" { $environment = "production"; $region = "matrixtech" }
+                        "cap"       { $environment = "production"; $region = "cap" }
+                        "tolima"    { $environment = "production"; $region = "seapto" }
+                        "huila"     { $environment = "production"; $region = "suchance" }
+                        "cauca"     { $environment = "production"; $region = "acertemos" }
+                        "boyaca"    { $environment = "production"; $region = "jer" }
+                    }
+                }
             }
             if ($environment -ne "unknown") {
             @"
@@ -131,12 +141,15 @@ jobs:
             "@ | Set-Content -Encoding UTF8 .env
 
               Write-Host "##vso[task.setvariable variable=environment]$environment"
+              Write-Host "##vso[task.setvariable variable=region]$region"
               Write-Host "`n✅ Archivo .env creado correctamente"
               Get-Content .env
             } else {
-              Write-Host "❌ No se encontró una rama valida, branch [$environment]."
+              Write-Host "`n❌ No se encontró una rama valida, branch [$environment]."
               exit 99
             }
+        env:
+          red: ${{ parameters.red }}
 
       - task: PowerShell@2
         displayName: "📝 Update version in package.json"
@@ -144,20 +157,18 @@ jobs:
           targetType: "inline"
           script: |
             $ErrorActionPreference = "Stop"
+            Write-Host "📦 Modificando versión en package.json: $env:version"
             $packagePath = "$(Build.SourcesDirectory)\package.json"
-            $newVersion = "$(version)"
 
             if (Test-Path $packagePath) {
-              Write-Host "📦 Modificando versión en package.json: $newVersion"
-
               $packageJson = Get-Content $packagePath -Raw | ConvertFrom-Json
-              $packageJson.version = $newVersion
+              $packageJson.version = $env:version
               $packageJson | ConvertTo-Json -Depth 10 | Set-Content -Encoding UTF8 $packagePath
 
               Write-Host "`n✅ Version en package.json actualizada correctamente."
               Get-Content $packagePath | ForEach-Object { Write-Host $_ }
             } else {
-              Write-Host "❌ No se encontró el archivo package.json en la ruta [$packagePath]"
+              Write-Host "`n❌ No se encontró el archivo package.json en la ruta [$packagePath]"
               exit 99
             }
 
@@ -186,63 +197,76 @@ jobs:
           targetType: "inline"
           script: |
             Write-Host "📦 Instalando dependencias"
-            npm i
+            pnpm i
   
             Write-Host "`n📦 Dependencias instaladas:"
-            npm list --depth=0
+            pnpm list --depth=0
 
       - task: PowerShell@2
         displayName: "📦 Build electron"
-        continueOnError: true
         inputs:
           targetType: " inline"
           script: |
             Write-Host "📦 Ejecutando build..."
-            npm run build
+            pnpm run build
 
-      # - task: PowerShell@2
-      #   displayName: "📦 Build electron"
-      #   continueOnError: true
-      #   inputs:
-      #     targetType: " inline"
-      #     script: |
-      #       Write-Host "📦 Ejecutando build..."
-      #       $vc = 'C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsall.bat'
-      #       if (-not (Test-Path $vc)) {
-      #         Write-Error "No se encontró vcvarsall: $vc"
-      #         exit 99
-      #       }
-      #       & cmd.exe /c "`"$vc`" x64 && pnpm run build"
+      - task: PowerShell@2
+        displayName: "🔍 Validate Build"
+        inputs:
+          targetType: " inline"
+          script: |
+            $ErrorActionPreference = "Stop"
+            Write-Host "📝 Validando build electron..."
 
-      # - task: PowerShell@2
-      #   displayName: "🔍 Validate Build"
-      #   continueOnError: true
-      #   inputs:
-      #     targetType: " inline"
-      #     script: |
-      #       $ErrorActionPreference = "Continue"
-      #       Write-Host "📝 Validando build electron..."
-      #       basePath = "$(Build.SourcesDirectory)\release\$(version)\$(environment)"
-      #       Write-Host "`n📂 Ruta de validación: $basePath"
+            $basePath = "$(Build.SourcesDirectory)\release\$($env:environment)\$($env:version)"
+            New-Item -ItemType Directory -Path $basePath\$($env:region) -Force | Out-Null
+            $allFound = $true 
 
-      #       $allFound = $true
-      #       $filesToCheck = @(
-      #         "InvictusUX Setup $(version).exe",
-      #         "InvictusUX Setup $(version).exe.blockmap",
-      #         "latest.yml"
-      #       )
-            
-      #       foreach ($file in $filesToCheck) {
-      #         $fullPath = Join-Path $basePath $file
-      #         if (Test-Path $fullPath) {
-      #           Write-Host "✅ Encontrado: $fullPath"
-      #         } else {
-      #           Write-Host "❌ Faltante: $fullPath"
-      #           $allFound = $false
-      #         }
-      #       }
+            $filesToCopy = @{
+              "InvictusUX Setup $($env:version).exe"          = "invictus-$($env:region)-$($env:version).exe"
+              "InvictusUX Setup $($env:version).exe.blockmap" = "invictus-$($env:region)-$($env:version).exe.blockmap"
+              "latest.yml"                                    = "latest.yml"
+            }
 
-      #       if (-not $allFound) {
-      #         Write-Error "Uno o más archivos requeridos no se encontraron."
-      #         exit 99
-      #       }
+            foreach ($file in $filesToCopy.GetEnumerator()) {
+              $fileName    = $file.Key
+              $newFileName = $file.Value
+
+              $sourcePath = Join-Path "$basePath" $fileName
+              $destinationPath = Join-Path "$basePath\$($env:region)" $newFileName
+
+              if (Test-Path $sourcePath) {
+                Copy-Item -Path $sourcePath -Destination $destinationPath -Force
+                Write-Host "📂 Copiado: $fileName -> $destinationPath"
+              } else {
+                Write-Host "⚠️ Archivo no encontrado $fileName -> $sourcePath"
+                $allFound = $false
+              }
+            }
+
+            if (-not $allFound) {
+              Write-Error "`n❌ Error: archivos requeridos no encontrados."
+              exit 99
+            } else {
+              Write-Host "`n📂 Directorio: $basePath\$($env:region)"
+              Get-ChildItem "$basePath\$($env:region)" -Force | Select-Object Mode, LastWriteTime, Length, Name | Format-Table -AutoSize
+            }
+          
+      - task: PowerShell@2
+        displayName: "📤 Upload Bucket S3"
+        inputs:
+          targetType: " inline"
+          script: |
+            $ErrorActionPreference = "Stop"
+            Write-Host "📦 Cargando al Bucket S3..."
+
+            $basePath = "$(Build.SourcesDirectory)\release\$($env:environment)\$($env:version)\$($env:region)"
+            Write-Host "`n📂 Archivos a cargar:"
+            Get-ChildItem "$basePath" -Force | Select-Object Mode, LastWriteTime, Length, Name | Format-Table -AutoSize
+
+            aws s3 cp "$basePath" "s3://e-remote/invictus-electron/windows/$($env:region)" --recursive --acl public-read
+        #condition: not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
+        env:
+          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
+          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)

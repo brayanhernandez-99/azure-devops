@@ -235,6 +235,7 @@ jobs:
                 # Las bases son diferentes, solo incrementa el prerelease
                 NEXT_VERSION="$BASE_VERSION_BRANCH-$clean_branch.$((CURRENT_PRERELEASE + 1))"
               fi
+              echo -e "\n🔍 Versiones Detectadas"
               echo "📌 anterior versión : $VERSION_ACTUAL"
               echo "🚀 Próxima versión : $NEXT_VERSION"
             fi
@@ -242,9 +243,10 @@ jobs:
             if [[ "$CURRENT_BRANCH" == refs/heads/master ]]; then
               git checkout version/$clean_branch
               VERSION_ACTUAL_MASTER=$(jq -r .version package.json)
-
               NEXT_BASE_VERSION=$(bump_version "$VERSION_ACTUAL_MASTER" "$RELEASE_TYPE")
               NEXT_VERSION="$NEXT_BASE_VERSION"
+
+              echo -e "\n🔍 Versiones Detectadas"
               echo "📌 Anterior versión : $VERSION_ACTUAL_MASTER"
               echo "🚀 Próxima versión : $NEXT_VERSION"
             fi
@@ -252,9 +254,10 @@ jobs:
             if [[ "$CURRENT_BRANCH" == refs/heads/hotfix/* ]]; then
               git checkout version/$clean_branch
               VERSION_ACTUAL_MASTER=$(jq -r .version package.json)
-
               NEXT_BASE_VERSION=$(bump_version "$VERSION_ACTUAL_MASTER" "$RELEASE_TYPE")
               NEXT_VERSION="$NEXT_BASE_VERSION"
+
+              echo -e "\n🔍 Versiones Detectadas"
               echo "📌 Anterior versión : $VERSION_ACTUAL_MASTER"
               echo "🚀 Próxima versión : $NEXT_VERSION"
             fi

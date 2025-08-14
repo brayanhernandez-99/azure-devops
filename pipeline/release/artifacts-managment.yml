@@ -46,7 +46,7 @@ stages:
                   VERSION_FILE="$(Pipeline.Workspace)/downloaded-versions/versions/$(msName)/version.json"
                   if [[ -f "$VERSION_FILE" ]]; then
                     VERSION=$(jq -r '.version' $VERSION_FILE)
-                    echo "🚀 Versión detectada para $(msName): $VERSION"
+                    echo -e "\n🚀 Versión detectada para $(msName): $VERSION"
                     echo "##vso[task.setvariable variable=msVersion]$VERSION"
                   else
                     echo "❌ No se encontró archivo de versión para $(msName)"
@@ -169,7 +169,7 @@ stages:
                   VERSION_FILE="$(Pipeline.Workspace)/downloaded-versions/versions/$(msName)/version.json"
                   if [[ -f "$VERSION_FILE" ]]; then
                     VERSION=$(jq -r '.version' $VERSION_FILE)
-                    echo "🚀 Versión detectada para $(msName): $VERSION"
+                    echo -e "\n🚀 Versión detectada para $(msName): $VERSION"
                     echo "##vso[task.setvariable variable=msVersion]$VERSION"
                   else
                     echo "❌ No se encontró archivo de versión para $(msName)"
@@ -292,7 +292,7 @@ stages:
                   VERSION_FILE="$(Pipeline.Workspace)/downloaded-versions/versions/$(msName)/version.json"
                   if [[ -f "$VERSION_FILE" ]]; then
                     VERSION=$(jq -r '.version' $VERSION_FILE)
-                    echo "🚀 Versión detectada para $(msName): $VERSION"
+                    echo -e "\n🚀 Versión detectada para $(msName): $VERSION"
                     echo "##vso[task.setvariable variable=msVersion]$VERSION"
                   else
                     echo "❌ No se encontró archivo de versión para $(msName)"

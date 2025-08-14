@@ -36,13 +36,6 @@ jobs:
         jobDisplayName: "Build Flutter Master ${{ parameters.red }}"
 
     steps:
-      - task: FlutterInstall@0
-        displayName: "🔧 Install Flutter $(versionFlutter)"
-        inputs:
-          mode: "auto"
-          channel: "stable"
-          version: "custom"
-          customVersion: $(versionFlutter)
 
       - task: DownloadBuildArtifacts@0
         displayName: "📥 Download Version Artifact"
@@ -51,12 +44,13 @@ jobs:
           downloadPath: "$(Pipeline.Workspace)/downloaded-versions"
 
       - script: |
-          ls -R $(Pipeline.Workspace)/downloaded-versions/versions/version-apk
+          echo -e "\n📁 Archivo version.json:"
+          ls -la $(Pipeline.Workspace)/downloaded-versions/versions/version-apk
           VERSION_FILE="$(Pipeline.Workspace)/downloaded-versions/versions/version-apk/version.json"
           if [[ -f "$VERSION_FILE" ]]; then
             VERSION=$(jq -r '.version' $VERSION_FILE)
             BASE_VERSION=$(echo "$VERSION" | cut -d'-' -f1)
-            echo "🚀 Versión detectada para apk: $BASE_VERSION"
+            echo -e "\n🚀 Versión detectada para apk: $BASE_VERSION"
             echo "##vso[task.setvariable variable=msVersion]$BASE_VERSION"
           else
             echo "❌ No se encontró archivo de versión para apk"
@@ -65,11 +59,12 @@ jobs:
         displayName: "📚 Read apk versions"
 
       - script: |
-          ls -R $(Pipeline.Workspace)/downloaded-versions/versions/version-pubspec-apk
+          echo -e "\n📁 Archivo version.json:"
+          ls -la $(Pipeline.Workspace)/downloaded-versions/versions/version-pubspec-apk
           VERSION_FILE="$(Pipeline.Workspace)/downloaded-versions/versions/version-pubspec-apk/version.json"
           if [[ -f "$VERSION_FILE" ]]; then
             VERSION=$(jq -r '.version' $VERSION_FILE)
-            echo "🚀 Versión detectada para apk pub: +$VERSION"
+            echo -e "\n🚀 Versión detectada para apk pub: +$VERSION"
             echo "##vso[task.setvariable variable=msVersionPubspec]$VERSION"
           else
             echo "❌ No se encontró archivo de versión para apk pubspec"
@@ -78,97 +73,87 @@ jobs:
         displayName: "📚 Read apk pubspec versions"
 
       - script: |
-          echo "Version a actualizar: $(msVersion)"
-          sed -i '' "s/^version: .*/version: $(msVersion)+$(msVersionPubspec)/" pubspec.yaml
-
-          cat pubspec.yaml
-        displayName: "Change version file pubspec"
-
-      - script: |
-          CURRENT_BRANCH=$(echo $(Build.SourceBranch))
-          echo "Version a actualizar: $(msVersion)"
-          echo "Branch: $CURRENT_BRANCH"
-          echo "Red: $red"
+          CURRENT_BRANCH="$(Build.SourceBranch)"
+          environment="unknown"
+          region="unknown"
 
           case "$CURRENT_BRANCH" in
-            refs/heads/develop | refs/heads/feature/*)
-              CURRENT_BRANCH_PR="dev"
-              ;;
-            refs/heads/staging)
-              CURRENT_BRANCH_PR="qa"
-              ;;
-            refs/heads/master)
+            refs/heads/feature/*) environment="dev"; region="dev"; ;;
+            refs/heads/hotfix/*) environment="dev"; region="dev"; ;;
+            refs/heads/develop) environment="dev"; region="dev"; ;;
+            refs/heads/staging) environment="qa"; region="qa"; ;;
+            refs/heads/master) 
               case "$red" in
-                "antioquia") CURRENT_BRANCH_PR="prd-gana" ;;
-                "cap")       CURRENT_BRANCH_PR="prd-cap" ;;
-                "tolima")    CURRENT_BRANCH_PR="prd-seapto" ;;
-                "huila")     CURRENT_BRANCH_PR="prd-suchance" ;;
-                "cauca")     CURRENT_BRANCH_PR="prd-acertemos" ;;
-                "boyaca")    CURRENT_BRANCH_PR="prd-jer" ;;
-                *) 
-                  echo "⚠️ Región [$red] no reconocida para master"; 
-                  exit 99 
-                  ;;
-              esac
-              ;;
-            *)
-              echo "⚠️ Rama [$CURRENT_BRANCH] no reconocida"
-              exit 99
-              ;;
+                "antioquia") environment="prd-gana"; region="gana"; ;;
+                "cap")       environment="prd-cap";  region="cap"; ;;
+                "tolima")    environment="prd-seapto"; region="septo"; ;;
+                "huila")     environment="prd-suchance"; region="suchance"; ;;
+                "cauca")     environment="prd-acertemos"; region="acertemos"; ;;
+                "boyaca")    environment="prd-jer"; region="jer"; ;;
+              esac ;;
           esac
 
-          echo -e "\nVERSION: $(msVersion)"
-          echo "ENVIRONMENT: $CURRENT_BRANCH_PR"
-          echo "URL: $(BASE_URL_FLUTTER)"
+          if [ "$environment" = "unknown" ] || [ "$region" = "unknown" ]; then
+            echo "⚠️ Environment [$environment] no reconocido"
+            echo "⚠️ Región [$region] no reconocida"
+            exit 99
+          fi
 
-          jq --arg version "$(msVersion)" --arg environment "$CURRENT_BRANCH_PR" --arg url "$(BASE_URL_FLUTTER)" '.VERSION = $version | .ENVIRONMENT = $environment | .BASE_URL = $url' env.json > tmp.json && mv tmp.json env.json
-          cat env.json
-        displayName: "Change version, environment, url file env.json"
+          echo "##vso[task.setvariable variable=environment]$environment"
+          echo "##vso[task.setvariable variable=region]$region"
+
+          echo "Branch: $CURRENT_BRANCH"
+          echo "Environment: $(environment)"
+          echo "Region: $(region)"
+        displayName: "📚 Configure environment & region"
         env:
           red: ${{ parameters.red }}
 
       - script: |
-          CURRENT_BRANCH=$(echo $(Build.SourceBranch))
+          echo "Version a actualizar: $(msVersion)"
+          sed -i '' "s/^version: .*/version: $(msVersion)+$(msVersionPubspec)/" pubspec.yaml
+          cat pubspec.yaml
+        displayName: "🔧 Change version file pubspec"
+
+      - script: |
+          CURRENT_BRANCH="$(Build.SourceBranch)"
+          echo "Version a actualizar: $(msVersion)"
           echo "Branch: $CURRENT_BRANCH"
           echo "Red: $red"
 
-          case "$CURRENT_BRANCH" in
-            refs/heads/develop | refs/heads/feature/*)
-              CURRENT_BRANCH_PR="dev"
-              ;;
-            refs/heads/staging)
-              CURRENT_BRANCH_PR="qa"
-              ;;
-            refs/heads/master)
-              case "$red" in
-                "antioquia") CURRENT_BRANCH_PR="gana" ;;
-                "cap")       CURRENT_BRANCH_PR="cap" ;;
-                "tolima")    CURRENT_BRANCH_PR="seapto" ;;
-                "huila")     CURRENT_BRANCH_PR="suchance" ;;
-                "cauca")     CURRENT_BRANCH_PR="acertemos" ;;
-                "boyaca")    CURRENT_BRANCH_PR="jer" ;;
-                *)           
-                  echo "⚠️ Región [$red] no reconocida para master"; 
-                  exit 99 
-                  ;;
-              esac
-              ;;
-            *)
-              echo "⚠️ Rama [$CURRENT_BRANCH] no reconocida"
-              exit 99 
-              ;;
-          esac
+          echo -e "\n📁 Archivo env.json:"
+          jq --arg version "$(msVersion)" \
+            --arg environment "$(environment)" \
+            --arg url "$(BASE_URL_FLUTTER)" \
+            '.VERSION = $version | .ENVIRONMENT = $environment | .BASE_URL = $url' env.json > tmp.json && mv tmp.json env.json
 
-          NEW_APP_ID="com.ux.mobile.$CURRENT_BRANCH_PR"
+          cat env.json
+        displayName: "🔧 Change version, environment, url file env.json"
+        env:
+          red: ${{ parameters.red }}
+
+      - script: |
+          echo "Branch: $(Build.SourceBranch)"
+          echo "Red: $red"
+
+          NEW_APP_ID="com.ux.mobile.$(region)"
           echo "New app ID: $NEW_APP_ID"
           sed -i '' "s|applicationId *= *\"[^\"]*\"|applicationId = \"$NEW_APP_ID\"|" android/app/build.gradle
 
           echo -e "\n Archivo Build.gradle"
           cat android/app/build.gradle
-        displayName: "Change file build.gradle"
+        displayName: "🔧 Change file build.gradle"
         env:
           red: ${{ parameters.red }}
 
+      - task: FlutterInstall@0
+        displayName: "🔧 Install Flutter $(versionFlutter)"
+        inputs:
+          mode: "auto"
+          channel: "stable"
+          version: "custom"
+          customVersion: $(versionFlutter)
+          
       - script: |
           echo "✔️ Verificando entorno Flutter y Android SDK..."
           echo -e "\n📦 ANDROID_HOME: $ANDROID_HOME" && ls -la "$ANDROID_HOME"
@@ -266,83 +251,34 @@ jobs:
         displayName: "✔️ Verify apk"
 
       - script: |
-          CURRENT_BRANCH=$(echo $(Build.SourceBranch))
           echo "Renombrando APK..."
-          echo "Branch: $CURRENT_BRANCH"
+          echo "Branch: $(Build.SourceBranch)"
           echo "Red: $red"
 
-          case "$CURRENT_BRANCH" in
-            refs/heads/develop)
-              CURRENT_BRANCH_PR="dev"
-              echo "$CURRENT_BRANCH_PR"
-              ;;
-            refs/heads/staging)
-              CURRENT_BRANCH_PR="qa"
-              ;;
-            refs/heads/master)
-              case "$red" in
-                "antioquia") CURRENT_BRANCH_PR="prd-gana" ;;
-                "cap")       CURRENT_BRANCH_PR="cap" ;;
-                "tolima")    CURRENT_BRANCH_PR="prd-seapto" ;;
-                "huila")     CURRENT_BRANCH_PR="prd-suchance" ;;
-                "cauca")     CURRENT_BRANCH_PR="prd-acertemos" ;;
-                "boyaca")    CURRENT_BRANCH_PR="prd-jer" ;;
-                *)           echo "⚠️ Región [$red] no reconocida para master"; exit 1 ;;
-              esac
-              ;;
-            *)
-              echo "⚠️ Rama [$CURRENT_BRANCH] no reconocida"; exit 1
-              ;;
-          esac
-
-          mv build/app/outputs/flutter-apk/app-profile.apk build/app/outputs/flutter-apk/invictus-$CURRENT_BRANCH_PR-v$(msVersion).apk
-          mv build/app/outputs/flutter-apk/app-profile.apk.sha1 build/app/outputs/flutter-apk/invictus-$CURRENT_BRANCH_PR-v$(msVersion).apk.sha1
-          APKNAME="invictus-$CURRENT_BRANCH_PR-v$(msVersion).apk"
-          echo "##vso[task.setvariable variable=apknameclean]$APKNAME"
+          mv build/app/outputs/flutter-apk/app-profile.apk build/app/outputs/flutter-apk/invictus-$(environment)-$(msVersion).apk
+          mv build/app/outputs/flutter-apk/app-profile.apk.sha1 build/app/outputs/flutter-apk/invictus-$(environment)-$(msVersion).apk.sha1
+          
+          APK_NAME="invictus-$(environment)-$(msVersion).apk"
+          echo "##vso[task.setvariable variable=apk-name]$APK_NAME"
+        
+          echo -e "\n📁 APK generados:"
           ls -l build/app/outputs/flutter-apk
-        displayName: "Change name file Apk"
-        condition: not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
+        displayName: "📝 Change name file Apk"
         env:
           red: ${{ parameters.red }}
 
       - script: |
-          CURRENT_BRANCH=$(echo $(Build.SourceBranch))
-          echo "Branch: $CURRENT_BRANCH"
+          echo "Branch: $(Build.SourceBranch)"
           echo "Red: $red"
 
-          case "$CURRENT_BRANCH" in
-            refs/heads/develop)
-              CURRENT_BRANCH_PR="dev"
-              ;;
-            refs/heads/staging)
-              CURRENT_BRANCH_PR="qa"
-              ;;
-            refs/heads/master)
-              case "$red" in
-                "antioquia") CURRENT_BRANCH_PR="prd-gana" ;;
-                "cap")       CURRENT_BRANCH_PR="cap" ;;
-                "tolima")    CURRENT_BRANCH_PR="prd-seapto" ;;
-                "huila")     CURRENT_BRANCH_PR="prd-suchance" ;;
-                "cauca")     CURRENT_BRANCH_PR="prd-acertemos" ;;
-                "boyaca")    CURRENT_BRANCH_PR="prd-jer" ;;
-                *)           echo "⚠️ Región [$red] no reconocida para master"; exit 1 ;;
-              esac
-              ;;
-            *)
-              echo "⚠️ Rama [$CURRENT_BRANCH] no reconocida"; exit 1
-              ;;
-          esac
-          mkdir -p build/app/outputs/flutter-apk/$CURRENT_BRANCH_PR
+          mkdir -p build/app/outputs/flutter-apk/$(environment)
+          mv build/app/outputs/flutter-apk/$(apk-name) build/app/outputs/flutter-apk/$(environment)
 
-          # Mover el archivo a la subcarpeta
-          mv build/app/outputs/flutter-apk/$(apknameclean) build/app/outputs/flutter-apk/$CURRENT_BRANCH_PR/
+          echo -e "\n📁 Archivos a cargar:"
+          ls -l build/app/outputs/flutter-apk/$(environment)
 
-          # Verifica que el archivo está donde debe
-          ls -l build/app/outputs/flutter-apk/$CURRENT_BRANCH_PR/
-
-          # Subir a S3 la carpeta completa
-          aws s3 cp build/app/outputs/flutter-apk/$CURRENT_BRANCH_PR/ s3://repository-native/app-seller/android/$CURRENT_BRANCH_PR/ --recursive --acl public-read
-        displayName: "Copy Apk Bucket S3"
+          aws s3 cp build/app/outputs/flutter-apk/$(environment) s3://repository-native/app-seller/android/$(environment) --recursive --acl public-read
+        displayName: "📤 Upload Bucket S3"
         condition: not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
         env:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
