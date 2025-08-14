@@ -208,7 +208,7 @@ jobs:
           targetType: " inline"
           script: |
             Write-Host "📦 Ejecutando build..."
-            pnpm run build
+            npm run build
 
       - task: PowerShell@2
         displayName: "🔍 Validate Build"
