@@ -5,11 +5,11 @@ jobs:
         pool:
           vmImage: "ubuntu-22.04"
         ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
-          environmentName: "Build develop"
+          environment: "Build develop"
         ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
-          environmentName: "Build staging"
+          environment: "Build staging"
         ${{ if or(eq(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')) }}:
-          environmentName: "Build master ${{ parameters.red }}"
+          environment: "Build master ${{ parameters.red }}"
         strategy:
           runOnce:
             deploy:
