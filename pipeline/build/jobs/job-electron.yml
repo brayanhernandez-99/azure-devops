@@ -224,7 +224,7 @@ jobs:
 
             $filesToCopy = @(
               "InvictusUX Setup $($env:version).exe",
-              "InvictusUX Setup $($env:version).blockmap",
+              "InvictusUX Setup $($env:version).exe.blockmap",
               "latest.yml"
             )
 
