@@ -265,7 +265,7 @@ jobs:
             Get-ChildItem "$basePath" -Force | Select-Object Mode, LastWriteTime, Length, Name | Format-Table -AutoSize
 
             aws s3 cp "$basePath" "s3://e-remote/invictus-electron/windows/$($env:region)" --recursive --acl public-read
-        condition: not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
+        #condition: not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
         env:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
