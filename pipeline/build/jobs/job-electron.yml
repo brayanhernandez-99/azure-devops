@@ -158,7 +158,7 @@ jobs:
           script: |
             $ErrorActionPreference = "Stop"
             $packagePath = "$(Build.SourcesDirectory)\package.json"
-            $newVersion = "$(version)"
+            $newVersion = "$($env:version)"
 
             if (Test-Path $packagePath) {
               Write-Host "📦 Modificando versión en package.json: $newVersion"
@@ -219,21 +219,20 @@ jobs:
           script: |
             $ErrorActionPreference = "Stop"
             Write-Host "📝 Validando build electron..."
-            $version=$(version)
 
-            $basePath = "$(Build.SourcesDirectory)\release\$(environment)\$version"
-            New-Item -ItemType Directory -Path $basePath\$(region) -Force | Out-Null
+            $basePath = "$(Build.SourcesDirectory)\release\$($env:environment)\$($env:version)"
+            New-Item -ItemType Directory -Path $basePath\$($env:region) -Force | Out-Null
             $allFound = $true
 
             $filesToCopy = @(
-              "InvictusUX Setup $version.exe",
-              "InvictusUX Setup $version.exe.blockmap",
+              "InvictusUX Setup $($env:version).exe",
+              "InvictusUX Setup $($env:version).exe.blockmap",
               "latest.yml"
             )
 
             foreach ($file in $filesToCopy) {
               $sourcePath = Join-Path "$basePath" $file
-              $destinationPath = Join-Path "$basePath\$(region)" $file
+              $destinationPath = Join-Path "$basePath\$($env:region)" $file
 
               if (Test-Path $sourcePath) {
                 Copy-Item -Path $sourcePath -Destination $destinationPath -Force
@@ -249,8 +248,8 @@ jobs:
               exit 99
             } 
           
-            Write-Host "`n📂 Directorio: $basePath\$(region)"
-            Get-ChildItem "$basePath\$(region)" -Force | Select-Object Mode, LastWriteTime, Length, Name | Format-Table -AutoSize
+            Write-Host "`n📂 Directorio: $basePath\$($env:region)"
+            Get-ChildItem "$basePath\$($env:region)" -Force | Select-Object Mode, LastWriteTime, Length, Name | Format-Table -AutoSize
       
       - task: PowerShell@2
         displayName: "📤 Upload Bucket S3"
@@ -259,9 +258,8 @@ jobs:
           script: |
             $ErrorActionPreference = "Stop"
             Write-Host "📦 Cargando al Bucket S3..."
-            $version=$(version)
 
-            $basePath = "$(Build.SourcesDirectory)\release\$(environment)\$version\$(region)"
+            $basePath = "$(Build.SourcesDirectory)\release\$($env:environment)\$($env:version)\$($env:region)"
             Write-Host "`n📂 Archivos a cargar:"
             Get-ChildItem "$basePath" -Force | Select-Object Mode, LastWriteTime, Length, Name | Format-Table -AutoSize
 
