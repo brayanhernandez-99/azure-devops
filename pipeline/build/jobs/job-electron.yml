@@ -223,8 +223,8 @@ jobs:
             $allFound = $true 
 
             $filesToCopy = @(
-                @("InvictusUX Setup $($env:version).exe",          "invictus-$($env:region)-v$($env:version).exe"),
-                @("InvictusUX Setup $($env:version).exe.blockmap", "invictus-$($env:region)-v$($env:version).exe.blockmap"),
+                @("InvictusUX Setup $($env:version).exe",          "invictus-$($env:region)-$($env:version).exe"),
+                @("InvictusUX Setup $($env:version).exe.blockmap", "invictus-$($env:region)-$($env:version).exe.blockmap"),
                 @("latest.yml",                                    "invictus-$($env:region)-latest.yml")
             )
 
