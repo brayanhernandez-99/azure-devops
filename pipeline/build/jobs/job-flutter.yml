@@ -1,5 +1,5 @@
 jobs:
-  - ${{ if or( not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')), not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))  }}:
+  - ${{ if and( not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')), not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))  }}:
       - deployment: WaitForApproval
         displayName: "Esperar aprobación"
         pool:
