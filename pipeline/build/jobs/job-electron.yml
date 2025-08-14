@@ -219,14 +219,15 @@ jobs:
           script: |
             $ErrorActionPreference = "Stop"
             Write-Host "📝 Validando build electron..."
+            $version=$(version)
 
-            $basePath = "$(Build.SourcesDirectory)\release\$(environment)\$(version)"
+            $basePath = "$(Build.SourcesDirectory)\release\$(environment)\$version"
             New-Item -ItemType Directory -Path $basePath\$(region) -Force | Out-Null
             $allFound = $true
 
             $filesToCopy = @(
-              "InvictusUX Setup $(version).exe",
-              "InvictusUX Setup $(version).exe.blockmap",
+              "InvictusUX Setup $version.exe",
+              "InvictusUX Setup $version.exe.blockmap",
               "latest.yml"
             )
 
@@ -258,8 +259,9 @@ jobs:
           script: |
             $ErrorActionPreference = "Stop"
             Write-Host "📦 Cargando al Bucket S3..."
+            $version=$(version)
 
-            $basePath = "$(Build.SourcesDirectory)\release\$(environment)\$(version)\$(region)"
+            $basePath = "$(Build.SourcesDirectory)\release\$(environment)\$version\$(region)"
             Write-Host "`n📂 Archivos a cargar:"
             Get-ChildItem "$basePath" -Force | Select-Object Mode, LastWriteTime, Length, Name | Format-Table -AutoSize
 
