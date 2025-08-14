@@ -19,20 +19,19 @@ jobs:
                 - script: echo "Aprobación recibida. Iniciando despliegues..."
 
   - job: "build_electron_windows"
-    displayName: ${{ variables.jobDisplayName }}
+    ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/') }}:
+      displayName: "Build Job Electron Feature"
+    ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
+      displayName: "Build Job Electron Develop"
+    ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
+      displayName: "Build Job Electron Staging"
+    ${{ if or(eq(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')) }}:
+      displayName: "Build Job Electron Master ${{ parameters.red }}"
     pool:
       vmImage: "windows-latest"
     variables:
       versionNode: $[coalesce(variables.nodeVersion, '18.x')]
       versionPython: $[coalesce(variables.pythonVersion, '3.x')]
-      ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/') }}:
-        jobDisplayName: "Build Electron Feature"
-      ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
-        jobDisplayName: "Build Electron Develop"
-      ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
-        jobDisplayName: "Build Electron Staging"
-      ${{ if or(eq(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')) }}:
-        jobDisplayName: "Build Electron Master ${{ parameters.red }}"
 
     steps:
       - task: DownloadBuildArtifacts@0
