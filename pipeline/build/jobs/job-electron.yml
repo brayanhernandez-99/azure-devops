@@ -157,13 +157,12 @@ jobs:
           targetType: "inline"
           script: |
             $ErrorActionPreference = "Stop"
-            Write-Host "📦 Modificando versión en package.json: $new_version"
+            Write-Host "📦 Modificando versión en package.json: $env:version"
             $packagePath = "$(Build.SourcesDirectory)\package.json"
-            $new_version = $env:version
 
             if (Test-Path $packagePath) {
               $packageJson = Get-Content $packagePath -Raw | ConvertFrom-Json
-              $packageJson.version = $new_version
+              $packageJson.version = $env:version
               $packageJson | ConvertTo-Json -Depth 10 | Set-Content -Encoding UTF8 $packagePath
 
               Write-Host "`n✅ Version en package.json actualizada correctamente."
@@ -218,23 +217,20 @@ jobs:
           script: |
             $ErrorActionPreference = "Stop"
             Write-Host "📝 Validando build electron..."
-            $version = $env:version
-            $environment = $env:environment
-            $region = $env:region
 
-            $basePath = "$(Build.SourcesDirectory)\release\$environment\$version"
-            New-Item -ItemType Directory -Path $basePath\$region -Force | Out-Null
+            $basePath = "$(Build.SourcesDirectory)\release\$($env:environment)\$($env:region)"
+            New-Item -ItemType Directory -Path $basePath\$($env:region) -Force | Out-Null
             $allFound = $true 
 
             $filesToCopy = @(
-              "InvictusUX Setup $version.exe",
-              "InvictusUX Setup $version.exe.blockmap",
+              "InvictusUX Setup $($env:version).exe",
+              "InvictusUX Setup $($env:version).blockmap",
               "latest.yml"
             )
 
             foreach ($file in $filesToCopy) {
               $sourcePath = Join-Path "$basePath" $file
-              $destinationPath = Join-Path "$basePath\$region" $file
+              $destinationPath = Join-Path "$basePath\$($env:region)" $file
 
               if (Test-Path $sourcePath) {
                 Copy-Item -Path $sourcePath -Destination $destinationPath -Force
@@ -250,7 +246,7 @@ jobs:
               exit 99
             } 
           
-            Write-Host "`n📂 Directorio: $basePath\$region"
+            Write-Host "`n📂 Directorio: $basePath\$($env:region)"
             Get-ChildItem "$basePath\$region" -Force | Select-Object Mode, LastWriteTime, Length, Name | Format-Table -AutoSize
       
       - task: PowerShell@2
