@@ -157,20 +157,19 @@ jobs:
           targetType: "inline"
           script: |
             $ErrorActionPreference = "Stop"
+            Write-Host "📦 Modificando versión en package.json: $new_version"
             $packagePath = "$(Build.SourcesDirectory)\package.json"
-            $newVersion = "$($env:version)"
+            $new_version = $env:version
 
             if (Test-Path $packagePath) {
-              Write-Host "📦 Modificando versión en package.json: $newVersion"
-
               $packageJson = Get-Content $packagePath -Raw | ConvertFrom-Json
-              $packageJson.version = $newVersion
+              $packageJson.version = $new_version
               $packageJson | ConvertTo-Json -Depth 10 | Set-Content -Encoding UTF8 $packagePath
 
               Write-Host "`n✅ Version en package.json actualizada correctamente."
               Get-Content $packagePath | ForEach-Object { Write-Host $_ }
             } else {
-              Write-Host "❌ No se encontró el archivo package.json en la ruta [$packagePath]"
+              Write-Host "`n❌ No se encontró el archivo package.json en la ruta [$packagePath]"
               exit 99
             }
 
@@ -219,20 +218,23 @@ jobs:
           script: |
             $ErrorActionPreference = "Stop"
             Write-Host "📝 Validando build electron..."
+            $version = $env:version
+            $environment = $env:environment
+            $region = $env:region
 
-            $basePath = "$(Build.SourcesDirectory)\release\$($env:environment)\$($env:version)"
-            New-Item -ItemType Directory -Path $basePath\$($env:region) -Force | Out-Null
-            $allFound = $true
+            $basePath = "$(Build.SourcesDirectory)\release\$environment\$version"
+            New-Item -ItemType Directory -Path $basePath\$region -Force | Out-Null
+            $allFound = $true 
 
             $filesToCopy = @(
-              "InvictusUX Setup $($env:version).exe",
-              "InvictusUX Setup $($env:version).exe.blockmap",
+              "InvictusUX Setup $version.exe",
+              "InvictusUX Setup $version.exe.blockmap",
               "latest.yml"
             )
 
             foreach ($file in $filesToCopy) {
               $sourcePath = Join-Path "$basePath" $file
-              $destinationPath = Join-Path "$basePath\$($env:region)" $file
+              $destinationPath = Join-Path "$basePath\$region" $file
 
               if (Test-Path $sourcePath) {
                 Copy-Item -Path $sourcePath -Destination $destinationPath -Force
@@ -248,8 +250,8 @@ jobs:
               exit 99
             } 
           
-            Write-Host "`n📂 Directorio: $basePath\$($env:region)"
-            Get-ChildItem "$basePath\$($env:region)" -Force | Select-Object Mode, LastWriteTime, Length, Name | Format-Table -AutoSize
+            Write-Host "`n📂 Directorio: $basePath\$region"
+            Get-ChildItem "$basePath\$region" -Force | Select-Object Mode, LastWriteTime, Length, Name | Format-Table -AutoSize
       
       - task: PowerShell@2
         displayName: "📤 Upload Bucket S3"
@@ -263,7 +265,7 @@ jobs:
             Write-Host "`n📂 Archivos a cargar:"
             Get-ChildItem "$basePath" -Force | Select-Object Mode, LastWriteTime, Length, Name | Format-Table -AutoSize
 
-            aws s3 cp "$basePath" "s3://e-remote/invictus-electron/windows/" --recursive --acl public-read
+            # aws s3 cp "$basePath" "s3://e-remote/invictus-electron/windows/" --recursive --acl public-read
         env:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
