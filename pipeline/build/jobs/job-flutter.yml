@@ -255,10 +255,10 @@ jobs:
           echo "Branch: $(Build.SourceBranch)"
           echo "Red: $red"
 
-          mv build/app/outputs/flutter-apk/app-profile.apk build/app/outputs/flutter-apk/invictus-$(environment)-v$(msVersion).apk
-          mv build/app/outputs/flutter-apk/app-profile.apk.sha1 build/app/outputs/flutter-apk/invictus-$(environment)-v$(msVersion).apk.sha1
+          mv build/app/outputs/flutter-apk/app-profile.apk build/app/outputs/flutter-apk/invictus-$(environment)-$(msVersion).apk
+          mv build/app/outputs/flutter-apk/app-profile.apk.sha1 build/app/outputs/flutter-apk/invictus-$(environment)-$(msVersion).apk.sha1
           
-          APK_NAME="invictus-$(environment)-v$(msVersion).apk"
+          APK_NAME="invictus-$(environment)-$(msVersion).apk"
           echo "##vso[task.setvariable variable=apk-name]$APK_NAME"
         
           echo -e "\n📁 APK generados:"
