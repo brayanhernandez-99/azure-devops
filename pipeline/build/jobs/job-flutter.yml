@@ -18,13 +18,13 @@ jobs:
 
   - job: "build_flutter"
     ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/') }}:
-      displayName: "Build Job Flutter Feature"
+      displayName: "Build Flutter Feature"
     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
-      displayName: "Build Job Flutter Develop"
+      displayName: "Build Flutter Develop"
     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
-      displayName: "Build Job Flutter Staging"
+      displayName: "Build Flutter Staging"
     ${{ if or(eq(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')) }}:
-      displayName: "Build Job Flutter Master ${{ parameters.red }}"
+      displayName: "Build Flutter Master ${{ parameters.red }}"
     pool:
       vmImage: "macos-latest"
     variables:

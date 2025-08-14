@@ -4,14 +4,12 @@ jobs:
         displayName: "Esperar aprobación"
         pool:
           vmImage: "ubuntu-22.04"
-          environment: ${{ variables.environmentName }}
-        variables:
-          ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
-            environmentName: "Build develop"
-          ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
-            environmentName: "Build staging"
-          ${{ if or(eq(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')) }}:
-            environmentName: "Build master ${{ parameters.red }}"
+        ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
+          environment: "Build develop"
+        ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
+          environment: "Build staging"
+        ${{ if or(eq(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')) }}:
+          environment: "Build master ${{ parameters.red }}"
         strategy:
           runOnce:
             deploy:
@@ -20,13 +18,13 @@ jobs:
 
   - job: "build_electron_windows"
     ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/') }}:
-      displayName: "Build Job Electron Feature"
+      displayName: "Build Electron Feature"
     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
-      displayName: "Build Job Electron Develop"
+      displayName: "Build Electron Develop"
     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
-      displayName: "Build Job Electron Staging"
+      displayName: "Build Electron Staging"
     ${{ if or(eq(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')) }}:
-      displayName: "Build Job Electron Master ${{ parameters.red }}"
+      displayName: "Build Electron Master ${{ parameters.red }}"
     pool:
       vmImage: "windows-latest"
     variables:
