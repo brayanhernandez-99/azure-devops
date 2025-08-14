@@ -4,8 +4,6 @@ jobs:
         displayName: "Esperar aprobación"
         pool:
           vmImage: "ubuntu-22.04"
-          environment: ${{ variables.environmentName }}
-        variables:
           ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
             environmentName: "Build develop"
           ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
