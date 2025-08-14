@@ -223,27 +223,23 @@ jobs:
             $allFound = $true 
 
             $filesToCopy = @(
-              "InvictusUX Setup $($env:version).exe",
-              "InvictusUX Setup $($env:version).exe.blockmap",
-              "latest.yml"
+                @("InvictusUX Setup $($env:version).exe",          "invictus-$($env:region)-v$($env:version).exe"),
+                @("InvictusUX Setup $($env:version).exe.blockmap", "invictus-$($env:region)-v$($env:version).exe.blockmap"),
+                @("latest.yml",                                    "invictus-$($env:region)-latest.yml")
             )
 
-            foreach ($file in $filesToCopy) {
-              $newFileName = $file
-             
-              switch -Wildcard ($file) {
-                "InvictusUX Setup $($env:version).exe"          { $newFileName = "invictus-$($env:region)-v$($env:version).exe" }
-                "InvictusUX Setup $($env:version).exe.blockmap" { $newFileName = "invictus-$($env:region)-v$($env:version).exe.blockmap" }
-              }
+            foreach ($file in $filesToCopy) {             
+              $fileName    = $pair[0]
+              $newFileName = $pair[1]
 
-              $sourcePath = Join-Path "$basePath" $file
+              $sourcePath = Join-Path "$basePath" $fileName
               $destinationPath = Join-Path "$basePath\$($env:region)" $newFileName
 
               if (Test-Path $sourcePath) {
                 Copy-Item -Path $sourcePath -Destination $destinationPath -Force
-                Write-Host "📂 Copiado: $file -> $destinationPath"
+                Write-Host "📂 Copiado: $fileName -> $destinationPath"
               } else {
-                Write-Host "⚠️ Archivo no encontrado $file -> $sourcePath"
+                Write-Host "⚠️ Archivo no encontrado $fileName -> $sourcePath"
                 $allFound = $false
               }
             }
