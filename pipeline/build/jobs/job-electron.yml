@@ -247,7 +247,7 @@ jobs:
             } 
           
             Write-Host "`n📂 Directorio: $basePath\$($env:region)"
-            Get-ChildItem "$basePath\$region" -Force | Select-Object Mode, LastWriteTime, Length, Name | Format-Table -AutoSize
+            Get-ChildItem "$basePath\$($env:region)" -Force | Select-Object Mode, LastWriteTime, Length, Name | Format-Table -AutoSize
       
       - task: PowerShell@2
         displayName: "📤 Upload Bucket S3"
