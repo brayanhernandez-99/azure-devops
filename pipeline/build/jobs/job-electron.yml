@@ -229,8 +229,8 @@ jobs:
             )
 
             foreach ($file in $filesToCopy) {             
-              $fileName    = $pair[0]
-              $newFileName = $pair[1]
+              $fileName    = $file[0]
+              $newFileName = $file[1]
 
               $sourcePath = Join-Path "$basePath" $fileName
               $destinationPath = Join-Path "$basePath\$($env:region)" $newFileName
