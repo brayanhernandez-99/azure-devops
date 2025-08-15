@@ -82,7 +82,7 @@ stages:
               red: ${{ region }}
 
   # Build Flutter para feature, hotfix, develop, staging
-  - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), eq(variables['Build.SourceBranch'], 'refs/heads/develop'), eq(variables['Build.SourceBranch'], 'refs/heads/staging')), eq(parameters.release, 'apk')) }}:
+  - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), eq(variables['Build.SourceBranch'], 'refs/heads/develop'), eq(variables['Build.SourceBranch'], 'refs/heads/staging')), eq(parameters.release, 'apk')) }}:
       - template: build/build-flutter.yml
         parameters:
           release: ${{ parameters.release }}
