@@ -79,12 +79,12 @@ jobs:
             refs/heads/staging) environment="qa"; region="qa"; ;;
             refs/heads/master) 
               case "$red" in
-                "antioquia") environment="prd-gana"; region="gana"; ;;
-                "cap")       environment="prd-cap";  region="cap"; ;;
-                "tolima")    environment="prd-seapto"; region="septo"; ;;
-                "huila")     environment="prd-suchance"; region="suchance"; ;;
-                "cauca")     environment="prd-acertemos"; region="acertemos"; ;;
-                "boyaca")    environment="prd-jer"; region="jer"; ;;
+                "antioquia") environment="prd-gana"; region="GANA"; ;;
+                "cap")       environment="prd-cap";  region="CAP"; ;;
+                "tolima")    environment="prd-seapto"; region="SEAPTO"; ;;
+                "huila")     environment="prd-suchance"; region="SUCHANCE"; ;;
+                "cauca")     environment="prd-acertemos"; region="ACERTEMOS"; ;;
+                "boyaca")    environment="prd-jer"; region="JER"; ;;
               esac ;;
           esac
 
