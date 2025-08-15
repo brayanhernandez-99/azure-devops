@@ -114,20 +114,19 @@ jobs:
             $region = "unknown"
 
             switch -Wildcard ($currentBranch) {
-                "refs/heads/feature/*" { $environment = "dev"; $region = "dev" }
-                "refs/heads/hotfix/*"  { $environment = "dev"; $region = "dev" }
-                "refs/heads/develop"   { $environment = "dev"; $region = "dev" }
-                "refs/heads/staging"   { $environment = "qa"; $region = "qa" }
-                "refs/heads/master" {
-                    switch ($env:red) {
-                        "antioquia" { $environment = "production"; $region = "matrixtech" }
-                        "cap"       { $environment = "production"; $region = "cap" }
-                        "tolima"    { $environment = "production"; $region = "seapto" }
-                        "huila"     { $environment = "production"; $region = "suchance" }
-                        "cauca"     { $environment = "production"; $region = "acertemos" }
-                        "boyaca"    { $environment = "production"; $region = "jer" }
-                    }
+              "refs/heads/feature/*" { $environment = "dev"; $region = "dev" }
+              "refs/heads/develop"   { $environment = "dev"; $region = "dev" }
+              "refs/heads/staging"   { $environment = "qa"; $region = "qa" }
+              "refs/heads/master" {
+                switch ($env:red) {
+                  "antioquia" { $environment = "production"; $region = "matrixtech" }
+                  "cap"       { $environment = "production"; $region = "cap" }
+                  "tolima"    { $environment = "production"; $region = "seapto" }
+                  "huila"     { $environment = "production"; $region = "suchance" }
+                  "cauca"     { $environment = "production"; $region = "acertemos" }
+                  "boyaca"    { $environment = "production"; $region = "jer" }
                 }
+              }
             }
             if ($environment -ne "unknown") {
             @"
@@ -182,18 +181,13 @@ jobs:
           versionSpec: "$(versionNode)"
 
       - task: PowerShell@2
-        displayName: "⚙️ Install pnpm"
-        inputs:
-          targetType: "inline"
-          script: |
-            npm install -g pnpm
-
-      - task: PowerShell@2
         displayName: "⚙️ Install dependencies"
         inputs:
           targetType: "inline"
           script: |
             Write-Host "📦 Instalando dependencias"
+            npm install -g pnpm
+            pnpm config set msvs_version 2022
             pnpm i
   
             Write-Host "`n📦 Dependencias instaladas:"
