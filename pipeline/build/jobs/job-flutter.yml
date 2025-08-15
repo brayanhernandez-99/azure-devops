@@ -18,13 +18,13 @@ jobs:
 
   - job: "build_flutter"
     ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/') }}:
-      displayName: "Build Job Flutter Feature"
+      displayName: "Build Flutter Feature"
     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
-      displayName: "Build Job Flutter Develop"
+      displayName: "Build Flutter Develop"
     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
-      displayName: "Build Job Flutter Staging"
+      displayName: "Build Flutter Staging"
     ${{ if or(eq(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')) }}:
-      displayName: "Build Job Flutter Master ${{ parameters.red }}"
+      displayName: "Build Flutter Master ${{ parameters.red }}"
     pool:
       vmImage: "macos-latest"
     variables:
@@ -33,7 +33,6 @@ jobs:
       versionFlutter: $[coalesce(variables.flutterVersion, '3.x')]
 
     steps:
-
       - task: DownloadBuildArtifacts@0
         displayName: "📥 Download Version Artifact"
         inputs:
@@ -252,10 +251,10 @@ jobs:
           echo "Branch: $(Build.SourceBranch)"
           echo "Red: $red"
 
-          mv build/app/outputs/flutter-apk/app-profile.apk build/app/outputs/flutter-apk/invictus-$(environment)-$(msVersion).apk
-          mv build/app/outputs/flutter-apk/app-profile.apk.sha1 build/app/outputs/flutter-apk/invictus-$(environment)-$(msVersion).apk.sha1
+          mv build/app/outputs/flutter-apk/app-profile.apk build/app/outputs/flutter-apk/invictus-$(environment)-v$(msVersion).apk
+          mv build/app/outputs/flutter-apk/app-profile.apk.sha1 build/app/outputs/flutter-apk/invictus-$(environment)-v$(msVersion).apk.sha1
           
-          APK_NAME="invictus-$(environment)-$(msVersion).apk"
+          APK_NAME="invictus-$(environment)-v$(msVersion).apk"
           echo "##vso[task.setvariable variable=apk-name]$APK_NAME"
         
           echo -e "\n📁 APK generados:"
