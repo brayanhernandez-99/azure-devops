@@ -44,7 +44,7 @@ jobs:
 
       - script: |
           echo "Plan"
-          terragrunt run-all plan --terragrunt-non-interactive
+          terragrunt plan -all --terragrunt-non-interactive
         displayName: "Plan"
         workingDirectory: $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/devops/initial-infrastructure/aws-service-load-balancer
         env:
