@@ -114,20 +114,19 @@ jobs:
             $region = "unknown"
 
             switch -Wildcard ($currentBranch) {
-                "refs/heads/feature/*" { $environment = "dev"; $region = "dev" }
-                "refs/heads/hotfix/*"  { $environment = "dev"; $region = "dev" }
-                "refs/heads/develop"   { $environment = "dev"; $region = "dev" }
-                "refs/heads/staging"   { $environment = "qa"; $region = "qa" }
-                "refs/heads/master" {
-                    switch ($env:red) {
-                        "antioquia" { $environment = "production"; $region = "matrixtech" }
-                        "cap"       { $environment = "production"; $region = "cap" }
-                        "tolima"    { $environment = "production"; $region = "seapto" }
-                        "huila"     { $environment = "production"; $region = "suchance" }
-                        "cauca"     { $environment = "production"; $region = "acertemos" }
-                        "boyaca"    { $environment = "production"; $region = "jer" }
-                    }
+              "refs/heads/feature/*" { $environment = "dev"; $region = "dev" }
+              "refs/heads/develop"   { $environment = "dev"; $region = "dev" }
+              "refs/heads/staging"   { $environment = "qa"; $region = "qa" }
+              "refs/heads/master" {
+                switch ($env:red) {
+                  "antioquia" { $environment = "production"; $region = "matrixtech" }
+                  "cap"       { $environment = "production"; $region = "cap" }
+                  "tolima"    { $environment = "production"; $region = "seapto" }
+                  "huila"     { $environment = "production"; $region = "suchance" }
+                  "cauca"     { $environment = "production"; $region = "acertemos" }
+                  "boyaca"    { $environment = "production"; $region = "jer" }
                 }
+              }
             }
             if ($environment -ne "unknown") {
             @"
@@ -182,11 +181,21 @@ jobs:
           versionSpec: "$(versionNode)"
 
       - task: PowerShell@2
-        displayName: "⚙️ Install pnpm"
+        displayName: "⚙️ Crear carpeta npm-global"
         inputs:
-          targetType: "inline"
+          targetType: inline
           script: |
-            npm install -g pnpm
+            $path = "$(Build.SourcesDirectory)\npm-global"
+            if (-not (Test-Path $path)) { 
+                New-Item -ItemType Directory -Path $path | Out-Null 
+            }
+
+      - task: Cache@2
+        inputs:
+          key: 'npm-global | "$(Agent.OS)"'
+          restoreKeys: |
+            npm-global | "$(Agent.OS)"
+          path: $(Build.SourcesDirectory)\npm-global
 
       - task: PowerShell@2
         displayName: "⚙️ Install dependencies"
@@ -194,10 +203,11 @@ jobs:
           targetType: "inline"
           script: |
             Write-Host "📦 Instalando dependencias"
-            pnpm i
+            npm config set msvs_version 2022
+            npm i
   
             Write-Host "`n📦 Dependencias instaladas:"
-            pnpm list --depth=0
+            npm list --depth=0
 
       - task: PowerShell@2
         displayName: "📦 Build electron"
@@ -205,7 +215,7 @@ jobs:
           targetType: " inline"
           script: |
             Write-Host "📦 Ejecutando build..."
-            pnpm run build
+            npm run build
 
       - task: PowerShell@2
         displayName: "🔍 Validate Build"
