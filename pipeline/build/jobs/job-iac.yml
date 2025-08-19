@@ -44,7 +44,7 @@ jobs:
       
       - task: replacetokens@5
         inputs:
-          targetFiles: 'workingDirectory: $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/devops/initial-infrastructure/aws-service-secret-manager-aes/terragrunt.hcl'
+          targetFiles: '$(Build.SourcesDirectory)/iac-terragrunt/project/invictus/devops/initial-infrastructure/aws-service-secret-manager-aes/terragrunt.hcl'
           encoding: 'auto'
           writeBOM: true
           actionOnMissing: 'warn'      # 'fail', 'warn' o 'ignore'
