@@ -44,7 +44,7 @@ jobs:
       
       - task: replacetokens@5
         inputs:
-          targetFiles: '$(Build.SourcesDirectory)/iac-terragrunt/project/invictus/devops/initial-infrastructure/aws-service-secret-manager-aes'   # Archivos donde se van a reemplazar tokens
+          targetFiles: '$(Build.SourcesDirectory)/iac-terragrunt/project/invictus/devops/initial-infrastructure/terragrunt.hcl'   # Archivos donde se van a reemplazar tokens
           encoding: 'auto'
           writeBOM: true
           actionOnMissing: 'warn'      # 'fail', 'warn' o 'ignore'
