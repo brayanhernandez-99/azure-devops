@@ -10,7 +10,7 @@ stages:
       displayName: "Build repo configuration Master ${{ parameters.red }}"
 
     variables:
-      - template: ../variables/groups-transversal-variables.yml
+      - template: ../variables/groups-transversal-variables-rpc.yml
         parameters:
           red: ${{ parameters.red }}
 

@@ -31,5 +31,6 @@ jobs:
     steps:
       - script: |
           ls -l
-        displayName: "Compilando microservicio"
+          echo $(ACCOUNT_ID_INVIC)
+        displayName: "Account"
       
