@@ -1,0 +1,21 @@
+stages:
+  - stage: "build_unit_${{ parameters.red }}"
+    ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/') }}:
+      displayName: "Build repo configuration Feature"
+    ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
+      displayName: "Build repo configuration Develop"
+    ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
+      displayName: "Build repo configuration Staging"
+    ${{ if or(eq(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')) }}:
+      displayName: "Build repo configuration Master ${{ parameters.red }}"
+
+    variables:
+      - template: ../variables/groups-transversal-variables.yml
+        parameters:
+          red: ${{ parameters.red }}
+
+    jobs:
+      - ${{ if eq(parameters.release, 'rpc') }}:
+          - template: jobs/job-rpc.yml
+            parameters:
+              red: ${{ parameters.red }}

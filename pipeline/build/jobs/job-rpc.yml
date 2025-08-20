@@ -1,0 +1,35 @@
+jobs:
+  - ${{ if not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')) }}:
+      - deployment: WaitForApproval
+        displayName: "Esperar aprobación"
+        pool:
+          vmImage: "ubuntu-22.04"
+        ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
+          environment: "Build develop"
+        ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
+          environment: "Build staging"
+        ${{ if or(eq(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')) }}:
+          environment: "Build master ${{ parameters.red }}"
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - script: echo "Aprobación recibida. Iniciando despliegues..."
+
+  - job: "build_rpc"
+    ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/') }}:
+      displayName: "Build repo configuration Feature"
+    ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
+      displayName: "Build repo configuration Develop"
+    ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
+      displayName: "Build repo configuration Staging"
+    ${{ if or(eq(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')) }}:
+      displayName: "Build repo configuration Master ${{ parameters.red }}"
+    pool:
+      vmImage: "ubuntu-22.04"
+
+    steps:
+      - script: |
+          ls -l
+        displayName: "Compilando microservicio"
+      
