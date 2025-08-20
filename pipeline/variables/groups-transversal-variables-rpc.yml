@@ -3,6 +3,7 @@ variables:
   # Feature branch
     - ${{ if or( startsWith(variables['Build.SourceBranch'], 'refs/heads/feature'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix')) }}:
         - group: trasversal-azure-devops
+        
   # Develop branch
     - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
         - group: trasversal-aws-developer
