@@ -34,3 +34,11 @@ jobs:
           echo $(ACCOUNT_ID_INVIC)
         displayName: "Account"
       
+      - script: |
+          aws s3 cp . s3://configuration-$(ACCOUNT_ID_INVIC) --recursive --exclude "pipeline/*"
+        displayName: "Account"
+        env:
+          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVIC)
+          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVIC)
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+      
