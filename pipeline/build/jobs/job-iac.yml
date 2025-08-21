@@ -76,7 +76,7 @@ jobs:
           echo "destroy"
           terragrunt run-all destroy --terragrunt-non-interactive
         displayName: "destroy"
-        workingDirectory: $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/devops/awards/aws-service-secret-manager
+        workingDirectory: $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/devops/awards/aws-service-ecs
         env:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVIC)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVIC)
