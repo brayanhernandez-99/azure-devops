@@ -29,6 +29,10 @@ jobs:
       vmImage: "ubuntu-22.04"
 
     steps:
+      - checkout: self
+        fetchDepth: 0
+        persistCredentials: true
+        
       - script: |
           ls -l
           echo $(ACCOUNT_ID_INVIC)
