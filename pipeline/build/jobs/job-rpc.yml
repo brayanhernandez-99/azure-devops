@@ -34,9 +34,9 @@ jobs:
         persistCredentials: true
 
       - script: |
-          ls -l
-          echo $(ACCOUNT_ID_INVIC)
-        displayName: "Account"
+          tree
+          echo "account ID: $(ACCOUNT_ID_INVIC)"
+        displayName: "File structure and account ID"
       
       - script: |
           echo "Upload configuration to S3"
