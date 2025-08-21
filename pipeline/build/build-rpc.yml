@@ -1,7 +1,5 @@
 stages:
   - stage: "build_unit_${{ parameters.red }}"
-    ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/') }}:
-      displayName: "Build repo configuration Feature"
     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
       displayName: "Build repo configuration Develop"
     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
