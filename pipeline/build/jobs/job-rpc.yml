@@ -55,7 +55,7 @@ jobs:
             echo "ℹ️ No se enviará mensaje a SQS: no hubo cambios en reports/"
           fi
         displayName: "Verify changes in reports/"
-        condition: not(variables['Build.SourceBranch'], 'refs/heads/develop'))
+        condition: not(variables['Build.SourceBranch'], 'refs/heads/develop')
         env:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVIC)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVIC)
