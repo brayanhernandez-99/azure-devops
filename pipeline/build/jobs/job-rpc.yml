@@ -17,9 +17,9 @@ jobs:
                 - script: echo "Aprobación recibida. Iniciando despliegues..."
 
   - job: "build_rpc"
-    ${{ if eq(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')) }}:
+    ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/') }}:
       displayName: "Build repo configuration Feature"
-    ${{ if eq(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')) }}:
+    ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/') }}:
       displayName: "Build repo configuration Hotfix"
     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
       displayName: "Build repo configuration Develop"
