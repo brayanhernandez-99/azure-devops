@@ -1,5 +1,5 @@
 jobs:
-  - ${{ if not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')) }}:
+  - ${{ if and(not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')), not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'))) }}:
       - deployment: WaitForApproval
         displayName: "Esperar aprobación"
         pool:
@@ -17,6 +17,10 @@ jobs:
                 - script: echo "Aprobación recibida. Iniciando despliegues..."
 
   - job: "build_rpc"
+    ${{ if eq(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')) }}:
+        displayName: "Build repo configuration Feature"
+    ${{ if eq(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')) }}:
+      displayName: "Build repo configuration Hotfix"
     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
       displayName: "Build repo configuration Develop"
     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
@@ -31,15 +35,57 @@ jobs:
         fetchDepth: 0
         persistCredentials: true
 
+      
+      - script: |
+          echo "📌 Verificando si feature está actualizada con master y si hay cambios relevantes..."
+
+          git fetch origin master
+
+          # Encuentra el punto de bifurcación (base común)
+          MERGE_BASE=$(git merge-base HEAD origin/master)
+
+          # Verifica si la rama está actualizada
+          if [ "$MERGE_BASE" = "$(git rev-parse origin/master)" ]; then
+            echo "✅ La rama feature o hotfix está actualizada con master."
+          else
+            echo "⚠️ La rama feature o hotfix NO contiene todos los commits de master. Verificando cambios relevantes en master..."
+
+            # Obtén los archivos cambiados en master desde el punto de bifurcación
+            CHANGED_FILES=$(git diff --name-only "$MERGE_BASE".."origin/master")
+
+            echo "🔍 Archivos nuevos en master desde el punto de bifurcación:"
+            echo "$CHANGED_FILES"
+
+            # Filtrar cambios relevantes (ignorar carpeta pipeline/)
+            RELEVANT_CHANGES=$(echo "$CHANGED_FILES" | grep -vE '^pipeline/')
+
+            if [[ -z "$RELEVANT_CHANGES" ]]; then
+              echo "ℹ️ Solo hay cambios en archivos ignorados (pipeline/). Continuando..."
+            else
+              echo "❌ Cambios relevantes detectados en master y no están integrados. Debes actualizar tu rama."
+              exit 1
+            fi
+          fi
+        displayName: "Validate feature or hotfix branch is up to date"
+        condition: and(succeeded(), or(
+          startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'),
+          startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
+
       - script: |
           tree
           echo "account ID: $(ACCOUNT_ID_INVIC)"
         displayName: "File structure and account ID"
+        condition: and(succeeded(),
+          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
+          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
       
       - script: |
           echo "Upload configuration to S3"
-          aws s3 cp . s3://configuration-$(ACCOUNT_ID_INVIC) --recursive --exclude "pipeline/*"
+          # aws s3 cp . s3://configuration-$(ACCOUNT_ID_INVIC) --recursive --exclude "pipeline/*"
         displayName: "Upload configuration to S3"
+        condition: and(succeeded(),
+          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
+          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
         env:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVIC)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVIC)
@@ -48,17 +94,20 @@ jobs:
       - script: |
           echo "🔎 Verificando cambios en carpeta reports/..."
           if git diff --name-only HEAD~1 HEAD | grep -q "^reports/"; then 
-            echo "✅ Se detectaron cambios en reports/ y no es develop, enviando mensaje a SQS"; 
-            json_complete='{"event":"migration","streamNotifier":"Notifier","model":{"method":"insert","reports":[{"name":"modelos_invictus","type_card":"model"},{"name":"reportes_invictus","type_card":"question"}]}}'; 
-            aws sqs send-message \
-              --queue-url https://sqs.us-east-1.amazonaws.com/$(ACCOUNT_ID_INVIC)/Sellers \
-              --message-body "$json_complete" \
-              --delay-seconds 0
+            # echo "✅ Se detectaron cambios en reports/ y no es develop, enviando mensaje a SQS"; 
+            # json_complete='{"event":"migration","streamNotifier":"Notifier","model":{"method":"insert","reports":[{"name":"modelos_invictus","type_card":"model"},{"name":"reportes_invictus","type_card":"question"}]}}'; 
+            # aws sqs send-message \
+            #   --queue-url https://sqs.us-east-1.amazonaws.com/$(ACCOUNT_ID_INVIC)/Sellers \
+            #   --message-body "$json_complete" \
+            #   --delay-seconds 0
           else 
             echo "ℹ️ No se enviará mensaje a SQS: no hubo cambios en reports/"
           fi
         displayName: "Verify changes in reports/"
-        condition: ne(variables['Build.SourceBranch'], 'refs/heads/develop')
+        condition: and(succeeded(),
+          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
+          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')),
+          ne(variables['Build.SourceBranch'], 'refs/heads/develop'))
         env:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVIC)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVIC)
