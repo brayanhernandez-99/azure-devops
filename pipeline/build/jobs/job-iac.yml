@@ -34,13 +34,11 @@ jobs:
           echo "📥 Descargando Terragrunt..."
           aws s3 cp "s3://infrastructure-as-code-invictus/terragrunt/terragrunt-$(versionTerragrunt)" "terragrunt"
 
-          # Validar que el archivo se descargó
           if [ ! -s terragrunt ]; then
             echo "❌ Error: No se pudo descargar terragrunt: $(versionTerragrunt)"
             exit 99
           fi
 
-          # Hacerlo ejecutable y moverlo
           chmod +x terragrunt
           sudo mv terragrunt /usr/local/bin/terragrunt
 
@@ -49,20 +47,18 @@ jobs:
         displayName: "Instalar Terragrunt"
         env:
           AWS_ACCESS_KEY_ID: $(ACCOUNT_ID_DEPLOY)
-          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVIC)
+          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
 
       - script: |
           echo "📥 Descargando Terraform..."
           aws s3 cp "s3://infrastructure-as-code-invictus/terraform/terraform-$(versionTerraform)" "terraform"
 
-          # Validar que el archivo se descargó
           if [ ! -s terraform ]; then
             echo "❌ Error: No se pudo descargar terraform: $(versionTerraform)"
             exit 99
           fi
 
-          # Hacerlo ejecutable y moverlo
           chmod +x terraform
           sudo mv terraform /usr/local/bin/terraform
 
