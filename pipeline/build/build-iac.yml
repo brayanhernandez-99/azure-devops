@@ -1,7 +1,7 @@
 stages:
   - stage: "build_iac"
     ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/') }}:
-      displayName: "Build IAC Feature"
+      displayName: "Build Infrastructure Feature"
 
     variables:
       - template: ../variables/groups-transversal-variables-iac.yml
