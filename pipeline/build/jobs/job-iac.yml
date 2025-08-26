@@ -117,8 +117,8 @@ jobs:
         displayName: "Plan"
         workingDirectory: $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/devops/awards/aws-service-s3
         env:
-          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVIC)
-          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVIC)
+          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEVOPS)
+          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEVOPS)
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
       
       # - script: |
@@ -127,8 +127,8 @@ jobs:
       #   displayName: "apply"
       #   workingDirectory: $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/develop/apps/aws-service-cloudfront/cloudfront-app-administration
       #   env:
-      #     AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVIC)
-      #     AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVIC)
+      #     AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEVOPS)
+      #     AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEVOPS)
       #     AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
       
       # - script: |
@@ -137,6 +137,6 @@ jobs:
       #   displayName: "destroy"
       #   workingDirectory: $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/develop/apps/aws-service-cloudfront/cloudfront-app-administration
       #   env:
-      #     AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVIC)
-      #     AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVIC)
+      #     AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEVOPS)
+      #     AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEVOPS)
       #     AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
