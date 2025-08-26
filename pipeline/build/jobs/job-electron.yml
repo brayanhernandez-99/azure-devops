@@ -28,8 +28,8 @@ jobs:
     pool:
       vmImage: "windows-latest"
     variables:
-      versionNode: $[coalesce(variables.nodeVersion, '18.x')]
-      versionPython: $[coalesce(variables.pythonVersion, '3.x')]
+      versionNode: $[coalesce(variables.nodeVersion, '18.20.7')]
+      versionPython: $[coalesce(variables.pythonVersion, '3.24.0')]
 
     steps:
       - task: DownloadBuildArtifacts@0
