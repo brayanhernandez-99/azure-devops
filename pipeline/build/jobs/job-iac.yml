@@ -71,7 +71,7 @@ jobs:
         displayName: "Instalar terraform"
         env:
           AWS_ACCESS_KEY_ID: $(ACCOUNT_ID_DEPLOY)
-          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVIC)
+          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
 
       # - script: |
