@@ -71,36 +71,6 @@ jobs:
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
 
 
-      # - task: TerraformInstaller@1
-      #   inputs:
-      #     terraformVersion: $(TerraformVersion)
-
-      # - script: |
-      #     sudo apt-get update -y
-      #     sudo apt-get install -y unzip
-      #     curl -LO https://github.com/gruntwork-io/terragrunt/releases/download/$(terragruntVersion)/terragrunt_linux_amd64
-      #     chmod +x terragrunt_linux_amd64
-      #     sudo mv terragrunt_linux_amd64 /usr/local/bin/terragrunt
-      #     terragrunt --version
-      #   displayName: "Instalar Terragrunt"
-      #   env:
-      #     AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
-      #     AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
-      #     AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
-
-      # - script: |
-      #     sudo apt-get update -y
-      #     sudo apt-get install -y unzip
-      #     curl -LO https://github.com/gruntwork-io/terragrunt/releases/download/$(terragruntVersion)/terragrunt_linux_amd64
-      #     chmod +x terragrunt_linux_amd64
-      #     sudo mv terragrunt_linux_amd64 /usr/local/bin/terragrunt
-      #     terragrunt --version
-      #   displayName: "Instalar Terragrunt"
-      #   env:
-      #     AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
-      #     AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
-      #     AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
-      
       # - task: replacetokens@5
       #   inputs:
       #     targetFiles: '$(Build.SourcesDirectory)/iac-terragrunt/project/invictus/devops/initial-infrastructure/aws-service-ssm-parameter/terragrunt.hcl'
@@ -113,7 +83,7 @@ jobs:
 
       - script: |
           echo "Plan"
-          terragrunt plan -all --terragrunt-non-interactive
+          terragrunt plan --all --non-interactive
         displayName: "Plan"
         workingDirectory: $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/devops/awards/aws-service-s3
         env:
@@ -123,7 +93,7 @@ jobs:
       
       # - script: |
       #     echo "apply"
-      #     terragrunt run-all apply --terragrunt-non-interactive
+      #     terragrunt apply --all --non-interactive
       #   displayName: "apply"
       #   workingDirectory: $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/develop/apps/aws-service-cloudfront/cloudfront-app-administration
       #   env:
@@ -133,7 +103,7 @@ jobs:
       
       # - script: |
       #     echo "destroy"
-      #     terragrunt run-all destroy --terragrunt-non-interactive
+      #     terragrunt destroy --all --non-interactive
       #   displayName: "destroy"
       #   workingDirectory: $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/develop/apps/aws-service-cloudfront/cloudfront-app-administration
       #   env:
