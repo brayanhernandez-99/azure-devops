@@ -1,6 +1,7 @@
 variables:
   - group: trasversal-aws-deployment
   - group: trasversal-infrastructure-as-code-invictus
+  - group: trasversal-aws-devops
 #   - group: trasversal-aws-develop
 
 #   # Feature branch
