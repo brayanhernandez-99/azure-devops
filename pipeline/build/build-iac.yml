@@ -3,10 +3,10 @@ stages:
     ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/') }}:
       displayName: "Build IAC Feature"
 
-    # variables:
-    #   - template: ../variables/groups-transversal-variables.yml
-    #     parameters:
-    #       red: ${{ parameters.red }}
+    variables:
+      - template: ../variables/groups-transversal-variables-iac.yml
+        parameters:
+          red: ${{ parameters.red }}
 
     jobs:
       - ${{ if eq(parameters.release, 'iac') }}:
