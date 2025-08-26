@@ -1,7 +1,7 @@
 variables:
   - group: trasversal-azure-devops
   - group: trasversal-aws-deployment
-  - group: trasversal-aws-develop
+#   - group: trasversal-aws-develop
 
   # Feature branch
   - ${{ if or( startsWith(variables['Build.SourceBranch'], 'refs/heads/feature'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix')) }}:
