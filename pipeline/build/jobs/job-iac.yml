@@ -70,16 +70,17 @@ jobs:
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
 
-
-      # - task: replacetokens@5
-      #   inputs:
-      #     targetFiles: '$(Build.SourcesDirectory)/iac-terragrunt/project/invictus/devops/initial-infrastructure/aws-service-ssm-parameter/terragrunt.hcl'
-      #     encoding: 'auto'
-      #     writeBOM: true
-      #     actionOnMissing: 'warn'      # 'fail', 'warn' o 'ignore'
-      #     keepToken: false
-      #     tokenPrefix: '#{'
-      #     tokenSuffix: '}#'
+      - task: replacetokens@5
+        inputs:
+          targetFiles: |
+            $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/**/*.hcl;
+            $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/**/*.tf
+          encoding: 'auto'
+          writeBOM: true
+          actionOnMissing: 'warn'   # 'fail', 'warn' o 'ignore'
+          keepToken: false
+          tokenPrefix: '#{'
+          tokenSuffix: '}#'
 
       - script: |
           echo "Plan"
