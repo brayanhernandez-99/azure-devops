@@ -73,6 +73,7 @@ jobs:
       - task: replacetokens@5
         inputs:
           targetFiles: |
+            !$(Build.SourcesDirectory)/iac-terragrunt/invictus/**/*.lock.hcl
             $(Build.SourcesDirectory)/iac-terragrunt/invictus/**/*.hcl
             $(Build.SourcesDirectory)/iac-terragrunt/invictus/**/*.tf
           encoding: 'auto'
