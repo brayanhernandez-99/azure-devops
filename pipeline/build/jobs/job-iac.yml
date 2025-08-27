@@ -33,7 +33,7 @@ jobs:
       - script: |
           echo -e "\n📋 Variables de entorno disponibles:"
           printenv | sort | grep -i "aws" || true
-        displayName: "📋 AWS variables environment"
+        displayName: "📋 Environment variables"
 
       - script: |
           echo "📥 Descargando Terragrunt..."
