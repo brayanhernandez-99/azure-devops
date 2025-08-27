@@ -73,9 +73,10 @@ jobs:
       - task: replacetokens@5
         inputs:
           targetFiles: |
-            !$(Build.SourcesDirectory)/iac-terragrunt/invictus/**/*.lock.hcl
-            $(Build.SourcesDirectory)/iac-terragrunt/invictus/**/*.hcl
-            $(Build.SourcesDirectory)/iac-terragrunt/invictus/**/*.tf
+            $(Build.SourcesDirectory)/iac-terragrunt/invictus/**/terragrunt.hcl
+            $(Build.SourcesDirectory)/iac-terragrunt/invictus/root.hcl
+            $(Build.SourcesDirectory)/iac-terragrunt/invictus/backend.tf
+            $(Build.SourcesDirectory)/iac-terragrunt/invictus/provider.tf
           encoding: 'auto'
           writeBOM: true
           actionOnMissing: 'warn'   # 'fail', 'warn' o 'ignore'
@@ -86,7 +87,7 @@ jobs:
 
       - script: |
           echo -e "\n📋 Variables de entorno disponibles:"
-          printenv | sort | egrep -i "aws|azure" || true
+          printenv | sort | grep -i "aws" || true
         displayName: "📋 AWS variables environment"
 
       - script: |
