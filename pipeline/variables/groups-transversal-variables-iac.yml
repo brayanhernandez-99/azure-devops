@@ -1,19 +1,18 @@
 variables:
   - group: trasversal-aws-deployment
   - group: trasversal-infrastructure-invictus
-  - group: trasversal-aws-devops
-#   - group: trasversal-aws-develop
+  - group: trasversal-aws-staging
 
 #   # Feature branch
 #   - ${{ if or( startsWith(variables['Build.SourceBranch'], 'refs/heads/feature'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix')) }}:
 
 #   # Develop branch
 #   - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
-#       # - group: trasversal-aws-developer
+#       # - group: variables-infrastructure-develop
 
 #   # Staging branch
 #   - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
-#       # - group: trasversal-aws-qa
+#       # - group: variables-infrastructure-staging
     
 #   # Master or tags → por red
 #   - ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'antioquia')) }}:
