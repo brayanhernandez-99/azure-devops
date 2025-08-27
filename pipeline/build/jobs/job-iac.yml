@@ -44,7 +44,7 @@ jobs:
 
           echo -e "\n🚀 Terragrunt instalado correctamente:"
           terragrunt --version
-        displayName: "🔧 Instalar Terragrunt"
+        displayName: "🛠️ Instalar Terragrunt"
         env:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
@@ -64,7 +64,7 @@ jobs:
 
           echo -e "\n🚀 Terraform instalado correctamente:"
           terraform --version
-        displayName: "🔧 Instalar terraform"
+        displayName: "🛠️ Instalar terraform"
         env:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
@@ -103,7 +103,7 @@ jobs:
           terragrunt plan --all --terragrunt-include-dir ./initial-infrastructure/aws-service-load-balancer --non-interactive
           terragrunt plan --all --terragrunt-include-dir ./initial-infrastructure/aws-service-vpc-link --non-interactive
 
-        displayName: "⚙️ Plan"
+        displayName: "🌀 Plan"
         workingDirectory: $(Build.SourcesDirectory)/iac-terragrunt/invictus/
         env:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_STAGING)
