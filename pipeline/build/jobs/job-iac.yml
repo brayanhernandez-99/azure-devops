@@ -73,8 +73,8 @@ jobs:
       - task: replacetokens@5
         inputs:
           targetFiles: |
-            $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/**/*.hcl;
-            $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/**/*.tf
+            $(Build.SourcesDirectory)/iac-terragrunt/invictus/**/*.hcl
+            $(Build.SourcesDirectory)/iac-terragrunt/invictus/**/*.tf
           encoding: 'auto'
           writeBOM: true
           actionOnMissing: 'warn'   # 'fail', 'warn' o 'ignore'
@@ -83,12 +83,20 @@ jobs:
           tokenSuffix: '}#'
 
       - script: |
-          echo "📋 Variables de entorno disponibles:"
+          echo -e "\n📋 Variables de entorno disponibles:\n"
           printenv | sort
         displayName: "Dump env vars"
 
       - script: |
           echo "Plan"
+          pwd
+          
+          echo -e "\nFiles:"
+          cat ./initial-infrastructure/aws-service-vpc
+          cat ./initial-infrastructure/aws-service-vpn
+          cat ./initial-infrastructure/aws-service-load-balancer
+          cat ./initial-infrastructure/aws-service-vpc-link
+
           terragrunt plan --all --terragrunt-include-dir ./initial-infrastructure/aws-service-vpc --non-interactive
           terragrunt plan --all --terragrunt-include-dir ./initial-infrastructure/aws-service-vpn --non-interactive
           terragrunt plan --all --terragrunt-include-dir ./initial-infrastructure/aws-service-load-balancer --non-interactive
