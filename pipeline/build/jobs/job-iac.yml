@@ -92,10 +92,10 @@ jobs:
           pwd
           
           echo -e "\nFiles:"
-          cat ./initial-infrastructure/aws-service-vpc
-          cat ./initial-infrastructure/aws-service-vpn
-          cat ./initial-infrastructure/aws-service-load-balancer
-          cat ./initial-infrastructure/aws-service-vpc-link
+          cat ./initial-infrastructure/aws-service-vpc/terragrunt.hcl
+          cat ./initial-infrastructure/aws-service-vpn/terragrunt.hcl
+          cat ./initial-infrastructure/aws-service-load-balancer/terragrunt.hcl
+          cat ./initial-infrastructure/aws-service-vpc-link/terragrunt.hcl
 
           terragrunt plan --all --terragrunt-include-dir ./initial-infrastructure/aws-service-vpc --non-interactive
           terragrunt plan --all --terragrunt-include-dir ./initial-infrastructure/aws-service-vpn --non-interactive
