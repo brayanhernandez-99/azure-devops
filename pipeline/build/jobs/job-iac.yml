@@ -84,7 +84,7 @@ jobs:
 
       - script: |
           echo -e "\n📋 Variables de entorno disponibles:\n"
-          printenv | sort | grep aws
+          printenv | sort | egrep -i "aws|azure" || true
         displayName: "AWS variables environment"
 
       - script: |
