@@ -84,8 +84,8 @@ jobs:
 
       - script: |
           echo -e "\n📋 Variables de entorno disponibles:\n"
-          printenv | sort
-        displayName: "Dump env vars"
+          printenv | sort | grep aws
+        displayName: "AWS variables environment"
 
       - script: |
           echo "Plan"
