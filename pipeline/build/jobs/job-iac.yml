@@ -70,6 +70,11 @@ jobs:
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
 
+      - script: |
+          echo -e "\n📋 Variables de entorno disponibles:"
+          printenv | sort | grep -i "aws" || true
+        displayName: "📋 AWS variables environment"
+
       - task: replacetokens@5
         inputs:
           targetFiles: |
@@ -84,11 +89,6 @@ jobs:
           tokenPrefix: '#{'
           tokenSuffix: '}#'
         displayName: "⚙️ Replace Tokens"
-
-      - script: |
-          echo -e "\n📋 Variables de entorno disponibles:"
-          printenv | sort | grep -i "aws" || true
-        displayName: "📋 AWS variables environment"
 
       - script: |
           echo -e "\n Ejecutando: terragrunt plan..."
