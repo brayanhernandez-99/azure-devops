@@ -93,8 +93,11 @@ jobs:
       - script: |
           echo -e "\n Ejecutando: terragrunt plan..."
           
-          terragrunt run-all plan  --queue-include-dir=./initial-infrastructure/aws-service- --non-interactive
-          terragrunt run-all apply --queue-include-dir=./initial-infrastructure/aws-service- --non-interactive
+          terragrunt run-all plan  --queue-include-dir=./initial-infrastructure/aws-service-load-balancer --non-interactive
+          terragrunt run-all apply --queue-include-dir=./initial-infrastructure/aws-service-load-balancer --non-interactive
+          
+          terragrunt run-all plan  --queue-include-dir=./initial-infrastructure/aws-service-vpc-link --non-interactive
+          terragrunt run-all apply --queue-include-dir=./initial-infrastructure/aws-service-vpc-link --non-interactive
 
         displayName: "✔️ Plan"
         workingDirectory: $(Build.SourcesDirectory)/iac-terragrunt/invictus/
