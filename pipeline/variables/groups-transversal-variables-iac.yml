@@ -2,6 +2,8 @@ variables:
   - group: trasversal-aws-deployment
   - group: trasversal-infrastructure-invictus
   - group: trasversal-aws-staging
+  - group: variables-infrastructure-staging
+
 
 #   # Feature branch
 #   - ${{ if or( startsWith(variables['Build.SourceBranch'], 'refs/heads/feature'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix')) }}:
