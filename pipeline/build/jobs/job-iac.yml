@@ -84,7 +84,7 @@ jobs:
         displayName: "⚙️ Replace Tokens"
 
       - script: |
-          echo -e "\n📋 Variables de entorno disponibles:\n"
+          echo -e "\n📋 Variables de entorno disponibles:"
           printenv | sort | egrep -i "aws|azure" || true
         displayName: "📋 AWS variables environment"
 
@@ -103,7 +103,7 @@ jobs:
           terragrunt plan --all --terragrunt-include-dir ./initial-infrastructure/aws-service-load-balancer --non-interactive
           terragrunt plan --all --terragrunt-include-dir ./initial-infrastructure/aws-service-vpc-link --non-interactive
 
-        displayName: "🌀 Plan"
+        displayName: "✔️ Plan"
         workingDirectory: $(Build.SourcesDirectory)/iac-terragrunt/invictus/
         env:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_STAGING)
