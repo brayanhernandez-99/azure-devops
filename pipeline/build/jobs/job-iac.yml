@@ -31,6 +31,11 @@ jobs:
     steps:
 
       - script: |
+          echo -e "\n📋 Variables de entorno disponibles:"
+          printenv | sort | grep -i "aws" || true
+        displayName: "📋 AWS variables environment"
+        
+      - script: |
           echo "📥 Descargando Terragrunt..."
           aws s3 cp "s3://infrastructure-as-code-invictus/terragrunt/terragrunt-$(versionTerragrunt)" "terragrunt"
 
@@ -85,11 +90,6 @@ jobs:
           tokenSuffix: '}#'
         displayName: "⚙️ Replace Tokens"
 
-      - script: |
-          echo -e "\n📋 Variables de entorno disponibles:"
-          printenv | sort | grep -i "aws" || true
-        displayName: "📋 AWS variables environment"
-        
       - script: |
           echo -e "\n Ejecutando: terragrunt plan..."
           
