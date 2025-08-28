@@ -93,17 +93,18 @@ jobs:
       - script: |
           echo -e "\n Ejecutando: terragrunt plan..."
           
-          terragrunt run-all plan  --queue-include-dir=./initial-infrastructure/aws-service-cognito-identity-pool --non-interactive
-          terragrunt run-all apply --queue-include-dir=./initial-infrastructure/aws-service-cognito-identity-pool --non-interactive
+          terragrunt run-all plan  --queue-include-dir=./initial-infrastructure/aws-service-secret-manager --non-interactive
+          terragrunt run-all apply --queue-include-dir=./initial-infrastructure/aws-service-secret-manager --non-interactive
 
-          terragrunt run-all plan  --queue-include-dir=./initial-infrastructure/aws-service-rds --non-interactive
-          terragrunt run-all apply --queue-include-dir=./initial-infrastructure/aws-service-rds --non-interactive
+          terragrunt run-all plan  --queue-include-dir=./initial-infrastructure/aws-service-secret-manager-aes --non-interactive
+          terragrunt run-all apply --queue-include-dir=./initial-infrastructure/aws-service-secret-manager-aes --non-interactive
 
-          terragrunt run-all plan  --queue-include-dir=./initial-infrastructure/aws-service-iam-profile --non-interactive
-          terragrunt run-all apply --queue-include-dir=./initial-infrastructure/aws-service-iam-profile --non-interactive
+          terragrunt run-all plan  --queue-include-dir=./initial-infrastructure/aws-service-secret-manager-funds --non-interactive
+          terragrunt run-all apply --queue-include-dir=./initial-infrastructure/aws-service-secret-manager-funds --non-interactive
 
-          terragrunt run-all plan  --queue-include-dir=./initial-infrastructure/aws-service-sqs --non-interactive
-          terragrunt run-all apply --queue-include-dir=./initial-infrastructure/aws-service-sqs --non-interactive
+          terragrunt run-all plan  --queue-include-dir=./initial-infrastructure/aws-service-secret-manager-iot --non-interactive
+          terragrunt run-all apply --queue-include-dir=./initial-infrastructure/aws-service-secret-manager-iot --non-interactive
+
 
         displayName: "✔️ Plan"
         workingDirectory: $(Build.SourcesDirectory)/iac-terragrunt/invictus/
