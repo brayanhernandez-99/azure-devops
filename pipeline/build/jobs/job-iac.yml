@@ -94,10 +94,10 @@ jobs:
           echo -e "\n Ejecutando: terragrunt plan..."
           
           terragrunt run-all plan  --queue-include-dir=./initial-infrastructure/aws-service-apigateway-domain-names-admin --non-interactive
-          #terragrunt run-all apply --queue-include-dir=./initial-infrastructure/aws-service-apigateway-domain-names-admin --non-interactive
+          terragrunt run-all apply --queue-include-dir=./initial-infrastructure/aws-service-apigateway-domain-names-admin --non-interactive
           
           terragrunt run-all plan  --queue-include-dir=./initial-infrastructure/aws-service-apigateway-domain-names-seller --non-interactive
-          #terragrunt run-all apply --queue-include-dir=./initial-infrastructure/aws-service-apigateway-domain-names-seller --non-interactive
+          terragrunt run-all apply --queue-include-dir=./initial-infrastructure/aws-service-apigateway-domain-names-seller --non-interactive
 
 
         displayName: "✔️ Plan"
