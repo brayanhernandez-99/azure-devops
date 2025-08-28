@@ -93,12 +93,23 @@ jobs:
       - script: |
           echo -e "\n Ejecutando: terragrunt plan..."
           
-          terragrunt run-all plan  --queue-include-dir=./initial-infrastructure/aws-service-apigateway-domain-names-admin --non-interactive
-          terragrunt run-all apply --queue-include-dir=./initial-infrastructure/aws-service-apigateway-domain-names-admin --non-interactive
+          terragrunt run-all plan  --queue-include-dir=./initial-infrastructure/aws-service-iot-policies --non-interactive
+          terragrunt run-all apply --queue-include-dir=./initial-infrastructure/aws-service-iot-policies --non-interactive
           
-          terragrunt run-all plan  --queue-include-dir=./initial-infrastructure/aws-service-apigateway-domain-names-seller --non-interactive
-          terragrunt run-all apply --queue-include-dir=./initial-infrastructure/aws-service-apigateway-domain-names-seller --non-interactive
+          terragrunt run-all plan  --queue-include-dir=./initial-infrastructure/aws-service-kinesis-ckm --non-interactive
+          terragrunt run-all apply --queue-include-dir=./initial-infrastructure/aws-service-kinesis-ckm --non-interactive
 
+          terragrunt run-all plan  --queue-include-dir=./initial-infrastructure/aws-service-ecs-cluster --non-interactive
+          terragrunt run-all apply --queue-include-dir=./initial-infrastructure/aws-service-ecs-cluster --non-interactive
+
+          terragrunt run-all plan  --queue-include-dir=./initial-infrastructure/aws-service-s3 --non-interactive
+          terragrunt run-all apply --queue-include-dir=./initial-infrastructure/aws-service-s3 --non-interactive
+
+          terragrunt run-all plan  --queue-include-dir=./initial-infrastructure/aws-service-s3-repository-configuration --non-interactive
+          terragrunt run-all apply --queue-include-dir=./initial-infrastructure/aws-service-s3-repository-configuration --non-interactive
+
+          terragrunt run-all plan  --queue-include-dir=./initial-infrastructure/aws-service-cognito --non-interactive
+          terragrunt run-all apply --queue-include-dir=./initial-infrastructure/aws-service-cognito --non-interactive
 
         displayName: "✔️ Plan"
         workingDirectory: $(Build.SourcesDirectory)/iac-terragrunt/invictus/
