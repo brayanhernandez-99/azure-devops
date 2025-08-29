@@ -96,9 +96,6 @@ jobs:
           terragrunt run-all plan  --queue-include-dir=./apps/aws-service-s3 --non-interactive
           terragrunt run-all apply --queue-include-dir=./apps/aws-service-s3 --non-interactive
 
-          terragrunt run-all plan  --queue-include-dir=./apps/aws-service-custom-cache-policy --non-interactive
-          terragrunt run-all apply --queue-include-dir=./apps/aws-service-custom-cache-policy --non-interactive
-
           terragrunt run-all plan  --queue-include-dir=./apps/aws-service-cloudfront-function --non-interactive
           terragrunt run-all apply --queue-include-dir=./apps/aws-service-cloudfront-function --non-interactive
 
