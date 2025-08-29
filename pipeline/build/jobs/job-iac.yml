@@ -129,136 +129,136 @@ jobs:
 
 
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-app-administration-policy
-          terragrunt plan --all --non-interactive
-          terragrunt apply --all --non-interactive
-          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-app-administration-policy
+          # terragrunt plan --all --non-interactive
+          # terragrunt apply --all --non-interactive
+          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-app-sellers-policy
-          terragrunt plan --all --non-interactive
-          terragrunt apply --all --non-interactive
-          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-app-sellers-policy
+          # terragrunt plan --all --non-interactive
+          # terragrunt apply --all --non-interactive
+          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
     
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-awards-policy
-          terragrunt plan --all --non-interactive
-          terragrunt apply --all --non-interactive
-          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-awards-policy
+          # terragrunt plan --all --non-interactive
+          # terragrunt apply --all --non-interactive
+          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
        
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-biometrics-policy
-          terragrunt plan --all --non-interactive
-          terragrunt apply --all --non-interactive
-          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-biometrics-policy
+          # terragrunt plan --all --non-interactive
+          # terragrunt apply --all --non-interactive
+          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-cashier-policy
-          terragrunt plan --all --non-interactive
-          terragrunt apply --all --non-interactive
-          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
-
-          
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-chance-policy
-          terragrunt plan --all --non-interactive
-          terragrunt apply --all --non-interactive
-          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-cashier-policy
+          # terragrunt plan --all --non-interactive
+          # terragrunt apply --all --non-interactive
+          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
           
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-commissions-policy
-          terragrunt plan --all --non-interactive
-          terragrunt apply --all --non-interactive
-          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-chance-policy
+          # terragrunt plan --all --non-interactive
+          # terragrunt apply --all --non-interactive
+          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+
+          
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-commissions-policy
+          # terragrunt plan --all --non-interactive
+          # terragrunt apply --all --non-interactive
+          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-conciliation-policy
-          terragrunt plan --all --non-interactive
-          terragrunt apply --all --non-interactive
-          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-conciliation-policy
+          # terragrunt plan --all --non-interactive
+          # terragrunt apply --all --non-interactive
+          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-dashboard-policy
-          terragrunt plan --all --non-interactive
-          terragrunt apply --all --non-interactive
-          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-dashboard-policy
+          # terragrunt plan --all --non-interactive
+          # terragrunt apply --all --non-interactive
+          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-dynamic-storage-policy
-          terragrunt plan --all --non-interactive
-          terragrunt apply --all --non-interactive
-          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-dynamic-storage-policy
+          # terragrunt plan --all --non-interactive
+          # terragrunt apply --all --non-interactive
+          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-external-wager-policy
-          terragrunt plan --all --non-interactive
-          terragrunt apply --all --non-interactive
-          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-external-wager-policy
+          # terragrunt plan --all --non-interactive
+          # terragrunt apply --all --non-interactive
+          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-hierarchies-policy
-          terragrunt plan --all --non-interactive
-          terragrunt apply --all --non-interactive
-          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-hierarchies-policy
+          # terragrunt plan --all --non-interactive
+          # terragrunt apply --all --non-interactive
+          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-invictus-policy
-          terragrunt plan --all --non-interactive
-          terragrunt apply --all --non-interactive
-          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-invictus-policy
+          # terragrunt plan --all --non-interactive
+          # terragrunt apply --all --non-interactive
+          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-login-policy
-          terragrunt plan --all --non-interactive
-          terragrunt apply --all --non-interactive
-          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-login-policy
+          # terragrunt plan --all --non-interactive
+          # terragrunt apply --all --non-interactive
+          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-lotteries-policy
-          terragrunt plan --all --non-interactive
-          terragrunt apply --all --non-interactive
-          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-lotteries-policy
+          # terragrunt plan --all --non-interactive
+          # terragrunt apply --all --non-interactive
+          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-money-control-policy
-          terragrunt plan --all --non-interactive
-          terragrunt apply --all --non-interactive
-          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-money-control-policy
+          # terragrunt plan --all --non-interactive
+          # terragrunt apply --all --non-interactive
+          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-notifications-policy
-          terragrunt plan --all --non-interactive
-          terragrunt apply --all --non-interactive
-          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-notifications-policy
+          # terragrunt plan --all --non-interactive
+          # terragrunt apply --all --non-interactive
+          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-papelery-policy
-          terragrunt plan --all --non-interactive
-          terragrunt apply --all --non-interactive
-          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-papelery-policy
+          # terragrunt plan --all --non-interactive
+          # terragrunt apply --all --non-interactive
+          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-promotional-policy
-          terragrunt plan --all --non-interactive
-          terragrunt apply --all --non-interactive
-          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-promotional-policy
+          # terragrunt plan --all --non-interactive
+          # terragrunt apply --all --non-interactive
+          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-raffles-policy
-          terragrunt plan --all --non-interactive
-          terragrunt apply --all --non-interactive
-          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-raffles-policy
+          # terragrunt plan --all --non-interactive
+          # terragrunt apply --all --non-interactive
+          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-recharges-policy
-          terragrunt plan --all --non-interactive
-          terragrunt apply --all --non-interactive
-          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-recharges-policy
+          # terragrunt plan --all --non-interactive
+          # terragrunt apply --all --non-interactive
+          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-users-policy
-          terragrunt plan --all --non-interactive
-          terragrunt apply --all --non-interactive
-          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-users-policy
+          # terragrunt plan --all --non-interactive
+          # terragrunt apply --all --non-interactive
+          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
 
         displayName: "✔️ Plan"
