@@ -92,18 +92,9 @@ jobs:
 
       - script: |
           echo -e "\n Ejecutando: terragrunt plan..."
-          
-          terragrunt run-all plan  --queue-include-dir=./initial-infrastructure/aws-service-secret-manager --non-interactive
-          terragrunt run-all apply --queue-include-dir=./initial-infrastructure/aws-service-secret-manager --non-interactive
-
-          terragrunt run-all plan  --queue-include-dir=./initial-infrastructure/aws-service-secret-manager-aes --non-interactive
-          terragrunt run-all apply --queue-include-dir=./initial-infrastructure/aws-service-secret-manager-aes --non-interactive
-
-          terragrunt run-all plan  --queue-include-dir=./initial-infrastructure/aws-service-secret-manager-funds --non-interactive
-          terragrunt run-all apply --queue-include-dir=./initial-infrastructure/aws-service-secret-manager-funds --non-interactive
-
-          terragrunt run-all plan  --queue-include-dir=./initial-infrastructure/aws-service-secret-manager-iot --non-interactive
-          terragrunt run-all apply --queue-include-dir=./initial-infrastructure/aws-service-secret-manager-iot --non-interactive
+        
+          terragrunt run-all plan  --queue-include-dir=./initial-infrastructure/aws-service-ssm-parameter --non-interactive
+          terragrunt run-all apply --queue-include-dir=./initial-infrastructure/aws-service-ssm-parameter --non-interactive
 
 
         displayName: "✔️ Plan"
