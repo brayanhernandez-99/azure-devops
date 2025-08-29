@@ -93,13 +93,9 @@ jobs:
       - script: |
           echo -e "\n Ejecutando: terragrunt plan..."
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3
-          terragrunt plan --all --non-interactive
-          terragrunt apply --all --non-interactive
-
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront-function
-          # terragrunt run-all plan  --queue-include-dir=./apps/aws-service-cloudfront-function --non-interactive
-          # terragrunt run-all apply --queue-include-dir=./apps/aws-service-cloudfront-function --non-interactive
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront-function
+          terragrunt run-all plan  --queue-include-dir=./apps/aws-service-cloudfront-function --non-interactive
+          terragrunt run-all apply --queue-include-dir=./apps/aws-service-cloudfront-function --non-interactive
 
           # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront
           # terragrunt run-all plan  --queue-include-dir=./apps/aws-service-cloudfront --non-interactive
