@@ -93,14 +93,22 @@ jobs:
       - script: |
           echo -e "\n Ejecutando: terragrunt plan..."
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/cloudfront-app-administration
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-app-administration
           terragrunt plan --all --non-interactive
           terragrunt apply --all --non-interactive
 
-          cloudfront-chance
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/cloudfront-app-sellers
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-app-sellers
           terragrunt plan --all --non-interactive
           terragrunt apply --all --non-interactive
+          
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-awards
+          terragrunt plan --all --non-interactive
+          terragrunt apply --all --non-interactive
+
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-biometrics
+          terragrunt plan --all --non-interactive
+          terragrunt apply --all --non-interactive
+
 
 
 
