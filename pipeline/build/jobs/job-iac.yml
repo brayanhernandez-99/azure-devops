@@ -93,6 +93,42 @@ jobs:
       - script: |
           echo -e "\n Ejecutando: terragrunt plan..."
 
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-papelery
+          terragrunt plan --all --non-interactive
+          terragrunt apply --all --non-interactive
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+
+
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-promotional
+          terragrunt plan --all --non-interactive
+          terragrunt apply --all --non-interactive
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+
+
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-raffles
+          terragrunt plan --all --non-interactive
+          terragrunt apply --all --non-interactive
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+
+
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-recharges
+          terragrunt plan --all --non-interactive
+          terragrunt apply --all --non-interactive
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+
+
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-users
+          terragrunt plan --all --non-interactive
+          terragrunt apply --all --non-interactive
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+
+          
+
+
+
+
+
+
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-app-administration-policy
           terragrunt plan --all --non-interactive
           terragrunt apply --all --non-interactive
