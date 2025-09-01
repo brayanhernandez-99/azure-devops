@@ -31,8 +31,11 @@ jobs:
     steps:
 
       - script: |
-          echo -e "\n📋 Variables de entorno disponibles:"
+          echo -e "\n📋 Variables disponibles:"
           printenv | sort | grep -i "aws" || true
+
+          echo -e "\n📋 Parametros disponibles:"
+          printenv | sort | grep -i "parameter" || true
         displayName: "📋 Environment variables"
 
       - script: |
