@@ -104,12 +104,13 @@ jobs:
           terragrunt plan --all --queue-include-dir=./astro/aws-service-ssm-parameter --non-interactive
 
 
-          terragrunt plan --all --queue-include-dir=./astro/aws-service-secret-manager --non-interactive
-          terragrunt plan --all --queue-include-dir=./astro/aws-service-secret-manager-betplay --non-interactive
-          terragrunt plan --all --queue-include-dir=./astro/aws-service-sqs --non-interactive
-          terragrunt plan --all --queue-include-dir=./astro/aws-service-s3 --non-interactive
-          terragrunt plan --all --queue-include-dir=./astro/aws-service-ecs --non-interactive
-          terragrunt plan --all --queue-include-dir=./astro/aws-service-ssm-parameter --non-interactive
+          terragrunt apply --all --queue-include-dir=./astro/aws-service-secret-manager --non-interactive --auto-approve
+          terragrunt apply --all --queue-include-dir=./astro/aws-service-secret-manager-betplay --non-interactive --auto-approve
+          terragrunt apply --all --queue-include-dir=./astro/aws-service-sqs --non-interactive --auto-approve
+          terragrunt apply --all --queue-include-dir=./astro/aws-service-s3 --non-interactive --auto-approve
+          terragrunt apply --all --queue-include-dir=./astro/aws-service-ecs --non-interactive --auto-approve
+          terragrunt apply --all --queue-include-dir=./astro/aws-service-ssm-parameter --non-interactive --auto-approve
+
 
 
           #cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/
