@@ -104,7 +104,6 @@ jobs:
           terragrunt plan --all --non-interactive
           terragrunt apply --all --non-interactive
 
-
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/astro/aws-service-sqs
           terragrunt plan --all --non-interactive
           terragrunt apply --all --non-interactive
