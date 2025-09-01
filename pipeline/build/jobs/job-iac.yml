@@ -94,31 +94,12 @@ jobs:
         displayName: "⚙️ Replace Tokens"
 
       - script: |
-          echo -e "\n Ejecutando: terragrunt plan..."
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/astro/aws-service-secret-manager
-          terragrunt plan --all --non-interactive
-          terragrunt apply --all --non-interactive
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/astro/aws-service-secret-manager-betplay
-          terragrunt plan --all --non-interactive
-          terragrunt apply --all --non-interactive
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/astro/aws-service-sqs
-          terragrunt plan --all --non-interactive
-          terragrunt apply --all --non-interactive
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/astro/aws-service-s3
-          terragrunt plan --all --non-interactive
-          terragrunt apply --all --non-interactive          
+          echo -e "\n Ejecutando: terragrunt plan..."   
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/astro/aws-service-ecs
           terragrunt plan --all --non-interactive
           terragrunt apply --all --non-interactive     
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/astro/aws-service-ssm-parameter
-          terragrunt plan --all --non-interactive
-          terragrunt apply --all --non-interactive     
 
 
           #cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/
