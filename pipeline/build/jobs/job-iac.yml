@@ -32,10 +32,10 @@ jobs:
 
       - script: |
           echo -e "\n📋 Variables disponibles:"
-          printenv | sort | grep -i "aws" || true
+          printenv | sort | grep -i "aws_" || true
 
           echo -e "\n📋 Parametros disponibles:"
-          printenv | sort | grep -i "parameter" || true
+          printenv | sort | grep -i "parameter_" || true
         displayName: "📋 Environment variables"
 
       - script: |
