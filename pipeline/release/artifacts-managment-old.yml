@@ -23,6 +23,12 @@ stages:
               name: "Azure Pipelines"
               VmImage: "ubuntu-22.04"
 
+            strategy:
+              matrix:
+                ${{ each ms in parameters.apps }}:
+                  ${{ ms }}:
+                    msName: ${{ ms }}
+
             steps:
               - checkout: self
 
@@ -36,31 +42,31 @@ stages:
                 displayName: "📥 Download Version Artifact"
 
               - script: |
-                  ls -R $(Pipeline.Workspace)/downloaded-versions/versions
-                  VERSION_FILE="$(Pipeline.Workspace)/downloaded-versions/version.json"
+                  ls -R $(Pipeline.Workspace)/downloaded-versions/versions/$(msName)
+                  VERSION_FILE="$(Pipeline.Workspace)/downloaded-versions/versions/$(msName)/version.json"
                   if [[ -f "$VERSION_FILE" ]]; then
                     VERSION=$(jq -r '.version' $VERSION_FILE)
-                    echo -e "\n🚀 Versión detectada para $(Build.Repository.Name): $VERSION"
+                    echo -e "\n🚀 Versión detectada para $(msName): $VERSION"
                     echo "##vso[task.setvariable variable=msVersion]$VERSION"
                   else
-                    echo "❌ No se encontró archivo de versión para $(Build.Repository.Name)"
+                    echo "❌ No se encontró archivo de versión para $(msName)"
                     exit 1
                   fi
                 displayName: "📖 Read Microservice Versions"
 
               - script: |
                   echo "build dev docker images"
-                  DOCKERFILE_PATH=$(Build.Repository.Name)/Dockerfile
+                  DOCKERFILE_PATH=$(Build.Repository.Name)/apps/$(msName)/Dockerfile
                   echo "Verificando existencia de: $DOCKERFILE_PATH"
 
                   if [ -f "$DOCKERFILE_PATH" ]; then
                     echo "✅ Ya existe el Dockerfile en $DOCKERFILE_PATH"
-                    ls -la $(Build.Repository.Name)
+                    ls -la $(Build.Repository.Name)/apps/$(msName)
                   else
                     echo "⚠️ No existe el Dockerfile. Copiando desde templates..."
-                    cp pipelines-templates/pipeline/docker/Dockerfile $(Build.Repository.Name)/Dockerfile
+                    cp pipelines-templates/pipeline/docker/Dockerfile $(Build.Repository.Name)/apps/$(msName)/Dockerfile
                     echo "✅ Dockerfile copiado exitosamente."
-                    ls -la $(Build.Repository.Name)
+                    ls -la $(Build.Repository.Name)/apps/$(msName)
                   fi
                 displayName: "Check or Copy Dockerfile"
 
@@ -69,33 +75,19 @@ stages:
                 inputs:
                   targetType: "inline"
                   script: |
-                    echo "🔐 Obteniendo token de AWS CodeArtifact..."
-                    token=$(aws codeartifact get-authorization-token \
+                    export CODEARTIFACT_AUTH_TOKEN=$(aws codeartifact get-authorization-token \
                       --domain matrixtech-npm-repository \
-                      --domain-owner "$ACCOUNT_ID_DEPLOY" \
-                      --region "$AWS_DEFAULT_REGION" \
+                      --domain-owner $ACCOUNT_ID_DEPLOY \
+                      --region $AWS_DEFAULT_REGION \
                       --query authorizationToken \
-                      --output text)
-
-                    REPO_DOMAIN="matrixtech-npm-repository-$ACCOUNT_ID_DEPLOY.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com"
-                    REPO_PATH="npm/matrixtech-npm-repository"
-                    REPO_URL="https://$REPO_DOMAIN/$REPO_PATH"
-
-                    echo "Configurando npm..."
-                    npm config set "//$REPO_DOMAIN/$REPO_PATH/:_authToken" "$token"
-                    npm config set registry "$REPO_URL"
-
-                    echo "Verificando identidad de AWS..."
+                      --output text )
+                    npm config set //matrixtech-npm-repository-$ACCOUNT_ID_DEPLOY.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com/npm/matrixtech-npm-repository/:_authToken=$CODEARTIFACT_AUTH_TOKEN
+                    npm config set registry https://matrixtech-npm-repository-$ACCOUNT_ID_DEPLOY.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com/npm/matrixtech-npm-repository/
                     aws sts get-caller-identity
 
-
-                    echo "Generando archivo .npmrc"
-                    cat <<EOF > ".npmrc"
-                    //$REPO_DOMAIN/$REPO_PATH/:_authToken=$token
-                    registry=$REPO_URL
-                    EOF
-                    ls -la .npmrc
-                  displayName: "🔐 Setup CodeArtifact & npm config"
+                    cd $(Build.Repository.Name)/apps/$(msName)
+                    echo "//matrixtech-npm-repository-$ACCOUNT_ID_DEPLOY.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com/npm/matrixtech-npm-repository/:_authToken=$CODEARTIFACT_AUTH_TOKEN" > .npmrc
+                    echo "registry=https://matrixtech-npm-repository-$ACCOUNT_ID_DEPLOY.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com/npm/matrixtech-npm-repository/" >> .npmrc
                 env:
                   AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
                   AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
@@ -112,24 +104,24 @@ stages:
                   AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
 
               - task: Docker@2
-                displayName: "Build Container Image Development $(Build.Repository.Name)"
+                displayName: "Build Container Image Development $(msName)"
                 continueOnError: true
                 inputs:
                   command: "build"
-                  repository: "$(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/pruebas-pipeline-$(Build.Repository.Name)-develop"
-                  Dockerfile: "$(Build.Repository.Name)/Dockerfile"
+                  repository: "$(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/pruebas-pipeline-$(msName)-develop"
+                  Dockerfile: "$(Build.Repository.Name)/apps/$(msName)/Dockerfile"
                   tags: $(msVersion)
 
               - script: |
-                  echo "Verificando si existe el repositorio pruebas-pipeline-$(Build.Repository.Name)-develop"
+                  echo "Verificando si existe el repositorio pruebas-pipeline-$(msName)-develop"
                   aws ecr describe-repositories \
-                    --repository-names pruebas-pipeline-$(Build.Repository.Name)-develop \
+                    --repository-names pruebas-pipeline-$(msName)-develop \
                     --region $AWS_DEFAULT_REGION > /dev/null 2>&1
 
                   if [ $? -ne 0 ]; then
                     echo "Repositorio no existe. Creándolo..."
                     aws ecr create-repository \
-                      --repository-name pruebas-pipeline-$(Build.Repository.Name)-develop \
+                      --repository-name pruebas-pipeline-$(msName)-develop \
                       --region $AWS_DEFAULT_REGION
                   else
                     echo "Repositorio ya existe. Continuando..."
@@ -141,10 +133,10 @@ stages:
                   AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
 
               - task: Docker@2
-                displayName: "Push Container Image Development $(Build.Repository.Name)"
+                displayName: "Push Container Image Development $(msName)"
                 inputs:
                   command: "Push"
-                  repository: "$(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/pruebas-pipeline-$(Build.Repository.Name)-develop"
+                  repository: "$(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/pruebas-pipeline-$(msName)-develop"
                   tags: $(msVersion)
 
       - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
@@ -154,6 +146,12 @@ stages:
               name: "Azure Pipelines"
               VmImage: "ubuntu-22.04"
 
+            strategy:
+              matrix:
+                ${{ each ms in parameters.apps }}:
+                  ${{ ms }}:
+                    msName: ${{ ms }}
+
             steps:
               - checkout: self
 
@@ -167,31 +165,31 @@ stages:
                 displayName: "📥 Download Version Artifact"
 
               - script: |
-                  ls -R $(Pipeline.Workspace)/downloaded-versions/versions
-                  VERSION_FILE="$(Pipeline.Workspace)/downloaded-versions/versions/version.json"
+                  ls -R $(Pipeline.Workspace)/downloaded-versions/versions/$(msName)
+                  VERSION_FILE="$(Pipeline.Workspace)/downloaded-versions/versions/$(msName)/version.json"
                   if [[ -f "$VERSION_FILE" ]]; then
                     VERSION=$(jq -r '.version' $VERSION_FILE)
-                    echo -e "\n🚀 Versión detectada para $(Build.Repository.Name): $VERSION"
+                    echo -e "\n🚀 Versión detectada para $(msName): $VERSION"
                     echo "##vso[task.setvariable variable=msVersion]$VERSION"
                   else
-                    echo "❌ No se encontró archivo de versión para $(Build.Repository.Name)"
+                    echo "❌ No se encontró archivo de versión para $(msName)"
                     exit 1
                   fi
                 displayName: "📖 Read Microservice Versions"
 
               - script: |
                   echo "build qa docker images"
-                  DOCKERFILE_PATH=$(Build.Repository.Name)/Dockerfile
+                  DOCKERFILE_PATH=$(Build.Repository.Name)/apps/$(msName)/Dockerfile
                   echo "Verificando existencia de: $DOCKERFILE_PATH"
 
                   if [ -f "$DOCKERFILE_PATH" ]; then
                     echo "✅ Ya existe el Dockerfile en $DOCKERFILE_PATH"
-                    ls -la $(Build.Repository.Name)
+                    ls -la $(Build.Repository.Name)/apps/$(msName)
                   else
                     echo "⚠️ No existe el Dockerfile. Copiando desde templates..."
-                    cp pipelines-templates/pipeline/docker/Dockerfile $(Build.Repository.Name)/Dockerfile
+                    cp pipelines-templates/pipeline/docker/Dockerfile $(Build.Repository.Name)/apps/$(msName)/Dockerfile
                     echo "✅ Dockerfile copiado exitosamente."
-                    ls -la $(Build.Repository.Name)
+                    ls -la $(Build.Repository.Name)/apps/$(msName)
                   fi
                 displayName: "Check or Copy Dockerfile"
 
@@ -200,33 +198,19 @@ stages:
                 inputs:
                   targetType: "inline"
                   script: |
-                    echo "🔐 Obteniendo token de AWS CodeArtifact..."
-                    token=$(aws codeartifact get-authorization-token \
+                    export CODEARTIFACT_AUTH_TOKEN=$(aws codeartifact get-authorization-token \
                       --domain matrixtech-npm-repository \
-                      --domain-owner "$ACCOUNT_ID_DEPLOY" \
-                      --region "$AWS_DEFAULT_REGION" \
+                      --domain-owner $ACCOUNT_ID_DEPLOY \
+                      --region $AWS_DEFAULT_REGION \
                       --query authorizationToken \
-                      --output text)
-
-                    REPO_DOMAIN="matrixtech-npm-repository-$ACCOUNT_ID_DEPLOY.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com"
-                    REPO_PATH="npm/matrixtech-npm-repository"
-                    REPO_URL="https://$REPO_DOMAIN/$REPO_PATH"
-
-                    echo "Configurando npm..."
-                    npm config set "//$REPO_DOMAIN/$REPO_PATH/:_authToken" "$token"
-                    npm config set registry "$REPO_URL"
-
-                    echo "Verificando identidad de AWS..."
+                      --output text )
+                    npm config set //matrixtech-npm-repository-$ACCOUNT_ID_DEPLOY.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com/npm/matrixtech-npm-repository/:_authToken=$CODEARTIFACT_AUTH_TOKEN
+                    npm config set registry https://matrixtech-npm-repository-$ACCOUNT_ID_DEPLOY.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com/npm/matrixtech-npm-repository/
                     aws sts get-caller-identity
 
-
-                    echo "Generando archivo .npmrc"
-                    cat <<EOF > ".npmrc"
-                    //$REPO_DOMAIN/$REPO_PATH/:_authToken=$token
-                    registry=$REPO_URL
-                    EOF
-                    ls -la .npmrc
-                  displayName: "🔐 Setup CodeArtifact & npm config"
+                    cd $(Build.Repository.Name)/apps/$(msName)
+                    echo "//matrixtech-npm-repository-$ACCOUNT_ID_DEPLOY.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com/npm/matrixtech-npm-repository/:_authToken=$CODEARTIFACT_AUTH_TOKEN" > .npmrc
+                    echo "registry=https://matrixtech-npm-repository-$ACCOUNT_ID_DEPLOY.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com/npm/matrixtech-npm-repository/" >> .npmrc
                 env:
                   AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
                   AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
@@ -243,24 +227,24 @@ stages:
                   AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
 
               - task: Docker@2
-                displayName: "Build Container Image Staging $(Build.Repository.Name)"
+                displayName: "Build Container Image Staging $(msName)"
                 continueOnError: true
                 inputs:
                   command: "build"
-                  repository: "$(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/pruebas-pipeline-$(Build.Repository.Name)-qa"
-                  Dockerfile: "$(Build.Repository.Name)/Dockerfile"
+                  repository: "$(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/pruebas-pipeline-$(msName)-qa"
+                  Dockerfile: "$(Build.Repository.Name)/apps/$(msName)/Dockerfile"
                   tags: $(msVersion)
 
               - script: |
-                  echo "Verificando si existe el repositorio pruebas-pipeline-$(Build.Repository.Name)-qa"
+                  echo "Verificando si existe el repositorio pruebas-pipeline-$(msName)-qa"
                   aws ecr describe-repositories \
-                    --repository-names pruebas-pipeline-$(Build.Repository.Name)-qa \
+                    --repository-names pruebas-pipeline-$(msName)-qa \
                     --region $AWS_DEFAULT_REGION > /dev/null 2>&1
 
                   if [ $? -ne 0 ]; then
                     echo "Repositorio no existe. Creándolo..."
                     aws ecr create-repository \
-                      --repository-name pruebas-pipeline-$(Build.Repository.Name)-qa \
+                      --repository-name pruebas-pipeline-$(msName)-qa \
                       --region $AWS_DEFAULT_REGION
                   else
                     echo "Repositorio ya existe. Continuando..."
@@ -272,10 +256,10 @@ stages:
                   AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
 
               - task: Docker@2
-                displayName: "Push Container Image Staging $(Build.Repository.Name)"
+                displayName: "Push Container Image Staging $(msName)"
                 inputs:
                   command: "Push"
-                  repository: "$(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/pruebas-pipeline-$(Build.Repository.Name)-qa"
+                  repository: "$(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/pruebas-pipeline-$(msName)-qa"
                   tags: $(msVersion)
 
       - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/master') }}:
@@ -285,6 +269,12 @@ stages:
               name: "Azure Pipelines"
               VmImage: "ubuntu-22.04"
 
+            strategy:
+              matrix:
+                ${{ each ms in parameters.apps }}:
+                  ${{ ms }}:
+                    msName: ${{ ms }}
+
             steps:
               - checkout: self
 
@@ -298,31 +288,31 @@ stages:
                 displayName: "📥 Download Version Artifact"
 
               - script: |
-                  ls -R $(Pipeline.Workspace)/downloaded-versions/versions
-                  VERSION_FILE="$(Pipeline.Workspace)/downloaded-versions/versions/version.json"
+                  ls -R $(Pipeline.Workspace)/downloaded-versions/versions/$(msName)
+                  VERSION_FILE="$(Pipeline.Workspace)/downloaded-versions/versions/$(msName)/version.json"
                   if [[ -f "$VERSION_FILE" ]]; then
                     VERSION=$(jq -r '.version' $VERSION_FILE)
-                    echo -e "\n🚀 Versión detectada para $(Build.Repository.Name): $VERSION"
+                    echo -e "\n🚀 Versión detectada para $(msName): $VERSION"
                     echo "##vso[task.setvariable variable=msVersion]$VERSION"
                   else
-                    echo "❌ No se encontró archivo de versión para $(Build.Repository.Name)"
+                    echo "❌ No se encontró archivo de versión para $(msName)"
                     exit 1
                   fi
                 displayName: "📖 Read Microservice Versions"
 
               - script: |
                   echo "build qa docker images"
-                  DOCKERFILE_PATH=$(Build.Repository.Name)/Dockerfile
+                  DOCKERFILE_PATH=$(Build.Repository.Name)/apps/$(msName)/Dockerfile
                   echo "Verificando existencia de: $DOCKERFILE_PATH"
 
                   if [ -f "$DOCKERFILE_PATH" ]; then
                     echo "✅ Ya existe el Dockerfile en $DOCKERFILE_PATH"
-                    ls -la $(Build.Repository.Name)
+                    ls -la $(Build.Repository.Name)/apps/$(msName)
                   else
                     echo "⚠️ No existe el Dockerfile. Copiando desde templates..."
-                    cp pipelines-templates/pipeline/docker/Dockerfile $(Build.Repository.Name)/Dockerfile
+                    cp pipelines-templates/pipeline/docker/Dockerfile $(Build.Repository.Name)/apps/$(msName)/Dockerfile
                     echo "✅ Dockerfile copiado exitosamente."
-                    ls -la $(Build.Repository.Name)
+                    ls -la $(Build.Repository.Name)/apps/$(msName)
                   fi
                 displayName: "Check or Copy Dockerfile"
 
@@ -331,33 +321,19 @@ stages:
                 inputs:
                   targetType: "inline"
                   script: |
-                    echo "🔐 Obteniendo token de AWS CodeArtifact..."
-                    token=$(aws codeartifact get-authorization-token \
+                    export CODEARTIFACT_AUTH_TOKEN=$(aws codeartifact get-authorization-token \
                       --domain matrixtech-npm-repository \
-                      --domain-owner "$ACCOUNT_ID_DEPLOY" \
-                      --region "$AWS_DEFAULT_REGION" \
+                      --domain-owner $ACCOUNT_ID_DEPLOY \
+                      --region $AWS_DEFAULT_REGION \
                       --query authorizationToken \
-                      --output text)
-
-                    REPO_DOMAIN="matrixtech-npm-repository-$ACCOUNT_ID_DEPLOY.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com"
-                    REPO_PATH="npm/matrixtech-npm-repository"
-                    REPO_URL="https://$REPO_DOMAIN/$REPO_PATH"
-
-                    echo "Configurando npm..."
-                    npm config set "//$REPO_DOMAIN/$REPO_PATH/:_authToken" "$token"
-                    npm config set registry "$REPO_URL"
-
-                    echo "Verificando identidad de AWS..."
+                      --output text )
+                    npm config set //matrixtech-npm-repository-$ACCOUNT_ID_DEPLOY.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com/npm/matrixtech-npm-repository/:_authToken=$CODEARTIFACT_AUTH_TOKEN
+                    npm config set registry https://matrixtech-npm-repository-$ACCOUNT_ID_DEPLOY.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com/npm/matrixtech-npm-repository/
                     aws sts get-caller-identity
 
-
-                    echo "Generando archivo .npmrc"
-                    cat <<EOF > ".npmrc"
-                    //$REPO_DOMAIN/$REPO_PATH/:_authToken=$token
-                    registry=$REPO_URL
-                    EOF
-                    ls -la .npmrc
-                  displayName: "🔐 Setup CodeArtifact & npm config"
+                    cd $(Build.Repository.Name)/apps/$(msName)
+                    echo "//matrixtech-npm-repository-$ACCOUNT_ID_DEPLOY.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com/npm/matrixtech-npm-repository/:_authToken=$CODEARTIFACT_AUTH_TOKEN" > .npmrc
+                    echo "registry=https://matrixtech-npm-repository-$ACCOUNT_ID_DEPLOY.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com/npm/matrixtech-npm-repository/" >> .npmrc
                 env:
                   AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
                   AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
@@ -374,24 +350,24 @@ stages:
                   AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
 
               - task: Docker@2
-                displayName: "Build Container Image master $(Build.Repository.Name)"
+                displayName: "Build Container Image master $(msName)"
                 continueOnError: true
                 inputs:
                   command: "build"
-                  repository: "$(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/pruebas-pipeline-$(Build.Repository.Name)-prd"
-                  Dockerfile: "$(Build.Repository.Name)/Dockerfile"
+                  repository: "$(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/pruebas-pipeline-$(msName)-prd"
+                  Dockerfile: "$(Build.Repository.Name)/apps/$(msName)/Dockerfile"
                   tags: $(msVersion)
 
               - script: |
-                  echo "Verificando si existe el repositorio pruebas-pipeline-$(Build.Repository.Name)-prd"
+                  echo "Verificando si existe el repositorio pruebas-pipeline-$(msName)-prd"
                   aws ecr describe-repositories \
-                    --repository-names pruebas-pipeline-$(Build.Repository.Name)-prd \
+                    --repository-names pruebas-pipeline-$(msName)-prd \
                     --region $AWS_DEFAULT_REGION > /dev/null 2>&1
 
                   if [ $? -ne 0 ]; then
                     echo "Repositorio no existe. Creándolo..."
                     aws ecr create-repository \
-                      --repository-name pruebas-pipeline-$(Build.Repository.Name)-prd \
+                      --repository-name pruebas-pipeline-$(msName)-prd \
                       --region $AWS_DEFAULT_REGION
                   else
                     echo "Repositorio ya existe. Continuando..."
@@ -403,8 +379,8 @@ stages:
                   AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
 
               - task: Docker@2
-                displayName: "Push Container Image master $(Build.Repository.Name)"
+                displayName: "Push Container Image master $(msName)"
                 inputs:
                   command: "Push"
-                  repository: "$(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/pruebas-pipeline-$(Build.Repository.Name)-prd"
+                  repository: "$(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/pruebas-pipeline-$(msName)-prd"
                   tags: $(msVersion)
