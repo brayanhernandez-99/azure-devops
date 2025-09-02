@@ -30,7 +30,7 @@ variables:
       - group: trasversal-aws-qa
       - group: variables-flutter-qa
       - group: trasversal-electron-develop
-      - group: trasversal-aws-devops
+    #   - group: trasversal-aws-devops
       - group: transversal-app-cloudFront-devops
       - group: transversal-app-administration-vue2-qa
       - group: transversal-app-sellers-vue2-qa
