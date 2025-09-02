@@ -72,7 +72,7 @@ jobs:
             echo "Verificando identidad de AWS..."
             aws sts get-caller-identity
             
-            npmrcPath="$(file)/$(msName)/.npmrc"
+            npmrcPath="apps/$(msName)/.npmrc"
             echo "Generando archivo .npmrcPath en: $npmrcPath"
             cat <<EOF > "$npmrcPath"
             //$REPO_DOMAIN/$REPO_PATH/:_authToken=$token
