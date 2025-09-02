@@ -285,9 +285,9 @@ jobs:
 
           git checkout version/$clean_branch
           git add package.json
-          git commit -m "chore($(msName)): bump version to $(cleanNEXT_VERSION)"
+          git commit -m "chore($(Build.Repository.Name)): bump version to $(cleanNEXT_VERSION)"
           git push origin version/$clean_branch
-        displayName: "Update version and push MS:$(msName)"
+        displayName: "Update version and push MS:$(Build.Repository.Name)"
         condition: and(succeeded(),
           ne(variables['Build.SourceBranchName'], 'master'),
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
