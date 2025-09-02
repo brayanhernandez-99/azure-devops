@@ -15,7 +15,7 @@ jobs:
         deploy:
           steps:
             - script: |
-                echo "Original msName: $(msName)"
+                echo "Original msName: $(Build.Repository.Name)"
                 cleanName=$(echo "$(Build.Repository.Name)" | sed -E 's/^microservice-([^-]+)-invictus$/\1/')
                 echo "Nombre limpio: $cleanName"
                 echo "##vso[task.setvariable variable=cleanMsName]$cleanName"
