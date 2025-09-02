@@ -6,7 +6,8 @@ jobs:
       vmImage: "ubuntu-22.04"
     variables:
       versionNode: $[coalesce(variables.nodeVersion, '18.20.7')]
-.    steps:
+
+    steps:
       - task: DownloadBuildArtifacts@0
         inputs:
           artifactName: "versions"
