@@ -6,7 +6,19 @@ jobs:
       vmImage: "ubuntu-22.04"
     variables:
       versionNode: $[coalesce(variables.nodeVersion, '18.20.7')]
-.    steps:
+
+    strategy:
+      matrix:
+        ${{ each ms in parameters.apps }}:
+          ${{ ms }}:
+            msName: ${{ ms }}
+
+    steps:
+      - script: |
+          echo "Compilando microservicio: $(msName)"
+          ls -l
+        displayName: "Build $(msName)"
+
       - task: DownloadBuildArtifacts@0
         inputs:
           artifactName: "versions"
@@ -14,13 +26,14 @@ jobs:
         displayName: "📥 Download Version Artifact"
 
       - script: |
-          ls -R $(Pipeline.Workspace)/downloaded-versions/versions
-          VERSION_FILE="$(Pipeline.Workspace)/downloaded-versions/versions/version.json"
+          ls -R $(Pipeline.Workspace)/downloaded-versions/versions/$(msName)
+          VERSION_FILE="$(Pipeline.Workspace)/downloaded-versions/versions/$(msName)/version.json"
           if [[ -f "$VERSION_FILE" ]]; then
-            VERSION=$(jq -r '.version' $VERSION_FILE)            echo -e "\n🚀 Versión detectada para $(Build.Repository.Name): $VERSION"
+            VERSION=$(jq -r '.version' $VERSION_FILE)
+            echo -e "\n🚀 Versión detectada para $(msName): $VERSION"
             echo "##vso[task.setvariable variable=msVersion]$VERSION"
           else
-            echo "❌ No se encontró archivo de versión para $(Build.Repository.Name)"
+            echo "❌ No se encontró archivo de versión para $(msName)"
             exit 1
           fi
         displayName: "📖 Read Microservice Versions"
@@ -58,14 +71,14 @@ jobs:
 
             echo "Verificando identidad de AWS..."
             aws sts get-caller-identity
-
-
-            echo "Generando archivo .npmrc"
-            cat <<EOF > ".npmrc"
+            
+            npmrcPath="apps/$(msName)/.npmrc"
+            echo "Generando archivo .npmrcPath en: $npmrcPath"
+            cat <<EOF > "$npmrcPath"
             //$REPO_DOMAIN/$REPO_PATH/:_authToken=$token
             registry=$REPO_URL
             EOF
-            ls -la .npmrc
+            ls -la $npmrcPath
           displayName: "🔐 Setup CodeArtifact & npm config"
         env:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
@@ -83,11 +96,11 @@ jobs:
           SonarQube: "SonarQubeConection"
           scannerMode: "CLI"
           configMode: "manual"
-          cliProjectKey: "pruebas-$(Build.Repository.Name)"
-          cliProjectName: "pruebas-$(Build.Repository.Name)"
-          cliSources: "$(System.DefaultWorkingDirectory)"
+          cliProjectKey: "pruebas-$(msName)"
+          cliProjectName: "pruebas-$(msName)"
+          cliSources: "$(System.DefaultWorkingDirectory)/apps/$(msName)"
           extraProperties: |
-            sonar.javascript.lcov.reportPaths=$(System.DefaultWorkingDirectory)/coverage/lcov.info
+            sonar.javascript.lcov.reportPaths=$(System.DefaultWorkingDirectory)/apps/$(msName)/coverage/lcov.info
             sonar.exclusions=**/*.java,**/test/**,**/android/**,**/ios/**,**/coverage/**,**/.nyc_output/**,**/reports/**,**/node_modules/**,**/migrations/**,**/config/**
 
       - script: |
@@ -98,11 +111,14 @@ jobs:
         displayName: "Set-Variable SONARQUBE_SCANNER_PARAMS"
 
       - script: |
-          echo "🔧 Actualizando versión en package.json a $(msVersion)"
+          cd $(System.DefaultWorkingDirectory)/apps/$(msName)
+          echo "🔧 Actualizando versión en apps/$(msName)/package.json a $(msVersion)"
           jq --arg version "$(msVersion)" '.version = $version' package.json > tmp.json && mv tmp.json package.json
         displayName: "🧪 Temporary version for build"
 
       - script: |
+          echo "Estás en la carpeta: $(System.DefaultWorkingDirectory)/apps/$(msName)"
+          cd $(System.DefaultWorkingDirectory)/apps/$(msName)
           pnpm install --ignore-scripts
           
           echo -e "\n📋 Dependencias instaladas:"
@@ -110,13 +126,15 @@ jobs:
         displayName: "Install microservice dependencies"
 
       - script: |
+          cd $(System.DefaultWorkingDirectory)/apps/$(msName)
           pnpm run test
-        displayName: "Test MS:$(Build.Repository.Name)"
+        displayName: "Test MS:$(msName)"
         continueOnError: true
 
       - script: |
+          cd $(System.DefaultWorkingDirectory)/apps/$(msName)
           pnpm run coverage
-        displayName: "Coverage MS:$(Build.Repository.Name)"
+        displayName: "Coverage MS:$(msName)"
         continueOnError: true
 
       - task: SonarQubeAnalyze@7
@@ -130,14 +148,14 @@ jobs:
       - script: |
           echo "Esperando Quality Gate..."
 
-          status=$(curl -s -u "$SONAR_TOKEN:" "$SONAR_HOST_URL/api/qualitygates/project_status?projectKey=pruebas-$(Build.Repository.Name)")
-          metrics_response=$(curl -s -u "$SONAR_TOKEN:" "$SONAR_HOST_URL/api/measures/component?component=pruebas-$(Build.Repository.Name)&metricKeys=coverage,duplicated_lines_density")
+          status=$(curl -s -u "$SONAR_TOKEN:" "$SONAR_HOST_URL/api/qualitygates/project_status?projectKey=pruebas-$(msName)")
+          metrics_response=$(curl -s -u "$SONAR_TOKEN:" "$SONAR_HOST_URL/api/measures/component?component=pruebas-$(msName)&metricKeys=coverage,duplicated_lines_density")
 
           coverage=$(echo "$metrics_response" | jq -r '.component.measures[] | select(.metric=="coverage") | .value')
           duplication=$(echo "$metrics_response" | jq -r '.component.measures[] | select(.metric=="duplicated_lines_density") | .value')
 
           status_code=$(echo "$status" | jq -r '.projectStatus.status')
-          echo "🔹 Proyecto: pruebas-$(Build.Repository.Name) | Coverage: $coverage | Lines Duplications: $duplication | Estado: $status_code"
+          echo "🔹 Proyecto: pruebas-$(msName) | Coverage: $coverage | Lines Duplications: $duplication | Estado: $status_code"
 
           if [[ "$status_code" == "ERROR" ]]; then
             echo "❌ El proyecto falló su Quality Gate."
@@ -148,7 +166,7 @@ jobs:
         env:
           SONAR_TOKEN: $(SONAR_TOKEN)
           SONAR_HOST_URL: $(SONAR_HOST_URL)
-        displayName: "🔍 Verify Quality Gate MS:$(Build.Repository.Name)"
+        displayName: "🔍 Verify Quality Gate MS:$(msName)"
         continueOnError: true
         condition: and(succeeded(),
           ne(variables['msName'], 'app-administration-vue2'),

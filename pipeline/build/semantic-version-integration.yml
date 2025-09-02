@@ -9,8 +9,8 @@ stages:
     jobs:
       - ${{ if eq(parameters.release, 'aws-ecs') }}:
           - template: ../general/semantic-version-backend.yml
-            parameters:
-              apps: ${{ parameters.apps }}
+            # parameters:
+            #   apps: ${{ parameters.apps }}
 
       - ${{ if eq(parameters.release, 'aws-s3') }}:
           - template: ../general/semantic-version-frontend.yml

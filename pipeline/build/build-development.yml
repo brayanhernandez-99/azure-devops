@@ -43,8 +43,8 @@ stages:
     jobs:
       - ${{ if eq(parameters.release, 'aws-ecs') }}:
           - template: jobs/job-backend.yml
-            parameters:
-              apps: ${{ parameters.apps }}
+            # parameters:
+            #   apps: ${{ parameters.apps }}
 
       - ${{ if eq(parameters.release, 'aws-s3') }}:
           - template: jobs/job-frontend.yml
