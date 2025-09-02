@@ -104,4 +104,4 @@ variables:
       - group: transversal-app-invictus-microfrontend-master-boyaca
       # - group: transversal-app-cloudFront-master-boyaca
 
-  - template: pipeline/vars-azure-pipeline.yml@self
+#   - template: pipeline/vars-azure-pipeline.yml@self
