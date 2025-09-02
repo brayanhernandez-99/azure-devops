@@ -89,12 +89,14 @@ stages:
                     aws sts get-caller-identity
 
 
-                    echo "Generando archivo .npmrc"
-                    cat <<EOF > ".npmrc"
+                    npmrcPath="$(Build.Repository.Name)/.npmrc"
+                    echo "Generando archivo .npmrcPath en: $npmrcPath"
+                    cat <<EOF > "$npmrcPath"
                     //$REPO_DOMAIN/$REPO_PATH/:_authToken=$token
                     registry=$REPO_URL
                     EOF
-                    ls -la .npmrc
+                    ls -la $npmrcPath
+
                   displayName: "🔐 Setup CodeArtifact & npm config"
                 env:
                   AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
@@ -105,6 +107,7 @@ stages:
                   echo "Logging in to ECR..."
                   aws ecr get-login-password --region $AWS_DEFAULT_REGION | \
                   docker login --username AWS --password-stdin $ACCOUNT_ID_DEPLOY.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+                  ls -la
                 displayName: "Login to AWS ECR"
                 env:
                   AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
@@ -220,12 +223,13 @@ stages:
                     aws sts get-caller-identity
 
 
-                    echo "Generando archivo .npmrc"
-                    cat <<EOF > ".npmrc"
+                    npmrcPath="$(Build.Repository.Name)/.npmrc"
+                    echo "Generando archivo .npmrcPath en: $npmrcPath"
+                    cat <<EOF > "$npmrcPath"
                     //$REPO_DOMAIN/$REPO_PATH/:_authToken=$token
                     registry=$REPO_URL
                     EOF
-                    ls -la .npmrc
+                    ls -la $npmrcPath
                   displayName: "🔐 Setup CodeArtifact & npm config"
                 env:
                   AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
@@ -351,12 +355,13 @@ stages:
                     aws sts get-caller-identity
 
 
-                    echo "Generando archivo .npmrc"
-                    cat <<EOF > ".npmrc"
+                    npmrcPath="$(Build.Repository.Name)/.npmrc"
+                    echo "Generando archivo .npmrcPath en: $npmrcPath"
+                    cat <<EOF > "$npmrcPath"
                     //$REPO_DOMAIN/$REPO_PATH/:_authToken=$token
                     registry=$REPO_URL
                     EOF
-                    ls -la .npmrc
+                    ls -la $npmrcPath
                   displayName: "🔐 Setup CodeArtifact & npm config"
                 env:
                   AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
