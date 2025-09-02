@@ -1,7 +1,7 @@
 variables:
   - group: trasversal-aws-deployment
   - group: trasversal-azure-devops
-  - group: trasversal-flutter-invictus
+  - group: trasversal-versions-invictus
   
   # Feature branch
   - ${{ if or( startsWith(variables['Build.SourceBranch'], 'refs/heads/feature'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix')) }}:
