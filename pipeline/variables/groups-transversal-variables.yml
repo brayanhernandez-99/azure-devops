@@ -27,7 +27,7 @@ variables:
 
   # Staging branch
   - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
-      # - group: trasversal-aws-qa
+      - group: trasversal-aws-qa
       - group: variables-flutter-qa
       - group: trasversal-electron-develop
       - group: trasversal-aws-devops
