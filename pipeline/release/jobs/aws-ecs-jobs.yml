@@ -1,6 +1,6 @@
 jobs:
-  - deployment: WaitForApproval
-    displayName: "Esperar aprobación"
+  - deployment: DeployECS
+    displayName: "DeployECS"
     pool:
       name: Azure Pipelines
       vmImage: "ubuntu-22.04"
@@ -14,250 +14,234 @@ jobs:
       runOnce:
         deploy:
           steps:
-            - script: echo "Aprobación recibida. Iniciando despliegues..."
+            - script: |
+                echo "Original msName: $(msName)"
+                cleanName=$(echo "$(Build.Repository.Name)" | sed -E 's/^microservice-([^-]+)-invictus$/\1/')
+                echo "Nombre limpio: $cleanName"
+                echo "##vso[task.setvariable variable=cleanMsName]$cleanName"
+              displayName: "deploy $(Build.Repository.Name)"
 
-  - job: "aws_ecs"
-    dependsOn: WaitForApproval
-    ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
-      displayName: "AWS ECS Develop"
-    ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
-      displayName: "AWS ECS Staging"
-    ${{ if or(eq(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')) }}:
-      displayName: "AWS ECS Master ${{ parameters.red }}"
+            - task: DownloadBuildArtifacts@0
+              inputs:
+                artifactName: "versions"
+                downloadPath: "$(Pipeline.Workspace)/downloaded-versions"
+              displayName: "📥 Download Version Artifact"
 
-    pool:
-      name: Azure Pipelines
-      vmImage: "ubuntu-22.04"
+            - script: |
+                ls -R $(Pipeline.Workspace)/downloaded-versions/versions
+                VERSION_FILE="$(Pipeline.Workspace)/downloaded-versions/versions/version.json"
+                if [[ -f "$VERSION_FILE" ]]; then
+                  VERSION=$(jq -r '.version' $VERSION_FILE)
+                  echo -e "\n🚀 Versión detectada para $(Build.Repository.Name): $VERSION"
+                  echo "##vso[task.setvariable variable=msVersion]$VERSION"
+                else
+                  echo "❌ No se encontró archivo de versión para $(Build.Repository.Name)"
+                  exit 1
+                fi
+              displayName: "📖 Read Microservice Versions"
 
-    steps:
-      - script: |
-          echo "Original msName: $(msName)"
-          cleanName=$(echo "$(Build.Repository.Name)" | sed -E 's/^microservice-([^-]+)-invictus$/\1/')
-          echo "Nombre limpio: $cleanName"
-          echo "##vso[task.setvariable variable=cleanMsName]$cleanName"
-        displayName: "deploy $(Build.Repository.Name)"
+            - script: |
+                echo "Logging in to ECR..."
+                aws ecr get-login-password --region $AWS_DEFAULT_REGION | \
+                docker login --username AWS --password-stdin $ACCOUNT_ID_DEPLOY.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+              displayName: "Login to AWS ECR"
+              env:
+                AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
+                AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
+                AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
 
-      - task: DownloadBuildArtifacts@0
-        inputs:
-          artifactName: "versions"
-          downloadPath: "$(Pipeline.Workspace)/downloaded-versions"
-        displayName: "📥 Download Version Artifact"
+            - task: Bash@3
+              displayName: "Verificar si la imagen existe en ECR"
+              inputs:
+                targetType: "inline"
+                script: |
+                  CURRENT_BRANCH=$(echo $(Build.SourceBranch))
+                  if [[ "$CURRENT_BRANCH" == refs/heads/develop ]]; then
+                    raw_branch=$(Build.SourceBranch)
+                    clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
+                  fi
 
-      - script: |
-          ls -R $(Pipeline.Workspace)/downloaded-versions/versions
-          VERSION_FILE="$(Pipeline.Workspace)/downloaded-versions/versions/version.json"
-          if [[ -f "$VERSION_FILE" ]]; then
-            VERSION=$(jq -r '.version' $VERSION_FILE)
-            echo -e "\n🚀 Versión detectada para $(Build.Repository.Name): $VERSION"
-            echo "##vso[task.setvariable variable=msVersion]$VERSION"
-          else
-            echo "❌ No se encontró archivo de versión para $(Build.Repository.Name)"
-            exit 1
-          fi
-        displayName: "📖 Read Microservice Versions"
+                  if [[ "$CURRENT_BRANCH" == refs/heads/staging ]]; then
+                    clean_branch=qa
+                  fi
 
-      - script: |
-          echo "Logging in to ECR..."
-          aws ecr get-login-password --region $AWS_DEFAULT_REGION | \
-          docker login --username AWS --password-stdin $ACCOUNT_ID_DEPLOY.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
-        displayName: "Login to AWS ECR"
-        env:
-          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
-          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
-          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+                  if [[ "$CURRENT_BRANCH" == refs/heads/master ]]; then
+                    clean_branch=prd
+                  fi
 
-      - task: Bash@3
-        displayName: "Verificar si la imagen existe en ECR"
-        inputs:
-          targetType: "inline"
-          script: |
-            CURRENT_BRANCH=$(echo $(Build.SourceBranch))
-            if [[ "$CURRENT_BRANCH" == refs/heads/develop ]]; then
-              raw_branch=$(Build.SourceBranch)
-              clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
-            fi
+                  REPO_NAME="pruebas-pipeline-$(Build.Repository.Name)-$clean_branch"
+                  IMAGE_TAG="$(msVersion)"
 
-            if [[ "$CURRENT_BRANCH" == refs/heads/staging ]]; then
-              clean_branch=qa
-            fi
+                  echo "🔍 Verificando si la imagen '$IMAGE_TAG' existe en '$REPO_NAME'..."
 
-            if [[ "$CURRENT_BRANCH" == refs/heads/master ]]; then
-              clean_branch=prd
-            fi
+                  if aws ecr describe-images \
+                      --repository-name "$REPO_NAME" \
+                      --image-ids imageTag=$IMAGE_TAG \
+                      --region "$AWS_DEFAULT_REGION" > /dev/null 2>&1; then
+                    echo "✅ Imagen encontrada en ECR."
+                  else
+                    echo "❌ Imagen no encontrada: $REPO_NAME:$IMAGE_TAG"
+                    exit 1
+                  fi
+                displayName: "🔍 Verify image in ECR"
+              env:
+                AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
+                AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
+                AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
 
-            REPO_NAME="pruebas-pipeline-$(Build.Repository.Name)-$clean_branch"
-            IMAGE_TAG="$(msVersion)"
+            - script: |
+                export AWS_ACCESS_KEY_ID
+                export AWS_SECRET_ACCESS_KEY
+                export AWS_REGION
 
-            echo "🔍 Verificando si la imagen '$IMAGE_TAG' existe en '$REPO_NAME'..."
+                if { [[ "$(Build.Repository.Name)" == "bff-administration" || "$(Build.Repository.Name)" == "bff-sellers" ]] && [[ "$RED" == "cap" || "$RED" == "antioquia" ]]; };then
+                    CLUSTER=$(Build.Repository.Name)-cluster
+                    SERVICES=$(Build.Repository.Name)-fg-service
+                fi
+                if { [[ "$(cleanMsName)" == "raffle" ]] && [[ "$RED" == "cap" || "$RED" == "antioquia" ]]; }; then
+                    CLUSTER=raffles-ms-cluster
+                    SERVICES=raffles-ms-fg-service
+                fi
+                if { [[ "$(cleanMsName)" == "notifier" ]] && [[ "$RED" == "cap" || "$RED" == "antioquia" ]]; }; then
+                    CLUSTER=msnotifier-cluster
+                    SERVICES=msnotifier-fg-service
+                fi
+                if { [[ "$(cleanMsName)" == "raffle" ]] && ! [[ "$RED" == "cap" || "$RED" == "antioquia" ]]; }; then
+                    SERVICES=raffles
+                fi
+                echo $CLUSTER
+                echo $SERVICES
 
-            if aws ecr describe-images \
-                --repository-name "$REPO_NAME" \
-                --image-ids imageTag=$IMAGE_TAG \
-                --region "$AWS_DEFAULT_REGION" > /dev/null 2>&1; then
-              echo "✅ Imagen encontrada en ECR."
-            else
-              echo "❌ Imagen no encontrada: $REPO_NAME:$IMAGE_TAG"
-              exit 1
-            fi
-          displayName: "🔍 Verify image in ECR"
-        env:
-          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
-          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
-          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+                echo "Obteniendo task definition..."
+                arn=$(aws ecs describe-services \
+                  --cluster $CLUSTER \
+                  --services $SERVICES \
+                  --query 'services[0].taskDefinition' \
+                  --output text \
+                  --region $(AWS_DEFAULT_REGION))
+                  
+                echo "TaskDef ARN: $arn"
+                echo "##vso[task.setvariable variable=taskDefinitionArn]$arn"
+              displayName: "Get ARN Task Definition"
+              env:
+                AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVIC)
+                AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVIC)
+                AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+                red: ${{ parameters.red }}
 
-      - script: |
-          export AWS_ACCESS_KEY_ID
-          export AWS_SECRET_ACCESS_KEY
-          export AWS_REGION
+            - script: |
+                echo "Obteniendo family de task definition..."
+                ARN='$(taskDefinitionArn)'
+                echo $ARN
 
-          if { [[ "$(Build.Repository.Name)" == "bff-administration" || "$(Build.Repository.Name)" == "bff-sellers" ]] && [[ "$RED" == "cap" || "$RED" == "antioquia" ]]; };then
-              CLUSTER=$(Build.Repository.Name)-cluster
-              SERVICES=$(Build.Repository.Name)-fg-service
-          fi
-          if { [[ "$(cleanMsName)" == "raffle" ]] && [[ "$RED" == "cap" || "$RED" == "antioquia" ]]; }; then
-              CLUSTER=raffles-ms-cluster
-              SERVICES=raffles-ms-fg-service
-          fi
-          if { [[ "$(cleanMsName)" == "notifier" ]] && [[ "$RED" == "cap" || "$RED" == "antioquia" ]]; }; then
-              CLUSTER=msnotifier-cluster
-              SERVICES=msnotifier-fg-service
-          fi
-          if { [[ "$(cleanMsName)" == "raffle" ]] && ! [[ "$RED" == "cap" || "$RED" == "antioquia" ]]; }; then
-              SERVICES=raffles
-          fi
-          echo $CLUSTER
-          echo $SERVICES
+                FAMILY=$(echo $ARN | cut -d'/' -f2 | cut -d':' -f1)
+                echo "##vso[task.setvariable variable=taskFamily]$FAMILY"
+              displayName: "Extract family from ARN"
 
-          echo "Obteniendo task definition..."
-          arn=$(aws ecs describe-services \
-            --cluster $CLUSTER \
-            --services $SERVICES \
-            --query 'services[0].taskDefinition' \
-            --output text \
-            --region $(AWS_DEFAULT_REGION))
-            
-          echo "TaskDef ARN: $arn"
-          echo "##vso[task.setvariable variable=taskDefinitionArn]$arn"
-        displayName: "Get ARN Task Definition"
-        env:
-          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVIC)
-          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVIC)
-          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
-          red: ${{ parameters.red }}
+            - script: |
+                export AWS_ACCESS_KEY_ID
+                export AWS_SECRET_ACCESS_KEY
+                export AWS_REGION
 
-      - script: |
-          echo "Obteniendo family de task definition..."
-          ARN='$(taskDefinitionArn)'
-          echo $ARN
+                echo "Obteniendo definición actual..."
+                aws ecs describe-task-definition \
+                  --task-definition $(taskDefinitionArn) \
+                  --query 'taskDefinition' \
+                  > taskdef.json
+                cat taskdef.json
+              displayName: "Get current task definition"
+              env:
+                AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVIC)
+                AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVIC)
+                AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
 
-          FAMILY=$(echo $ARN | cut -d'/' -f2 | cut -d':' -f1)
-          echo "##vso[task.setvariable variable=taskFamily]$FAMILY"
-        displayName: "Extract family from ARN"
+            - script: |
+                newTag="$(msVersion)"
 
-      - script: |
-          export AWS_ACCESS_KEY_ID
-          export AWS_SECRET_ACCESS_KEY
-          export AWS_REGION
+                jq --arg newTag "$newTag" '
+                  .containerDefinitions |= map(
+                    .image |= (split(":")[0] + ":" + $newTag)
+                  )
+                ' taskdef.json > new-taskdef-$(cleanMsName).json
 
-          echo "Obteniendo definición actual..."
-          aws ecs describe-task-definition \
-            --task-definition $(taskDefinitionArn) \
-            --query 'taskDefinition' \
-            > taskdef.json
-          cat taskdef.json
-        displayName: "Get current task definition"
-        env:
-          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVIC)
-          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVIC)
-          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+                echo "Imagen actualizada con nuevo tag: $newTag"
+                cat new-taskdef-$(cleanMsName).json
+              displayName: "📝 Update image tag in task definition"
 
-      - script: |
-          newTag="$(msVersion)"
+            - script: |
+                jq '{
+                  family,
+                  taskRoleArn,
+                  executionRoleArn,
+                  networkMode,
+                  containerDefinitions,
+                  volumes,
+                  placementConstraints,
+                  requiresCompatibilities,
+                  cpu,
+                  memory,
+                  tags,
+                  pidMode,
+                  ipcMode,
+                  proxyConfiguration,
+                  inferenceAccelerators,
+                  ephemeralStorage,
+                  runtimePlatform
+                } | with_entries(select(.value != null))' new-taskdef-$(cleanMsName).json > new-taskdef-$(cleanMsName)-ecs.json
+                
+                cat new-taskdef-$(cleanMsName)-ecs.json
+              displayName: "🧹 Clean up attributes"
 
-          jq --arg newTag "$newTag" '
-            .containerDefinitions |= map(
-              .image |= (split(":")[0] + ":" + $newTag)
-            )
-          ' taskdef.json > new-taskdef-$(cleanMsName).json
+            # - script: |
+            #     export AWS_ACCESS_KEY_ID
+            #     export AWS_SECRET_ACCESS_KEY
+            #     export AWS_REGION
 
-          echo "Imagen actualizada con nuevo tag: $newTag"
-          cat new-taskdef-$(cleanMsName).json
-        displayName: "📝 Update image tag in task definition"
+            #     output=$(aws ecs register-task-definition \
+            #     --cli-input-json file://new-taskdef-$(cleanMsName)-ecs.json \
+            #     --region $AWS_DEFAULT_REGION)
 
-      - script: |
-          jq '{
-            family,
-            taskRoleArn,
-            executionRoleArn,
-            networkMode,
-            containerDefinitions,
-            volumes,
-            placementConstraints,
-            requiresCompatibilities,
-            cpu,
-            memory,
-            tags,
-            pidMode,
-            ipcMode,
-            proxyConfiguration,
-            inferenceAccelerators,
-            ephemeralStorage,
-            runtimePlatform
-          } | with_entries(select(.value != null))' new-taskdef-$(cleanMsName).json > new-taskdef-$(cleanMsName)-ecs.json
-          
-          cat new-taskdef-$(cleanMsName)-ecs.json
-        displayName: "🧹 Clean up attributes"
+            #     arn=$(echo $output | jq -r '.taskDefinition.taskDefinitionArn')
 
-      # - script: |
-      #     export AWS_ACCESS_KEY_ID
-      #     export AWS_SECRET_ACCESS_KEY
-      #     export AWS_REGION
+            #     echo "Nueva Task Definition ARN: $arn"
 
-      #     output=$(aws ecs register-task-definition \
-      #     --cli-input-json file://new-taskdef-$(cleanMsName)-ecs.json \
-      #     --region $AWS_DEFAULT_REGION)
+            #     echo "##vso[task.setvariable variable=taskDefinitionArnNew]$arn"
 
-      #     arn=$(echo $output | jq -r '.taskDefinition.taskDefinitionArn')
+            #   displayName: "Registrar nueva task definition"
+            #   env:
+            #     AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVIC)
+            #     AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVIC)
+            #     AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
 
-      #     echo "Nueva Task Definition ARN: $arn"
+            # - script: |
+            #     export AWS_ACCESS_KEY_ID
+            #     export AWS_SECRET_ACCESS_KEY
+            #     export AWS_REGION
 
-      #     echo "##vso[task.setvariable variable=taskDefinitionArnNew]$arn"
+            #     echo $(taskDefinitionArnNew)
 
-      #   displayName: "Registrar nueva task definition"
-      #   env:
-      #     AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVIC)
-      #     AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVIC)
-      #     AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+            #     if { [[ "$(Build.Repository.Name)" == "bff-administration" || "$(Build.Repository.Name)" == "bff-sellers" ]] && [[ "$RED" == "cap" || "$RED" == "antioquia" ]]; };then
+            #         CLUSTER=$(Build.Repository.Name)-cluster
+            #         SERVICES=$(Build.Repository.Name)-fg-service
+            #     fi
+            #     if { [[ "$(cleanMsName)" == "raffle" ]] && [[ "$RED" == "cap" || "$RED" == "antioquia" ]]; }; then
+            #         CLUSTER=raffles-ms-cluster
+            #         SERVICES=raffles-ms-fg-service
+            #     fi
+            #     if { [[ "$(cleanMsName)" == "notifier" ]] && [[ "$RED" == "cap" || "$RED" == "antioquia" ]]; }; then
+            #         CLUSTER=msnotifier-cluster
+            #         SERVICES=msnotifier-fg-service
+            #     fi
+            #     echo $CLUSTER
+            #     echo $SERVICES
 
-      # - script: |
-      #     export AWS_ACCESS_KEY_ID
-      #     export AWS_SECRET_ACCESS_KEY
-      #     export AWS_REGION
-
-      #     echo $(taskDefinitionArnNew)
-
-      #     if { [[ "$(Build.Repository.Name)" == "bff-administration" || "$(Build.Repository.Name)" == "bff-sellers" ]] && [[ "$RED" == "cap" || "$RED" == "antioquia" ]]; };then
-      #         CLUSTER=$(Build.Repository.Name)-cluster
-      #         SERVICES=$(Build.Repository.Name)-fg-service
-      #     fi
-      #     if { [[ "$(cleanMsName)" == "raffle" ]] && [[ "$RED" == "cap" || "$RED" == "antioquia" ]]; }; then
-      #         CLUSTER=raffles-ms-cluster
-      #         SERVICES=raffles-ms-fg-service
-      #     fi
-      #     if { [[ "$(cleanMsName)" == "notifier" ]] && [[ "$RED" == "cap" || "$RED" == "antioquia" ]]; }; then
-      #         CLUSTER=msnotifier-cluster
-      #         SERVICES=msnotifier-fg-service
-      #     fi
-      #     echo $CLUSTER
-      #     echo $SERVICES
-
-      #     aws ecs update-service \
-      #       --cluster $CLUSTER \
-      #       --service $SERVICES \
-      #       --task-definition $(taskDefinitionArnNew) \
-      #       --region $AWS_DEFAULT_REGION
-      #   displayName: "Actualizar servicio con nueva task definition"
-      #   env:
-      #     AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVIC)
-      #     AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVIC)
-      #     AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+            #     aws ecs update-service \
+            #       --cluster $CLUSTER \
+            #       --service $SERVICES \
+            #       --task-definition $(taskDefinitionArnNew) \
+            #       --region $AWS_DEFAULT_REGION
+            #   displayName: "Actualizar servicio con nueva task definition"
+            #   env:
+            #     AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVIC)
+            #     AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVIC)
+            #     AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
