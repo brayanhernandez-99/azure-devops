@@ -15,10 +15,10 @@ variables:
 
   # Develop branch
   - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
-      # - group: trasversal-aws-developer
+      - group: trasversal-aws-developer
       - group: variables-flutter-develop
       - group: trasversal-electron-develop
-      - group: trasversal-aws-devops
+    #   - group: trasversal-aws-devops
       - group: transversal-app-cloudFront-devops
       - group: transversal-app-administration-vue2-develop
       - group: transversal-app-sellers-vue2-develop
