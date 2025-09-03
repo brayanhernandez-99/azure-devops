@@ -2,7 +2,6 @@ stages:
   - stage: "microservices_developmet"
     displayName: "microservices Developmet"
     dependsOn: []
-    condition: and(succeeded(), ne(variables['Build.SourceBranch'], 'refs/heads/master'))
 
     jobs:
       - ${{ if eq(parameters.release, 'aws-ecs') }}:
