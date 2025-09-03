@@ -4,8 +4,6 @@ jobs:
     pool:
       name: "Azure Pipelines"
       vmImage: "ubuntu-22.04"
-    variables:
-      versionNode: $[coalesce(variables.nodeVersion, '18.20.7')]
 
     steps:
       - script: |
