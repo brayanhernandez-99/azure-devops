@@ -1,8 +1,13 @@
-stages:
-  - stage: "microservices_developmet"
-    displayName: "microservices Developmet"
-    dependsOn: []
+jobs:
+  - job: "build_nodejs"
+    displayName: "Build nodejs"
+    pool:
+      name: "Azure Pipelines"
+      vmImage: "ubuntu-22.04"
+    variables:
+      versionNode: $[coalesce(variables.nodeVersion, '18.20.7')]
 
-    jobs:
-      # - ${{ if eq(parameters.release, 'aws-ecs') }}:
-        - template: ../general/semantic-version-backend.yml
+    steps:
+      - script: |
+          ls 
+        displayName: "📖 Read Microservice Versions"
