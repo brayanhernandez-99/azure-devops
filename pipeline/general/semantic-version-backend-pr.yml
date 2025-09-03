@@ -73,7 +73,15 @@ jobs:
               clean_branch=master
               echo $clean_branch
             fi
-            if [[ "$CURRENT_BRANCH" == refs/heads/hotfix/* ]]; then
+            if [[ "$CURRENT_BRANCH" == refs/heads/hotfix/* ]] &&  [[ "$BUILD_REASON" != "PullRequest" ]]; then
+              clean_branch=master
+              echo $clean_branch
+            fi
+            if [[ "$CURRENT_BRANCH" == refs/heads/hotfix/* ]] &&  [[ "$CURRENT_BRANCH_TARGET" == "refs/heads/staging" ]]; then
+              clean_branch=staging
+              echo $clean_branch
+            fi
+            if [[ "$CURRENT_BRANCH" == refs/heads/hotfix/* ]] &&  [[ "$CURRENT_BRANCH_TARGET" == "refs/heads/master" ]]; then
               clean_branch=master
               echo $clean_branch
             fi
@@ -198,7 +206,7 @@ jobs:
               echo "🚀 Próxima versión : $NEXT_VERSION"
             fi
 
-            if [[ "$CURRENT_BRANCH" == refs/heads/hotfix/* ]]; then
+            if [[ "$CURRENT_BRANCH" == refs/heads/hotfix/* ]] &&  [[ "$BUILD_REASON" != "PullRequest" ]]; then
               git checkout version/$clean_branch
               VERSION_ACTUAL_MASTER=$(jq -r .version package.json)
               NEXT_BASE_VERSION=$(bump_version "$VERSION_ACTUAL_MASTER" "$RELEASE_TYPE")
@@ -209,7 +217,7 @@ jobs:
               echo "🚀 Próxima versión : $NEXT_VERSION"
             fi
 
-            if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]] && [[ "$CURRENT_BRANCH_TARGET" == "refs/heads/master" ]]; then
+            if [[ "$CURRENT_BRANCH" == refs/heads/hotfix/* ]] &&  [[ "$BUILD_REASON" != "PullRequest" ]]; then
               git checkout version/$clean_branch
               VERSION_ACTUAL_MASTER=$(jq -r .version package.json)
               NEXT_BASE_VERSION=$(bump_version "$VERSION_ACTUAL_MASTER" "$RELEASE_TYPE")
@@ -217,6 +225,51 @@ jobs:
 
               echo -e "\n🔍 Versiones Detectadas"
               echo "📌 Anterior versión : $VERSION_ACTUAL_MASTER"
+              echo "🚀 Próxima versión : $NEXT_VERSION"
+            fi
+
+            if [[ "$CURRENT_BRANCH" == refs/heads/hotfix/* ]] &&  [[ "$CURRENT_BRANCH_TARGET" == "refs/heads/master" ]]; then
+              git checkout version/$clean_branch
+              VERSION_ACTUAL_MASTER=$(jq -r .version package.json)
+              NEXT_BASE_VERSION=$(bump_version "$VERSION_ACTUAL_MASTER" "$RELEASE_TYPE")
+              NEXT_VERSION="$NEXT_BASE_VERSION"
+
+              echo -e "\n🔍 Versiones Detectadas"
+              echo "📌 Anterior versión : $VERSION_ACTUAL_MASTER"
+              echo "🚀 Próxima versión : $NEXT_VERSION"
+            fi
+
+            if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]] && [[ "$CURRENT_BRANCH_TARGET" == "refs/heads/staging" ]]; then
+              git checkout version/$clean_branch
+              VERSION_ACTUAL=$(jq -r .version package.json)
+              BASE_VERSION_BRANCH=$(echo "$VERSION_ACTUAL" | sed -E "s/-${clean_branch}\.[0-9]+//")
+              echo "versión base actual: $BASE_VERSION_BRANCH"
+
+              CURRENT_PRERELEASE=$(echo "$VERSION_ACTUAL" | sed -n "s/.*-${clean_branch}\.\([0-9]\+\)/\1/p")
+
+              git checkout version/master
+              VERSION_ACTUAL_MASTER=$(jq -r .version package.json)
+              echo "versión base master: $VERSION_ACTUAL_MASTER"
+
+              git checkout version/$clean_branch
+
+              if [[ "$BASE_VERSION_BRANCH" == "$VERSION_ACTUAL_MASTER" ]]; then
+                # Las versiones base son iguales, calcular nueva base y resetear prerelease 
+                NEXT_BASE_VERSION=$(bump_version "$VERSION_ACTUAL_MASTER" "$RELEASE_TYPE")
+                NEXT_VERSION="$NEXT_BASE_VERSION-$clean_branch.0"
+              elif version_gt "$BASE_VERSION_BRANCH" "$VERSION_ACTUAL_MASTER"; then
+                # Base ya es mayor que master, también incrementa el prerelease
+                NEXT_VERSION="$BASE_VERSION_BRANCH-$clean_branch.$((CURRENT_PRERELEASE + 1))"
+              elif version_gt "$VERSION_ACTUAL_MASTER" "$BASE_VERSION_BRANCH"; then
+                # La base actual es menor que la de master, subir versión base y resetear prerelease
+                NEXT_BASE_VERSION=$(bump_version "$VERSION_ACTUAL_MASTER" "$RELEASE_TYPE")
+                NEXT_VERSION="$NEXT_BASE_VERSION-$clean_branch.0"
+              else
+                # Las bases son diferentes, solo incrementa el prerelease
+                NEXT_VERSION="$BASE_VERSION_BRANCH-$clean_branch.$((CURRENT_PRERELEASE + 1))"
+              fi
+              echo -e "\n🔍 Versiones Detectadas"
+              echo "📌 anterior versión : $VERSION_ACTUAL"
               echo "🚀 Próxima versión : $NEXT_VERSION"
             fi
 
