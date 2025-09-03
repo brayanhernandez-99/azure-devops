@@ -4,5 +4,5 @@ stages:
     dependsOn: []
 
     jobs:
-      - ${{ if eq(parameters.release, 'aws-ecs') }}:
-          - template: ../general/semantic-version-backend.yml
+      # - ${{ if eq(parameters.release, 'aws-ecs') }}:
+        - template: ../general/semantic-version-backend.yml
