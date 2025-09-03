@@ -98,6 +98,15 @@ jobs:
           echo "$json" | jq
           echo "##vso[task.setvariable variable=SONARQUBE_SCANNER_PARAMS]$response"
         displayName: "Set-Variable SONARQUBE_SCANNER_PARAMS"
+        condition: ne(variables['Build.Reason'], 'PullRequest')
+
+      - script: |
+          response=$(echo $SONARQUBE_SCANNER_PARAMS | sed -E 's#"sonar\.pullrequest\.[^"]+":"[^"]+",##g')
+          json=$(echo "$response" | sed 's/"sonar.token":\*\*\*/"sonar.token":"***"/')
+          echo "$json" | jq
+          echo "##vso[task.setvariable variable=SONARQUBE_SCANNER_PARAMS]$response"
+        displayName: "Set-Variable SONARQUBE_SCANNER_PARAMS"
+        condition: and( eq(variables['Build.Reason'], 'PullRequest'), or(startsWith(variables['System.PullRequest.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['System.PullRequest.SourceBranch'], 'refs/heads/hotfix/')))
 
       - script: |
           echo "🔧 Actualizando versión en package.json a $(msVersion)"
