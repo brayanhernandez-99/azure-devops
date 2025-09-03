@@ -1,11 +1,33 @@
-jobs:
-  - job: "build_nodejs"
-    displayName: "Build nodejs"
-    pool:
-      name: "Azure Pipelines"
-      vmImage: "ubuntu-22.04"
+stages:
+  - stage: "microservices_developmet"
+    displayName: "microservices Developmet"
+    dependsOn: []
+    condition: and( eq(variables['Build.Reason'], 'PullRequest'), or(startsWith(variables['System.PullRequest.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['System.PullRequest.SourceBranch'], 'refs/heads/hotfix/')))
 
-    steps:
-      - script: |
-          ls 
-        displayName: "📖 Read Microservice Versions"
+    jobs:
+      - ${{ if eq(parameters.release, 'aws-ecs') }}:
+          - template: ../general/semantic-version-backend.yml
+            parameters:
+              apps: ${{ parameters.apps }}
+
+  - stage: "build_developmet_${{ parameters.red }}"
+    displayName: "Build Development PR"
+
+    
+    dependsOn:
+      - "microservices_developmet"
+    condition: and(
+                in(dependencies.microservices_developmet.result, 'Succeeded', 'SucceededWithIssues'),
+                eq(variables['Build.Reason'], 'PullRequest'),
+                or(
+                  startsWith(variables['System.PullRequest.SourceBranch'], 'refs/heads/feature/'),
+                  startsWith(variables['System.PullRequest.SourceBranch'], 'refs/heads/hotfix/')
+                )
+              )
+
+    variables:
+      - template: ../variables/groups-transversal-variables.yml
+
+    jobs:
+      - ${{ if eq(parameters.release, 'aws-ecs') }}:
+          - template: jobs/job-backend.yml
