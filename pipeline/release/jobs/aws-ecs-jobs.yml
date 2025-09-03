@@ -1,6 +1,6 @@
 jobs:
   - deployment: DeployECS
-    displayName: "DeployECS"
+    displayName: "Deploy ECS"
     pool:
       name: Azure Pipelines
       vmImage: "ubuntu-22.04"
