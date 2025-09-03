@@ -43,9 +43,15 @@ stages:
                   apps: ${{ parameters.apps }}
                   red: ${{ parameters.red }}
 
-      - ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'antioquia')) }}:
+      - ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'antioquia'), eq(parameters.release, 'aws-s3')) }}:
           - template: ../general/commit-tag-changeload.yml
             parameters:
               apps: ${{ parameters.apps }}
+              red: ${{ parameters.red }}
+              release: ${{ parameters.release }}
+
+      - ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'antioquia'), eq(parameters.release, 'aws-ecs')) }}:
+          - template: ../general/commit-tag-changeload-back.yml
+            parameters:
               red: ${{ parameters.red }}
               release: ${{ parameters.release }}
