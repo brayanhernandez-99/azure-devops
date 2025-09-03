@@ -32,7 +32,9 @@ resources:
 
 stages:
   # Build para PR feature/hotfix con release aws-ecs
-  - ${{ if or(and(eq(variables['Build.Reason'], 'PullRequest'), eq(parameters.release, 'aws-ecs')) , or(startsWith(variables['System.PullRequest.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['System.PullRequest.SourceBranch'], 'refs/heads/hotfix/'))) }}:
+  # - ${{ if and(eq(variables['Build.Reason'], 'PullRequest'), eq(parameters.release, 'aws-ecs')) , or(startsWith(variables['System.PullRequest.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['System.PullRequest.SourceBranch'], 'refs/heads/hotfix/')) }}:
+  - ${{ if and(eq(variables['Build.Reason'], 'PullRequest'), eq(parameters.release, 'aws-ecs')) }}:
+    - ${{ if or(startsWith(variables['System.PullRequest.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['System.PullRequest.SourceBranch'], 'refs/heads/hotfix/')) }}:
       - stage: DeployFeatureOrHotfix
         displayName: "🚀 Deploy desde PR feature/hotfix con release aws-ecs"
         jobs:
