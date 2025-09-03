@@ -54,15 +54,19 @@ jobs:
 
       - script: |
           CURRENT_BRANCH=$(echo $(System.PullRequest.SourceBranch))
+          CURRENT_BRANCH_TARGET=$(echo $(System.PullRequest.TargetBranch))
           echo $CURRENT_BRANCH
 
           git fetch origin $(System.PullRequest.SourceBranch):pr_branch
           git checkout pr_branch
 
           if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|master|staging|feature/.+|hotfix/.+)$ ]]; then
-
-            if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
+            if [[ "$CURRENT_BRANCH" == refs/heads/feature/* && "$CURRENT_BRANCH_TARGET" == "refs/heads/develop" ]]; then
               clean_branch=develop
+              echo $clean_branch
+            fi
+            if [[ "$CURRENT_BRANCH" == refs/heads/feature/* && "$CURRENT_BRANCH_TARGET" == "refs/heads/staging" ]]; then
+              clean_branch=staging
               echo $clean_branch
             fi
 
