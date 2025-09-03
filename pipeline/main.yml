@@ -33,10 +33,12 @@ resources:
 stages:
   # Build para PR feature/hotfix con release aws-ecs
   - ${{ if and(eq(variables['Build.Reason'], 'PullRequest'), eq(parameters.release, 'aws-ecs'), or(startsWith(variables['System.PullRequest.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['System.PullRequest.SourceBranch'], 'refs/heads/hotfix/'))) }}:
-      - template: build/build-development-prueba.yml
-        parameters:
-          release: ${{ parameters.release }}
-          red: antioquia
+      - stage: DeployFeatureOrHotfix
+        displayName: "🚀 Deploy desde PR feature/hotfix con release aws-ecs"
+        jobs:
+          - job: Build
+            steps:
+              - script: echo "Building for $(System.PullRequest.SourceBranch) with release $(parameters.release)"
 
   # Build semantic version si es tag o master con aws-s3
   - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), eq(variables['Build.SourceBranch'], 'refs/heads/master')), eq(parameters.release, 'aws-s3')) }}:
