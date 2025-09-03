@@ -33,7 +33,7 @@ resources:
 stages:
 
   # - ${{ if and(or(startsWith(variables['System.PullRequest.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['System.PullRequest.SourceBranch'], 'refs/heads/hotfix/')), eq(parameters.release, 'aws-ecs')) }}:
-  - ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
+  - ${{ if and(eq(variables['Build.Reason'], 'PullRequest'), eq(parameters.release, 'aws-ecs'), or(startsWith(variables['System.PullRequest.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['System.PullRequest.SourceBranch'], 'refs/heads/hotfix/'))) }}:
       - stage: DeployFeatureOrHotfix
         displayName: "🚀 Deploy desde PR feature/hotfix con release aws-ecs"
         jobs:
