@@ -69,7 +69,10 @@ jobs:
               clean_branch=staging
               echo $clean_branch
             fi
-
+            if [[ "$CURRENT_BRANCH" == refs/heads/feature/* && "$CURRENT_BRANCH_TARGET" == "refs/heads/master" ]]; then
+              clean_branch=master
+              echo $clean_branch
+            fi
             if [[ "$CURRENT_BRANCH" == refs/heads/hotfix/* ]]; then
               clean_branch=master
               echo $clean_branch
