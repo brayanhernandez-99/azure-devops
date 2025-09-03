@@ -31,6 +31,13 @@ resources:
       ref: $(Build.SourceBranch)
 
 stages:
+  - ${{ if and(or(startsWith(variables['System.PullRequest.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['System.PullRequest.SourceBranch'], 'refs/heads/hotfix/')), eq(parameters.release, 'aws-ecs')) }}:
+      - template: build/build-development.yml
+        parameters:
+          release: ${{ parameters.release }}
+          apps: ${{ parameters.apps }}
+          red: antioquia 
+
   # Build semantic version si es tag o master con aws-s3
   - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), eq(variables['Build.SourceBranch'], 'refs/heads/master')), eq(parameters.release, 'aws-s3')) }}:
       - template: build/semantic-version-integration.yml
