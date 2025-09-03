@@ -33,7 +33,7 @@ resources:
 stages:
   # Build para PR feature/hotfix con release aws-ecs
   - ${{ if and(eq(variables['Build.Reason'], 'PullRequest'), eq(parameters.release, 'aws-ecs')) }}:
-      - template: build-development-prueba.yml
+      - template: build/build-development-prueba.yml
         parameters:
           release: ${{ parameters.release }}
           red: antioquia
