@@ -97,47 +97,19 @@ jobs:
           echo -e "\n Ejecutando: terragrunt plan..."   
 
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/collected/aws-service-iam-scheduler-rol
+
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/hierarchies/aws-service-secret-manager
           terragrunt plan --all --non-interactive
           terragrunt apply --all --non-interactive
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/collected/aws-service-secret-manager
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/hierarchies/aws-service-ecs
           terragrunt plan --all --non-interactive
           terragrunt apply --all --non-interactive
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/collected/aws-service-sqs
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/hierarchies/aws-service-ssm-parameter
           terragrunt plan --all --non-interactive
           terragrunt apply --all --non-interactive
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/collected/aws-service-ecs
-          terragrunt plan --all --non-interactive
-          terragrunt apply --all --non-interactive
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/collected/aws-service-ssm-parameter
-          terragrunt plan --all --non-interactive
-          terragrunt apply --all --non-interactive
-
-
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/conciliation/aws-service-iam-scheduler-rol
-          terragrunt plan --all --non-interactive
-          terragrunt apply --all --non-interactive
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/conciliation/aws-service-secret-manager
-          terragrunt plan --all --non-interactive
-          terragrunt apply --all --non-interactive
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/conciliation/aws-service-sqs
-          terragrunt plan --all --non-interactive
-          terragrunt apply --all --non-interactive
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/conciliation/aws-service-ecs
-          terragrunt plan --all --non-interactive
-          terragrunt apply --all --non-interactive
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/conciliation/aws-service-ssm-parameter
-          terragrunt plan --all --non-interactive
-          terragrunt apply --all --non-interactive
 
 
         displayName: "✔️ Plan"
