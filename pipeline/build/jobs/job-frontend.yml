@@ -246,7 +246,7 @@ jobs:
 
       - script: |
           pnpm test --filter=...$(msName)
-        displayName: "Test MS:$(msName)"
+        displayName: "Test MS: $(msName)"
         continueOnError: true
         condition: and(
           succeeded(),
@@ -259,7 +259,7 @@ jobs:
       - script: |
           pnpm coverage --filter=...$(msName)
           ls -la $(System.DefaultWorkingDirectory)/$(file)/$(msName)/coverage
-        displayName: "Coverage MS:$(msName)"
+        displayName: "Coverage MS: $(msName)"
         continueOnError: true
         condition: and(
           succeeded(),
