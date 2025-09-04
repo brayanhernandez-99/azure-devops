@@ -97,32 +97,29 @@ jobs:
           echo -e "\n Ejecutando: terragrunt plan..."   
 
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/bff-administration/aws-service-iam-profile
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/bff-administration
           terragrunt plan --all --non-interactive
           terragrunt apply --all --non-interactive
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/bff-administration/aws-service-ecs
-          terragrunt plan --all --non-interactive
-          terragrunt apply --all --non-interactive
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/bff-administration/aws-service-ssm-parameter
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/bff-sellers
           terragrunt plan --all --non-interactive
           terragrunt apply --all --non-interactive
 
 
 
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/bff-sellers/aws-service-iam-profile
-          terragrunt plan --all --non-interactive
-          terragrunt apply --all --non-interactive
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/bff-sellers/aws-service-ecs
-          terragrunt plan --all --non-interactive
-          terragrunt apply --all --non-interactive
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/bff-sellers/aws-service-iam-profile
+          # terragrunt plan --all --non-interactive
+          # terragrunt apply --all --non-interactive
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/bff-sellers/aws-service-ssm-parameter
-          terragrunt plan --all --non-interactive
-          terragrunt apply --all --non-interactive
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/bff-sellers/aws-service-ecs
+          # terragrunt plan --all --non-interactive
+          # terragrunt apply --all --non-interactive
+
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/bff-sellers/aws-service-ssm-parameter
+          # terragrunt plan --all --non-interactive
+          # terragrunt apply --all --non-interactive
 
 
 
