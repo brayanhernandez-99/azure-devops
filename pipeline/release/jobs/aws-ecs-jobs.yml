@@ -120,8 +120,7 @@ jobs:
                     echo "$name_bff"
                 fi
 
-                # if { [[ "$(Build.Repository.Name)" == "bff-$CLEAN_NAME-invictus" || "$(Build.Repository.Name)" == "bff-sellers-invictus" || "$(Build.Repository.Name)" == "bff-integration-invictus" ]] && [[ "$RED" == "cap" || "$RED" == "antioquia" ]]; };then
-                if { [[ "$(Build.Repository.Name)" == "$name_bff" ]]; };then
+                if { [[ "$(Build.Repository.Name)" == "$name_bff" ]] && [[ "$RED" == "cap" || "$RED" == "antioquia" ]]; };then
                     CLUSTER=$(clean_name_ecr)-cluster
                     SERVICES=$(clean_name_ecr)-fg-service
                 fi
@@ -246,8 +245,17 @@ jobs:
             #     export AWS_REGION
 
             #     echo $(taskDefinitionArnNew)
+            #     REPO_NAME="$(Build.Repository.Name)"
 
-            #     if { [[ "$(Build.Repository.Name)" == "bff-administration-invictus" || "$(Build.Repository.Name)" == "bff-sellers-invictus" || "$(Build.Repository.Name)" == "bff-integration-invictus" ]] && [[ "$RED" == "cap" || "$RED" == "antioquia" ]]; };then
+            #     if [[ "$REPO_NAME" == bff-*-invictus ]]; then
+            #         CLEAN_NAME="${REPO_NAME#bff-}"        # quita prefijo bff-
+            #         CLEAN_NAME="${CLEAN_NAME%-invictus}"  # quita sufijo -invictus
+            #         echo "$CLEAN_NAME"
+            #         name_bff="bff-$CLEAN_NAME-invictus"
+            #         echo "$name_bff"
+            #     fi
+
+            #     if { [[ "$(Build.Repository.Name)" == "$name_bff" ]] && [[ "$RED" == "cap" || "$RED" == "antioquia" ]]; };then
             #         CLUSTER=$(clean_name_ecr)-cluster
             #         SERVICES=$(clean_name_ecr)-fg-service
             #     fi
@@ -272,3 +280,4 @@ jobs:
             #     AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVIC)
             #     AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVIC)
             #     AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+            #     red: ${{ parameters.red }}
