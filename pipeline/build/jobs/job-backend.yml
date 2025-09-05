@@ -97,7 +97,7 @@ jobs:
           json=$(echo "$response" | sed 's/"sonar.token":\*\*\*/"sonar.token":"***"/')
           echo "$json" | jq
           echo "##vso[task.setvariable variable=SONARQUBE_SCANNER_PARAMS]$response"
-        displayName: "Set-Variable SONARQUBE_SCANNER_PARAMS"
+        displayName: "⚙️ Set Variable — SONARQUBE_SCANNER_PARAMS"
         condition: ne(variables['Build.Reason'], 'PullRequest')
 
       - script: |
@@ -105,7 +105,7 @@ jobs:
           json=$(echo "$response" | sed 's/"sonar.token":\*\*\*/"sonar.token":"***"/')
           echo "$json" | jq
           echo "##vso[task.setvariable variable=SONARQUBE_SCANNER_PARAMS]$response"
-        displayName: "Set-Variable SONARQUBE_SCANNER_PARAMS"
+        displayName: "⚙️ Set Variable — SONARQUBE_SCANNER_PARAMS"
         condition: and( eq(variables['Build.Reason'], 'PullRequest'), or(startsWith(variables['System.PullRequest.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['System.PullRequest.SourceBranch'], 'refs/heads/hotfix/')))
 
       - script: |
@@ -126,23 +126,23 @@ jobs:
             echo "✅ Dependencias Instaladas:"
             echo "$OUTPUT"
           fi
-        displayName: "Install microservice dependencies"
+        displayName: "📦 Install Microservice Dependencies"
 
       - script: |
           pnpm run test
-        displayName: "Test MS:$(Build.Repository.Name)"
+        displayName: "🚀 Running Tests on $(Build.Repository.Name)"
         continueOnError: true
 
       - script: |
           pnpm run coverage
-        displayName: "Coverage MS: $(Build.Repository.Name)"
+        displayName: "🔎 Coverage Analysis: $(Build.Repository.Name)"
         continueOnError: true
 
       - task: SonarQubeAnalyze@7
-        displayName: "Sonar Analysis"
+        displayName: "📡 Run Sonar Analysis"
 
       - task: SonarQubePublish@7
-        displayName: "Publish Result Static Code Analysis"
+        displayName: "📤 Publish Static Code Analysis Results"
         inputs:
           pollingTimeoutSec: 400
 
@@ -167,5 +167,5 @@ jobs:
         env:
           SONAR_TOKEN: $(SONAR_TOKEN)
           SONAR_HOST_URL: $(SONAR_HOST_URL)
-        displayName: "🔍 Verify Quality Gate MS: $(Build.Repository.Name)"
+        displayName: "🛡️ Quality Gate Check: $(Build.Repository.Name)"
         continueOnError: true
