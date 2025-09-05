@@ -120,7 +120,7 @@ jobs:
           # pnpm ls --depth=0 || true
           OUTPUT=$(pnpm ls --depth=0 || true)
           if [[ -z "$OUTPUT" ]]; then
-            echo "❌ No se instalaron dependencias, esperar que se actualicen las dependencias a nivel global"
+            echo "##vso[task.logissue type=error]❌ No se instalaron dependencias, esperar que se actualicen las dependencias a nivel global"
             exit 1
           else
             echo "✅ Dependencias Instaladas:"
