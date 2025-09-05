@@ -161,8 +161,3 @@ jobs:
           SONAR_HOST_URL: $(SONAR_HOST_URL)
         displayName: "🔍 Verify Quality Gate MS: $(Build.Repository.Name)"
         continueOnError: true
-        condition: and(succeeded(),
-          ne(variables['msName'], 'app-administration-vue2'),
-          ne(variables['msName'], 'app-sellers-vue2'),
-          ne(variables['Build.SourceBranchName'], 'master'),
-          ne(variables['Build.SourceBranchName'], 'staging'))
