@@ -101,7 +101,7 @@ jobs:
         condition: ne(variables['Build.Reason'], 'PullRequest')
 
       - script: |
-          response=$(echo $SONARQUBE_SCANNER_PARAMS | sed -E 's#"sonar\.pullrequest\.[^"]+":"[^"]+",##g')
+          response=$(echo $SONARQUBE_SCANNER_PARAMS | sed -E 's#"sonar\.pullrequest\.[^"]+":"[^"]+",##g' | sed -E 's#"sonar\.login":"[^"]+",##g')
           safe=$(echo "$response" | sed -E 's#("sonar.token":")[^"]+#\1***#')
           echo "$safe" | jq   # 👀 Solo para ver
           echo "##vso[task.setvariable variable=SONARQUBE_SCANNER_PARAMS]$response"
