@@ -1,6 +1,6 @@
 jobs:
   - deployment: DeployECS
-    displayName: "Deploy ECS"
+    displayName: "🚀 Deploy ECS"
     pool:
       name: Azure Pipelines
       vmImage: "ubuntu-22.04"
@@ -19,7 +19,7 @@ jobs:
                 cleanName=$(echo "$(Build.Repository.Name)" | sed -E 's/^microservice-//; s/-invictus$//')
                 echo "Nombre limpio: $cleanName"
                 echo "##vso[task.setvariable variable=cleanMsName]$cleanName"
-              displayName: "deploy $(Build.Repository.Name)"
+              displayName: "🌐 Deploying $(Build.Repository.Name)"
 
             - task: DownloadBuildArtifacts@0
               inputs:
@@ -44,7 +44,7 @@ jobs:
                 echo "Logging in to ECR..."
                 aws ecr get-login-password --region $AWS_DEFAULT_REGION | \
                 docker login --username AWS --password-stdin $ACCOUNT_ID_DEPLOY.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
-              displayName: "Login to AWS ECR"
+              displayName: "🔑 Login to AWS ECR"
               env:
                 AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
                 AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
@@ -61,11 +61,9 @@ jobs:
 
                   echo "$CLEAN_NAME"
                   echo "##vso[task.setvariable variable=clean_name_ecr]$CLEAN_NAME"
-                  
-              displayName: "Name repository ECR"
+              displayName: "📛 Set ECR Repository Name"
 
             - task: Bash@3
-              displayName: "Verificar si la imagen existe en ECR"
               inputs:
                 targetType: "inline"
                 script: |
@@ -99,7 +97,7 @@ jobs:
                     echo "❌ Imagen no encontrada: $REPO_NAME:$IMAGE_TAG"
                     exit 1
                   fi
-                displayName: "🔍 Verify image in ECR"
+              displayName: "🔍 Verify if Image Exists in ECR"
               env:
                 AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
                 AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
@@ -148,7 +146,7 @@ jobs:
                   
                 echo "TaskDef ARN: $arn"
                 echo "##vso[task.setvariable variable=taskDefinitionArn]$arn"
-              displayName: "Get ARN Task Definition"
+              displayName: "🔗 Get Task Definition ARN"
               env:
                 AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVIC)
                 AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVIC)
@@ -175,7 +173,7 @@ jobs:
                   --query 'taskDefinition' \
                   > taskdef.json
                 cat taskdef.json
-              displayName: "Get current task definition"
+              displayName: "📑 Get Current Task Definition"
               env:
                 AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVIC)
                 AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVIC)
@@ -233,7 +231,7 @@ jobs:
 
             #     echo "##vso[task.setvariable variable=taskDefinitionArnNew]$arn"
 
-            #   displayName: "Registrar nueva task definition"
+            #   displayName: "🆕 Register New Task Definition"
             #   env:
             #     AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVIC)
             #     AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVIC)
@@ -275,7 +273,7 @@ jobs:
             #       --service $SERVICES \
             #       --task-definition $(taskDefinitionArnNew) \
             #       --region $AWS_DEFAULT_REGION
-            #   displayName: "Actualizar servicio con nueva task definition"
+            #   displayName: "⚡ Deploy New Task Definition to Service"
             #   env:
             #     AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVIC)
             #     AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVIC)

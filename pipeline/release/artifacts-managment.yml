@@ -1,6 +1,6 @@
 stages:
   - stage: "artifacts_managment"
-    displayName: "Artifacts Managment"
+    displayName: "📂 Artifacts Managment"
 
     ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), in(variables['Build.SourceBranch'], 'refs/heads/develop')) }}:
       dependsOn:
@@ -18,7 +18,7 @@ stages:
     jobs:
       - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop')}}:
           - job: "publish_image_dev"
-            displayName: "Publish Docker Image Development Environment"
+            displayName: "🐳 Publish Docker Image Development Environment"
             pool:
               name: "Azure Pipelines"
               VmImage: "ubuntu-22.04"
@@ -62,7 +62,7 @@ stages:
                     echo "✅ Dockerfile copiado exitosamente."
                     ls -la $(Build.Repository.Name)
                   fi
-                displayName: "Check or Copy Dockerfile"
+                displayName: "📝 Check or Copy Dockerfile"
 
               - task: Bash@3
                 name: AuthCodeArtifact
@@ -97,7 +97,7 @@ stages:
                     EOF
                     ls -la $npmrcPath
 
-                  displayName: "🔐 Setup CodeArtifact & npm config"
+                displayName: "🔐 Setup CodeArtifact & npm config"
                 env:
                   AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
                   AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
@@ -107,7 +107,7 @@ stages:
                   echo "Logging in to ECR..."
                   aws ecr get-login-password --region $AWS_DEFAULT_REGION | \
                   docker login --username AWS --password-stdin $ACCOUNT_ID_DEPLOY.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
-                displayName: "Login to AWS ECR"
+                displayName: "🔑 Login to AWS ECR"
                 env:
                   AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
                   AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
@@ -124,10 +124,10 @@ stages:
 
                   echo "$CLEAN_NAME"
                   echo "##vso[task.setvariable variable=clean_name_ecr]$CLEAN_NAME"
-                displayName: "Name repository ECR"
+                displayName: "📛 Set ECR Repository Name"
 
               - task: Docker@2
-                displayName: "Build Container Image Development $(Build.Repository.Name)"
+                displayName: "📦 Build Container Image Development $(Build.Repository.Name)"
                 continueOnError: true
                 inputs:
                   command: "build"
@@ -149,14 +149,14 @@ stages:
                   else
                     echo "Repositorio ya existe. Continuando..."
                   fi
-                displayName: "Ensure ECR Repository Exists"
+                displayName: "🛡️ Ensure ECR Repository Exists"
                 env:
                   AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
                   AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
                   AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
 
               - task: Docker@2
-                displayName: "Push Container Image Development $(Build.Repository.Name)"
+                displayName: "🚀 Push Container Image Development $(Build.Repository.Name)"
                 inputs:
                   command: "Push"
                   repository: "$(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/pruebas-pipeline-$(clean_name_ecr)-develop"
@@ -164,7 +164,7 @@ stages:
 
       - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
           - job: "publish_image_qa"
-            displayName: "Publish Docker Image Staging Environment"
+            displayName: "🐳 Publish Docker Image Staging Environment"
             pool:
               name: "Azure Pipelines"
               VmImage: "ubuntu-22.04"
@@ -208,7 +208,7 @@ stages:
                     echo "✅ Dockerfile copiado exitosamente."
                     ls -la $(Build.Repository.Name)
                   fi
-                displayName: "Check or Copy Dockerfile"
+                displayName: "📝 Check or Copy Dockerfile"
 
               - task: Bash@3
                 name: AuthCodeArtifact
@@ -242,7 +242,7 @@ stages:
                     registry=$REPO_URL
                     EOF
                     ls -la $npmrcPath
-                  displayName: "🔐 Setup CodeArtifact & npm config"
+                displayName: "🔐 Setup CodeArtifact & npm config"
                 env:
                   AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
                   AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
@@ -252,7 +252,7 @@ stages:
                   echo "Logging in to ECR..."
                   aws ecr get-login-password --region $AWS_DEFAULT_REGION | \
                   docker login --username AWS --password-stdin $ACCOUNT_ID_DEPLOY.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
-                displayName: "Login to AWS ECR"
+                displayName: "🔑 Login to AWS ECR"
                 env:
                   AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
                   AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
@@ -269,10 +269,10 @@ stages:
 
                   echo "$CLEAN_NAME"
                   echo "##vso[task.setvariable variable=clean_name_ecr]$CLEAN_NAME"
-                displayName: "Name repository ECR"
+                displayName: "📛 Set ECR Repository Name"
 
               - task: Docker@2
-                displayName: "Build Container Image Staging $(Build.Repository.Name)"
+                displayName: "📦 Build Container Image Staging $(Build.Repository.Name)"
                 continueOnError: true
                 inputs:
                   command: "build"
@@ -294,14 +294,14 @@ stages:
                   else
                     echo "Repositorio ya existe. Continuando..."
                   fi
-                displayName: "Ensure ECR Repository Exists"
+                displayName: "🛡️ Ensure ECR Repository Exists"
                 env:
                   AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
                   AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
                   AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
 
               - task: Docker@2
-                displayName: "Push Container Image Staging $(Build.Repository.Name)"
+                displayName: "🚀 Push Container Image Staging $(Build.Repository.Name)"
                 inputs:
                   command: "Push"
                   repository: "$(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/pruebas-pipeline-$(clean_name_ecr)-qa"
@@ -309,7 +309,7 @@ stages:
 
       - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/master') }}:
           - job: "publish_image_pnd"
-            displayName: "Publish Docker Image master Environment"
+            displayName: "🐳 Publish Docker Image Master Environment"
             pool:
               name: "Azure Pipelines"
               VmImage: "ubuntu-22.04"
@@ -353,7 +353,7 @@ stages:
                     echo "✅ Dockerfile copiado exitosamente."
                     ls -la $(Build.Repository.Name)
                   fi
-                displayName: "Check or Copy Dockerfile"
+                displayName: "📝 Check or Copy Dockerfile"
 
               - task: Bash@3
                 name: AuthCodeArtifact
@@ -387,7 +387,7 @@ stages:
                     registry=$REPO_URL
                     EOF
                     ls -la $npmrcPath
-                  displayName: "🔐 Setup CodeArtifact & npm config"
+                displayName: "🔐 Setup CodeArtifact & npm config"
                 env:
                   AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
                   AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
@@ -397,7 +397,7 @@ stages:
                   echo "Logging in to ECR..."
                   aws ecr get-login-password --region $AWS_DEFAULT_REGION | \
                   docker login --username AWS --password-stdin $ACCOUNT_ID_DEPLOY.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
-                displayName: "Login to AWS ECR"
+                displayName: "🔑 Login to AWS ECR"
                 env:
                   AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
                   AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
@@ -414,10 +414,10 @@ stages:
 
                   echo "$CLEAN_NAME"
                   echo "##vso[task.setvariable variable=clean_name_ecr]$CLEAN_NAME"
-                displayName: "Name repository ECR"
+                displayName: "📛 Set ECR Repository Name"
 
               - task: Docker@2
-                displayName: "Build Container Image master $(Build.Repository.Name)"
+                displayName: "📦 Build Container Image master $(Build.Repository.Name)"
                 continueOnError: true
                 inputs:
                   command: "build"
@@ -439,14 +439,14 @@ stages:
                   else
                     echo "Repositorio ya existe. Continuando..."
                   fi
-                displayName: "Ensure ECR Repository Exists"
+                displayName: "🛡️ Ensure ECR Repository Exists"
                 env:
                   AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
                   AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
                   AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
 
               - task: Docker@2
-                displayName: "Push Container Image master $(Build.Repository.Name)"
+                displayName: "🚀 Push Container Image master $(Build.Repository.Name)"
                 inputs:
                   command: "Push"
                   repository: "$(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/pruebas-pipeline-$(clean_name_ecr)-prd"
