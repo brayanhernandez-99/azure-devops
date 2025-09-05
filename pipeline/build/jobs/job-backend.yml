@@ -82,6 +82,7 @@ jobs:
           jdkSourceOption: "PreInstalled"
 
       - task: SonarQubePrepare@7
+        displayName: "⚙️ Prepare SonarQube Analysis"
         inputs:
           SonarQube: "SonarQubeConection"
           scannerMode: "CLI"
