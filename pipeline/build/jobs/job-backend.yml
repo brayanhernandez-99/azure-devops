@@ -1,6 +1,6 @@
 jobs:
   - job: "build_nodejs"
-    displayName: "Build nodejs"
+    displayName: "🔧 Building Node.js Project"
     pool:
       name: "Azure Pipelines"
       vmImage: "ubuntu-22.04"
@@ -68,19 +68,21 @@ jobs:
             registry=$REPO_URL
             EOF
             ls -la .npmrc
-          displayName: "🔐 Setup CodeArtifact & npm config"
+        displayName: "🔐 Setup CodeArtifact & npm config"
         env:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
 
       - task: JavaToolInstaller@0
+        displayName: "🔧 Install JDK 17"
         inputs:
           versionSpec: "17"
           jdkArchitectureOption: "x64"
           jdkSourceOption: "PreInstalled"
 
       - task: SonarQubePrepare@7
+        displayName: "⚙️ Prepare SonarQube Analysis"
         inputs:
           SonarQube: "SonarQubeConection"
           scannerMode: "CLI"
@@ -97,7 +99,7 @@ jobs:
           json=$(echo "$response" | sed 's/"sonar.token":\*\*\*/"sonar.token":"***"/')
           echo "$json" | jq
           echo "##vso[task.setvariable variable=SONARQUBE_SCANNER_PARAMS]$response"
-        displayName: "Set-Variable SONARQUBE_SCANNER_PARAMS"
+        displayName: "⚙️ Set Variable — SONARQUBE_SCANNER_PARAMS"
         condition: ne(variables['Build.Reason'], 'PullRequest')
 
       - script: |
@@ -105,7 +107,7 @@ jobs:
           json=$(echo "$response" | sed 's/"sonar.token":\*\*\*/"sonar.token":"***"/')
           echo "$json" | jq
           echo "##vso[task.setvariable variable=SONARQUBE_SCANNER_PARAMS]$response"
-        displayName: "Set-Variable SONARQUBE_SCANNER_PARAMS"
+        displayName: "⚙️ Set Variable — SONARQUBE_SCANNER_PARAMS"
         condition: and( eq(variables['Build.Reason'], 'PullRequest'), or(startsWith(variables['System.PullRequest.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['System.PullRequest.SourceBranch'], 'refs/heads/hotfix/')))
 
       - script: |
@@ -116,25 +118,33 @@ jobs:
       - script: |
           pnpm install --ignore-scripts
           
-          echo -e "\n📋 Dependencias instaladas:"
-          pnpm ls --depth=0 || true
-        displayName: "Install microservice dependencies"
+          # echo -e "\n📋 Dependencias instaladas:"
+          # pnpm ls --depth=0 || true
+          OUTPUT=$(pnpm ls --depth=0 || true)
+          if [[ -z "$OUTPUT" ]]; then
+            echo "##vso[task.logissue type=error]❌ No se instalaron dependencias, esperar que se actualicen las dependencias a nivel global"
+            exit 1  
+          else
+            echo "✅ Dependencias Instaladas:"
+            echo "$OUTPUT"
+          fi
+        displayName: "📦 Install Microservice Dependencies"
 
       - script: |
           pnpm run test
-        displayName: "Test MS:$(Build.Repository.Name)"
+        displayName: "🚀 Running Tests on $(Build.Repository.Name)"
         continueOnError: true
 
       - script: |
           pnpm run coverage
-        displayName: "Coverage MS: $(Build.Repository.Name)"
+        displayName: "🔎 Coverage Analysis: $(Build.Repository.Name)"
         continueOnError: true
 
       - task: SonarQubeAnalyze@7
-        displayName: "Sonar Analysis"
+        displayName: "📡 Run Sonar Analysis"
 
       - task: SonarQubePublish@7
-        displayName: "Publish Result Static Code Analysis"
+        displayName: "📤 Publish Static Code Analysis Results"
         inputs:
           pollingTimeoutSec: 400
 
@@ -159,5 +169,5 @@ jobs:
         env:
           SONAR_TOKEN: $(SONAR_TOKEN)
           SONAR_HOST_URL: $(SONAR_HOST_URL)
-        displayName: "🔍 Verify Quality Gate MS: $(Build.Repository.Name)"
+        displayName: "🛡️ Quality Gate Check: $(Build.Repository.Name)"
         continueOnError: true
