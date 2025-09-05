@@ -116,9 +116,12 @@ jobs:
                     CLEAN_NAME="${REPO_NAME#bff-}"        # quita prefijo bff-
                     CLEAN_NAME="${CLEAN_NAME%-invictus}"  # quita sufijo -invictus
                     echo "$CLEAN_NAME"
+                    name_bff="bff-$CLEAN_NAME-invictus"
+                    echo "$name_bff"
                 fi
 
-                if { [[ "$(Build.Repository.Name)" == "bff-$CLEAN_NAME-invictus" || "$(Build.Repository.Name)" == "bff-sellers-invictus" || "$(Build.Repository.Name)" == "bff-integration-invictus" ]] && [[ "$RED" == "cap" || "$RED" == "antioquia" ]]; };then
+                # if { [[ "$(Build.Repository.Name)" == "bff-$CLEAN_NAME-invictus" || "$(Build.Repository.Name)" == "bff-sellers-invictus" || "$(Build.Repository.Name)" == "bff-integration-invictus" ]] && [[ "$RED" == "cap" || "$RED" == "antioquia" ]]; };then
+                if { [[ "$(Build.Repository.Name)" == "$name_bff" ]]; };then
                     CLUSTER=$(clean_name_ecr)-cluster
                     SERVICES=$(clean_name_ecr)-fg-service
                 fi
