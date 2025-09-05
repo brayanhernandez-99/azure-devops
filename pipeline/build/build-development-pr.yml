@@ -11,9 +11,8 @@ stages:
               apps: ${{ parameters.apps }}
 
   - stage: "build_developmet_${{ parameters.red }}"
-    displayName: "Build Development PR"
+    displayName: "🛠️ Build — Development Pull Request"
 
-    
     dependsOn:
       - "microservices_developmet"
     condition: and(
