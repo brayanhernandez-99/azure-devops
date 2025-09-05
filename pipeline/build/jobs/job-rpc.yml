@@ -1,7 +1,7 @@
 jobs:
   - ${{ if and(not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')), not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'))) }}:
       - deployment: WaitForApproval
-        displayName: "Esperar aprobación"
+        displayName: "⏳ Wait for Approval"
         pool:
           vmImage: "ubuntu-22.04"
         ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
@@ -18,15 +18,15 @@ jobs:
 
   - job: "build_rpc"
     ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/') }}:
-      displayName: "Build repo configuration Feature"
+      displayName: "⚡ Build repo configuration Feature"
     ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/') }}:
-      displayName: "Build repo configuration Hotfix"
+      displayName: "⚡ Build repo configuration Hotfix"
     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
-      displayName: "Build repo configuration Develop"
+      displayName: "⚡ Build repo configuration Develop"
     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
-      displayName: "Build repo configuration Staging"
+      displayName: "⚡ Build repo configuration Staging"
     ${{ if or(eq(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')) }}:
-      displayName: "Build repo configuration Master ${{ parameters.red }}"
+      displayName: "⚡ Build repo configuration Master ${{ parameters.red }}"
     pool:
       vmImage: "ubuntu-22.04"
 
@@ -67,7 +67,7 @@ jobs:
               exit 1
             fi
           fi
-        displayName: "Validate feature or hotfix branch is up to date"
+        displayName: "✅ Validate Feature/Hotfix Branch Up-to-Date"
         condition: and(succeeded(), or(
           startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'),
           startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
@@ -75,7 +75,7 @@ jobs:
       - script: |
           tree
           echo "account ID: $(ACCOUNT_ID_INVIC)"
-        displayName: "File structure and account ID"
+        displayName: "📂 File Structure & Account ID"
         condition: and(succeeded(),
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
@@ -83,7 +83,7 @@ jobs:
       - script: |
           echo "Upload configuration to S3"
           aws s3 cp . s3://configuration-$(ACCOUNT_ID_INVIC) --recursive --exclude "pipeline/*"
-        displayName: "Upload configuration to S3"
+        displayName: "📤 Upload Configuration to S3"
         condition: and(succeeded(),
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
@@ -104,7 +104,7 @@ jobs:
           else 
             echo "ℹ️ No se enviará mensaje a SQS: no hubo cambios en reports/"
           fi
-        displayName: "Verify changes in reports/"
+        displayName: "🔍 Verify Changes in reports/"
         condition: and(succeeded(),
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')),
