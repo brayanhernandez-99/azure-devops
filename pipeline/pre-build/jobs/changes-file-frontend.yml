@@ -1,6 +1,6 @@
 jobs:
   - job: "change_file"
-    displayName: "🔍 Detect Changed Files MS"
+    displayName: "🔍 Detect Changed Microfrontend Files"
     pool:
       name: "Azure Pipelines"
       VmImage: ubuntu-22.04
@@ -76,7 +76,7 @@ jobs:
               echo $pipeline_output
 
               run_id=$(echo "$pipeline_output" | jq -r '.id')              
-              echo " - Url: https://dev.azure.com/ux-technology/Invictus/_build/results?buildId=$run_id"
+              echo "##[command]🌐 Build Results URL: https://dev.azure.com/ux-technology/Invictus/_build/results?buildId=$run_id"
               echo " - Release: $release"
             else
               echo "❌ No se ejecuta cuando source branch es stagign o develop solo con hotfix o features"
@@ -112,7 +112,7 @@ jobs:
               echo $pipeline_output
 
               run_id=$(echo "$pipeline_output" | jq -r '.id')              
-              echo " - Url: https://dev.azure.com/ux-technology/Invictus/_build/results?buildId=$run_id"
+              echo "##[command]🌐 Build Results URL: https://dev.azure.com/ux-technology/Invictus/_build/results?buildId=$run_id"
               echo " - Release: $release"
             else
               echo "❌ No se ejecuta este pipeline manual para las ramas feature y Hotfix"

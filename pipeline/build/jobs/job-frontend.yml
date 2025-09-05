@@ -119,7 +119,7 @@ jobs:
 
           echo -e "\n📁 Archivos .env.local para administration-vue2"
           ls -la app-legacy/app-administration-vue2
-        displayName: "Generate .env admin & seller"
+        displayName: "📝 Generate .env — Admin & Seller"
 
       - script: |
           echo -e "\n🛠 Generando .env.local para invictus"          
@@ -129,7 +129,7 @@ jobs:
 
           echo -e "\n🛠 Generando .env para $(msName)"
           cat $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.env
-        displayName: "Generate .env invictus"
+        displayName: "📝 Generate .env — Invictus"
         env:
           red: ${{ parameters.red }}
 
@@ -140,12 +140,12 @@ jobs:
 
           echo -e "\n📁 Archivos .env VIT"
           ls -la
-        displayName: "Generate .env VIT"
+        displayName: "📝 Generate .env — VIT"
 
       - script: |
           echo -e "VITE_APP_VERSION=\$npm_package_version\nVITE_BASE_URL=" > $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.env
           cat $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.env
-        displayName: "Copy .env"
+        displayName: "📝 Copy .env"
 
       - script: |
           cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
@@ -167,9 +167,17 @@ jobs:
       - script: |
           cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
           pnpm i
-          echo -e "\n📋 Dependencias instaladas:"
-          pnpm list --depth=0 || true
-        displayName: "Install microservice dependencies"
+
+          OUTPUT=$(pnpm ls --depth=0 || true)
+          if [[ -z "$OUTPUT" ]]; then
+            echo "##vso[task.logissue type=error]❌ No se instalaron dependencias, esperar que se actualicen las dependencias a nivel global"
+            exit 1  
+          else
+            echo "✅ Dependencias Instaladas:"
+            echo "$OUTPUT"
+          fi
+        displayName: "📦 Install Microservice Dependencies"
+
 
       - script: |
           cat $(System.DefaultWorkingDirectory)/app-legacy/app-administration-vue2/.env.local
@@ -185,7 +193,7 @@ jobs:
             pnpm build --filter=...$(msName)
             ls -la $(System.DefaultWorkingDirectory)/$(file)/$(msName)/dist
           fi
-        displayName: "Build microservice dependencies"
+        displayName: "🛠️ Build Microservice $(msName)"
 
       - script: |
           echo "Descomentando app-legacy/*"
@@ -199,6 +207,7 @@ jobs:
           )
 
       - task: JavaToolInstaller@0
+        displayName: "🔧 Install JDK 17"
         inputs:
           versionSpec: "17"
           jdkArchitectureOption: "x64"
@@ -212,6 +221,7 @@ jobs:
           )
 
       - task: SonarQubePrepare@7
+        displayName: "⚙️ Prepare SonarQube Analysis"
         inputs:
           SonarQube: "SonarQubeConection"
           scannerMode: "CLI"
@@ -235,7 +245,7 @@ jobs:
           json=$(echo "$response" | sed 's/"sonar.token":\*\*\*/"sonar.token":"***"/')
           echo "$json" | jq
           echo "##vso[task.setvariable variable=SONARQUBE_SCANNER_PARAMS]$response"
-        displayName: "Set-Variable SONARQUBE_SCANNER_PARAMS"
+        displayName: "⚙️ Set Variable — SONARQUBE_SCANNER_PARAMS"
         condition: and(
           succeeded(),
           ne(variables['msName'], 'app-administration-vue2'),
@@ -246,7 +256,7 @@ jobs:
 
       - script: |
           pnpm test --filter=...$(msName)
-        displayName: "Test MS: $(msName)"
+        displayName: "🧪 Run Tests for Microservice: $(msName)"
         continueOnError: true
         condition: and(
           succeeded(),
@@ -259,7 +269,7 @@ jobs:
       - script: |
           pnpm coverage --filter=...$(msName)
           ls -la $(System.DefaultWorkingDirectory)/$(file)/$(msName)/coverage
-        displayName: "Coverage MS: $(msName)"
+        displayName: "🔎 Coverage Analysis: $(msName)"
         continueOnError: true
         condition: and(
           succeeded(),
@@ -270,7 +280,7 @@ jobs:
           )
 
       - task: SonarQubeAnalyze@7
-        displayName: "Sonar Analysis"
+        displayName: "📡 Run Sonar Analysis"
         condition: and(
           succeeded(),
           ne(variables['msName'], 'app-administration-vue2'),
@@ -280,7 +290,7 @@ jobs:
           )
 
       - task: SonarQubePublish@7
-        displayName: "Publish Result Static Code Analysis"
+        displayName: "📤 Publish Static Code Analysis Results"
         inputs:
           pollingTimeoutSec: 400
         condition: and(
@@ -312,7 +322,7 @@ jobs:
         env:
           SONAR_TOKEN: $(SONAR_TOKEN)
           SONAR_HOST_URL: $(SONAR_HOST_URL)
-        displayName: "🔍 Verify Quality Gate"
+        displayName: "🛡️ Quality Gate Check: $(msName)"
         continueOnError: true
         condition: and(
           succeeded(),
@@ -335,7 +345,7 @@ jobs:
           else
             echo "No se encontro la carpeta dist, por ende no compilo el proyecto $msName"
           fi
-        displayName: "📦 Upload S3"
+        displayName: "⚡ Upload Files to S3 Bucket"
         condition: and(
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
