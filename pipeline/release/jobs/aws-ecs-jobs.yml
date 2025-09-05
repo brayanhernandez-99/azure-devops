@@ -160,7 +160,7 @@ jobs:
 
                 FAMILY=$(echo $ARN | cut -d'/' -f2 | cut -d':' -f1)
                 echo "##vso[task.setvariable variable=taskFamily]$FAMILY"
-              displayName: "Extract family from ARN"
+              displayName: "📌 Extract Family from ARN"
 
             - script: |
                 export AWS_ACCESS_KEY_ID
