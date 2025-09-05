@@ -110,7 +110,7 @@ jobs:
                 export AWS_SECRET_ACCESS_KEY
                 export AWS_REGION
 
-                if { [[ "$(Build.Repository.Name)" == "bff-administration-invictus" || "$(Build.Repository.Name)" == "bff-sellers-invictus" ]] && [[ "$RED" == "cap" || "$RED" == "antioquia" ]]; };then
+                if { [[ "$(Build.Repository.Name)" == "bff-administration-invictus" || "$(Build.Repository.Name)" == "bff-sellers-invictus" || "$(Build.Repository.Name)" == "bff-integration-invictus" ]] && [[ "$RED" == "cap" || "$RED" == "antioquia" ]]; };then
                     CLUSTER=$(clean_name_ecr)-cluster
                     SERVICES=$(clean_name_ecr)-fg-service
                 fi
@@ -236,7 +236,7 @@ jobs:
 
             #     echo $(taskDefinitionArnNew)
 
-            #     if { [[ "$(Build.Repository.Name)" == "bff-administration-invictus" || "$(Build.Repository.Name)" == "bff-sellers-invictus" ]] && [[ "$RED" == "cap" || "$RED" == "antioquia" ]]; };then
+            #     if { [[ "$(Build.Repository.Name)" == "bff-administration-invictus" || "$(Build.Repository.Name)" == "bff-sellers-invictus" || "$(Build.Repository.Name)" == "bff-integration-invictus" ]] && [[ "$RED" == "cap" || "$RED" == "antioquia" ]]; };then
             #         CLUSTER=$(clean_name_ecr)-cluster
             #         SERVICES=$(clean_name_ecr)-fg-service
             #     fi
