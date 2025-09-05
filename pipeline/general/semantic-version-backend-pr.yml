@@ -1,6 +1,6 @@
 jobs:
   - job: "semantic_version"
-    displayName: "Semantic Version"
+    displayName: "🔖 Semantic Versioning"
     pool:
       name: "Azure Pipelines"
       VmImage: ubuntu-22.04
@@ -46,7 +46,7 @@ jobs:
               exit 1
             fi
           fi
-        displayName: "Validate feature branch is up to date"
+        displayName: "🔎 Validate Feature Branch is Up to Date"
         condition: and(succeeded(), or(
               startsWith(variables['System.PullRequest.SourceBranch'], 'refs/heads/feature/'),
               startsWith(variables['System.PullRequest.SourceBranch'], 'refs/heads/hotfix/')))
