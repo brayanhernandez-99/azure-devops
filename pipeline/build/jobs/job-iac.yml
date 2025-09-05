@@ -97,89 +97,59 @@ jobs:
           echo -e "\n Ejecutando: terragrunt plan..."   
 
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/notifier/aws-service-ecs
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/generic-services/aws-service-secret-manager-payvalida-secret
           terragrunt plan --all --non-interactive
           terragrunt apply --all --non-interactive
 
 
 
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/metabase/aws-service-secret-manager
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/legacy/aws-service-secret-manager
           terragrunt plan --all --non-interactive
           terragrunt apply --all --non-interactive
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/metabase/aws-service-ecs
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/legacy/aws-service-sqs
           terragrunt plan --all --non-interactive
           terragrunt apply --all --non-interactive
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/metabase/aws-service-ssm-parameter
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/legacy/aws-service-ecs
           terragrunt plan --all --non-interactive
           terragrunt apply --all --non-interactive
 
-
-
-
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/millonario/aws-service-secret-manager
-          terragrunt plan --all --non-interactive
-          terragrunt apply --all --non-interactive
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/millonario/aws-service-secret-manager-betplay
-          terragrunt plan --all --non-interactive
-          terragrunt apply --all --non-interactive
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/millonario/aws-service-sqs
-          terragrunt plan --all --non-interactive
-          terragrunt apply --all --non-interactive
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/millonario/aws-service-ecs
-          terragrunt plan --all --non-interactive
-          terragrunt apply --all --non-interactive
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/millonario/aws-service-ssm-parameter
-          terragrunt plan --all --non-interactive
-          terragrunt apply --all --non-interactive
-
-
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/money-control/aws-service-secret-manager
-          terragrunt plan --all --non-interactive
-          terragrunt apply --all --non-interactive
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/money-control/aws-service-sqs
-          terragrunt plan --all --non-interactive
-          terragrunt apply --all --non-interactive
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/money-control/aws-service-ecs
-          terragrunt plan --all --non-interactive
-          terragrunt apply --all --non-interactive
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/money-control/aws-service-ssm-parameter
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/legacy/aws-service-ssm-parameter
           terragrunt plan --all --non-interactive
           terragrunt apply --all --non-interactive
 
 
 
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/notifications/aws-service-iam-scheduler-rol
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/online-games/aws-service-secret-manager
           terragrunt plan --all --non-interactive
           terragrunt apply --all --non-interactive
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/notifications/aws-service-secret-manager
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/online-games/aws-service-ecs
           terragrunt plan --all --non-interactive
           terragrunt apply --all --non-interactive
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/notifications/aws-service-sqs
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/online-games/aws-service-ssm-parameter
           terragrunt plan --all --non-interactive
           terragrunt apply --all --non-interactive
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/notifications/aws-service-ecs
+
+
+
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/papelery/aws-service-secret-manager
           terragrunt plan --all --non-interactive
           terragrunt apply --all --non-interactive
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/notifications/aws-service-ssm-parameter
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/papelery/aws-service-ecs
           terragrunt plan --all --non-interactive
           terragrunt apply --all --non-interactive
+
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/papelery/aws-service-ssm-parameter
+          terragrunt plan --all --non-interactive
+          terragrunt apply --all --non-interactive
+
 
 
         displayName: "✔️ Plan"
