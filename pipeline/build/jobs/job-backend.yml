@@ -117,7 +117,15 @@ jobs:
           pnpm install --ignore-scripts
           
           echo -e "\n📋 Dependencias instaladas:"
-          pnpm ls --depth=0 || true
+          # pnpm ls --depth=0 || true
+          OUTPUT=$(pnpm ls --depth=0 || true)
+          if [[ -z "$OUTPUT" ]]; then
+            echo "❌ No hay dependencias instaladas"
+            exit 1
+          else
+            echo "✅ Dependencias detectadas:"
+            echo "$OUTPUT"
+          fi
         displayName: "Install microservice dependencies"
 
       - script: |
