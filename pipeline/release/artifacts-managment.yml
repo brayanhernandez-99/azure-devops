@@ -107,7 +107,6 @@ stages:
                   echo "Logging in to ECR..."
                   aws ecr get-login-password --region $AWS_DEFAULT_REGION | \
                   docker login --username AWS --password-stdin $ACCOUNT_ID_DEPLOY.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
-                  ls -la
                 displayName: "Login to AWS ECR"
                 env:
                   AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
