@@ -1,6 +1,6 @@
 stages:
   - stage: "semantic_version_integration"
-    displayName: "semantic-version-integration"
+    displayName: "🏷️ Semantic Version Integration"
     dependsOn: []
 
     variables:
