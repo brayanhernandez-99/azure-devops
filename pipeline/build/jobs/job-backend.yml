@@ -116,14 +116,14 @@ jobs:
       - script: |
           pnpm install --ignore-scripts
           
-          echo -e "\n📋 Dependencias instaladas:"
+          # echo -e "\n📋 Dependencias instaladas:"
           # pnpm ls --depth=0 || true
           OUTPUT=$(pnpm ls --depth=0 || true)
           if [[ -z "$OUTPUT" ]]; then
-            echo "❌ No hay dependencias instaladas"
+            echo "❌ No se instalaron dependencias, esperar que se actualicen las dependencias a nivel global"
             exit 1
           else
-            echo "✅ Dependencias detectadas:"
+            echo "✅ Dependencias Instaladas:"
             echo "$OUTPUT"
           fi
         displayName: "Install microservice dependencies"
