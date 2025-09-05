@@ -1,7 +1,7 @@
 jobs:
   - ${{ if or(eq(variables['Build.SourceBranch'], 'refs/heads/master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')) }}:
       - deployment: WaitForApproval
-        displayName: "Esperar aprobación"
+        displayName: "⏳ Wait for Approval"
         condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
         pool:
           vmImage: "ubuntu-22.04"
@@ -14,7 +14,7 @@ jobs:
                 - script: echo "Aprobación recibida. Iniciando despliegues..."
 
   - job: "build_nodejs"
-    displayName: "Build nodejs"
+    displayName: "⚡ Build Node.js"
     pool:
       vmImage: "ubuntu-22.04"
     variables:

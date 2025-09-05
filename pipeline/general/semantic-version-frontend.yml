@@ -1,6 +1,6 @@
 jobs:
   - job: "semantic_version"
-    displayName: "Semantic Version"
+    displayName: "🔖 Semantic Versioning"
     pool:
       name: "Azure Pipelines"
       VmImage: ubuntu-22.04
@@ -28,7 +28,7 @@ jobs:
             echo "Ruta de archivo del mf: $fileselect"
             echo "##vso[task.setvariable variable=file]$fileselect"
           fi
-        displayName: "Select file"
+        displayName: "📂 Select File"
 
       - script: |
           echo "📌 Verificando si feature está actualizada con master y si hay cambios relevantes..."
@@ -60,7 +60,7 @@ jobs:
               exit 1
             fi
           fi
-        displayName: "Validate feature branch is up to date"
+        displayName: "🔎 Validate Feature Branch is Up to Date"
         condition: and(succeeded(), or(
           startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'),
           startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
@@ -73,7 +73,7 @@ jobs:
           echo "##vso[task.setvariable variable=repoID]$REPO_ID"
         env:
           AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
-        displayName: "ID Repositorio"
+        displayName: "📌 Set Repository ID"
         condition: and(
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
@@ -104,7 +104,7 @@ jobs:
           echo "{\"idpr\": \"$PR_ID\" }" > $(Build.ArtifactStagingDirectory)/idpr/idpr.json
         env:
           AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
-        displayName: "ID Pull Request"
+        displayName: "📌 Set Pull Request ID"
         condition: and(succeeded(),
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
@@ -120,7 +120,7 @@ jobs:
           echo "##vso[task.setvariable variable=filteredCommits]$SAFE_COMMITS"
         env:
           AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
-        displayName: "Details of Pull Request Commits"
+        displayName: "📝 Pull Request Commit Details"
         condition: and(succeeded(),
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
@@ -308,7 +308,7 @@ jobs:
           git add package.json
           git commit -m "chore($(msName)): bump version to $(cleanNEXT_VERSION)"
           git push origin version/$clean_branch
-        displayName: "Update version and push MS:$(msName)"
+        displayName: "⚡ Bump Version & Push — $(msName)"
         condition: and(succeeded(),
           ne(variables['Build.SourceBranchName'], 'master'),
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
