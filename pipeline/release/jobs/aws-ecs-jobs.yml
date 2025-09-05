@@ -255,7 +255,7 @@ jobs:
             #         echo "$name_bff"
             #     fi
 
-            #     if { [[ "$(Build.Repository.Name)" == "$name_bff" ]] && [[ "$red" == "cap" || "$red" == "antioquia" ]]; };then
+            #     if [[ "$REPO_NAME" == "$name_bff" && ( "$red" == "cap" || "$red" == "antioquia" ) ]]; then
             #         CLUSTER=$(clean_name_ecr)-cluster
             #         SERVICES=$(clean_name_ecr)-fg-service
             #     fi
