@@ -127,7 +127,7 @@ jobs:
 
       - script: |
           pnpm run coverage
-        displayName: "Coverage MS:$(Build.Repository.Name)"
+        displayName: "Coverage MS: $(Build.Repository.Name)"
         continueOnError: true
 
       - task: SonarQubeAnalyze@7
@@ -159,7 +159,7 @@ jobs:
         env:
           SONAR_TOKEN: $(SONAR_TOKEN)
           SONAR_HOST_URL: $(SONAR_HOST_URL)
-        displayName: "🔍 Verify Quality Gate MS:$(Build.Repository.Name)"
+        displayName: "🔍 Verify Quality Gate MS: $(Build.Repository.Name)"
         continueOnError: true
         condition: and(succeeded(),
           ne(variables['msName'], 'app-administration-vue2'),

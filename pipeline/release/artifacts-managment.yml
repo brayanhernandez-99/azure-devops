@@ -113,26 +113,38 @@ stages:
                   AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
                   AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
                   AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+              
+              - script: |
+                  REPO_NAME="$(Build.Repository.Name)"
+
+                  if [[ "$REPO_NAME" == "microservice-notifier-invictus" ]]; then
+                      CLEAN_NAME="notifier"
+                  else
+                      CLEAN_NAME="${REPO_NAME%-invictus}"   # quita solo el sufijo -invictus
+                  fi
+
+                  echo "$CLEAN_NAME"
+                displayName: "Name repository ECR"
 
               - task: Docker@2
                 displayName: "Build Container Image Development $(Build.Repository.Name)"
                 continueOnError: true
                 inputs:
                   command: "build"
-                  repository: "$(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/pruebas-pipeline-$(Build.Repository.Name)-develop"
+                  repository: "$(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/pruebas-pipeline-$CLEAN_NAME-develop"
                   Dockerfile: "$(Build.Repository.Name)/Dockerfile"
                   tags: $(msVersion)
 
               - script: |
-                  echo "Verificando si existe el repositorio pruebas-pipeline-$(Build.Repository.Name)-develop"
+                  echo "Verificando si existe el repositorio pruebas-pipeline-$CLEAN_NAME-develop"
                   aws ecr describe-repositories \
-                    --repository-names pruebas-pipeline-$(Build.Repository.Name)-develop \
+                    --repository-names pruebas-pipeline-$CLEAN_NAME-develop \
                     --region $AWS_DEFAULT_REGION > /dev/null 2>&1
 
                   if [ $? -ne 0 ]; then
                     echo "Repositorio no existe. Creándolo..."
                     aws ecr create-repository \
-                      --repository-name pruebas-pipeline-$(Build.Repository.Name)-develop \
+                      --repository-name pruebas-pipeline-$CLEAN_NAME-develop \
                       --region $AWS_DEFAULT_REGION
                   else
                     echo "Repositorio ya existe. Continuando..."
@@ -147,7 +159,7 @@ stages:
                 displayName: "Push Container Image Development $(Build.Repository.Name)"
                 inputs:
                   command: "Push"
-                  repository: "$(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/pruebas-pipeline-$(Build.Repository.Name)-develop"
+                  repository: "$(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/pruebas-pipeline-$CLEAN_NAME-develop"
                   tags: $(msVersion)
 
       - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
