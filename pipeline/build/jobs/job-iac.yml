@@ -115,89 +115,36 @@ jobs:
           # terragrunt apply --all --non-interactive
 
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/online-games/aws-service-secret-manager
-          # terragrunt plan --all --non-interactive
-          # terragrunt apply --all --non-interactive
-
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/online-games/aws-service-ecs
-          # terragrunt plan --all --non-interactive
-          # terragrunt apply --all --non-interactive
-
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/online-games/aws-service-ssm-parameter
-          # terragrunt plan --all --non-interactive
-          # terragrunt apply --all --non-interactive
-
-
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/papelery/aws-service-secret-manager
-          # terragrunt plan --all --non-interactive
-          # terragrunt apply --all --non-interactive
-
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/papelery/aws-service-ecs
-          # terragrunt plan --all --non-interactive
-          # terragrunt apply --all --non-interactive
-
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/papelery/aws-service-ssm-parameter
-          # terragrunt plan --all --non-interactive
-          # terragrunt apply --all --non-interactive
-
-
-
-
-
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/payments/aws-service-iam-scheduler-rol
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/online-games/aws-service-secret-manager
           terragrunt plan --all --non-interactive
           terragrunt apply --all --non-interactive
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/payments/aws-service-secret-manager
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/online-games/aws-service-secret-manager-betplay
           terragrunt plan --all --non-interactive
           terragrunt apply --all --non-interactive
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/payments/aws-service-ecs
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/online-games/aws-service-sqs
           terragrunt plan --all --non-interactive
           terragrunt apply --all --non-interactive
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/payments/aws-service-ssm-parameter
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/online-games/aws-service-ecs
+          terragrunt plan --all --non-interactive
+          terragrunt apply --all --non-interactive
+
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/online-games/aws-service-ssm-parameter
           terragrunt plan --all --non-interactive
           terragrunt apply --all --non-interactive
 
 
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/products/aws-service-secret-manager
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/papelery/aws-service-secret-manager
           terragrunt plan --all --non-interactive
           terragrunt apply --all --non-interactive
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/products/aws-service-s3
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/papelery/aws-service-ecs
           terragrunt plan --all --non-interactive
           terragrunt apply --all --non-interactive
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/products/aws-service-ecs
-          terragrunt plan --all --non-interactive
-          terragrunt apply --all --non-interactive
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/products/aws-service-ssm-parameter
-          terragrunt plan --all --non-interactive
-          terragrunt apply --all --non-interactive
-
-          
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/promotional/aws-service-iam-scheduler-rol
-          terragrunt plan --all --non-interactive
-          terragrunt apply --all --non-interactive
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/promotional/aws-service-secret-manager
-          terragrunt plan --all --non-interactive
-          terragrunt apply --all --non-interactive
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/promotional/aws-service-sqs
-          terragrunt plan --all --non-interactive
-          terragrunt apply --all --non-interactive
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/promotional/aws-service-ecs
-          terragrunt plan --all --non-interactive
-          terragrunt apply --all --non-interactive
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/promotional/aws-service-ssm-parameter
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/papelery/aws-service-ssm-parameter
           terragrunt plan --all --non-interactive
           terragrunt apply --all --non-interactive
 
