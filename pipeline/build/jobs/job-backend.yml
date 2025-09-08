@@ -117,9 +117,7 @@ jobs:
 
       - script: |
           pnpm install --ignore-scripts
-          
-          # echo -e "\n📋 Dependencias instaladas:"
-          # pnpm ls --depth=0 || true
+        
           OUTPUT=$(pnpm ls --depth=0 || true)
           if [[ -z "$OUTPUT" ]]; then
             echo "##vso[task.logissue type=error]❌ No se instalaron dependencias, esperar que se actualicen las dependencias a nivel global"

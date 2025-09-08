@@ -1,6 +1,9 @@
 stages:
   - stage: "microservices_developmet"
-    displayName: "🧩 Semantic Version Microservices"
+    ${{ if eq(parameters.release, 'aws-ecs') }}:
+      displayName: "🧩 Semantic Version Microservices"
+    ${{ if eq(parameters.release, 'aws-s3') }}:
+      displayName: "🧩 Semantic Version MicroFrontend"
     dependsOn: []
     condition: and(succeeded(), ne(variables['Build.SourceBranch'], 'refs/heads/master'))
 
