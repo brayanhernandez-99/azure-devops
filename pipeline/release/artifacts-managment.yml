@@ -26,7 +26,7 @@ stages:
             steps:
               - checkout: self
 
-              - checkout: git://DevOps-templates-UX/pipelines-templates@feature/Inicio-templates
+              - checkout: git://DevOps-templates-UX/pipelines-templates@feature/refactor
                 fetchDepth: 1
 
               - task: DownloadBuildArtifacts@0
