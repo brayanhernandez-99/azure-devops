@@ -284,6 +284,7 @@ jobs:
           git config user.email "pipelineUX@ux.technology"
 
           git checkout version/$clean_branch
+          git pull origin version/$clean_branch
           git add package.json
           git commit -m "chore($(Build.Repository.Name)): bump version to $(cleanNEXT_VERSION)"
           git push origin version/$clean_branch
