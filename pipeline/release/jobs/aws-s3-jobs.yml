@@ -49,7 +49,7 @@ jobs:
             echo -e "\n🚀 Versión detectada para $(msName): $VERSION"
             echo "##vso[task.setvariable variable=msVersion]$VERSION"
           else
-            echo "❌ No se encontró archivo de versión para $(msName)"
+            echo "##vso[task.logissue type=error]❌ No se encontró archivo de versión para $(msName)"
             exit 1
           fi
         displayName: "📖 Read Microservice Versions"
@@ -61,6 +61,12 @@ jobs:
 
           CLOUDFRONT_ID_VALUE="${!ENV_VAR_NAME}"
           echo $CLOUDFRONT_ID_VALUE
+          if [[ -z "$CLOUDFRONT_ID_VALUE" ]]; then
+            echo "##vso[task.logissue type=error]❌ No se encontró el CLOUDFRONT_ID_VALUE"
+            exit 1
+          else
+            echo "✅ CLOUDFRONT_ID_VALUE: $CLOUDFRONT_ID_VALUE"
+          fi
 
           echo "##vso[task.setvariable variable=CLOUDFRONT_ID]$CLOUDFRONT_ID_VALUE"
         displayName: "📌 Set CloudFront Variable Name"

@@ -35,7 +35,7 @@ jobs:
                   echo -e "\n🚀 Versión detectada para $(Build.Repository.Name): $VERSION"
                   echo "##vso[task.setvariable variable=msVersion]$VERSION"
                 else
-                  echo "❌ No se encontró archivo de versión para $(Build.Repository.Name)"
+                  echo "##vso[task.logissue type=error]❌ No se encontró archivo de versión para $(Build.Repository.Name)"
                   exit 1
                 fi
               displayName: "📖 Read Microservice Versions"
@@ -94,7 +94,7 @@ jobs:
                       --region "$AWS_DEFAULT_REGION" > /dev/null 2>&1; then
                     echo "✅ Imagen encontrada en ECR."
                   else
-                    echo "❌ Imagen no encontrada: $REPO_NAME:$IMAGE_TAG"
+                    echo "##vso[task.logissue type=error]❌ Imagen no encontrada: $REPO_NAME:$IMAGE_TAG"
                     exit 1
                   fi
               displayName: "🔍 Verify if Image Exists in ECR"
@@ -147,7 +147,7 @@ jobs:
                   
                 # echo "TaskDef ARN: $arn"
                 if [[ -z "$arn" || "$arn" == "None" ]]; then
-                  echo "❌ Error: No se encontró task definition para el servicio $SERVICES en el cluster $CLUSTER"
+                  echo "##vso[task.logissue type=error]❌ Error: No se encontró task definition para el servicio $SERVICES en el cluster $CLUSTER"
                   exit 1
                 else
                   echo "✅ TaskDef ARN: $arn"

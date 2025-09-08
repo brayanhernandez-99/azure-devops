@@ -53,7 +53,7 @@ jobs:
             echo -e "\n🚀 Versión detectada para $(msName): $VERSION"
             echo "##vso[task.setvariable variable=msVersion]$VERSION"
           else
-            echo "❌ No se encontró archivo de versión para [$(msName)]"
+            echo "##vso[task.logissue type=error]❌ No se encontró archivo de versión para [$(msName)]"
             exit 1
           fi
         displayName: "📝 Read Microservice Versions"
@@ -194,7 +194,7 @@ jobs:
           DIST_PATH="$(System.DefaultWorkingDirectory)/$(file)/$(msName)/dist"
 
           if [[ ! -d "$DIST_PATH" ]] || [[ -z "$(ls -A "$DIST_PATH" 2>/dev/null)" ]]; then
-            echo "❌ Error: No se generó el build o la carpeta dist está vacía."
+            echo "##vso[task.logissue type=error]❌ Error: No se generó el build o la carpeta dist está vacía."
             exit 1
           else
             echo "✅ Build generado correctamente en $DIST_PATH"
@@ -321,7 +321,7 @@ jobs:
           echo "🔹 Proyecto: pruebas-microfronted-$(msName) | Coverage: $coverage | Lines Duplications: $duplication | Estado: $status_code"
 
           if [[ "$status_code" == "ERROR" ]]; then
-            echo "❌ El proyecto falló su Quality Gate."
+            echo "##vso[task.logissue type=error]❌ El proyecto falló su Quality Gate."
             exit 1
           else
             echo "✅ El proyecto pasó su Quality Gate."
@@ -350,7 +350,7 @@ jobs:
             fi
             aws s3 cp ./$(file)/$(msName)/dist s3://mf-prueba-$msName-$(ACCOUNT_ID_INVIC)/$(msVersion)/ --recursive
           else
-            echo "No se encontro la carpeta dist, por ende no compilo el proyecto $msName"
+            echo "##vso[task.logissue type=error]❌ No se encontro la carpeta dist, por ende no compilo el proyecto $msName"
             exit 1
           fi
         displayName: "⚡ Upload Files to S3 Bucket"

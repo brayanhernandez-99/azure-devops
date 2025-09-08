@@ -22,7 +22,7 @@ jobs:
             echo -e "\n🚀 Versión detectada para $(Build.Repository.Name): $VERSION"
             echo "##vso[task.setvariable variable=msVersion]$VERSION"
           else
-            echo "❌ No se encontró archivo de versión para $(Build.Repository.Name)"
+            echo "##vso[task.logissue type=error]❌ No se encontró archivo de versión para $(Build.Repository.Name)"
             exit 1
           fi
         displayName: "📖 Read Microservice Versions"
@@ -159,7 +159,7 @@ jobs:
           echo "🔹 Proyecto: pruebas-$(Build.Repository.Name) | Coverage: $coverage | Lines Duplications: $duplication | Estado: $status_code"
 
           if [[ "$status_code" == "ERROR" ]]; then
-            echo "❌ El proyecto falló su Quality Gate."
+            echo "##vso[task.logissue type=error]❌ El proyecto falló su Quality Gate."
             exit 1
           else
             echo "✅ El proyecto pasó su Quality Gate."
