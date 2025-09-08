@@ -145,7 +145,13 @@ jobs:
                   --output text \
                   --region $(AWS_DEFAULT_REGION))
                   
-                echo "TaskDef ARN: $arn"
+                # echo "TaskDef ARN: $arn"
+                if [[ -z "$arn" || "$arn" == "None" ]]; then
+                  echo "❌ Error: No se encontró task definition para el servicio $SERVICES en el cluster $CLUSTER"
+                  exit 1
+                else
+                  echo "✅ TaskDef ARN: $arn"
+                fi
                 echo "##vso[task.setvariable variable=taskDefinitionArn]$arn"
               displayName: "🔗 Get Task Definition ARN"
               env:
