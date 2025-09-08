@@ -178,7 +178,6 @@ jobs:
           fi
         displayName: "📦 Install MicroFrontend Dependencies"
 
-
       - script: |
           cat $(System.DefaultWorkingDirectory)/app-legacy/app-administration-vue2/.env.local
           if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
