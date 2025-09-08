@@ -1,11 +1,11 @@
 stages:
   - stage: "build_developmet_${{ parameters.red }}"
     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
-      displayName: "Build Development"
+      displayName: "📦 Build Development"
     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
-      displayName: "Build Development Staging"
+      displayName: "📦 Build Development Staging"
     ${{ if or(eq(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')) }}:
-      displayName: "Build Development Master ${{ parameters.red }}"
+      displayName: "📦 Build Development Master ${{ parameters.red }}"
 
     ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), in(variables['Build.SourceBranch'], 'refs/heads/master')) }}:
       dependsOn:

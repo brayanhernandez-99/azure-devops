@@ -56,7 +56,7 @@ jobs:
             if [[ -z "$RELEVANT_CHANGES" ]]; then
               echo "ℹ️ Solo hay cambios en archivos ignorados (pipeline/). Continuando..."
             else
-              echo "❌ Cambios relevantes detectados en master y no están integrados. Debes actualizar tu rama."
+              echo "##vso[task.logissue type=error]❌ Cambios relevantes detectados en master y no están integrados. Debes actualizar tu rama."
               exit 1
             fi
           fi
