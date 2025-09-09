@@ -163,5 +163,5 @@ jobs:
           vmImage: "ubuntu-22.04"
         steps:
           - task: git-tag-on-release-task@9
-            displayName: "Create and Publish Versioning Tag"
+            displayName: "📦 Create and Publish Versioning Tag"
             continueOnError: true

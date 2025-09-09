@@ -1,15 +1,17 @@
 jobs:
   - deployment: DeployECS
-    displayName: "🚀 Deploy ECS"
     pool:
       name: Azure Pipelines
       vmImage: "ubuntu-22.04"
     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
       environment: "Deploy develop"
+      displayName: "🚀 AWS ECS Develop"
     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
       environment: "Deploy staging"
+      displayName: "🚀 AWS ECS Staging"
     ${{ if or(eq(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')) }}:
       environment: "Deploy master ${{ parameters.red }}"
+      displayName: "🚀 AWS ECS Master ${{ parameters.red }}"
     strategy:
       runOnce:
         deploy:
