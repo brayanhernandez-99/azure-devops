@@ -97,9 +97,9 @@ jobs:
           set -e
           echo ""
           echo ""
-          echo"$secret_conexred-cashin-secret_baseUrl"
-          echo"$secret_conexred-cashin-secret_usuarioHost"
-          echo"$secret_conexred-cashin-secret_claveHost"
+          echo "$secret_conexred-cashin-secret_baseUrl"
+          echo "$secret_conexred-cashin-secret_usuarioHost"
+          echo "$secret_conexred-cashin-secret_claveHost"
           cat $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges/aws-service-secret-manager-bemovil/terragrunt.hcl
           echo ""
           echo ""
