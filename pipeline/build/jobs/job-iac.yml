@@ -95,27 +95,25 @@ jobs:
 
       - script: |
           set -e
-          echo -e "\n Ejecutando: terragrunt plan..."   
-          secret_string_value  = <<EOF
-          {
-            "baseUrl": "#{secret_conexredsecret_baseUrl}#",
-            "usuarioHost": "#{secret_conexredsecret_usuarioHost}#",
-            "claveHost": "#{secret_conexredsecret_claveHost}#",
-            "codigoComercio": "#{secret_conexredsecret_codigoComercio}#",
-            "puntoVenta": "#{secret_conexredsecret_puntoVenta}#",
-            "terminal": "#{secret_conexredsecret_terminal}#",
-            "claveCxr": "#{secret_conexredsecret_claveCxr}#",
-            "timeout": "#{secret_conexredsecret_timeout}#"
-          }
-          EOF
-          echo -e "\n******************************************"
-          cat $secret_string_value
-          echo -e "\n******************************************"
-          echo "Contenido de archivo luego del reemplazo:"
+          echo ""
+          echo "============================================"
+          echo "✅ Imprimiendo variables reemplazadas"
+          echo "============================================"
+          
+          echo "baseUrl: $secret_conexredsecret_baseUrl"
+          echo "usuarioHost: $secret_conexredsecret_usuarioHost"
+          echo "claveHost: $secret_conexredsecret_claveHost"
+          echo "codigoComercio: $secret_conexredsecret_codigoComercio"
+          echo "puntoVenta: $secret_conexredsecret_puntoVenta"
+          echo "terminal: $secret_conexredsecret_terminal"
+          echo "claveCxr: $secret_conexredsecret_claveCxr"
+          echo "timeout: $secret_conexredsecret_timeout"
+
+          echo ""
+          echo "============================================"
+          echo "📄 Contenido de terragrunt.hcl luego del reemplazo"
+          echo "============================================"
           cat invictus/recharges/aws-service-secret-manager-conexred/terragrunt.hcl
-          echo -e "\n******************************************"
-          echo ""
-          echo ""
           echo ""
 
 
@@ -123,9 +121,9 @@ jobs:
 
 
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges/aws-service-secret-manager-conexred
-          terragrunt plan --all --non-interactive
-          terragrunt apply --all --non-interactive
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges/aws-service-secret-manager-conexred
+          # terragrunt plan --all --non-interactive
+          # terragrunt apply --all --non-interactive
 
           # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges/aws-service-secret-manager-conexred-pines
           # terragrunt plan --all --non-interactive
