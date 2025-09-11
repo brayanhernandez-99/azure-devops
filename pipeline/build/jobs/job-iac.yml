@@ -96,13 +96,13 @@ jobs:
       - script: |
           set -e
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges/aws-service-secret-manager-pay
-          terragrunt plan --all --non-interactive
-          terragrunt apply --all --non-interactive
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges/aws-service-secret-manager-pay
+          # terragrunt plan --all --non-interactive
+          # terragrunt apply --all --non-interactive
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges/aws-service-secret-manager-recaudos
-          terragrunt plan --all --non-interactive
-          terragrunt apply --all --non-interactive
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges/aws-service-secret-manager-recaudos
+          # terragrunt plan --all --non-interactive
+          # terragrunt apply --all --non-interactive
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges/aws-service-sqs
           terragrunt plan --all --non-interactive
