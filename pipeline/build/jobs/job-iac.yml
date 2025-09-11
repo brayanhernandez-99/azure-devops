@@ -113,7 +113,7 @@ jobs:
           echo "============================================"
           echo "📄 Contenido de terragrunt.hcl luego del reemplazo"
           echo "============================================"
-          cat invictus/recharges/aws-service-secret-manager-conexred/terragrunt.hcl
+          cat $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges/aws-service-secret-manager-conexred/terragrunt.hcl
           echo ""
 
 
