@@ -96,32 +96,21 @@ jobs:
       - script: |
           set -e
 
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/payment-voucher/aws-service-secret-manager-company-config
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/payment-voucher/aws-service-sqs
           terragrunt plan --all --non-interactive
           terragrunt apply --all --non-interactive
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/payment-voucher/aws-service-secret-manager-customer-config
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/payment-voucher/aws-service-sqs-dlq
           terragrunt plan --all --non-interactive
           terragrunt apply --all --non-interactive
 
-
-
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/payment-voucher/aws-service-sqs
-          # terragrunt plan --all --non-interactive
-          # terragrunt apply --all --non-interactive
-
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/payment-voucher/aws-service-sqs-dlq
-          # terragrunt plan --all --non-interactive
-          # terragrunt apply --all --non-interactive
-
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/payment-voucher/aws-service-ecs
-          # terragrunt plan --all --non-interactive
-          # terragrunt apply --all --non-interactive
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/payment-voucher/aws-service-ecs
+          terragrunt plan --all --non-interactive
+          terragrunt apply --all --non-interactive
           
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/payment-voucher/aws-service-ssm-parameter
-          # terragrunt plan --all --non-interactive
-          # terragrunt apply --all --non-interactive
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/payment-voucher/aws-service-ssm-parameter
+          terragrunt plan --all --non-interactive
+          terragrunt apply --all --non-interactive
 
 
         displayName: "✔️ Plan"
