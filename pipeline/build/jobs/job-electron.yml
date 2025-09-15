@@ -187,7 +187,6 @@ jobs:
           script: |
             Write-Host "📦 Instalando dependencias"
             npm install -g pnpm
-            pnpm config set msvs_version 2022
             pnpm i
   
             Write-Host "`n📦 Dependencias instaladas:"
