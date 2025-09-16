@@ -238,8 +238,8 @@ jobs:
             Write-Host "📦 Instalando dependencias"
             npm install -g pnpm
             pnpm install
-            pnpm dlx electron-builder install-app-deps
-  
+            npx electron-builder install-app-deps 
+
             Write-Host "`n📦 Dependencias instaladas:"
             pnpm list --depth=0
 
