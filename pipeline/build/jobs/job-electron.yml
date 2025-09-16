@@ -176,21 +176,21 @@ jobs:
           script: |
             $ErrorActionPreference = "Stop"
           
-            $source_branch="$(Build.SourceBranch)"
-            $target_branch="refs/remotes/origin/$($env:target_branch)"
+            $SOURCE_BRANCH = "$(Build.SourceBranch)".Replace("refs/heads/","")
+            $TARGET_BRANCH = $env:target_branch   
 
-            echo "`n🔎 Verificando que no se hayan agregado nuevas sentencias console.log..."
-            Write-Host "Branch actual: $source_branch"
-            Write-Host "Branch destino: $target_branch"
+            Write-Host "`n🔎 Verificando que no se hayan agregado nuevas sentencias console.log..."
+            Write-Host "Branch actual: $SOURCE_BRANCH"
+            Write-Host "Branch destino: $TARGET_BRANCH"
 
-            git fetch origin $target_branch
-            $diff = git --no-pager diff $target_branch $source_branch
+            git fetch origin $TARGET_BRANCH            
+            $diff = git --no-pager diff origin/$TARGET_BRANCH origin/$SOURCE_BRANCH
 
             if ($diff | Select-String -Pattern "^\+.*console\.log") {
-              Write-Host "`n❌ Se encontro 'console.log' en los cambios"
-              exit 99
+                Write-Host "`n❌ Se encontró 'console.log' en los cambios"
+                exit 99
             } else {
-              Write-Host "`n✅ No se encontraron sentencias 'console.log' en los cambios"
+                Write-Host "`n✅ No se encontraron sentencias 'console.log' en los cambios"
             }
             
       - task: PowerShell@2
