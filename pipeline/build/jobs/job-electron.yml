@@ -52,11 +52,11 @@ jobs:
 
       # Verificar que MSBuild y cl.exe estén disponibles
       - powershell: |
-          Write-Host "`n MSBuild:"
-          Get-Command msbuild -ErrorAction SilentlyContinue
+          Write-Host "`n🔍 Buscando MSBuild.exe..."
+          Get-ChildItem -Path "C:\Program Files (x86)\Microsoft Visual Studio" -Recurse -Filter msbuild.exe -ErrorAction SilentlyContinue | Select-Object -First 3 FullName
 
-          Write-Host "`n cl.exe:"
-          Get-Command cl.exe -ErrorAction SilentlyContinue
+          Write-Host "`n🔍 Buscando cl.exe..."
+          Get-ChildItem -Path "C:\Program Files (x86)\Microsoft Visual Studio" -Recurse -Filter cl.exe -ErrorAction SilentlyContinue | Select-Object -First 3 FullName
         displayName: "🔍 Check build tools"
 
       - task: DownloadBuildArtifacts@0
