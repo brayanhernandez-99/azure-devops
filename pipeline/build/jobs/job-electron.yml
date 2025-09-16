@@ -33,17 +33,29 @@ jobs:
       versionPython: $[coalesce(variables.pythonVersion, '3.24.0')]
 
     steps:
+      - task: Cache@2
+        inputs:
+          key: 'choco | "$(Agent.OS)"'
+          path: 'C:\ProgramData\chocolatey\lib'
+          cacheHitVar: CHOCO_CACHE_RESTORED
+
       # Instalar Visual Studio Build Tools con workload de C++
       - powershell: |
-          choco install visualstudio2022buildtools --package-parameters "--add Microsoft.VisualStudio.Workload.VCTools --quiet --norestart --includeRecommended --includeOptional"
-          choco install windows-sdk-10-version-1903-all -y --force
+            if (-not $env:CHOCO_CACHE_RESTORED) {
+              Write-Host "`n ⚙️ Instalando VS Build Tools y Windows SDK..."
+              choco install visualstudio2022buildtools --package-parameters "--add Microsoft.VisualStudio.Workload.VCTools --quiet --norestart --includeRecommended"
+              choco install windows-sdk-10-version-1903-all -y --force
+            } else {
+              Write-Host "`n ✅ Usando cache de Build Tools y SDK"
+            }
         displayName: "⚙️ Install VS Build Tools + Windows SDK"
 
       # Verificar que MSBuild y cl.exe estén disponibles
       - powershell: |
-          Write-Host "MSBuild:"
+          Write-Host "`n MSBuild:"
           Get-Command msbuild -ErrorAction SilentlyContinue
-          Write-Host "cl.exe:"
+
+          Write-Host "`n cl.exe:"
           Get-Command cl.exe -ErrorAction SilentlyContinue
         displayName: "🔍 Check build tools"
 
