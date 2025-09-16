@@ -50,15 +50,6 @@ jobs:
             }
         displayName: "⚙️ Install VS Build Tools + Windows SDK"
 
-      # Verificar que MSBuild y cl.exe estén disponibles
-      - powershell: |
-          Write-Host "`n🔍 Buscando MSBuild.exe..."
-          Get-ChildItem -Path "C:\Program Files (x86)\Microsoft Visual Studio" -Recurse -Filter msbuild.exe -ErrorAction SilentlyContinue | Select-Object -First 3 FullName
-
-          Write-Host "`n🔍 Buscando cl.exe..."
-          Get-ChildItem -Path "C:\Program Files (x86)\Microsoft Visual Studio" -Recurse -Filter cl.exe -ErrorAction SilentlyContinue | Select-Object -First 3 FullName
-        displayName: "🔍 Check build tools"
-
       - task: DownloadBuildArtifacts@0
         displayName: "📥 Download Version Artifact"
         inputs:
