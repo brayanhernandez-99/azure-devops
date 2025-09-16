@@ -150,12 +150,12 @@ jobs:
               }
             }
             if ($environment -ne "unknown") {
-              @"
-              DOMAIN_ADMIN="$(BASE_URL_ELECTRON_ADMIN)"
-              DOMAIN_SELLER="$(BASE_URL_ELECTRON_SELLERS)"
-              TARGET="windows"
-              TARGET_ENVIRONMENT="$environment"
-              "@ | Set-Content -Encoding UTF8 .env
+            @"
+            DOMAIN_ADMIN="$(BASE_URL_ELECTRON_ADMIN)"
+            DOMAIN_SELLER="$(BASE_URL_ELECTRON_SELLERS)"
+            TARGET="windows"
+            TARGET_ENVIRONMENT="$environment"
+            "@ | Set-Content -Encoding UTF8 .env
               
               Write-Host "##vso[task.setvariable variable=environment]$environment"
               Write-Host "##vso[task.setvariable variable=region]$region"
@@ -232,11 +232,12 @@ jobs:
           targetType: "inline"
           script: |
             Write-Host "📦 Instalando dependencias"
-            npm install
-            npx electron-builder install-app-deps
+            npm install -g pnpm
+            pnpm install
+            pnpm dlx electron-builder install-app-deps
   
             Write-Host "`n📦 Dependencias instaladas:"
-            npm list --depth=0
+            pnpm list --depth=0
 
       - task: PowerShell@2
         displayName: "📦 Build electron"
@@ -244,7 +245,7 @@ jobs:
           targetType: " inline"
           script: |
             Write-Host "📦 Ejecutando build..."
-            npm run build
+            pnpm run build
 
       - task: PowerShell@2
         displayName: "🔍 Validate Build"
