@@ -28,7 +28,6 @@ jobs:
     pool:
       vmImage: "windows-latest"
     variables:
-      NODE_OPTIONS: "--max-old-space-size=4096"
       versionNode: $[coalesce(variables.nodeVersion, '18.20.7')]
       versionPython: $[coalesce(variables.pythonVersion, '3.24.0')]
 
@@ -37,25 +36,6 @@ jobs:
       - checkout: self
         fetchDepth: 0
         persistCredentials: true
-
-      # - task: Cache@2
-      #   inputs:
-      #     key: 'choco | "$(Agent.OS)"'
-      #     path: 'C:\ProgramData\chocolatey\lib'
-      #     cacheHitVar: CHOCO_CACHE_RESTORED
-
-      # - task: PowerShell@2
-      #   displayName: "⚙️ Install VS Build Tools + Windows SDK"
-      #   inputs:
-      #     targetType: "inline"
-      #     script: |
-      #       if (-not $env:CHOCO_CACHE_RESTORED) {
-      #         Write-Host "`n⚙️ Instalando VS Build Tools y Windows SDK..."
-      #         choco install visualstudio2022buildtools --package-parameters "--add Microsoft.VisualStudio.Workload.VCTools --add Microsoft.VisualStudio.Component.Windows10SDK.19041 --quiet --norestart --includeRecommended" -y
-      #         choco install windows-sdk-10-version-2004-all -y --force
-      #       } else {
-      #         Write-Host "`n✅ Usando cache de Build Tools y SDK"
-      #       }
 
       - task: DownloadBuildArtifacts@0
         displayName: "📥 Download Version Artifact"
@@ -174,28 +154,28 @@ jobs:
         env:
           red: ${{ parameters.red }}
 
-      # - task: PowerShell@2
-      #   displayName: "🔍 Check for 'console.log' in changes"        
-      #   inputs:
-      #     targetType: "inline"
-      #     script: |
-      #       $ErrorActionPreference = "Stop"
-      #       $source_branch = "$(Build.SourceBranch)".Replace("refs/heads/","")
-      #       $target_branch = $env:target_branch   
+      - task: PowerShell@2
+        displayName: "🔍 Check for 'console.log' in changes"        
+        inputs:
+          targetType: "inline"
+          script: |
+            $ErrorActionPreference = "Stop"
+            $source_branch = "$(Build.SourceBranch)".Replace("refs/heads/","")
+            $target_branch = $env:target_branch   
 
-      #       Write-Host "`n🔎 Verificando que no se hayan agregado nuevas sentencias console.log..."
-      #       Write-Host "Branch actual: $source_branch"
-      #       Write-Host "Branch destino: $target_branch"
+            Write-Host "`n🔎 Verificando que no se hayan agregado nuevas sentencias console.log..."
+            Write-Host "Branch actual: $source_branch"
+            Write-Host "Branch destino: $target_branch"
 
-      #       git fetch origin $target_branch            
-      #       $diff = git --no-pager diff origin/$target_branch..origin/$source_branch
+            git fetch origin $target_branch            
+            $diff = git --no-pager diff origin/$target_branch..origin/$source_branch
 
-      #       if ($diff | Select-String -Pattern "^\+.*console\.log") {
-      #           Write-Host "`n❌ Se encontro 'console.log' en los cambios"
-      #           exit 99
-      #       } else {
-      #           Write-Host "`n✅ No se encontraron sentencias 'console.log' en los cambios"
-      #       }
+            if ($diff | Select-String -Pattern "^\+.*console\.log") {
+                Write-Host "`n❌ Se encontro 'console.log' en los cambios"
+                exit 99
+            } else {
+                Write-Host "`n✅ No se encontraron sentencias 'console.log' en los cambios"
+            }
             
       - task: PowerShell@2
         displayName: "📝 Update version in package.json"
@@ -237,7 +217,7 @@ jobs:
           script: |
             Write-Host "📦 Instalando dependencias"
             npm install
-            
+
             Write-Host "`n📦 Dependencias instaladas:"
             npm list --depth=0
 
@@ -301,7 +281,7 @@ jobs:
             Get-ChildItem "$basePath" -Force | Select-Object Mode, LastWriteTime, Length, Name | Format-Table -AutoSize
 
             aws s3 cp "$basePath" "s3://e-remote/invictus-electron/windows/$($env:region)" --recursive --acl public-read
-        #condition: not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
+        condition: not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
         env:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
