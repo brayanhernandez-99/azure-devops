@@ -41,13 +41,13 @@ jobs:
 
       # Instalar Visual Studio Build Tools con workload de C++
       - powershell: |
-            if (-not $env:CHOCO_CACHE_RESTORED) {
+            # if (-not $env:CHOCO_CACHE_RESTORED) {
               Write-Host "`n ⚙️ Instalando VS Build Tools y Windows SDK..."
               choco install visualstudio2022buildtools --package-parameters "--add Microsoft.VisualStudio.Workload.VCTools --quiet --norestart --includeRecommended"
               choco install windows-sdk-10-version-1903-all -y --force
-            } else {
-              Write-Host "`n ✅ Usando cache de Build Tools y SDK"
-            }
+            #} else {
+            #  Write-Host "`n ✅ Usando cache de Build Tools y SDK"
+            #}
         displayName: "⚙️ Install VS Build Tools + Windows SDK"
 
       # Verificar que MSBuild y cl.exe estén disponibles
