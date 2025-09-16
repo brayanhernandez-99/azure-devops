@@ -175,7 +175,8 @@ jobs:
           targetType: "inline"
           script: |
             $ErrorActionPreference = "Stop"
-          
+            git config --global credential.helper store
+
             $SOURCE_BRANCH = "$(Build.SourceBranch)".Replace("refs/heads/","")
             $TARGET_BRANCH = $env:target_branch   
 
@@ -184,7 +185,7 @@ jobs:
             Write-Host "Branch destino: $TARGET_BRANCH"
 
             git fetch origin $TARGET_BRANCH            
-            $diff = git --no-pager diff origin/$TARGET_BRANCH origin/$SOURCE_BRANCH
+            $diff = git --no-pager diff origin/$TARGET_BRANCH..origin/$SOURCE_BRANCH
 
             if ($diff | Select-String -Pattern "^\+.*console\.log") {
                 Write-Host "`n❌ Se encontró 'console.log' en los cambios"
