@@ -33,22 +33,24 @@ jobs:
       versionPython: $[coalesce(variables.pythonVersion, '3.24.0')]
 
     steps:
-      - task: Cache@2
-        inputs:
-          key: 'choco | "$(Agent.OS)"'
-          path: 'C:\ProgramData\chocolatey\lib'
-          cacheHitVar: CHOCO_CACHE_RESTORED
+      # - task: Cache@2
+      #   inputs:
+      #     key: 'choco | "$(Agent.OS)"'
+      #     path: 'C:\ProgramData\chocolatey\lib'
+      #     cacheHitVar: CHOCO_CACHE_RESTORED
 
-      # Instalar Visual Studio Build Tools con workload de C++
-      - powershell: |
-            if (-not $env:CHOCO_CACHE_RESTORED) {
-              Write-Host "`n ⚙️ Instalando VS Build Tools y Windows SDK..."
-              choco install visualstudio2022buildtools --package-parameters "--add Microsoft.VisualStudio.Workload.VCTools --add Microsoft.VisualStudio.Component.Windows10SDK.19041 --quiet --norestart --includeRecommended" -y
-              choco install windows-sdk-10-version-2004-all -y --force
-            } else {
-              Write-Host "`n ✅ Usando cache de Build Tools y SDK"
-            }
-        displayName: "⚙️ Install VS Build Tools + Windows SDK"
+      # - task: PowerShell@2
+      #   displayName: "⚙️ Install VS Build Tools + Windows SDK"
+      #   inputs:
+      #     targetType: "inline"
+      #     script: |
+      #       if (-not $env:CHOCO_CACHE_RESTORED) {
+      #         Write-Host "`n⚙️ Instalando VS Build Tools y Windows SDK..."
+      #         choco install visualstudio2022buildtools --package-parameters "--add Microsoft.VisualStudio.Workload.VCTools --add Microsoft.VisualStudio.Component.Windows10SDK.19041 --quiet --norestart --includeRecommended" -y
+      #         choco install windows-sdk-10-version-2004-all -y --force
+      #       } else {
+      #         Write-Host "`n✅ Usando cache de Build Tools y SDK"
+      #       }
 
       - task: DownloadBuildArtifacts@0
         displayName: "📥 Download Version Artifact"
@@ -125,37 +127,39 @@ jobs:
           targetType: "inline"
           script: |
             $ErrorActionPreference = "Stop"
-            Write-Host "📁 Generando .env"
+            Write-Host "`n📁 Generando .env"
             $currentBranch="$(Build.SourceBranch)"
 
             $environment = "unknown"
             $region = "unknown"
+            $target_branch = "unknown"
 
             switch -Wildcard ($currentBranch) {
-              "refs/heads/feature/*" { $environment = "dev"; $region = "dev" }
-              "refs/heads/develop"   { $environment = "dev"; $region = "dev" }
-              "refs/heads/staging"   { $environment = "qa"; $region = "qa" }
+              "refs/heads/feature/*" { $environment = "dev"; $region = "dev"; $target_branch = "develop"; }
+              "refs/heads/develop"   { $environment = "dev"; $region = "dev"; $target_branch = "develop"; }
+              "refs/heads/staging"   { $environment = "qa"; $region = "qa"; $target_branch = "staging"; }
               "refs/heads/master" {
                 switch ($env:red) {
-                  "antioquia" { $environment = "production"; $region = "matrixtech" }
-                  "cap"       { $environment = "production"; $region = "cap" }
-                  "tolima"    { $environment = "production"; $region = "seapto" }
-                  "huila"     { $environment = "production"; $region = "suchance" }
-                  "cauca"     { $environment = "production"; $region = "acertemos" }
-                  "boyaca"    { $environment = "production"; $region = "jer" }
+                  "antioquia" { $environment = "production"; $region = "matrixtech"; $target_branch = "master"; }
+                  "cap"       { $environment = "production"; $region = "cap"; $target_branch = "master"; }
+                  "tolima"    { $environment = "production"; $region = "seapto"; $target_branch = "master"; }
+                  "huila"     { $environment = "production"; $region = "suchance"; $target_branch = "master"; }
+                  "cauca"     { $environment = "production"; $region = "acertemos"; $target_branch = "master"; }
+                  "boyaca"    { $environment = "production"; $region = "jer"; $target_branch = "master"; }
                 }
               }
             }
             if ($environment -ne "unknown") {
-            @"
-            DOMAIN_ADMIN="$(BASE_URL_ELECTRON_ADMIN)"
-            DOMAIN_SELLER="$(BASE_URL_ELECTRON_SELLERS)"
-            TARGET="windows"
-            TARGET_ENVIRONMENT="$environment"
-            "@ | Set-Content -Encoding UTF8 .env
-
+              @"
+              DOMAIN_ADMIN="$(BASE_URL_ELECTRON_ADMIN)"
+              DOMAIN_SELLER="$(BASE_URL_ELECTRON_SELLERS)"
+              TARGET="windows"
+              TARGET_ENVIRONMENT="$environment"
+              "@ | Set-Content -Encoding UTF8 .env
+              
               Write-Host "##vso[task.setvariable variable=environment]$environment"
               Write-Host "##vso[task.setvariable variable=region]$region"
+              Write-Host "##vso[task.setvariable variable=target_branch]$target_branch"
               Write-Host "`n✅ Archivo .env creado correctamente"
               Get-Content .env
             } else {
@@ -165,6 +169,30 @@ jobs:
         env:
           red: ${{ parameters.red }}
 
+      - task: PowerShell@2
+        displayName: "🔍 Check for 'console.log' in changes"        
+        inputs:
+          targetType: "inline"
+          script: |
+            $ErrorActionPreference = "Stop"
+          
+            source_branch="$(Build.SourceBranchName)"
+            target_branch="refs/remotes/origin/$($env:region)"
+
+            echo "`n🔎 Verificando que no se hayan agregado nuevas sentencias console.log..."
+            Write-Host "Branch actual: $source_branch"
+            Write-Host "Branch destino: $target_branch"
+
+            git fetch origin $target_branch
+            $diff = git --no-pager diff origin/$TARGET_BRANCH origin/$SOURCE_BRANCH
+
+            if ($diff | Select-String -Pattern "^\+.*console\.log") {
+              Write-Host "`n❌ Se encontro 'console.log' en los cambios"
+              exit 99
+            } else {
+              Write-Host "`n✅ No se encontraron sentencias 'console.log' en los cambios"
+            }
+            
       - task: PowerShell@2
         displayName: "📝 Update version in package.json"
         inputs:
