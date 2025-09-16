@@ -211,6 +211,25 @@ jobs:
           versionSpec: "$(versionNode)"
 
       - task: PowerShell@2
+        displayName: '🧹 Remove BOM from package.json'
+        inputs:
+          targetType: 'inline'
+          script: |
+            $filePath = "$(Build.SourcesDirectory)\package.json"
+
+            if (Test-Path $filePath) {
+                $bytes = [System.IO.File]::ReadAllBytes($filePath)
+                if ($bytes.Length -ge 3 -and $bytes[0] -eq 0xEF -and $bytes[1] -eq 0xBB -and $bytes[2] -eq 0xBF) {
+                    [System.IO.File]::WriteAllBytes($filePath, $bytes[3..($bytes.Length-1)])
+                    Write-Host "`n⚠️ BOM removed from package.json"
+                } else {
+                    Write-Host "`n✅ package.json no contiene BOM"
+                }
+            } else {
+                Write-Warning "`n❌ package.json no se encontró en $filePath"
+            }
+
+      - task: PowerShell@2
         displayName: "⚙️ Install dependencies"
         inputs:
           targetType: "inline"
