@@ -33,6 +33,11 @@ jobs:
       versionPython: $[coalesce(variables.pythonVersion, '3.24.0')]
 
     steps:
+
+      - checkout: self
+        fetchDepth: 0
+        persistCredentials: true
+
       # - task: Cache@2
       #   inputs:
       #     key: 'choco | "$(Agent.OS)"'
