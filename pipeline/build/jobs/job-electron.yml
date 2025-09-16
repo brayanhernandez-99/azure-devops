@@ -236,12 +236,11 @@ jobs:
           targetType: "inline"
           script: |
             Write-Host "📦 Instalando dependencias"
-            npm install -g pnpm
-            pnpm install
+            npm install
             npx electron-builder install-app-deps 
 
             Write-Host "`n📦 Dependencias instaladas:"
-            pnpm list --depth=0
+            npm list --depth=0
 
       - task: PowerShell@2
         displayName: "📦 Build electron"
@@ -249,7 +248,7 @@ jobs:
           targetType: " inline"
           script: |
             Write-Host "📦 Ejecutando build..."
-            pnpm run build
+            npm run build
 
       - task: PowerShell@2
         displayName: "🔍 Validate Build"
