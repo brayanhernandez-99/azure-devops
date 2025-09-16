@@ -237,8 +237,7 @@ jobs:
           script: |
             Write-Host "📦 Instalando dependencias"
             npm install
-            npx electron-builder install-app-deps 
-
+            
             Write-Host "`n📦 Dependencias instaladas:"
             npm list --depth=0
 
