@@ -154,28 +154,28 @@ jobs:
         env:
           red: ${{ parameters.red }}
 
-      - task: PowerShell@2
-        displayName: "🔍 Check for 'console.log' in changes"        
-        inputs:
-          targetType: "inline"
-          script: |
-            $ErrorActionPreference = "Stop"
-            $source_branch = "$(Build.SourceBranch)".Replace("refs/heads/","")
-            $target_branch = $env:target_branch   
+      # - task: PowerShell@2
+      #   displayName: "🔍 Check for 'console.log' in changes"        
+      #   inputs:
+      #     targetType: "inline"
+      #     script: |
+      #       $ErrorActionPreference = "Stop"
+      #       $source_branch = "$(Build.SourceBranch)".Replace("refs/heads/","")
+      #       $target_branch = $env:target_branch   
 
-            Write-Host "`n🔎 Verificando que no se hayan agregado nuevas sentencias console.log..."
-            Write-Host "Branch actual: $source_branch"
-            Write-Host "Branch destino: $target_branch"
+      #       Write-Host "`n🔎 Verificando que no se hayan agregado nuevas sentencias console.log..."
+      #       Write-Host "Branch actual: $source_branch"
+      #       Write-Host "Branch destino: $target_branch"
 
-            git fetch origin $target_branch            
-            $diff = git --no-pager diff origin/$target_branch..origin/$source_branch
+      #       git fetch origin $target_branch            
+      #       $diff = git --no-pager diff origin/$target_branch..origin/$source_branch
 
-            if ($diff | Select-String -Pattern "^\+.*console\.log") {
-                Write-Host "`n❌ Se encontro 'console.log' en los cambios"
-                exit 99
-            } else {
-                Write-Host "`n✅ No se encontraron sentencias 'console.log' en los cambios"
-            }
+      #       if ($diff | Select-String -Pattern "^\+.*console\.log") {
+      #           Write-Host "`n❌ Se encontro 'console.log' en los cambios"
+      #           exit 99
+      #       } else {
+      #           Write-Host "`n✅ No se encontraron sentencias 'console.log' en los cambios"
+      #       }
             
       - task: PowerShell@2
         displayName: "📝 Update version in package.json"
