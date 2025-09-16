@@ -215,6 +215,7 @@ jobs:
         inputs:
           targetType: 'inline'
           script: |
+            $ErrorActionPreference = "Stop"
             $filePath = "$(Build.SourcesDirectory)\package.json"
 
             if (Test-Path $filePath) {
@@ -227,6 +228,7 @@ jobs:
                 }
             } else {
                 Write-Warning "`n❌ package.json no se encontró en $filePath"
+                exit 99
             }
 
       - task: PowerShell@2
