@@ -176,8 +176,8 @@ jobs:
           script: |
             $ErrorActionPreference = "Stop"
           
-            source_branch="$(Build.SourceBranchName)"
-            target_branch="refs/remotes/origin/$($env:region)"
+            $source_branch="$(Build.SourceBranchName)"
+            $target_branch="refs/remotes/origin/$($env:region)"
 
             echo "`n🔎 Verificando que no se hayan agregado nuevas sentencias console.log..."
             Write-Host "Branch actual: $source_branch"
