@@ -40,7 +40,7 @@ jobs:
               echo -e "\nℹ️ Solo hay cambios en archivos ignorados (pipeline/). Continuando..."
             else
               echo -e "\n##vso[task.logissue type=error]❌ Cambios relevantes detectados en master y no están integrados. Debes actualizar tu rama."
-              exit 1
+              exit 99
             fi
           fi
         displayName: "🔎 Validate Feature or Hotfix Branch is Up to Date"

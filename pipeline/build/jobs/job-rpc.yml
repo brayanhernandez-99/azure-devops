@@ -61,10 +61,10 @@ jobs:
 
             if [[ -z "$RELEVANT_CHANGES" ]]; then
               echo "ℹ️ Solo hay cambios en archivos ignorados (pipeline/). Continuando..."
-              exit 1
+              exit 99
             else
               echo "❌ Cambios relevantes detectados en master y no están integrados. Debes actualizar tu rama."
-              exit 1
+              exit 99
             fi
           fi
         displayName: "✅ Validate Feature/Hotfix Branch Up-to-Date"

@@ -60,7 +60,7 @@ jobs:
 
               if [ -z "$apps" ]; then
                 echo "❌ No se detectaron cambios en apps. Cancelando ejecución del pipeline."
-                exit 1
+                exit 99
               fi
               
               echo "🔍 Apps modificadas detectadas:"
@@ -96,7 +96,7 @@ jobs:
 
               if [ -z "$apps" ]; then
                 echo "❌ No se detectaron cambios en apps. Cancelando ejecución del pipeline."
-                exit 1
+                exit 99
               fi
 
               echo "🔍 Apps modificadas detectadas:"

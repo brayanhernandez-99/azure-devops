@@ -50,7 +50,7 @@ stages:
                     echo "##vso[task.setvariable variable=msVersion]$VERSION"
                   else
                     echo "❌ No se encontró archivo de versión para $(msName)"
-                    exit 1
+                    exit 99
                   fi
                 displayName: "📖 Read Microservice Versions"
 
@@ -173,7 +173,7 @@ stages:
                     echo "##vso[task.setvariable variable=msVersion]$VERSION"
                   else
                     echo "❌ No se encontró archivo de versión para $(msName)"
-                    exit 1
+                    exit 99
                   fi
                 displayName: "📖 Read Microservice Versions"
 
@@ -296,7 +296,7 @@ stages:
                     echo "##vso[task.setvariable variable=msVersion]$VERSION"
                   else
                     echo "❌ No se encontró archivo de versión para $(msName)"
-                    exit 1
+                    exit 99
                   fi
                 displayName: "📖 Read Microservice Versions"
 
