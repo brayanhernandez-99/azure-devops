@@ -32,7 +32,6 @@ jobs:
       versionPython: $[coalesce(variables.pythonVersion, '3.24.0')]
 
     steps:
-
       - checkout: self
         fetchDepth: 0
         persistCredentials: true
@@ -133,7 +132,7 @@ jobs:
                 }
               }
             }
-            
+
             if ($environment -ne "unknown") {
             @"
             DOMAIN_ADMIN="$(BASE_URL_ELECTRON_ADMIN)"
@@ -154,7 +153,7 @@ jobs:
           red: ${{ parameters.red }}
 
       - task: PowerShell@2
-        displayName: "🔍 Check for 'console.log' in changes"        
+        displayName: "🔍 Check for 'console.log' in changes"
         inputs:
           targetType: "inline"
           script: |
@@ -176,7 +175,7 @@ jobs:
                 Write-Host "`n✅ No se encontraron sentencias 'console.log' en los cambios"
             }
           condition: startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')
-            
+
       - task: PowerShell@2
         displayName: "📝 Update version in package.json"
         inputs:
@@ -211,9 +210,9 @@ jobs:
           versionSpec: "$(versionNode)"
 
       - task: PowerShell@2
-        displayName: '🧹 Remove BOM from package.json'
+        displayName: "🧹 Remove BOM from package.json"
         inputs:
-          targetType: 'inline'
+          targetType: "inline"
           script: |
             $ErrorActionPreference = "Stop"
             $filePath = "$(Build.SourcesDirectory)\package.json"

@@ -61,6 +61,7 @@ jobs:
           else
             echo -e "\n✅ No se encontraron sentencias 'console.log' en los cambios"
           fi
+        condition: startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')
         displayName: "🔍 Check for 'console.log' in changes"
 
 

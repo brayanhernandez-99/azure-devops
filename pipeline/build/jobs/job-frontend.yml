@@ -68,6 +68,26 @@ jobs:
           npm install -g pnpm
         displayName: "⚙️ Install pnpm"
 
+      - script: |
+          sourceBranch="${BUILD_SOURCEBRANCH/refs\/heads\//}"
+          targetBranch="master"
+
+          echo -e "\n🔎 Verificando que no se hayan agregado nuevas sentencias console.log..."
+          echo "Branch actual: $sourceBranch"
+          echo "Branch destino: $targetBranch"
+
+          git fetch origin "$targetBranch"
+          diff=$(git --no-pager diff "origin/$targetBranch..origin/$sourceBranch")
+
+          if echo "$diff" | grep -qE '^\+.*console\.log'; then
+            echo -e "\n❌ Se encontro 'console.log' en los cambios"
+            exit 99
+          else
+            echo -e "\n✅ No se encontraron sentencias 'console.log' en los cambios"
+          fi
+        condition: startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')
+        displayName: "🔍 Check for 'console.log' in changes"
+
       - task: Bash@3
         name: AuthCodeArtifact
         inputs:
@@ -91,7 +111,7 @@ jobs:
 
             echo "Verificando identidad de AWS..."
             aws sts get-caller-identity
-            
+
             npmrcPath="$(file)/$(msName)/.npmrc"
             echo "Generando archivo .npmrcPath en: $npmrcPath"
             cat <<EOF > "$npmrcPath"

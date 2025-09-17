@@ -2,7 +2,7 @@ variables:
   - group: trasversal-aws-deployment
   - group: trasversal-azure-devops
   - group: trasversal-versions-invictus
-  
+
   # Feature branch
   - ${{ if or( startsWith(variables['Build.SourceBranch'], 'refs/heads/feature'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix')) }}:
       - group: variables-flutter-develop
@@ -103,5 +103,5 @@ variables:
       - group: transversal-app-sellers-vue2-master-boyaca
       - group: transversal-app-invictus-microfrontend-master-boyaca
       # - group: transversal-app-cloudFront-master-boyaca
-
+      
 #   - template: pipeline/vars-azure-pipeline.yml@self
