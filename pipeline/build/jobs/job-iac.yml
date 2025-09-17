@@ -106,9 +106,17 @@ jobs:
           # terragrunt apply --all --non-interactive
 
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/siga
+
+
+
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-apigateway-integration
           terragrunt plan --all --non-interactive
           terragrunt apply --all --non-interactive
+
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-apigateway-domain-names-integration
+          terragrunt plan --all --non-interactive
+          terragrunt apply --all --non-interactive
+
 
 
 
@@ -123,6 +131,7 @@ jobs:
           # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/bff-integration/aws-service-ssm-parameter
           # terragrunt plan --all --non-interactive
           # terragrunt apply --all --non-interactive
+
 
         displayName: "✔️ Plan"
         workingDirectory: $(Build.SourcesDirectory)/iac-terragrunt/invictus/
