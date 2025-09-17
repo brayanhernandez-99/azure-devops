@@ -6,7 +6,7 @@ variables:
   # Develop or Feature branch
   - ${{ if or( startsWith(variables['Build.SourceBranch'], 'refs/heads/feature'), startsWith(variables['Build.SourceBranch'], 'refs/heads/develop')) }}:
       - group: trasversal-electron-develop
-      - group: trasversal-aws-master-antioquia
+      - group: trasversal-aws-developer
 
   # Staging branch
   - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
