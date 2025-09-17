@@ -299,14 +299,14 @@ jobs:
     steps:
 
       - task: DownloadBuildArtifacts@0
-        displayName: "📥 Download Version Artifact"
         inputs:
           artifactName: "versions"
           downloadPath: "$(Pipeline.Workspace)/downloaded-versions"
-      
+        displayName: "📥 Download Version Artifact"
+
       - script: |
           ls -R $(Pipeline.Workspace)/downloaded-versions/versions
-          VERSION_FILE="$(Pipeline.Workspace)\downloaded-versions\versions\electron\version.json"
+          VERSION_FILE="$(Pipeline.Workspace)/downloaded-versions/versions/electron/version.json"
           if [[ -f "$VERSION_FILE" ]]; then
             VERSION=$(jq -r '.version' $VERSION_FILE)            
             echo -e "\n🚀 Versión detectada para $(Build.Repository.Name): $VERSION"
