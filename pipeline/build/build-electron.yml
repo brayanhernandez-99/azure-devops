@@ -14,7 +14,7 @@ stages:
     condition: in(dependencies.semantic_version_integration.result, 'Succeeded', 'SucceededWithIssues')
 
     variables:
-      - template: ../variables/groups-transversal-variables.yml
+      - template: ../variables/groups-transversal-variables-electron.yml
         parameters:
           red: ${{ parameters.red }}
 
@@ -23,9 +23,3 @@ stages:
           - template: jobs/job-electron.yml
             parameters:
               red: ${{ parameters.red }}
-
-      # - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), in(variables['Build.SourceBranch'], 'refs/heads/develop', 'refs/heads/staging','refs/heads/master' )), eq(parameters.red, 'antioquia')) }}:
-      #     - template: ../general/commit-tag-changeload-electron.yml
-      #       parameters:
-      #         red: ${{ parameters.red }}
-      #         release: ${{ parameters.release }}
