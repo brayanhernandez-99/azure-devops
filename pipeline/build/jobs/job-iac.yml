@@ -113,9 +113,9 @@ jobs:
           terragrunt plan --all --non-interactive
           terragrunt apply --all --non-interactive
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-apigateway-domain-names-integration
-          # terragrunt plan --all --non-interactive
-          # terragrunt apply --all --non-interactive
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-apigateway-domain-names-integration
+          terragrunt plan --all --non-interactive
+          terragrunt apply --all --non-interactive
 
 
 
