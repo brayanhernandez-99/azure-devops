@@ -109,22 +109,3 @@ jobs:
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
       
-      # - script: |
-      #     echo "apply"
-      #     terragrunt apply --all --non-interactive
-      #   displayName: "apply"
-      #   workingDirectory: $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/develop/apps/aws-service-cloudfront/cloudfront-app-administration
-      #   env:
-      #     AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEVOPS)
-      #     AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEVOPS)
-      #     AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
-      
-      # - script: |
-      #     echo "destroy"
-      #     terragrunt destroy --all --non-interactive
-      #   displayName: "destroy"
-      #   workingDirectory: $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/develop/apps/aws-service-cloudfront/cloudfront-app-administration
-      #   env:
-      #     AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEVOPS)
-      #     AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEVOPS)
-      #     AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
