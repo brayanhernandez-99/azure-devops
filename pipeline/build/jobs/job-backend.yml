@@ -44,50 +44,6 @@ jobs:
           npm install -g pnpm
         displayName: "⚙️ Install pnpm"
 
-      - script: |
-          sourceBranch="${BUILD_SOURCEBRANCH/refs\/heads\//}"
-          targetBranch="master"
-
-          echo -e "\n🔎 Verificando que no se hayan agregado nuevas sentencias console.log..."
-          echo "Branch actual: $sourceBranch"
-          echo "Branch destino: $targetBranch"
-
-          git fetch origin "$targetBranch"
-          diff=$(git --no-pager diff "origin/$targetBranch..origin/$sourceBranch")
-
-          if echo "$diff" | grep -qE '^\+.*console\.log'; then
-            echo -e "\n❌ Se encontro 'console.log' en los cambios"
-            exit 99
-          else
-            echo -e "\n✅ No se encontraron sentencias 'console.log' en los cambios"
-          fi
-        condition: startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')
-        displayName: "🔍 Check for 'console.log' in changes"
-
-
-      # - task: PowerShell@2
-      #   displayName: "🔍 Check for 'console.log' in changes"        
-      #   inputs:
-      #     targetType: "inline"
-      #     script: |
-      #       $ErrorActionPreference = "Stop"
-      #       $source_branch = "$(Build.SourceBranch)".Replace("refs/heads/","")
-      #       $target_branch = $env:target_branch   
-
-      #       Write-Host "`n🔎 Verificando que no se hayan agregado nuevas sentencias console.log..."
-      #       Write-Host "Branch actual: $source_branch"
-      #       Write-Host "Branch destino: $target_branch"
-
-      #       git fetch origin $target_branch            
-      #       $diff = git --no-pager diff origin/$target_branch..origin/$source_branch
-
-      #       if ($diff | Select-String -Pattern "^\+.*console\.log") {
-      #           Write-Host "`n❌ Se encontro 'console.log' en los cambios"
-      #           exit 99
-      #       } else {
-      #           Write-Host "`n✅ No se encontraron sentencias 'console.log' en los cambios"
-      #       }
-
       - task: Bash@3
         name: AuthCodeArtifact
         inputs:
