@@ -22,7 +22,7 @@ jobs:
             echo -e "\n🚀 Versión detectada para $(Build.Repository.Name): $VERSION"
             echo "##vso[task.setvariable variable=msVersion]$VERSION"
           else
-            echo "##vso[task.logissue type=error]❌ No se encontró archivo de versión para $(Build.Repository.Name)"
+            echo "##vso[task.logissue type=error]❌ No se encontro archivo de versión para $(Build.Repository.Name)"
             exit 1
           fi
         displayName: "📖 Read Microservice Versions"
@@ -32,10 +32,93 @@ jobs:
         inputs:
           versionSource: "spec"
           versionSpec: "$(versionNode)"
+          
+      - task: JavaToolInstaller@0
+        displayName: "🔧 Install JDK 17"
+        inputs:
+          versionSpec: "17"
+          jdkArchitectureOption: "x64"
+          jdkSourceOption: "PreInstalled"
 
       - script: |
           npm install -g pnpm
         displayName: "⚙️ Install pnpm"
+
+      - script: |
+          current_branch CURRENT_BRANCH="$(Build.SourceBranch)"
+          $target_branch = "unknown"
+
+          case "$current_branch CURRENT_BRANCH" in
+            refs/heads/feature/*) environment="dev"; ;;
+            refs/heads/develop) environment="dev"; ;;
+            refs/heads/staging) environment="qa"; ;;
+            refs/heads/master) 
+              case "$red" in
+                "antioquia") environment="prd-gana"; ;;
+                "cap")       environment="prd-cap";  ;;
+                "tolima")    environment="prd-seapto"; ;;
+                "huila")     environment="prd-suchance"; ;;
+                "cauca")     environment="prd-acertemos"; ;;
+                "boyaca")    environment="prd-jer"; ;;
+              esac ;;
+          esac
+
+          if [ "$environment" = "unknown" ] || [ "$region" = "unknown" ]; then
+            echo "⚠️ Environment [$environment] no reconocido"
+            echo "⚠️ Región [$region] no reconocida"
+            exit 99
+          fi
+
+          echo "##vso[task.setvariable variable=environment]$environment"
+          echo "##vso[task.setvariable variable=region]$region"
+
+          echo "Branch: $current_branch CURRENT_BRANCH"
+          echo "Environment: $(environment)"
+          echo "Region: $(region)"
+        displayName: "🔍 Check for 'console.log' in changes"
+
+      - script: |
+          source_branch="${BUILD_SOURCEBRANCH/refs\/heads\//}"
+          target_branch="${target_branch}"
+
+          echo -e "\n🔎 Verificando que no se hayan agregado nuevas sentencias console.log..."
+          echo "Branch actual: $source_branch"
+          echo "Branch destino: $target_branch"
+
+          git fetch origin "$target_branch"
+          diff=$(git --no-pager diff "origin/$target_branch..origin/$source_branch")
+
+          if echo "$diff" | grep -qE '^\+.*console\.log'; then
+            echo -e "\n❌ Se encontro 'console.log' en los cambios"
+            exit 99
+          else
+            echo -e "\n✅ No se encontraron sentencias 'console.log' en los cambios"
+          fi
+        displayName: "🔍 Check for 'console.log' in changes"
+
+
+      # - task: PowerShell@2
+      #   displayName: "🔍 Check for 'console.log' in changes"        
+      #   inputs:
+      #     targetType: "inline"
+      #     script: |
+      #       $ErrorActionPreference = "Stop"
+      #       $source_branch = "$(Build.SourceBranch)".Replace("refs/heads/","")
+      #       $target_branch = $env:target_branch   
+
+      #       Write-Host "`n🔎 Verificando que no se hayan agregado nuevas sentencias console.log..."
+      #       Write-Host "Branch actual: $source_branch"
+      #       Write-Host "Branch destino: $target_branch"
+
+      #       git fetch origin $target_branch            
+      #       $diff = git --no-pager diff origin/$target_branch..origin/$source_branch
+
+      #       if ($diff | Select-String -Pattern "^\+.*console\.log") {
+      #           Write-Host "`n❌ Se encontro 'console.log' en los cambios"
+      #           exit 99
+      #       } else {
+      #           Write-Host "`n✅ No se encontraron sentencias 'console.log' en los cambios"
+      #       }
 
       - task: Bash@3
         name: AuthCodeArtifact
@@ -73,13 +156,6 @@ jobs:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
-
-      - task: JavaToolInstaller@0
-        displayName: "🔧 Install JDK 17"
-        inputs:
-          versionSpec: "17"
-          jdkArchitectureOption: "x64"
-          jdkSourceOption: "PreInstalled"
 
       - task: SonarQubePrepare@7
         displayName: "⚙️ Prepare SonarQube Analysis"
@@ -121,7 +197,7 @@ jobs:
           OUTPUT=$(pnpm ls --depth=0 || true)
           if [[ -z "$OUTPUT" ]]; then
             echo "##vso[task.logissue type=error]❌ No se instalaron dependencias, esperar que se actualicen las dependencias a nivel global"
-            exit 1  
+            exit 99
           else
             echo "✅ Dependencias Instaladas:"
             echo "$OUTPUT"
@@ -159,8 +235,8 @@ jobs:
           echo "🔹 Proyecto: pruebas-$(Build.Repository.Name) | Coverage: $coverage | Lines Duplications: $duplication | Estado: $status_code"
 
           if [[ "$status_code" == "ERROR" ]]; then
-            echo "##vso[task.logissue type=error]❌ El proyecto falló su Quality Gate."
-            exit 1
+            echo "##vso[task.logissue type=error]❌ El proyecto fallo su Quality Gate."
+            exit 99
           else
             echo "✅ El proyecto pasó su Quality Gate."
           fi

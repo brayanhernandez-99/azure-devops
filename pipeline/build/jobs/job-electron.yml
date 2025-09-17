@@ -117,20 +117,20 @@ jobs:
 
             $environment = "unknown"
             $region = "unknown"
-            $target_branch = "unknown"
+            $targetBranch = "unknown"
 
             switch -Wildcard ($currentBranch) {
-              "refs/heads/feature/*" { $environment = "dev"; $region = "dev"; $target_branch = "develop"; }
-              "refs/heads/develop"   { $environment = "dev"; $region = "dev"; $target_branch = "develop"; }
-              "refs/heads/staging"   { $environment = "qa"; $region = "qa"; $target_branch = "staging"; }
+              "refs/heads/feature/*" { $environment = "dev"; $region = "dev"; $targetBranch = "develop"; }
+              "refs/heads/develop"   { $environment = "dev"; $region = "dev"; $targetBranch = "develop"; }
+              "refs/heads/staging"   { $environment = "qa"; $region = "qa"; $targetBranch = "staging"; }
               "refs/heads/master" {
                 switch ($env:red) {
-                  "antioquia" { $environment = "production"; $region = "matrixtech"; $target_branch = "master"; }
-                  "cap"       { $environment = "production"; $region = "cap"; $target_branch = "master"; }
-                  "tolima"    { $environment = "production"; $region = "seapto"; $target_branch = "master"; }
-                  "huila"     { $environment = "production"; $region = "suchance"; $target_branch = "master"; }
-                  "cauca"     { $environment = "production"; $region = "acertemos"; $target_branch = "master"; }
-                  "boyaca"    { $environment = "production"; $region = "jer"; $target_branch = "master"; }
+                  "antioquia" { $environment = "production"; $region = "matrixtech"; $targetBranch = "master"; }
+                  "cap"       { $environment = "production"; $region = "cap"; $targetBranch = "master"; }
+                  "tolima"    { $environment = "production"; $region = "seapto"; $targetBranch = "master"; }
+                  "huila"     { $environment = "production"; $region = "suchance"; $targetBranch = "master"; }
+                  "cauca"     { $environment = "production"; $region = "acertemos"; $targetBranch = "master"; }
+                  "boyaca"    { $environment = "production"; $region = "jer"; $targetBranch = "master"; }
                 }
               }
             }
@@ -144,7 +144,7 @@ jobs:
               
               Write-Host "##vso[task.setvariable variable=environment]$environment"
               Write-Host "##vso[task.setvariable variable=region]$region"
-              Write-Host "##vso[task.setvariable variable=target_branch]$target_branch"
+              Write-Host "##vso[task.setvariable variable=targetBranch]$targetBranch"
               Write-Host "`n✅ Archivo .env creado correctamente"
               Get-Content .env
             } else {
@@ -160,15 +160,15 @@ jobs:
       #     targetType: "inline"
       #     script: |
       #       $ErrorActionPreference = "Stop"
-      #       $source_branch = "$(Build.SourceBranch)".Replace("refs/heads/","")
-      #       $target_branch = $env:target_branch   
+      #       $currentBranch = "$(Build.SourceBranch)".Replace("refs/heads/","")
+      #       $targetBranch = $env:targetBranch   
 
       #       Write-Host "`n🔎 Verificando que no se hayan agregado nuevas sentencias console.log..."
-      #       Write-Host "Branch actual: $source_branch"
-      #       Write-Host "Branch destino: $target_branch"
+      #       Write-Host "Branch actual: $currentBranch"
+      #       Write-Host "Branch destino: $targetBranch"
 
-      #       git fetch origin $target_branch            
-      #       $diff = git --no-pager diff origin/$target_branch..origin/$source_branch
+      #       git fetch origin $targetBranch            
+      #       $diff = git --no-pager diff origin/$targetBranch..origin/$currentBranch
 
       #       if ($diff | Select-String -Pattern "^\+.*console\.log") {
       #           Write-Host "`n❌ Se encontro 'console.log' en los cambios"

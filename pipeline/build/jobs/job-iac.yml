@@ -100,11 +100,7 @@ jobs:
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/metabase/
           terragrunt plan --all --non-interactive
           terragrunt apply --all --non-interactive
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/collected/
-          terragrunt plan --all --non-interactive
-          terragrunt apply --all --non-interactive
-
+          
 
         displayName: "✔️ Plan"
         workingDirectory: $(Build.SourcesDirectory)/iac-terragrunt/invictus/
