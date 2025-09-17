@@ -14,7 +14,7 @@ jobs:
         persistCredentials: true
 
       - script: |
-          echo "📌 Verificando si feature está actualizada con master y si hay cambios relevantes..."
+          echo -e "\n📌 Verificando si feature está actualizada con master y si hay cambios relevantes..."
 
           git fetch origin master
 
@@ -23,7 +23,7 @@ jobs:
 
           # Verifica si la rama está actualizada
           if [ "$MERGE_BASE" = "$(git rev-parse origin/master)" ]; then
-            echo -e "\n✅ La rama feature está actualizada con master."
+            echo -e "\n✅ La rama feature esta actualizada con master."
           else
             echo -e "\n⚠️ La rama feature NO contiene todos los commits de master. Verificando cambios relevantes en master..."
 
