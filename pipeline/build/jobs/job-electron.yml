@@ -430,4 +430,36 @@ jobs:
             exit 99
           fi
         displayName: "📝 Update version in package.json"
+
+      - script: |
+          echo "🧹 Remove BOM from package.json"
+          FILE_PATH="$(Build.SourcesDirectory)/package.json"
+
+          if [[ -f "$FILE_PATH" ]]; then
+            # Detectar si empieza con BOM
+            if head -c3 "$FILE_PATH" | grep -q $'^\xEF\xBB\xBF'; then
+              # Eliminar BOM reescribiendo el archivo desde el byte 4
+              tail -c +4 "$FILE_PATH" > "$FILE_PATH.tmp" && mv "$FILE_PATH.tmp" "$FILE_PATH"
+              echo -e "\n⚠️  BOM eliminado de package.json"
+            else
+              echo -e "\n✅ package.json no contiene BOM"
+            fi
+          else
+            echo -e "\n❌ package.json no se encontró en $FILE_PATH"
+            exit 99
+          fi
+        displayName: "🧹 Remove BOM from package.json"
+
+      - script: |
+          echo -e "\n📦 Instalando dependencias"
+          npm_config_legacy_peer_deps=true npm i
+
+          echo -e "\n📦 Dependencias instaladas:"
+          npm list --depth=0
+        displayName: "⚙️ Install dependencies"
+
+      - script: |
+          echo -e "\n📦 Build electron"
+          npm_config_legacy_peer_deps=true npm run build
+        displayName: "📦 Build electron"
         
