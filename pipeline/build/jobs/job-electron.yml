@@ -224,36 +224,36 @@ jobs:
   #           Write-Host "📦 Ejecutando build..."
   #           npm run build
 
-  #     - task: PowerShell@2
-  #       displayName: "🔍 Validate Build"
-  #       inputs:
-  #         targetType: " inline"
-  #         script: |
-  #           $ErrorActionPreference = "Stop"
-  #           Write-Host "📝 Validando build electron..."
+      # - task: PowerShell@2
+      #   displayName: "🔍 Validate Build"
+      #   inputs:
+      #     targetType: " inline"
+      #     script: |
+      #       $ErrorActionPreference = "Stop"
+      #       Write-Host "📝 Validando build electron..."
 
-  #           $basePath = "$(Build.SourcesDirectory)\release\$($env:environment)\$($env:version)"
-  #           New-Item -ItemType Directory -Path $basePath\$($env:region) -Force | Out-Null
-  #           $allFound = $true 
+      #       $basePath = "$(Build.SourcesDirectory)\release\$($env:environment)\$($env:version)"
+      #       New-Item -ItemType Directory -Path $basePath\$($env:region) -Force | Out-Null
+      #       $allFound = $true 
 
-  #           $filesToCopy = @(
-  #             "InvictusUX Setup $($env:version).exe",
-  #             "InvictusUX Setup $($env:version).exe.blockmap",
-  #             "latest.yml"
-  #           )
+      #       $filesToCopy = @(
+      #         "InvictusUX Setup $($env:version).exe",
+      #         "InvictusUX Setup $($env:version).exe.blockmap",
+      #         "latest.yml"
+      #       )
 
-  #           foreach ($file in $filesToCopy) {
-  #             $sourcePath      = Join-Path "$basePath" $file
-  #             $destinationPath = Join-Path "$basePath\$($env:region)" $file
+      #       foreach ($file in $filesToCopy) {
+      #         $sourcePath      = Join-Path "$basePath" $file
+      #         $destinationPath = Join-Path "$basePath\$($env:region)" $file
 
-  #             if (Test-Path $sourcePath) {
-  #               Copy-Item -Path $sourcePath -Destination $destinationPath -Force
-  #               Write-Host "📂 Copiado: $file -> $destinationPath"
-  #             } else {
-  #               Write-Host "⚠️ Archivo no encontrado $file -> $sourcePath"
-  #               $allFound = $false
-  #             }
-  #           }
+      #         if (Test-Path $sourcePath) {
+      #           Copy-Item -Path $sourcePath -Destination $destinationPath -Force
+      #           Write-Host "📂 Copiado: $file -> $destinationPath"
+      #         } else {
+      #           Write-Host "⚠️ Archivo no encontrado $file -> $sourcePath"
+      #           $allFound = $false
+      #         }
+      #       }
 
   #           if (-not $allFound) {
   #             Write-Error "`n❌ Error: archivos requeridos no encontrados."
@@ -328,7 +328,7 @@ jobs:
         inputs:
           targetType: "inline"
           script: |
-            echo "🔐 Obteniendo token de AWS CodeArtifact..."
+            echo -e "\n🔐 Obteniendo token de AWS CodeArtifact..."
             token=$(aws codeartifact get-authorization-token \
               --domain matrixtech-npm-repository \
               --domain-owner "$ACCOUNT_ID_DEPLOY" \
@@ -393,6 +393,9 @@ jobs:
           EOF
 
           echo "##vso[task.setvariable variable=environment]$environment"
+          #echo "##vso[task.setvariable variable=region]$region"
+
+          region="dev-test"
           echo "##vso[task.setvariable variable=region]$region"
 
           echo -e "\n✅ Archivo .env creado correctamente"
@@ -414,11 +417,10 @@ jobs:
           versionSpec: "$(versionNode)"
       
       - script: |
-          echo "📦 Modificando versión en package.json: $(msVersion)"
+          echo -e "\n📦 Modificando versión en package.json: $(msVersion)"
           PACKAGE_PATH="$(Build.SourcesDirectory)/package.json"
           
           if [[ -f "$PACKAGE_PATH" ]]; then
-            # Actualizar el campo version
             jq --arg ver "$(msVersion)" '.version = $ver' "$PACKAGE_PATH" > "$PACKAGE_PATH.tmp" && mv "$PACKAGE_PATH.tmp" "$PACKAGE_PATH"
 
             echo -e "\n✅ Versión en package.json actualizada correctamente."
@@ -430,9 +432,11 @@ jobs:
         displayName: "📝 Update version in package.json"
 
       - script: |
-          echo -e "\n📦 Instalando dependencias..."
+          echo -e "\n📦 Instalando dependencias ubuntu..."
           sudo apt-get update
           sudo apt-get install -y libcups2-dev
+
+          echo -e "\n📦 Instalando dependencias node..."
           npm_config_legacy_peer_deps=true npm i
 
           echo -e "\n📦 Dependencias instaladas:"
@@ -445,10 +449,51 @@ jobs:
         displayName: "📦 Build electron"
 
       - script: |
-          echo "📝 Validando build electron..."
+          echo -e "\n📝 Validando build electron..."
 
           BASE_PATH="$(Build.SourcesDirectory)/release/$(environment)/$(msVersion)"
+          REGION_PATH="$BASE_PATH/$(region)"
+          mkdir -p "$REGION_PATH"
+          all_found=true
+          
+          FILES_TO_COPY=(
+            "InvictusUX-$(msVersion).AppImage"
+            "latest-linux.yml"
+          )
 
+          for file in "${FILES_TO_COPY[@]}"; do
+            source_path="$BASE_PATH/$file"
+            destination_path="$REGION_PATH/$file"
+
+            if [ -f "$source_path" ]; then
+              cp -f "$source_path" "$destination_path"
+              echo "📂 Copiado: $file -> $destination_path"
+            else
+              echo "⚠️ Archivo no encontrado $file -> $source_path"
+              all_found=false
+            fi
+          done
+
+          if [ "$all_found" = false ]; then
+            echo -e "\n❌ Error: archivos requeridos no encontrados."
+            exit 99
+          else
+            echo -e "\n📂 Directorio: $REGION_PATH"
+            ls -l "$REGION_PATH"
+          fi
+        displayName: "🔍 Validate Build"
+
+      - script: |
+          echo -e "\n📦 Cargando al Bucket S3..."
+          BASE_PATH="$(Build.SourcesDirectory)/release/$(environment)/$(msVersion)/$(region)"
+
+          echo -e "\n📂 Archivos a cargar: $BASE_PATH"
           ls -l "$BASE_PATH"
 
-        displayName: "🔍 Validate Build Files"
+          aws s3 cp "$BASE_PATH" "s3://e-remote/invictus-electron/linux/$(region)" --recursive --acl public-read
+        displayName: "📤 Upload Bucket S3"
+        #condition: not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
+        env:
+          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
+          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
