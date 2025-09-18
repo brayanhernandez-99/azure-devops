@@ -141,11 +141,7 @@ jobs:
             "@ | Set-Content -Encoding UTF8 .env
               
               Write-Host "##vso[task.setvariable variable=environment]$environment"
-              #Write-Host "##vso[task.setvariable variable=region]$region"
-              
-              $region="dev-test"
               Write-Host "##vso[task.setvariable variable=region]$region"
-              
               Write-Host "`n✅ Archivo .env creado correctamente"
               Get-Content .env
             } else {
@@ -280,7 +276,7 @@ jobs:
             Get-ChildItem "$basePath" -Force | Select-Object Mode, LastWriteTime, Length, Name | Format-Table -AutoSize
 
             aws s3 cp "$basePath" "s3://e-remote/invictus-electron/windows/$($env:region)" --recursive --acl public-read
-        #condition: not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
+        condition: not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
         env:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
@@ -396,11 +392,7 @@ jobs:
           EOF
 
           echo "##vso[task.setvariable variable=environment]$environment"
-          #echo "##vso[task.setvariable variable=region]$region"
-
-          region="dev-test"
           echo "##vso[task.setvariable variable=region]$region"
-
           echo -e "\n✅ Archivo .env creado correctamente"
           cat .env
         displayName: "⚙️ Generate .env"
@@ -495,7 +487,7 @@ jobs:
 
           aws s3 cp "$BASE_PATH" "s3://e-remote/invictus-electron/linux/$(region)" --recursive --acl public-read
         displayName: "📤 Upload Bucket S3"
-        #condition: not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
+        condition: not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
         env:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
