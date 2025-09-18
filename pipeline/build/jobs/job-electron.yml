@@ -447,9 +447,8 @@ jobs:
       - script: |
           echo "📝 Validando build electron..."
 
-          BASE_PATH="$(Build.SourcesDirectory)/release/$(environment)/$(version)"
+          BASE_PATH="$(Build.SourcesDirectory)/release/$(environment)/$(msVersion)"
 
           ls -l "$BASE_PATH"
 
-        displayName: "📦 Build electron"
-        
+        displayName: "🔍 Validate Build Files"
