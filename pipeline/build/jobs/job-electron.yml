@@ -412,3 +412,22 @@ jobs:
         inputs:
           versionSource: "spec"
           versionSpec: "$(versionNode)"
+
+
+      - script: |
+          echo "📦 Modificando versión en package.json: $(msVersion)"
+
+          PACKAGE_PATH="$(Build.SourcesDirectory)/package.json"
+
+          if [[ -f "$PACKAGE_PATH" ]]; then
+            # Actualizar el campo version
+            jq --arg ver "$(msVersion)" '.version = $ver' "$PACKAGE_PATH" > "$PACKAGE_PATH.tmp" && mv "$PACKAGE_PATH.tmp" "$PACKAGE_PATH"
+
+            echo -e "\n✅ Versión en package.json actualizada correctamente."
+            cat "$PACKAGE_PATH"
+          else
+            echo -e "\n❌ No se encontró el archivo package.json en la ruta [$PACKAGE_PATH]"
+            exit 99
+          fi
+        displayName: "📝 Update version in package.json"
+        
