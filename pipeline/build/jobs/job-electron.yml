@@ -413,19 +413,10 @@ jobs:
           versionSource: "spec"
           versionSpec: "$(versionNode)"
       
-      - task: Bash@3
-        inputs:
-          targetType: "inline"
-          script: |
-            sudo apt-get update
-            sudo apt-get install -y libcups2-dev
-        displayName: "📦 Instalar dependencias de impresión"
-
       - script: |
           echo "📦 Modificando versión en package.json: $(msVersion)"
-
           PACKAGE_PATH="$(Build.SourcesDirectory)/package.json"
-
+          
           if [[ -f "$PACKAGE_PATH" ]]; then
             # Actualizar el campo version
             jq --arg ver "$(msVersion)" '.version = $ver' "$PACKAGE_PATH" > "$PACKAGE_PATH.tmp" && mv "$PACKAGE_PATH.tmp" "$PACKAGE_PATH"
@@ -440,6 +431,8 @@ jobs:
 
       - script: |
           echo -e "\n📦 Instalando dependencias..."
+          sudo apt-get update
+          sudo apt-get install -y libcups2-dev
           npm_config_legacy_peer_deps=true npm i
 
           echo -e "\n📦 Dependencias instaladas:"
