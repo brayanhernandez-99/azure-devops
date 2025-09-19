@@ -23,3 +23,8 @@ stages:
           - template: jobs/job-electron.yml
             parameters:
               red: ${{ parameters.red }}
+
+      - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), in(variables['Build.SourceBranch'], 'refs/heads/develop', 'refs/heads/staging','refs/heads/master' )), eq(parameters.red, 'antioquia')) }}:
+          - template: ../general/commit-tag-changeload-electron.yml
+            parameters:
+              red: ${{ parameters.red }}

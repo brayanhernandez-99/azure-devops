@@ -259,26 +259,25 @@ jobs:
           publishLocation: "Container"
         displayName: "📦 Public artifact version"
 
-      - script: |
-          raw_branch=$(Build.SourceBranch)
-          clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
+      # - script: |
+      #     raw_branch=$(Build.SourceBranch)
+      #     clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
 
-          # cd $(System.DefaultWorkingDirectory)/apps/$(msName)
-          echo "🔧 Actualizando versión en $(Build.Repository.Name)/package.json a $(cleanNEXT_VERSION)"
-          jq --arg version "$(cleanNEXT_VERSION)" '.version = $version' package.json > tmp.json && mv tmp.json package.json
+      #     echo "🔧 Actualizando versión en $(Build.Repository.Name)/package.json a $(cleanNEXT_VERSION)"
+      #     jq --arg version "$(cleanNEXT_VERSION)" '.version = $version' package.json > tmp.json && mv tmp.json package.json
 
-          git config user.name "pipeline"
-          git config user.email "pipelineUX@ux.technology"
+      #     git config user.name "pipeline"
+      #     git config user.email "pipelineUX@ux.technology"
 
-          git checkout version/$clean_branch
-          git pull origin version/$clean_branch
-          git add package.json
-          git commit -m "chore($(Build.Repository.Name)): bump version to $(cleanNEXT_VERSION)"
-          git push origin version/$clean_branch
-        displayName: "⚡ Bump Version & Push — $(Build.Repository.Name)"
-        condition:
-          and(
-            succeeded(),
-            ne(variables['Build.SourceBranchName'], 'master'),
-            not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
-          )
+      #     git checkout version/$clean_branch
+      #     git pull origin version/$clean_branch
+      #     git add package.json
+      #     git commit -m "chore($(Build.Repository.Name)): bump version to $(cleanNEXT_VERSION)"
+      #     git push origin version/$clean_branch
+      #   displayName: "⚡ Bump Version & Push — $(Build.Repository.Name)"
+      #   condition:
+      #     and(
+      #       succeeded(),
+      #       ne(variables['Build.SourceBranchName'], 'master'),
+      #       not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
+      #     )
