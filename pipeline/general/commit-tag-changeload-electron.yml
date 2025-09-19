@@ -20,39 +20,6 @@ jobs:
         persistCredentials: true
 
       - script: |
-          echo "📌 Verificando si feature está actualizada con master y si hay cambios relevantes..."
-
-          git fetch origin master
-
-          # Encuentra el punto de bifurcación (base común)
-          MERGE_BASE=$(git merge-base HEAD origin/master)
-
-          # Verifica si la rama está actualizada
-          if [ "$MERGE_BASE" = "$(git rev-parse origin/master)" ]; then
-            echo "✅ La rama feature está actualizada con master."
-          else
-            echo "⚠️ La rama feature NO contiene todos los commits de master. Verificando cambios relevantes en master..."
-
-            # Obtén los archivos cambiados en master desde el punto de bifurcación
-            CHANGED_FILES=$(git diff --name-only "$MERGE_BASE".."origin/master")
-
-            echo "🔍 Archivos nuevos en master desde el punto de bifurcación:"
-            echo "$CHANGED_FILES"
-
-            # Filtrar cambios relevantes (ignorar carpeta pipeline/)
-            RELEVANT_CHANGES=$(echo "$CHANGED_FILES" | grep -vE '^pipeline/')
-
-            if [[ -z "$RELEVANT_CHANGES" ]]; then
-              echo "ℹ️ Solo hay cambios en archivos ignorados (pipeline/). Continuando..."
-            else
-              echo "❌ Cambios relevantes detectados en master y no están integrados. Debes actualizar tu rama."
-              exit 99
-            fi
-          fi
-        displayName: "Validate feature branch is up to date"
-        condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
-
-      - script: |
           REPO_ID=$(curl -s -u ":$AZURE_DEVOPS_CLI_PAT" \
             "https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories?api-version=5.0" \
             | jq -r '.value[] | select(.name == "$(Build.Repository.Name)").id')
@@ -60,7 +27,7 @@ jobs:
           echo "##vso[task.setvariable variable=repoID]$REPO_ID"
         env:
           AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
-        displayName: "ID Repositorio"
+        displayName: "📌 Set Repository ID"
 
       - script: |
           echo "id del repositorio $(Build.Repository.Name) = $(repoID)"
@@ -88,7 +55,7 @@ jobs:
           echo "{\"idpr\": \"$PR_ID\" }" > $(Build.ArtifactStagingDirectory)/idpr/idpr.json
         env:
           AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
-        displayName: "ID Pull Request"
+        displayName: "📌 Set Pull Request ID"
         condition: not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
 
       - script: |
@@ -102,13 +69,12 @@ jobs:
           echo "##vso[task.setvariable variable=filteredCommits]$SAFE_COMMITS"
         env:
           AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
-        displayName: "Details of Pull Request Commits"
+        displayName: "📝 Pull Request Commit Details"
         condition: not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
 
       - script: |
           CURRENT_BRANCH=$(echo $(Build.SourceBranch))
           echo $CURRENT_BRANCH
-
 
           if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|master|staging|feature/.+)$ ]]; then
 
@@ -187,14 +153,14 @@ jobs:
 
             if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|staging|feature/.+)$ ]]; then
               git checkout version/$clean_branch
-              VERSION_ACTUAL=$(jq -r .VERSION  env.json)
+              VERSION_ACTUAL=$(jq -r .version  package.json)
               BASE_VERSION_BRANCH=$(echo "$VERSION_ACTUAL" | sed -E "s/-${clean_branch}\.[0-9]+//")
               echo "versión base actual: $BASE_VERSION_BRANCH"
 
               CURRENT_PRERELEASE=$(echo "$VERSION_ACTUAL" | sed -n "s/.*-${clean_branch}\.\([0-9]\+\)/\1/p")
 
               git checkout version/master
-              VERSION_ACTUAL_MASTER=$(jq -r .VERSION env.json)
+              VERSION_ACTUAL_MASTER=$(jq -r .version package.json)
               echo "versión base master: $VERSION_ACTUAL_MASTER"
 
               git checkout version/$clean_branch
@@ -221,7 +187,7 @@ jobs:
 
             if [[ "$CURRENT_BRANCH" == refs/heads/master ]]; then
               git checkout version/$clean_branch
-              VERSION_ACTUAL_MASTER=$(jq -r .VERSION env.json)
+              VERSION_ACTUAL_MASTER=$(jq -r .version package.json)
               NEXT_BASE_VERSION=$(bump_version "$VERSION_ACTUAL_MASTER" "$RELEASE_TYPE")
               NEXT_VERSION="$NEXT_BASE_VERSION"
 
@@ -230,9 +196,9 @@ jobs:
               echo "🚀 Próxima versión : $NEXT_VERSION"
             fi
 
-            mkdir -p $(Build.ArtifactStagingDirectory)/version-apk
-            touch $(Build.ArtifactStagingDirectory)/version-apk/version-apk.json
-            echo "{ \"ms\": \"apk\", \"version\": \"$NEXT_VERSION\" }" > $(Build.ArtifactStagingDirectory)/version-apk/version-apk.json
+            mkdir -p $(Build.ArtifactStagingDirectory)/electron
+            touch $(Build.ArtifactStagingDirectory)/electron/version.json
+            echo "{ \"release\": \"exe\", \"version\": \"$NEXT_VERSION\" }" > $(Build.ArtifactStagingDirectory)/electron/version.json
 
             echo "##vso[task.setvariable variable=cleanNEXT_VERSION]$NEXT_VERSION"
           fi
@@ -240,93 +206,21 @@ jobs:
         name: SemanticJob
 
       - script: |
-          CURRENT_BRANCH=$(echo $(Build.SourceBranch))
-          echo $CURRENT_BRANCH
-
-          if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|master|staging|feature/.+)$ ]]; then
-
-            if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
-              clean_branch=develop
-              echo $clean_branch
-            fi
-
-            if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|staging|master)$ ]]; then
-              raw_branch=$(Build.SourceBranch)
-              clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
-            fi
-
-            if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|staging|feature/.+)$ ]]; then
-              git checkout version/$clean_branch
-              VERSION_ACTUAL=$(grep '^version:' pubspec.yaml | cut -d ' ' -f2)
-              echo "versión base actual: $VERSION_ACTUAL"
-
-              git checkout version/master
-              VERSION_ACTUAL_MASTER=$(grep '^version:' pubspec.yaml | cut -d ' ' -f2)
-              echo "versión base master: $VERSION_ACTUAL_MASTER"
-
-              git checkout version/$clean_branch
-
-              BUILD_NUMBER_VERSION_ACTUAL="${VERSION_ACTUAL#*+}"
-              BUILD_NUMBER_VERSION_MASTER="${VERSION_ACTUAL_MASTER#*+}"
-
-              echo -e "\n🔍 Versiones Detectadas"
-              echo "📌 Actual: $BUILD_NUMBER_VERSION_ACTUAL"
-              echo "📌 Master: $BUILD_NUMBER_VERSION_MASTER"
-
-              if [[ $BUILD_NUMBER_VERSION_ACTUAL == $BUILD_NUMBER_VERSION_MASTER ]]; then 
-                NEW_BUILD_NUMBER=$((BUILD_NUMBER_VERSION_ACTUAL + 1))
-              elif [[ $BUILD_NUMBER_VERSION_ACTUAL > $BUILD_NUMBER_VERSION_MASTER ]]; then 
-                NEW_BUILD_NUMBER=$BUILD_NUMBER_VERSION_ACTUAL
-              elif [[ $BUILD_NUMBER_VERSION_ACTUAL < $BUILD_NUMBER_VERSION_MASTER ]]; then 
-                NEW_BUILD_NUMBER=$((BUILD_NUMBER_VERSION_MASTER + 1))
-              fi
-              echo "🚀 Nuevo Build: +$NEW_BUILD_NUMBER"
-            fi
-
-            if [[ "$CURRENT_BRANCH" == refs/heads/master ]]; then
-              git checkout version/$clean_branch
-              VERSION_ACTUAL_MASTER=$(grep '^version:' pubspec.yaml | cut -d ' ' -f2)
-              BUILD_NUMBER_VERSION_MASTER="${VERSION_ACTUAL_MASTER#*+}"
-              NEW_BUILD_NUMBER=$((BUILD_NUMBER_VERSION_MASTER + 1))
-
-              echo -e "\n🔍 Versiones Detectadas"
-              echo "📌 Anterior versión : +$BUILD_NUMBER_VERSION_MASTER"
-              echo "🚀 Próxima versión : +$NEW_BUILD_NUMBER"
-            fi
-
-            mkdir -p $(Build.ArtifactStagingDirectory)/version-pubspec-apk
-            touch $(Build.ArtifactStagingDirectory)/version-pubspec-apk/version-pubspec-apk.json
-            echo "{ \"ms\": \"pubspec-apk\", \"version\": \"$NEW_BUILD_NUMBER\" }" > $(Build.ArtifactStagingDirectory)/version-pubspec-apk/version-pubspec-apk.json
-
-            echo "##vso[task.setvariable variable=NEXT_VERSION_PUB]$NEW_BUILD_NUMBER"
-          fi
-        displayName: "🔍 Detect next version pubspec"
-        name: SemanticJobPubspec
-
-      - script: |
           raw_branch=$(Build.SourceBranch)
           clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
+
+          echo "🔧 Actualizando versión en $(Build.Repository.Name)/package.json a $(cleanNEXT_VERSION)"
+          jq --arg version "$(cleanNEXT_VERSION)" '.version = $version' package.json > tmp.json && mv tmp.json package.json
 
           git config user.name "pipeline"
           git config user.email "pipelineUX@ux.technology"
 
           git checkout version/$clean_branch
-
-          echo "🔧 Actualizando versión $(cleanNEXT_VERSION) en el pubspec.yaml"
-          sed -i "s/^version: .*/version: $(cleanNEXT_VERSION)+$(NEXT_VERSION_PUB)/" pubspec.yaml
-
-          cat pubspec.yaml
-
-          jq --arg version "$(cleanNEXT_VERSION)"  '.VERSION = $version' env.json > tmp.json && mv tmp.json env.json
-
-          echo " "
-          cat env.json
-
-          git add env.json pubspec.yaml
-          git commit -m "chore Flutter: bump version to $(cleanNEXT_VERSION)"
+          git pull origin version/$clean_branch
+          git add package.json
+          git commit -m "chore($(Build.Repository.Name)): bump version to $(cleanNEXT_VERSION)"
           git push origin version/$clean_branch
-
-        displayName: "Update Version and Push"
+        displayName: "⚡ Bump Version & Push — $(Build.Repository.Name)"
 
   - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/master') }}:
       - job: "create_publish_versioning"
@@ -336,5 +230,5 @@ jobs:
           vmImage: "ubuntu-22.04"
         steps:
           - task: git-tag-on-release-task@9
-            displayName: "Create and Publish Versioning Tag"
+            displayName: "📦 Create and Publish Versioning Tag"
             continueOnError: true
