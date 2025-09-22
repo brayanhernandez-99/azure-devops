@@ -5,11 +5,11 @@ variables:
 
   # Feature branch
   - ${{ if or( startsWith(variables['Build.SourceBranch'], 'refs/heads/feature'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix')) }}:
+      - group: trasversal-aws-devops
+      - group: transversal-app-cloudFront-devops
       - group: transversal-app-administration-vue2-develop
       - group: transversal-app-sellers-vue2-develop
       - group: transversal-app-invictus-microfrontend-develop
-      - group: trasversal-aws-devops
-      - group: transversal-app-cloudFront-devops
 
   # Develop branch
   - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:

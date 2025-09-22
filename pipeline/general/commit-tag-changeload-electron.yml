@@ -1,8 +1,10 @@
 jobs:
   - job: "commit_tag_version"
     dependsOn:
-      - "build_electron_windows"
-    condition: in(dependencies.build_flutter.result, 'Succeeded', 'SucceededWithIssues')
+      - build_electron_windows
+      - build_electron_linux
+    condition: |
+      and(in(dependencies.build_electron_windows.result, 'Succeeded', 'SucceededWithIssues'),in(dependencies.build_electron_linux.result, 'Succeeded', 'SucceededWithIssues'))
 
     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
       displayName: "Commit and Tag Version Develop"

@@ -3,7 +3,7 @@ variables:
   - group: trasversal-infrastructure-invictus
 
 
-  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/feature/develop') }}:
+  - ${{ if or( startsWith(variables['Build.SourceBranch'], 'refs/heads/feature'), startsWith(variables['Build.SourceBranch'], 'refs/heads/develop')) }}:
     - group: trasversal-aws-develop
     - group: variables-infrastructure-develop
     - group: parameters-infrastructure-develop
