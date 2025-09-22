@@ -5,35 +5,35 @@ variables:
 
   # Develop or Feature branch
   - ${{ if or( startsWith(variables['Build.SourceBranch'], 'refs/heads/feature'), startsWith(variables['Build.SourceBranch'], 'refs/heads/develop')) }}:
-      - group: variables-electron-develop
+      - group: variables-flutter-develop
       - group: trasversal-aws-developer
 
   # Staging branch
   - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
-      - group: variables-electron-staging
+      - group: variables-flutter-staging
       - group: trasversal-aws-staging
 
   # Master or tags → por red
   - ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'antioquia')) }}:
-      - group: variables-electron-master-antioquia
+      - group: variables-flutter-antioquia
       - group: trasversal-aws-master-antioquia
 
   - ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'cap')) }}:
-      - group: variables-electron-master-cap
+      - group: variables-flutter-cap
       - group: trasversal-aws-master-cap
 
   - ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'tolima')) }}:
-      - group: variables-electron-master-tolima
+      - group: variables-flutter-tolima
       - group: trasversal-aws-master-tolima
 
   - ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'huila')) }}:
-      - group: variables-electron-master-huila
+      - group: variables-flutter-huila
       - group: trasversal-aws-master-huila
 
   - ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'cauca')) }}:
-      - group: variables-electron-master-cauca
+      - group: variables-flutter-cauca
       - group: trasversal-aws-master-cauca
 
   - ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'boyaca')) }}:
-      - group: variables-electron-master-boyaca
+      - group: variables-flutter-boyaca
       - group: trasversal-aws-master-boyaca

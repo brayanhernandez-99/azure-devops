@@ -29,7 +29,6 @@ jobs:
       vmImage: "macos-latest"
     variables:
       ANDROID_HOME: /Users/runner/Library/Android/sdk
-      flutterCacheKey: $(Build.SourceVersion)
       versionFlutter: $[coalesce(variables.flutterVersion, '3.24.0')]
 
     steps:

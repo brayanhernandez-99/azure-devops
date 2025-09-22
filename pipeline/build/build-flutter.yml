@@ -14,7 +14,7 @@ stages:
     condition: in(dependencies.semantic_version_integration.result, 'Succeeded', 'SucceededWithIssues')
 
     variables:
-      - template: ../variables/groups-transversal-variables.yml
+      - template: ../variables/groups-transversal-variables-flutter.yml
         parameters:
           red: ${{ parameters.red }}
 
