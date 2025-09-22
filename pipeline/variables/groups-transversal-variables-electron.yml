@@ -11,7 +11,7 @@ variables:
   # Staging branch
   - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
       - group: variables-electron-staging
-      - group: trasversal-aws-staging
+      - group: trasversal-aws-qa
 
   # Master or tags → por red
   - ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'antioquia')) }}:
