@@ -97,33 +97,10 @@ jobs:
       - script: |
           set -e
         
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3/s3-astro
+
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront-function
           terragrunt plan --all --non-interactive
           terragrunt apply --all --non-interactive
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3/s3-millonario
-          terragrunt plan --all --non-interactive
-          terragrunt apply --all --non-interactive
-
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-astro
-          terragrunt plan --all --non-interactive
-          terragrunt apply --all --non-interactive
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-millonario
-          terragrunt plan --all --non-interactive
-          terragrunt apply --all --non-interactive
-          
-
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-astro-policy
-          terragrunt plan --all --non-interactive
-          terragrunt apply --all --non-interactive
-          
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-millonario-policy
-          terragrunt plan --all --non-interactive
-          terragrunt apply --all --non-interactive
-
 
 
           # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront-metabase
