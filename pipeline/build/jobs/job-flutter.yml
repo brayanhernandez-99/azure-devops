@@ -266,12 +266,17 @@ jobs:
           echo "Red: $red"
 
           mkdir -p build/app/outputs/flutter-apk/$(environment)
-          mv build/app/outputs/flutter-apk/$(apk-name) build/app/outputs/flutter-apk/$(environment)
+          cp build/app/outputs/flutter-apk/$(apk-name) build/app/outputs/flutter-apk/$(environment)
 
           echo -e "\n📁 Archivos a cargar:"
           ls -l build/app/outputs/flutter-apk/$(environment)
 
           aws s3 cp build/app/outputs/flutter-apk/$(environment) s3://repository-native/app-seller/android/$(environment) --recursive --acl public-read
+          
+          echo -e "\n✅ Archivos subidos exitosamente."
+          echo "🔗 APK: $(apk-name)"
+          echo "🔗 URL: https://repository-native.s3.us-east-1.amazonaws.com/app-seller/android/$(environment)/$(apk-name)/"
+          
         displayName: "📤 Upload Bucket S3"
         condition: not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
         env:

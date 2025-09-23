@@ -276,6 +276,11 @@ jobs:
             Get-ChildItem "$basePath" -Force | Select-Object Mode, LastWriteTime, Length, Name | Format-Table -AutoSize
 
             aws s3 cp "$basePath" "s3://e-remote/invictus-electron/windows/$($env:region)" --recursive --acl public-read
+
+            echo -e "\n✅ Archivos subidos exitosamente."
+            echo "🔗 APP: InvictusUX Setup $(msVersion).exe"
+            echo "🔗 URL: https://e-remote.s3.us-east-1.amazonaws.com/invictus-electron/windows/$(environment)/InvictusUX+Setup+$(msVersion).exe"
+
         condition: not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
         env:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
@@ -486,6 +491,11 @@ jobs:
           ls -l "$BASE_PATH"
 
           aws s3 cp "$BASE_PATH" "s3://e-remote/invictus-electron/linux/$(region)" --recursive --acl public-read
+
+          echo -e "\n✅ Archivos subidos exitosamente."
+          echo "🔗 APP: InvictusUX-$(msVersion).AppImage"
+          echo "🔗 URL: https://e-remote.s3.us-east-1.amazonaws.com/invictus-electron/linux/$(environment)/InvictusUX-$(msVersion).AppImage"
+
         displayName: "📤 Upload Bucket S3"
         condition: not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
         env:
