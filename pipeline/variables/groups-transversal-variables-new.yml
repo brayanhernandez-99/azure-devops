@@ -21,6 +21,7 @@ variables:
 
   # Master or tags → por red
   - ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'antioquia')) }}:
+      - group: trasversal-aws-devops
     #   - group: trasversal-aws-master-antioquia
     #   - group: transversal-app-cloudFront-master-antioquia
     #   - group: transversal-app-administration-vue2-master-antioquia
@@ -28,6 +29,7 @@ variables:
     #   - group: transversal-app-invictus-microfrontend-master-antioquia
 
   - ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'cap')) }}:
+      - group: trasversal-aws-devops
     #   - group: trasversal-aws-master-cap
     #   - group: transversal-app-cloudFront-master-cap
     #   - group: transversal-app-administration-vue2-master-cap
@@ -35,6 +37,7 @@ variables:
     #   - group: transversal-app-invictus-microfrontend-master-cap
 
   - ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'tolima')) }}:
+      - group: trasversal-aws-devops
     #   - group: trasversal-aws-master-tolima
     #   - group: transversal-app-cloudFront-master-tolima
     #   - group: transversal-app-administration-vue2-master-tolima
@@ -42,6 +45,7 @@ variables:
     #   - group: transversal-app-invictus-microfrontend-master-tolima
 
   - ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'huila')) }}:
+      - group: trasversal-aws-devops
     #   - group: trasversal-aws-master-huila
     #   - group: transversal-app-cloudFront-master-huila
     #   - group: transversal-app-administration-vue2-master-huila
@@ -49,6 +53,7 @@ variables:
     #   - group: transversal-app-invictus-microfrontend-master-huila
 
   - ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'cauca')) }}:
+      - group: trasversal-aws-devops
     #   - group: trasversal-aws-master-cauca
     #   - group: transversal-app-cloudFront-master-cauca
     #   - group: transversal-app-administration-vue2-master-cauca
@@ -56,6 +61,7 @@ variables:
     #   - group: transversal-app-invictus-microfrontend-master-cauca
 
   - ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'boyaca')) }}:
+      - group: trasversal-aws-devops
     #   - group: trasversal-aws-master-boyaca
     #   - group: transversal-app-cloudFront-master-boyaca
     #   - group: transversal-app-administration-vue2-master-boyaca

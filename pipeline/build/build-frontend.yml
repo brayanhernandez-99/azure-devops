@@ -7,17 +7,24 @@ stages:
     jobs:
       - template: ../general/semantic-version-frontend.yml
         parameters:
-        apps: ${{ parameters.apps }}
+          apps: ${{ parameters.apps }}
 
   - stage: "build_developmet_${{ parameters.red }}"
     ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/') }}:
       displayName: "📦 Build Development Feature"
+    ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix') }}:
+      displayName: "📦 Build Development Hotfix"
     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
       displayName: "📦 Build Development Develop"
     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
       displayName: "📦 Build Development Staging"
     ${{ if or(eq(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')) }}:
       displayName: "📦 Build Development Master ${{ parameters.red }}"
+
+    ${{ if ne(variables['Build.SourceBranch'], 'refs/heads/master') }}:
+      dependsOn:
+        - "microservices_developmet"
+      condition: in(dependencies.microservices_developmet.result, 'Succeeded', 'SucceededWithIssues')
 
     ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), in(variables['Build.SourceBranch'], 'refs/heads/master')) }}:
       dependsOn:
@@ -30,8 +37,7 @@ stages:
           red: ${{ parameters.red }}
 
     jobs:
-      - ${{ if eq(parameters.release, 'aws-s3') }}:
-          - template: jobs/job-frontend.yml
-            parameters:
-              apps: ${{ parameters.apps }}
-              red: ${{ parameters.red }}
+      - template: jobs/job-frontend.yml
+        parameters:
+          apps: ${{ parameters.apps }}
+          red: ${{ parameters.red }}
