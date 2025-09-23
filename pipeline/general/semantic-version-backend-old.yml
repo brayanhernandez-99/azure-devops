@@ -6,7 +6,7 @@ jobs:
       VmImage: ubuntu-22.04
 
     variables:
-      - template: ../variables/groups-transversal-variables.yml
+      - template: ../variables/groups-transversal-variables-new.yml
 
     strategy:
       matrix:

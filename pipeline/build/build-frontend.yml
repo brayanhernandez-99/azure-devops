@@ -1,9 +1,19 @@
 stages:
+  - stage: "microservices_developmet"
+    displayName: "🧩 Semantic Version MicroFrontend"
+    dependsOn: []
+    condition: and(succeeded(), ne(variables['Build.SourceBranch'], 'refs/heads/master'))
+
+    jobs:
+      - template: ../general/semantic-version-frontend.yml
+        parameters:
+        apps: ${{ parameters.apps }}
+
   - stage: "build_developmet_${{ parameters.red }}"
     ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/') }}:
-      displayName: "📦 Build Feature"
+      displayName: "📦 Build Development Feature"
     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
-      displayName: "📦 Build Development"
+      displayName: "📦 Build Development Develop"
     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
       displayName: "📦 Build Development Staging"
     ${{ if or(eq(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')) }}:
@@ -15,7 +25,6 @@ stages:
       condition: in(dependencies.semantic_version_integration.result, 'Succeeded', 'SucceededWithIssues')
 
     variables:
-      #- template: ../variables/groups-transversal-variables.yml
       - template: ../variables/groups-transversal-variables-new.yml
         parameters:
           red: ${{ parameters.red }}

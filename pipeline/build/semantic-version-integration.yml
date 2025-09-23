@@ -4,13 +4,11 @@ stages:
     dependsOn: []
 
     variables:
-      - template: ../variables/groups-transversal-variables.yml
+      - template: ../variables/groups-transversal-variables-new.yml
 
     jobs:
       - ${{ if eq(parameters.release, 'aws-ecs') }}:
           - template: ../general/semantic-version-backend.yml
-            # parameters:
-            #   apps: ${{ parameters.apps }}
 
       - ${{ if eq(parameters.release, 'aws-s3') }}:
           - template: ../general/semantic-version-frontend.yml

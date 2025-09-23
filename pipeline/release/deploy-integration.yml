@@ -22,7 +22,7 @@ stages:
       VmImage: Ubuntu-20.04
 
     variables:
-      - template: ../variables/groups-transversal-variables.yml
+      - template: ../variables/groups-transversal-variables-new.yml
         parameters:
           red: ${{ parameters.red }}
 

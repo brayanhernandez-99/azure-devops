@@ -1,22 +1,13 @@
 stages:
   - stage: "microservices_developmet"
-    ${{ if eq(parameters.release, 'aws-ecs') }}:
-      displayName: "🧩 Semantic Version Microservices"
-    ${{ if eq(parameters.release, 'aws-s3') }}:
-      displayName: "🧩 Semantic Version MicroFrontend"
+    displayName: "🧩 Semantic Version MicroServices"
     dependsOn: []
     condition: and(succeeded(), ne(variables['Build.SourceBranch'], 'refs/heads/master'))
 
     jobs:
-      - ${{ if eq(parameters.release, 'aws-ecs') }}:
-          - template: ../general/semantic-version-backend.yml
-            parameters:
-              apps: ${{ parameters.apps }}
-
-      - ${{ if eq(parameters.release, 'aws-s3') }}:
-          - template: ../general/semantic-version-frontend.yml
-            parameters:
-              apps: ${{ parameters.apps }}
+      - template: ../general/semantic-version-backend.yml
+        parameters:
+        apps: ${{ parameters.apps }}
 
   - stage: "build_developmet_${{ parameters.red }}"
     ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/feature') }}:
@@ -24,7 +15,7 @@ stages:
     ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix') }}:
       displayName: "📦 Build Development Hotfix"
     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
-      displayName: "📦 Build Development"
+      displayName: "📦 Build Development Develop"
     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
       displayName: "📦 Build Development Staging"
     ${{ if or(eq(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')) }}:
@@ -41,14 +32,11 @@ stages:
       condition: in(dependencies.semantic_version_integration.result, 'Succeeded', 'SucceededWithIssues')
 
     variables:
-      #- template: ../variables/groups-transversal-variables.yml
       - template: ../variables/groups-transversal-variables-new.yml
 
     jobs:
       - ${{ if eq(parameters.release, 'aws-ecs') }}:
           - template: jobs/job-backend.yml
-            # parameters:
-            #   apps: ${{ parameters.apps }}
 
       - ${{ if eq(parameters.release, 'aws-s3') }}:
           - template: jobs/job-frontend.yml
