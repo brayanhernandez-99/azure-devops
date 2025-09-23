@@ -1,5 +1,5 @@
 stages:
-  - stage: "microservices_developmet"
+  - stage: "microservices_development"
     ${{ if eq(parameters.release, 'aws-ecs') }}:
       displayName: "🧩 Semantic Version Microservices"
     ${{ if eq(parameters.release, 'aws-s3') }}:
@@ -18,7 +18,7 @@ stages:
             parameters:
               apps: ${{ parameters.apps }}
 
-  - stage: "build_developmet_${{ parameters.red }}"
+  - stage: "build_development_${{ parameters.red }}"
     ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/feature') }}:
       displayName: "📦 Build Development Feature"
     ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix') }}:
@@ -32,8 +32,8 @@ stages:
 
     ${{ if ne(variables['Build.SourceBranch'], 'refs/heads/master') }}:
       dependsOn:
-        - "microservices_developmet"
-      condition: in(dependencies.microservices_developmet.result, 'Succeeded', 'SucceededWithIssues')
+        - "microservices_development"
+      condition: in(dependencies.microservices_development.result, 'Succeeded', 'SucceededWithIssues')
 
     ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), in(variables['Build.SourceBranch'], 'refs/heads/master')) }}:
       dependsOn:
@@ -41,13 +41,11 @@ stages:
       condition: in(dependencies.semantic_version_integration.result, 'Succeeded', 'SucceededWithIssues')
 
     variables:
-      - template: ../variables/groups-transversal-variables.yml
+      - template: ../variables/groups-transversal-variables-new.yml
 
     jobs:
       - ${{ if eq(parameters.release, 'aws-ecs') }}:
           - template: jobs/job-backend.yml
-            # parameters:
-            #   apps: ${{ parameters.apps }}
 
       - ${{ if eq(parameters.release, 'aws-s3') }}:
           - template: jobs/job-frontend.yml

@@ -1,5 +1,5 @@
 stages:
-  - stage: "build_developmet_${{ parameters.red }}"
+  - stage: "build_development_${{ parameters.red }}"
     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
       displayName: "📦 Build Development"
     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
@@ -13,7 +13,7 @@ stages:
       condition: in(dependencies.semantic_version_integration.result, 'Succeeded', 'SucceededWithIssues')
 
     variables:
-      - template: ../variables/groups-transversal-variables.yml
+      - template: ../variables/groups-transversal-variables-new.yml
         parameters:
           red: ${{ parameters.red }}
 
