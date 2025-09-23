@@ -25,5 +25,3 @@ variables:
 
   - ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'boyaca')) }}:
       - group: trasversal-aws-master-boyaca
-
-  - template: pipeline/vars-azure-pipeline.yml@self
