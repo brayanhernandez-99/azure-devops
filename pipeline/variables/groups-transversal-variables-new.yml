@@ -10,6 +10,7 @@ variables:
       - group: variables-app-administration-vue2-develop
       - group: variables-app-sellers-vue2-develop
       - group: variables-app-invictus-microfrontend-develop
+      - group: variables-app-invictus-microservices-develop
 
   # Staging branch
   - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
@@ -18,6 +19,7 @@ variables:
       - group: variables-app-administration-vue2-staging
       - group: variables-app-sellers-vue2-staging
       - group: variables-app-invictus-microfrontend-staging
+      - group: variables-app-invictus-microservices-staging
 
   # Master or tags → por red
   - ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'antioquia')) }}:
