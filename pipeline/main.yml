@@ -33,7 +33,7 @@ resources:
 stages:
   # Build para PR feature/hotfix con release aws-ecs
   - ${{ if and(eq(variables['Build.Reason'], 'PullRequest'), eq(parameters.release, 'aws-ecs')) }}:
-      - template: build/build-development-pr.yml
+      - template: build/build-ms-services-pr.yml
         parameters:
           release: ${{ parameters.release }}
           red: antioquia
@@ -66,7 +66,7 @@ stages:
 
   # Build para feature, hotfix, develop si NO es Flutter y NO es electron
   - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), eq(variables['Build.SourceBranch'], 'refs/heads/develop')), ne(parameters.release, 'apk'), ne(parameters.release, 'exe'), ne(parameters.release, 'iac'), ne(parameters.release, 'rpc')) }}:
-      - template: build/build-development.yml
+      - template: build/build-ms-services.yml
         parameters:
           release: ${{ parameters.release }}
           apps: ${{ parameters.apps }}
@@ -74,7 +74,7 @@ stages:
 
   # Build staging con release aws-s3
   - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/staging'), eq(parameters.release, 'aws-s3')) }}:
-      - template: build/build-development.yml
+      - template: build/build-ms-services.yml
         parameters:
           release: ${{ parameters.release }}
           apps: ${{ parameters.apps }}
@@ -83,7 +83,7 @@ stages:
   # Build master con release aws-s3 (por región)
   - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(parameters.release, 'aws-s3')) }}:
       - ${{ each region in parameters.red }}:
-          - template: build/build-master-front.yml
+          - template: build/build-ms-frontend.yml
             parameters:
               release: ${{ parameters.release }}
               apps: ${{ parameters.apps }}

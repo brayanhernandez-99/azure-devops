@@ -97,10 +97,10 @@ jobs:
       - script: |
           set -e
   
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront-metabase
+          # terragrunt plan --all --non-interactive
+          # terragrunt apply --all --non-interactive
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront-metabase
-          terragrunt plan --all --non-interactive
-          terragrunt apply --all --non-interactive
 
 
 
