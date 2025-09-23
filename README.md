@@ -12,8 +12,8 @@ pipelines-templates/
     ├── main.yml
     ├── main-pre-build.yml
     ├── build/
-    │   ├── build-backend.yml
-    │   ├── build-frontend.yml
+    │   ├── build-development.yml
+    │   ├── build-master-front.yml
     │   ├── build-flutter.yml
     │   ├── semantic-version-integration.yml
     │   └── jobs/
@@ -30,7 +30,7 @@ pipelines-templates/
     │   ├── semantic-version-backend.yml
     │   └── semantic-version-flutter.yml
     ├── pre-build/
-    │   ├── pre-build-backend.yml
+    │   ├── pre-build-development.yml
     │   └── jobs/
     │       ├── changes-file-front.yml
     │       └── changes-file.yml
