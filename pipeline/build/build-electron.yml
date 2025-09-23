@@ -1,13 +1,13 @@
 stages:
   - stage: "build_unit_${{ parameters.red }}"
     ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/') }}:
-      displayName: "Build Electron Feature"
+      displayName: "📦 Build Electron Feature"
     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
-      displayName: "Build Electron Develop"
+      displayName: "📦 Build Electron Develop"
     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
-      displayName: "Build Electron Staging"
+      displayName: "📦 Build Electron Staging"
     ${{ if or(eq(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')) }}:
-      displayName: "Build Electron Master ${{ parameters.red }}"
+      displayName: "📦 Build Electron Master ${{ parameters.red }}"
 
     dependsOn:
       - "semantic_version_integration"

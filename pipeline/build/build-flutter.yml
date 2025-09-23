@@ -1,13 +1,13 @@
 stages:
   - stage: "build_unit_${{ parameters.red }}"
     ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/') }}:
-      displayName: "Build Flutter Feature"
+      displayName: "📦 Build Flutter Feature"
     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
-      displayName: "Build Flutter Develop"
+      displayName: "📦 Build Flutter Develop"
     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
-      displayName: "Build Flutter Staging"
+      displayName: "📦 Build Flutter Staging"
     ${{ if or(eq(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')) }}:
-      displayName: "Build Flutter Master ${{ parameters.red }}"
+      displayName: "📦 Build Flutter Master ${{ parameters.red }}"
 
     dependsOn:
       - "semantic_version_integration"

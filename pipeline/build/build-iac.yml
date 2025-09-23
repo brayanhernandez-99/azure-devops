@@ -1,7 +1,13 @@
 stages:
-  - stage: "build_iac"
+  - stage: "Plan iac"
     ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/') }}:
-      displayName: "Build Infrastructure Feature"
+      displayName: "📦 Plan iac Feature"
+    ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
+      displayName: "📦 Plan iac Develop"
+    ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
+      displayName: "📦 Plan iac Staging"
+    ${{ if or(eq(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')) }}:
+      displayName: "📦 Plan iac Master ${{ parameters.red }}"
 
     variables:
       - template: ../variables/groups-transversal-variables-iac.yml

@@ -7,11 +7,11 @@ jobs:
   #         environment: ${{ variables.environmentName }}
   #       variables:
   #         ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
-  #           environmentName: "Build develop"
+  #           environmentName: "Plan develop"
   #         ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
-  #           environmentName: "Build staging"
+  #           environmentName: "Plan staging"
   #         ${{ if or(eq(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')) }}:
-  #           environmentName: "Build master ${{ parameters.red }}"
+  #           environmentName: "Plan master ${{ parameters.red }}"
   #       strategy:
   #         runOnce:
   #           deploy:
