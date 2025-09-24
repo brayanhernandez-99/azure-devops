@@ -13,18 +13,18 @@ variables:
     #   - group: variables-infrastructure-staging
     #   - group: parameters-infrastructure-staging
     #   - group: secrets-infrastructure-staging
-      
+
   - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/feature/cap') }}:
       - group: trasversal-aws-antioquia-cap
       - group: variables-infrastructure-antioquia-cap
-      #- group: parameters-infrastructure-
-      #- group: secrets-infrastructure-
+      #- group: parameters-infrastructure-antioquia-cap
+      #- group: secrets-infrastructure-antioquia-cap
 
   - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/feature/gana') }}:
       - group: trasversal-aws-antioquia
       - group: variables-infrastructure-antioquia
-      #- group: parameters-infrastructure-
-      #- group: secrets-infrastructure-
+      #- group: parameters-infrastructure-antioquia
+      #- group: secrets-infrastructure-antioquia
 
 
 #   # Feature branch
