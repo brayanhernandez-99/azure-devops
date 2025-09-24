@@ -277,7 +277,7 @@ jobs:
 
             aws s3 cp "$basePath" "s3://e-remote/invictus-electron/windows/$($env:region)" --recursive --acl public-read
 
-            echo -e "\n✅ Archivos subidos exitosamente."
+             Write-Host "`n✅ Archivos subidos exitosamente."
             echo "🔗 APP: InvictusUX Setup $($env:version).exe"
             echo "🔗 URL: https://e-remote.s3.us-east-1.amazonaws.com/invictus-electron/windows/$($env:environment)/InvictusUX+Setup+$($env:version).exe"
 
