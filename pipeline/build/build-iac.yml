@@ -1,5 +1,5 @@
 stages:
-  - stage: "Plan iac"
+  - stage: "Plan_iac"
     ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/') }}:
       displayName: "📦 Plan iac Feature"
     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
