@@ -1,5 +1,7 @@
 jobs:
+  #
   # Electron Windows
+  #
   - ${{ if not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')) }}:
       - deployment: WaitForApproval
         displayName: "Esperar aprobación"
@@ -285,7 +287,9 @@ jobs:
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
 
+  #
   # Electron Linux
+  #
   - job: "build_electron_linux"
     ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/') }}:
       displayName: "Build Electron Linux Feature"
