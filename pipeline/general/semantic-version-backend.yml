@@ -45,8 +45,8 @@ jobs:
           fi
         displayName: "🔎 Validate Feature or Hotfix Branch is Up to Date"
         condition: and(succeeded(), or(
-              startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'),
-              startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
+          startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'),
+          startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
 
       - script: |
           REPO_ID=$(curl -s -u ":$AZURE_DEVOPS_CLI_PAT" \
@@ -91,7 +91,7 @@ jobs:
         condition: and(succeeded(),
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
-    
+
       - script: |
           echo "Pull Request ID recuperado: $(ultimoPR)"
           echo "id del repositorio $(Build.Repository.Name) = $(repoID)" 

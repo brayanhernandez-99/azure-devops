@@ -71,7 +71,7 @@ jobs:
 
             echo "Verificando identidad de AWS..."
             aws sts get-caller-identity
-            
+
             npmrcPath="apps/$(msName)/.npmrc"
             echo "Generando archivo .npmrcPath en: $npmrcPath"
             cat <<EOF > "$npmrcPath"
@@ -120,7 +120,7 @@ jobs:
           echo "Estás en la carpeta: $(System.DefaultWorkingDirectory)/apps/$(msName)"
           cd $(System.DefaultWorkingDirectory)/apps/$(msName)
           pnpm install --ignore-scripts
-          
+
           echo -e "\n📋 Dependencias instaladas:"
           pnpm ls --depth=0 || true
         displayName: "Install microservice dependencies"

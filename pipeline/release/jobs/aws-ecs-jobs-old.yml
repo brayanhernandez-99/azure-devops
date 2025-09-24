@@ -210,7 +210,7 @@ jobs:
             ephemeralStorage,
             runtimePlatform
           } | with_entries(select(.value != null))' new-taskdef-$(cleanMsName).json > new-taskdef-$(cleanMsName)-ecs.json
-          
+
           cat new-taskdef-$(cleanMsName)-ecs.json
         displayName: "🧹 Clean up attributes"
 

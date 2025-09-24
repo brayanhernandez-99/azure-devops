@@ -48,9 +48,8 @@ jobs:
           fi
         displayName: "🔎 Validate Feature or Hotfix Branch is Up to Date"
         condition: and(succeeded(), or(
-              startsWith(variables['System.PullRequest.SourceBranch'], 'refs/heads/feature/'),
-              startsWith(variables['System.PullRequest.SourceBranch'], 'refs/heads/hotfix/')))
-
+          startsWith(variables['System.PullRequest.SourceBranch'], 'refs/heads/feature/'),
+          startsWith(variables['System.PullRequest.SourceBranch'], 'refs/heads/hotfix/')))
 
       - script: |
           CURRENT_BRANCH=$(echo $(System.PullRequest.SourceBranch))
@@ -277,4 +276,3 @@ jobs:
           ArtifactName: "versions"
           publishLocation: "Container"
         displayName: "📦 Publish Versioned Artifacts by Microservice"
-

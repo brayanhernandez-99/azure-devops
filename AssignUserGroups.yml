@@ -4,43 +4,43 @@ trigger: none
 
 parameters:
   - name: userEmail
-    displayName: 'User Email'
+    displayName: "User Email"
     type: string
-    default: 'user@example.com'
+    default: "user@example.com"
 
   - name: group_Contributors
-    displayName: 'Add to group: Contributors'
+    displayName: "Add to group: Contributors"
     type: boolean
     default: false
 
   - name: group_Readers
-    displayName: 'Add to group: Readers'
+    displayName: "Add to group: Readers"
     type: boolean
     default: false
 
   - name: group_ProjectAdmins
-    displayName: 'Add to group: Project Administrators'
+    displayName: "Add to group: Project Administrators"
     type: boolean
     default: false
 
 variables:
-  azureDevOpsOrg: 'https://dev.azure.com/YOUR_ORG'
-  project: 'YOUR_PROJECT'
+  azureDevOpsOrg: "https://dev.azure.com/YOUR_ORG"
+  project: "YOUR_PROJECT"
 
 stages:
   - stage: AssignUserToGroups
     jobs:
       - job: Assign
-        displayName: 'Assign user to selected groups'
+        displayName: "Assign user to selected groups"
         pool:
-          vmImage: 'windows-latest'
+          vmImage: "windows-latest"
 
         steps:
           - checkout: none
 
           - task: PowerShell@2
             name: AssignToGroups
-            displayName: 'Assign user to groups'
+            displayName: "Assign user to groups"
             inputs:
               targetType: inline
               script: |

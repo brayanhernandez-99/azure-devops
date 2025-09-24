@@ -82,7 +82,7 @@ jobs:
               echo "❌ No se ejecuta cuando source branch es stagign o develop solo con hotfix o features"
             fi
           fi
-          
+
           CURRENT_BRANCH=$(echo $(Build.SourceBranch))
           if [[ "$BUILD_REASON" == "IndividualCI" || "$BUILD_REASON" == "Manual" ]]; then
             if [[ "$CURRENT_BRANCH" != refs/heads/feature/* && "$CURRENT_BRANCH" != refs/heads/hotfix/* ]]; then

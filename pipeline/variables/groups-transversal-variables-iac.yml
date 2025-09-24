@@ -2,21 +2,18 @@ variables:
   - group: trasversal-aws-deployment
   - group: trasversal-infrastructure-invictus
 
-
   - ${{ if or( startsWith(variables['Build.SourceBranch'], 'refs/heads/feature'), startsWith(variables['Build.SourceBranch'], 'refs/heads/develop')) }}:
-    - group: trasversal-aws-develop
-    - group: variables-infrastructure-develop
-    - group: parameters-infrastructure-develop
-    - group: secrets-infrastructure-develop
+      - group: trasversal-aws-develop
+      - group: variables-infrastructure-develop
+      - group: parameters-infrastructure-develop
+      - group: secrets-infrastructure-develop
 
   - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/feature/staging') }}:
-    - group: trasversal-aws-staging
-    - group: variables-infrastructure-staging
-    - group: parameters-infrastructure-staging
-    - group: secrets-infrastructure-staging
-
-
-
+      - group: trasversal-aws-staging
+      - group: variables-infrastructure-staging
+      - group: parameters-infrastructure-staging
+      - group: secrets-infrastructure-staging
+      
 #   # Feature branch
 #   - ${{ if or( startsWith(variables['Build.SourceBranch'], 'refs/heads/feature'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix')) }}:
 
@@ -27,11 +24,11 @@ variables:
 #   # Staging branch
 #   - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
 #       # - group: variables-infrastructure-staging
-    
+
 #   # Master or tags → por red
 #   - ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'antioquia')) }}:
 #       # - group: trasversal-aws-master-antioquia
-      
+
 #   - ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'cap')) }}:
 #       # - group: trasversal-aws-master-cap
 
@@ -40,10 +37,9 @@ variables:
 
 #   - ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'huila')) }}:
 #       # - group: trasversal-aws-master-huila
-    
+
 #   - ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'cauca')) }}:
 #       # - group: trasversal-aws-master-cauca
-    
+
 #   - ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'boyaca')) }}:
 #       # - group: trasversal-aws-master-boyaca
-      

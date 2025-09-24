@@ -85,4 +85,3 @@ variables:
       - group: transversal-app-sellers-vue2-master-boyaca
       - group: transversal-app-invictus-microfrontend-master-boyaca
       # - group: transversal-app-cloudFront-master-boyaca
-      

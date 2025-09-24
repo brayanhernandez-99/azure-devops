@@ -16,13 +16,8 @@ stages:
     dependsOn:
       - "microservices_development"
     condition: and(
-                in(dependencies.microservices_development.result, 'Succeeded', 'SucceededWithIssues'),
-                eq(variables['Build.Reason'], 'PullRequest'),
-                or(
-                  startsWith(variables['System.PullRequest.SourceBranch'], 'refs/heads/feature/'),
-                  startsWith(variables['System.PullRequest.SourceBranch'], 'refs/heads/hotfix/')
-                )
-              )
+      in(dependencies.microservices_development.result, 'Succeeded', 'SucceededWithIssues'),
+      eq(variables['Build.Reason'], 'PullRequest'),or(startsWith(variables['System.PullRequest.SourceBranch'], 'refs/heads/feature/'),startsWith(variables['System.PullRequest.SourceBranch'], 'refs/heads/hotfix/')))
 
     variables:
       - template: ../variables/groups-transversal-variables-new.yml

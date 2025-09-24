@@ -1,5 +1,4 @@
 jobs:
-
   # Electron Windows
   - ${{ if not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')) }}:
       - deployment: WaitForApproval
@@ -34,7 +33,6 @@ jobs:
       versionPython: $[coalesce(variables.pythonVersion, '3.24.0')]
 
     steps:
-
       - task: DownloadBuildArtifacts@0
         displayName: "📥 Download Version Artifact"
         inputs:
@@ -287,7 +285,6 @@ jobs:
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
 
-
   # Electron Linux
   - job: "build_electron_linux"
     ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/') }}:
@@ -305,7 +302,6 @@ jobs:
       versionPython: $[coalesce(variables.pythonVersion, '3.24.0')]
 
     steps:
-
       - task: DownloadBuildArtifacts@0
         inputs:
           artifactName: "versions"
@@ -415,11 +411,11 @@ jobs:
         inputs:
           versionSource: "spec"
           versionSpec: "$(versionNode)"
-      
+
       - script: |
           echo -e "\n📦 Modificando versión en package.json: $(msVersion)"
           PACKAGE_PATH="$(Build.SourcesDirectory)/package.json"
-          
+
           if [[ -f "$PACKAGE_PATH" ]]; then
             jq --arg ver "$(msVersion)" '.version = $ver' "$PACKAGE_PATH" > "$PACKAGE_PATH.tmp" && mv "$PACKAGE_PATH.tmp" "$PACKAGE_PATH"
 
@@ -455,7 +451,7 @@ jobs:
           REGION_PATH="$BASE_PATH/$(region)"
           mkdir -p "$REGION_PATH"
           all_found=true
-          
+
           FILES_TO_COPY=(
             "InvictusUX-$(msVersion).AppImage"
             "latest-linux.yml"

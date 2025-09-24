@@ -35,7 +35,6 @@ jobs:
         fetchDepth: 0
         persistCredentials: true
 
-      
       - script: |
           echo "📌 Verificando si feature está actualizada con master y si hay cambios relevantes..."
 
@@ -79,7 +78,7 @@ jobs:
         condition: and(succeeded(),
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
-      
+
       - script: |
           echo "Upload configuration to S3"
           aws s3 cp . s3://configuration-$(ACCOUNT_ID_INVIC) --recursive --exclude "pipeline/*"
@@ -113,4 +112,3 @@ jobs:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVIC)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVIC)
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
-      
