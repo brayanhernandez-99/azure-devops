@@ -2,7 +2,7 @@ variables:
   - group: trasversal-aws-deployment
   - group: trasversal-infrastructure-invictus
 
-  - ${{ if or( startsWith(variables['Build.SourceBranch'], 'refs/heads/feature'), startsWith(variables['Build.SourceBranch'], 'refs/heads/develop')) }}:
+  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/feature/develop') }}:
       - group: trasversal-aws-develop
       - group: variables-infrastructure-develop
       - group: parameters-infrastructure-develop
@@ -14,6 +14,19 @@ variables:
       - group: parameters-infrastructure-staging
       - group: secrets-infrastructure-staging
       
+  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/feature/cap') }}:
+      - group: trasversal-aws-antioquia-cap
+      - group: variables-infrastructure-antioquia-cap
+      #- group: parameters-infrastructure-
+      #- group: secrets-infrastructure-
+
+  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/feature/gana') }}:
+      - group: trasversal-aws-antioquia-cap
+      - group: variables-infrastructure-antioquia
+      #- group: parameters-infrastructure-
+      #- group: secrets-infrastructure-
+
+
 #   # Feature branch
 #   - ${{ if or( startsWith(variables['Build.SourceBranch'], 'refs/heads/feature'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix')) }}:
 
