@@ -309,14 +309,13 @@ jobs:
 
       #       git config user.name "pipeline"
       #       git config user.email "pipelineUX@ux.technology"
-
+      
       #       git checkout version/$clean_branch
 
       #       echo "🔧 Actualizando versión $(cleanNEXT_VERSION) en el pubspec.yaml"
       #       sed -i "s/^version: .*/version: $(cleanNEXT_VERSION)+$(NEXT_VERSION_PUB)/" pubspec.yaml
 
       #       cat pubspec.yaml
-
       #       jq --arg version "$(cleanNEXT_VERSION)"  '.VERSION = $version' env.json > tmp.json && mv tmp.json env.json
 
       #       echo " "

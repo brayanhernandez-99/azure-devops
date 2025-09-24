@@ -275,7 +275,7 @@ jobs:
 
           echo -e "\n✅ Archivos subidos exitosamente."
           echo "🔗 APK: $(apk-name)"
-          echo "🔗 URL: https://repository-native.s3.us-east-1.amazonaws.com/app-seller/android/$(environment)/$(apk-name)/"
+          echo "🔗 URL: https://repository-native.s3.us-east-1.amazonaws.com/app-seller/android/$(environment)/$(apk-name)"
 
         displayName: "📤 Upload Bucket S3"
         condition: not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
