@@ -2,17 +2,17 @@ variables:
   - group: trasversal-aws-deployment
   - group: trasversal-infrastructure-invictus
 
-  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/feature/develop') }}:
-      - group: trasversal-aws-develop
-      - group: variables-infrastructure-develop
-      - group: parameters-infrastructure-develop
-      - group: secrets-infrastructure-develop
+#   - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/feature/develop') }}:
+    #   - group: trasversal-aws-develop
+    #   - group: variables-infrastructure-develop
+    #   - group: parameters-infrastructure-develop
+    #   - group: secrets-infrastructure-develop
 
-  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/feature/staging') }}:
-      - group: trasversal-aws-staging
-      - group: variables-infrastructure-staging
-      - group: parameters-infrastructure-staging
-      - group: secrets-infrastructure-staging
+#   - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/feature/staging') }}:
+    #   - group: trasversal-aws-staging
+    #   - group: variables-infrastructure-staging
+    #   - group: parameters-infrastructure-staging
+    #   - group: secrets-infrastructure-staging
       
   - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/feature/cap') }}:
       - group: trasversal-aws-antioquia-cap
@@ -21,7 +21,7 @@ variables:
       #- group: secrets-infrastructure-
 
   - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/feature/gana') }}:
-      - group: trasversal-aws-antioquia-cap
+      - group: trasversal-aws-antioquia
       - group: variables-infrastructure-antioquia
       #- group: parameters-infrastructure-
       #- group: secrets-infrastructure-
