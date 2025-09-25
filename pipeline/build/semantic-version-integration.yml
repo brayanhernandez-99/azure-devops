@@ -25,14 +25,3 @@ stages:
           - template: ../general/semantic-version-electron.yml
 
 
-  - stage: "semantic_version_integration"
-    displayName: "🏷️ Semantic Version Integration"
-    dependsOn: []
-
-    variables:
-      - template: ../variables/groups-transversal-variables-new.yml
-
-    jobs:
-      - ${{ if eq(parameters.release, 'aws-s3') }}:
-          - template: ../general/semantic-version-backend.yml
-
