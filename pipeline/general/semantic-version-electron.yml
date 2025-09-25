@@ -1,6 +1,6 @@
 jobs:
   - job: "semantic_version_electron"
-    displayName: "Semantic Version"
+    displayName: "🔖 Semantic Versioning Electron"
     pool:
       name: "Azure Pipelines"
       VmImage: ubuntu-22.04

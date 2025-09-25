@@ -1,6 +1,6 @@
 jobs:
   - job: "semantic_version"
-    displayName: "🔖 Semantic Versioning"
+    displayName: "🔖 Semantic Versioning Frontend"
     pool:
       name: "Azure Pipelines"
       VmImage: ubuntu-22.04
