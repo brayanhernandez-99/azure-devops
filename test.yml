@@ -1,0 +1,34 @@
+stages:
+  - semantic_version_integration
+  - microservices_development
+  - build_development_antioquia
+
+semantic_version_integration:
+  jobs:
+    - name: job1
+
+microservices_development:
+  jobs:
+    - name: jobA
+
+    - name: jobB
+      depends_on: [jobA]
+
+build_development_antioquia:
+  jobs:
+    - name: jobX
+
+    - name: jobY
+      depends_on: [jobX]
+
+
+
+# /project-root
+#   /ci
+#     templates/
+#       build-template.yml
+#       deploy-template.yml
+#     pipelines/
+#       microservices-development.yml
+#       build-development-antioquia.yml
+
