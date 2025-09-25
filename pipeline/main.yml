@@ -3,6 +3,7 @@ parameters:
     type: string
     values:
       - aws-s3
+      - aws-s3-new
       - aws-ecs
       - apk
       - exe
@@ -31,6 +32,29 @@ resources:
       ref: $(Build.SourceBranch)
 
 stages:
+  #
+  # MicroFrontend
+  #
+  - ${{ if and(eq(parameters.release, 'aws-s3-new'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/develop'), startsWith(variables['Build.SourceBranch'], 'refs/heads/staging'), startsWith(variables['Build.SourceBranch'], 'refs/heads/master'))) }}:
+      - template: build/semantic-version-integration.yml
+        parameters:
+          release: ${{ parameters.release }}
+
+      - template: build/build-development-pr.yml
+        parameters:
+          release: ${{ parameters.release }}
+          red: antioquia
+
+  #
+  #
+  #
+  #
+  #
+  #
+  #
+  #
+  #
+  #
   # Build para PR feature/hotfix con release aws-ecs
   - ${{ if and(eq(variables['Build.Reason'], 'PullRequest'), eq(parameters.release, 'aws-ecs')) }}:
       - template: build/build-development-pr.yml
