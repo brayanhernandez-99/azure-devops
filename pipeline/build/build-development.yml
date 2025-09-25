@@ -17,6 +17,9 @@ stages:
           - template: ../general/semantic-version-frontend.yml
             parameters:
               apps: ${{ parameters.apps }}
+      
+      - ${{ if eq(parameters.release, 'aws-s3') }}:
+          - template: ../general/semantic-version-electron.yml
 
   - stage: "build_development_${{ parameters.red }}"
     ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/feature') }}:
