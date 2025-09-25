@@ -20,5 +20,3 @@ stages:
 
       - ${{ if eq(parameters.release, 'exe') }}:
           - template: ../general/semantic-version-electron.yml
-
-
