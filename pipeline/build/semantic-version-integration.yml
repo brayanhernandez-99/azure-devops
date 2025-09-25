@@ -14,6 +14,7 @@ stages:
           - template: ../general/semantic-version-frontend.yml
             parameters:
               apps: ${{ parameters.apps }}
+          - template: ../general/semantic-version-electron.yml
 
       - ${{ if eq(parameters.release, 'apk') }}:
           - template: ../general/semantic-version-flutter.yml
