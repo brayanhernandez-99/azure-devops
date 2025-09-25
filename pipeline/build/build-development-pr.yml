@@ -1,6 +1,6 @@
 stages:
   - stage: "microservices_development"
-    displayName: "🧩 Semantic Version Microservices Development"
+    displayName: "🧩 Semantic Version Microservices"
     dependsOn: []
     condition: and( eq(variables['Build.Reason'], 'PullRequest'), or(startsWith(variables['System.PullRequest.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['System.PullRequest.SourceBranch'], 'refs/heads/hotfix/')))
 

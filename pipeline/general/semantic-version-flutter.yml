@@ -1,6 +1,6 @@
 jobs:
-  - job: "semantic_version"
-    displayName: "Semantic Version"
+  - job: "semantic_version_flutter"
+    displayName: "🔖 Semantic Versioning Flutter"
     pool:
       name: "Azure Pipelines"
       VmImage: ubuntu-22.04
