@@ -1,5 +1,5 @@
 jobs:
-  - job: "semantic_version"
+  - job: "semantic_version_electron"
     displayName: "Semantic Version"
     pool:
       name: "Azure Pipelines"
