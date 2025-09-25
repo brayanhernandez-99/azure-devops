@@ -26,18 +26,6 @@ variables:
       #- group: parameters-infrastructure-antioquia
       #- group: secrets-infrastructure-antioquia
 
-
-#   # Feature branch
-#   - ${{ if or( startsWith(variables['Build.SourceBranch'], 'refs/heads/feature'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix')) }}:
-
-#   # Develop branch
-#   - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
-#       # - group: variables-infrastructure-develop
-
-#   # Staging branch
-#   - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
-#       # - group: variables-infrastructure-staging
-
 #   # Master or tags → por red
 #   - ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'antioquia')) }}:
 #       # - group: trasversal-aws-master-antioquia
