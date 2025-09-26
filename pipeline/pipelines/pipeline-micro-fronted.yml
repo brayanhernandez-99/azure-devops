@@ -7,7 +7,7 @@ stages:
           apps: ${{ parameters.apps }}
           release: ${{ parameters.release }}
 
-  #- ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/master') }}:
+  # - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/master') }}:
       - ${{ each region in parameters.red }}:
           - stage: build_micro_frontend_${{ region }}
             displayName: "📦 Build MicroFrontend ${{ region }}"
@@ -18,6 +18,7 @@ stages:
                   red: ${{ parameters.red }}
                   apps: ${{ parameters.apps }}
 
+      - ${{ each region in parameters.red }}:
           - stage: deploy_micro_frontend_${{ region }}
             displayName: "🚀 Deploy MicroFrontend ${{ region }}"
             dependsOn: build_micro_frontend_${{ region }}
