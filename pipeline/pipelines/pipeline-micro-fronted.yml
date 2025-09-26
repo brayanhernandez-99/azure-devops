@@ -16,7 +16,6 @@ stages:
         - template: ../ci/build/build-fronted.yml
           parameters:
             region: ${{ region }}
-            red: ${{ parameters.red }}
             apps: ${{ parameters.apps }}
 
     - stage: build_electron_${{ region }}
@@ -44,7 +43,6 @@ stages:
   #       jobs:
   #         - template: ../ci/build/build-fronted.yml
   #           parameters:
-  #             red: ${{ parameters.red }}
   #             apps: ${{ parameters.apps }}
 
   #     - stage: build_electron

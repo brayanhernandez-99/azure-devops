@@ -2,70 +2,35 @@ variables:
   - group: trasversal-aws-deployment
   - group: trasversal-azure-devops
   - group: trasversal-versions-invictus
+  - group: trasversal-microfrontend-vue2
 
   # Develop - Feature - Hotfix
   - ${{ if or(eq(variables['Build.SourceBranchName'], 'develop'), startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')) }}:
       - group: trasversal-aws-develop
-      - group: variables-app-cloudFront-develop
-      - group: variables-app-administration-vue2-develop
-      - group: variables-app-sellers-vue2-develop
-      - group: variables-app-invictus-microfrontend-develop
-      - group: variables-app-invictus-microservices-develop
+      - group: variables-microfrontend-vue2-develop
+      - group: variables-microservices-develop
 
   # Staging
   - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
       - group: trasversal-aws-staging
-      - group: variables-app-cloudFront-staging
-      - group: variables-app-administration-vue2-staging
-      - group: variables-app-sellers-vue2-staging
-      - group: variables-app-invictus-microfrontend-staging
-      - group: variables-app-invictus-microservices-staging
+      - group: variables-microfrontend-vue2-develop
+      - group: variables-microservices-staging
 
   # Master or tags → por red
   - ${{ if and(eq(parameters.region, 'antioquia'), eq(variables['Build.SourceBranchName'], 'master')) }}:
       - group: trasversal-aws-devops
-    #   - group: trasversal-aws-master-antioquia
-    #   - group: transversal-app-cloudFront-master-antioquia
-    #   - group: transversal-app-administration-vue2-master-antioquia
-    #   - group: transversal-app-sellers-vue2-master-antioquia
-    #   - group: transversal-app-invictus-microfrontend-master-antioquia
 
   - ${{ if and(eq(parameters.region, 'cap'), eq(variables['Build.SourceBranchName'], 'master')) }}:
       - group: trasversal-aws-devops
-    #   - group: trasversal-aws-master-cap
-    #   - group: transversal-app-cloudFront-master-cap
-    #   - group: transversal-app-administration-vue2-master-cap
-    #   - group: transversal-app-sellers-vue2-master-cap
-    #   - group: transversal-app-invictus-microfrontend-master-cap
 
   - ${{ if and(eq(parameters.region, 'tolima'), eq(variables['Build.SourceBranchName'], 'master')) }}:
       - group: trasversal-aws-devops
-    #   - group: trasversal-aws-master-tolima
-    #   - group: transversal-app-cloudFront-master-tolima
-    #   - group: transversal-app-administration-vue2-master-tolima
-    #   - group: transversal-app-sellers-vue2-master-tolima
-    #   - group: transversal-app-invictus-microfrontend-master-tolima
 
   - ${{ if and(eq(parameters.region, 'huila'), eq(variables['Build.SourceBranchName'], 'master')) }}:
       - group: trasversal-aws-devops
-    #   - group: trasversal-aws-master-huila
-    #   - group: transversal-app-cloudFront-master-huila
-    #   - group: transversal-app-administration-vue2-master-huila
-    #   - group: transversal-app-sellers-vue2-master-huila
-    #   - group: transversal-app-invictus-microfrontend-master-huila
 
   - ${{ if and(eq(parameters.region, 'cauca'), eq(variables['Build.SourceBranchName'], 'master')) }}:
       - group: trasversal-aws-devops
-    #   - group: trasversal-aws-master-cauca
-    #   - group: transversal-app-cloudFront-master-cauca
-    #   - group: transversal-app-administration-vue2-master-cauca
-    #   - group: transversal-app-sellers-vue2-master-cauca
-    #   - group: transversal-app-invictus-microfrontend-master-cauca
 
   - ${{ if and(eq(parameters.region, 'boyaca'), eq(variables['Build.SourceBranchName'], 'master')) }}:
       - group: trasversal-aws-devops
-    #   - group: trasversal-aws-master-boyaca
-    #   - group: transversal-app-cloudFront-master-boyaca
-    #   - group: transversal-app-administration-vue2-master-boyaca
-    #   - group: transversal-app-sellers-vue2-master-boyaca
-    #   - group: transversal-app-invictus-microfrontend-master-boyaca

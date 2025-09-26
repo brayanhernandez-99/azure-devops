@@ -8,23 +8,23 @@ jobs:
     variables:
       - template: ../../variables/groups-transversal-variables.yml
         parameters:
-          red: ${{ parameters.region }}
+          region: ${{ parameters.region }}
 
     strategy:
       matrix:
         ${{ each ms in parameters.apps }}:
           ${{ ms }}:
             msName: ${{ ms }}
-
+    
     steps:
       - script: |
           if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
             fileselect=app-legacy
-            echo -e "\nℹ️ Ruta de archivo del ms: $fileselect"
+            echo -e "\nℹ️ Ruta de archivo del micro frontend: $fileselect"
             echo "##vso[task.setvariable variable=file]$fileselect"
           else
             fileselect=apps
-            echo -e "\nℹ️ Ruta de archivo del ms: $fileselect"
+            echo -e "\nℹ️ Ruta de archivo del micro frontend: $fileselect"
             echo "##vso[task.setvariable variable=file]$fileselect"
           fi
         displayName: "🧾 Select file"
@@ -48,68 +48,72 @@ jobs:
           fi
         displayName: "📝 Read Microservice Versions"
 
-      # - task: NodeTool@0
-      #   displayName: "🔧 Install Nodejs $(versionNode)"
-      #   inputs:
-      #     versionSource: "spec"
-      #     versionSpec: "$(versionNode)"
+      - task: NodeTool@0
+        displayName: "🔧 Install Nodejs $(versionNode)"
+        inputs:
+          versionSource: "spec"
+          versionSpec: "$(versionNode)"
 
-      # - script: |
-      #     npm install -g pnpm
-      #   displayName: "⚙️ Install pnpm"
+      - script: |
+          npm install -g pnpm
+        displayName: "⚙️ Install pnpm"
 
-      # - task: Bash@3
-      #   name: AuthCodeArtifact
-      #   inputs:
-      #     targetType: "inline"
-      #     script: |
-      #       echo "🔐 Obteniendo token de AWS CodeArtifact..."
-      #       token=$(aws codeartifact get-authorization-token \
-      #         --domain matrixtech-npm-repository \
-      #         --domain-owner "$ACCOUNT_ID_DEPLOY" \
-      #         --region "$AWS_DEFAULT_REGION" \
-      #         --query authorizationToken \
-      #         --output text)
+      - task: Bash@3
+        name: AuthCodeArtifact
+        inputs:
+          targetType: "inline"
+          script: |
+            echo "🔐 Obteniendo token de AWS CodeArtifact..."
+            token=$(aws codeartifact get-authorization-token \
+              --domain matrixtech-npm-repository \
+              --domain-owner "$ACCOUNT_ID_DEPLOY" \
+              --region "$AWS_DEFAULT_REGION" \
+              --query authorizationToken \
+              --output text)
 
-      #       REPO_DOMAIN="matrixtech-npm-repository-$ACCOUNT_ID_DEPLOY.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com"
-      #       REPO_PATH="npm/matrixtech-npm-repository"
-      #       REPO_URL="https://$REPO_DOMAIN/$REPO_PATH"
+            REPO_DOMAIN="matrixtech-npm-repository-$ACCOUNT_ID_DEPLOY.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com"
+            REPO_PATH="npm/matrixtech-npm-repository"
+            REPO_URL="https://$REPO_DOMAIN/$REPO_PATH"
 
-      #       echo "Configurando npm..."
-      #       npm config set "//$REPO_DOMAIN/$REPO_PATH/:_authToken" "$token"
-      #       npm config set registry "$REPO_URL"
+            echo "Configurando npm..."
+            npm config set "//$REPO_DOMAIN/$REPO_PATH/:_authToken" "$token"
+            npm config set registry "$REPO_URL"
 
-      #       echo "Verificando identidad de AWS..."
-      #       aws sts get-caller-identity
+            echo "Verificando identidad de AWS..."
+            aws sts get-caller-identity
 
-      #       npmrcPath="$(file)/$(msName)/.npmrc"
-      #       echo "Generando archivo .npmrcPath en: $npmrcPath"
-      #       cat <<EOF > "$npmrcPath"
-      #       //$REPO_DOMAIN/$REPO_PATH/:_authToken=$token
-      #       registry=$REPO_URL
-      #       EOF
-      #       ls -la $npmrcPath
-      #   displayName: "🔐 Setup CodeArtifact & npm config"
-      #   env:
-      #     AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
-      #     AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
-      #     AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+            npmrcPath="$(file)/$(msName)/.npmrc"
+            echo "Generando archivo .npmrcPath en: $npmrcPath"
+            cat <<EOF > "$npmrcPath"
+            //$REPO_DOMAIN/$REPO_PATH/:_authToken=$token
+            registry=$REPO_URL
+            EOF
+            ls -la $npmrcPath
+        displayName: "🔐 Setup CodeArtifact & npm config"
+        env:
+          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
+          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
 
-      # - script: |
-      #     echo -e "\n🛠 Generando .env.local para administration-vue2"
-      #     printenv | grep '^ADMIN_' | sed 's/^ADMIN_//' > $(System.DefaultWorkingDirectory)/app-legacy/app-administration-vue2/.env.local
-      #     cat $(System.DefaultWorkingDirectory)/app-legacy/app-administration-vue2/.env.local
+      - script: |
+          echo -e "\n📁 Archivos .env.local para administration-vue2"
+          printenv | grep '^ADMIN_' | sed 's/^VUE2_//' > $(System.DefaultWorkingDirectory)/app-legacy/app-administration-vue2/.env.local
+          printenv | grep '^ADMIN_' | sed 's/^ADMIN_//' > $(System.DefaultWorkingDirectory)/app-legacy/app-administration-vue2/.env.local
+          ls -la app-legacy/app-administration-vue2/.env.local
+          cat app-legacy/app-administration-vue2/.env.local
 
-      #     echo -e "\n🛠 Generando .env.local para sellers-vue2"
-      #     printenv | grep '^SELLERS_' | sed 's/^SELLERS_//' > $(System.DefaultWorkingDirectory)/app-legacy/app-sellers-vue2/.env.local
-      #     cat app-legacy/app-sellers-vue2/.env.local
+          echo -e "\n📁 Archivos .env.local para sellers-vue2"
+          printenv | grep '^SELLERS_' | sed 's/^VUE2_//' > $(System.DefaultWorkingDirectory)/app-legacy/app-sellers-vue2/.env.local
+          printenv | grep '^SELLERS_' | sed 's/^SELLERS_//' > $(System.DefaultWorkingDirectory)/app-legacy/app-sellers-vue2/.env.local
+          ls -la app-legacy/app-sellers-vue2/.env.local
+          cat app-legacy/app-sellers-vue2/.env.local
 
-      #     echo -e "\n📁 Archivos .env.local para sellers-vue2"
-      #     ls -la app-legacy/app-sellers-vue2
 
-      #     echo -e "\n📁 Archivos .env.local para administration-vue2"
-      #     ls -la app-legacy/app-administration-vue2
-      #   displayName: "📝 Generate .env — Admin & Seller"
+
+
+
+
+        displayName: "⚙️ Generate .env"
 
       # - script: |
       #     echo -e "\n🛠 Generando .env.local para invictus"          
@@ -120,8 +124,6 @@ jobs:
       #     echo -e "\n🛠 Generando .env para $(msName)"
       #     cat $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.env
       #   displayName: "📝 Generate .env — Invictus"
-      #   env:
-      #     red: ${{ parameters.red }}
 
       # - script: |
       #     echo -e "\n🛠 Generando .env para VIT"

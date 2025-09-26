@@ -33,10 +33,10 @@ parameters:
     default:
       - antioquia
       - cap
-      - tolima
-      - huila
-      - cauca
-      - boyaca
+      # - tolima
+      # - huila
+      # - cauca
+      # - boyaca
 
 resources:
   repositories:
