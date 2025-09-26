@@ -33,7 +33,6 @@ stages:
         jobs:
           - template: ../ci/build/build-fronted.yml
             parameters:
-              region: ${{ region }}
               red: ${{ parameters.red }}
               apps: ${{ parameters.apps }}
 
