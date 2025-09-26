@@ -10,5 +10,5 @@ jobs:
   # - ${{ if ne(variables['Build.SourceBranch'], 'refs/heads/master') }}:
   #     - template: ./job/job-fronted.yml
   #       parameters:
-  #         red: antioquia
+  #         red: ${{ parameters.red }}
   #         apps: ${{ parameters.apps }}

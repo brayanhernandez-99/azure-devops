@@ -1,5 +1,5 @@
 jobs:
-  - job: build_micro_frontend_${{ parameters.red }}
+  - job: build_micro_frontend_${{ parameters.region }}
     displayName: "📦 build"
     pool:
       name: "Azure Pipelines"
