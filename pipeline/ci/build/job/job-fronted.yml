@@ -4,7 +4,7 @@ jobs:
     pool:
       vmImage: ubuntu-22.04
     variables:
-    versionNode: $[coalesce(variables.nodeVersion, '18.20')]
+      versionNode: $[coalesce(variables.nodeVersion, '18.20')]
 
     strategy:
       matrix:

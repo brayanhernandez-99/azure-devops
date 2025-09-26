@@ -6,13 +6,6 @@ jobs:
               region: ${{ region }}
               apps: ${{ parameters.apps }}
 
-          # - job: build_micro_frontend_${{ region }}
-          #   steps:
-          #     - template: ./job/job-fronted.yml
-          #       parameters:
-          #         region: ${{ region }}
-          #         apps: ${{ parameters.apps }}
-
   - ${{ if ne(variables['Build.SourceBranch'], 'refs/heads/master') }}:
       - template: ./job/job-fronted.yml
         parameters:
