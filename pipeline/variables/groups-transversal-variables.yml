@@ -4,7 +4,7 @@ variables:
   - group: trasversal-versions-invictus
 
   # Develop - Feature - Hotfix
-  - ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/heads/develop'), startsWith(variables['Build.SourceBranch'], 'refs/heads/feature'), eq(variables['Build.SourceBranch'], 'refs/heads/hotfix')) }}:
+  - ${{ if or(eq(variables['Build.SourceBranchName'], 'develop'), startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')) }}:
       - group: trasversal-aws-develop
       - group: variables-app-cloudFront-develop
       - group: variables-app-administration-vue2-develop
@@ -13,7 +13,7 @@ variables:
       - group: variables-app-invictus-microservices-develop
 
   # Staging
-  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
+  - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
       - group: trasversal-aws-staging
       - group: variables-app-cloudFront-staging
       - group: variables-app-administration-vue2-staging
