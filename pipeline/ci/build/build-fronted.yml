@@ -11,3 +11,4 @@ jobs:
       - template: ./job/job-fronted.yml
         parameters:
           red: antioquia
+          apps: ${{ parameters.apps }}
