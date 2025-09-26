@@ -154,166 +154,166 @@ jobs:
           fi
         displayName: "📦 Install MicroFrontend Dependencies"
 
-      # - script: |
-      #     cat $(System.DefaultWorkingDirectory)/app-legacy/app-administration-vue2/.env.local
-      #     if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
-      #       cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
-      #       msName=$(msName)
-      #       msName=${msName%-vue2}
-      #       echo "Name MS:$msName"
-      #       npm run build
-      #     else
-      #       pnpm add -D dotenv-cli
-      #       pnpm build --filter=...$(msName)
-      #     fi
+      - script: |
+          cat $(System.DefaultWorkingDirectory)/app-legacy/app-administration-vue2/.env.local
+          if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
+            cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
+            msName=$(msName)
+            msName=${msName%-vue2}
+            echo "Name MS:$msName"
+            npm run build
+          else
+            pnpm add -D dotenv-cli
+            pnpm build --filter=...$(msName)
+          fi
 
-      #     DIST_PATH="$(System.DefaultWorkingDirectory)/$(file)/$(msName)/dist"
+          DIST_PATH="$(System.DefaultWorkingDirectory)/$(file)/$(msName)/dist"
 
-      #     if [[ ! -d "$DIST_PATH" ]] || [[ -z "$(ls -A "$DIST_PATH" 2>/dev/null)" ]]; then
-      #       echo "##vso[task.logissue type=error]❌ Error: No se generó el build o la carpeta dist está vacía."
-      #       exit 99
-      #     else
-      #       echo "✅ Build generado correctamente en $DIST_PATH"
-      #       ls -la "$DIST_PATH"
-      #     fi
-      #   displayName: "🛠️ Build MicroFrontend $(msName)"
+          if [[ ! -d "$DIST_PATH" ]] || [[ -z "$(ls -A "$DIST_PATH" 2>/dev/null)" ]]; then
+            echo "##vso[task.logissue type=error]❌ Error: No se generó el build o la carpeta dist está vacía."
+            exit 99
+          else
+            echo "✅ Build generado correctamente en $DIST_PATH"
+            ls -la "$DIST_PATH"
+          fi
+        displayName: "🛠️ Build MicroFrontend $(msName)"
 
-      # - script: |
-      #     echo "Descomentando app-legacy/*"
-      #     sed -i '/# *- *"app-legacy\//s/  # -/  -/' pnpm-workspace.yaml
-      #     cat pnpm-workspace.yaml
-      #   displayName: "💬 Uncomment app-legacy/*"
-      #   condition: and(
-      #     succeeded(),
-      #     ne(variables['msName'], 'app-administration-vue2'),
-      #     ne(variables['msName'], 'app-sellers-vue2')
-      #     )
+      - script: |
+          echo "Descomentando app-legacy/*"
+          sed -i '/# *- *"app-legacy\//s/  # -/  -/' pnpm-workspace.yaml
+          cat pnpm-workspace.yaml
+        displayName: "💬 Uncomment app-legacy/*"
+        condition: and(
+          succeeded(),
+          ne(variables['msName'], 'app-administration-vue2'),
+          ne(variables['msName'], 'app-sellers-vue2')
+          )
 
-      # - task: JavaToolInstaller@0
-      #   displayName: "🔧 Install JDK 17"
-      #   inputs:
-      #     versionSpec: "17"
-      #     jdkArchitectureOption: "x64"
-      #     jdkSourceOption: "PreInstalled"
-      #   condition: and(
-      #     succeeded(),
-      #     ne(variables['msName'], 'app-administration-vue2'),
-      #     ne(variables['msName'], 'app-sellers-vue2'),
-      #     ne(variables['Build.SourceBranchName'], 'master'),
-      #     ne(variables['Build.SourceBranchName'], 'staging')
-      #     )
+      - task: JavaToolInstaller@0
+        displayName: "🔧 Install JDK 17"
+        inputs:
+          versionSpec: "17"
+          jdkArchitectureOption: "x64"
+          jdkSourceOption: "PreInstalled"
+        condition: and(
+          succeeded(),
+          ne(variables['msName'], 'app-administration-vue2'),
+          ne(variables['msName'], 'app-sellers-vue2'),
+          ne(variables['Build.SourceBranchName'], 'master'),
+          ne(variables['Build.SourceBranchName'], 'staging')
+          )
 
-      # - task: SonarQubePrepare@7
-      #   displayName: "⚙️ Prepare SonarQube Analysis"
-      #   inputs:
-      #     SonarQube: "SonarQubeConection"
-      #     scannerMode: "CLI"
-      #     configMode: "manual"
-      #     cliProjectKey: "pruebas-microfronted-$(msName)"
-      #     cliProjectName: "pruebas-microfronted-$(msName)"
-      #     cliSources: "$(System.DefaultWorkingDirectory)/$(file)/$(msName)"
-      #     extraProperties: |
-      #       sonar.javascript.lcov.reportPaths=$(System.DefaultWorkingDirectory)/$(file)/$(msName)/coverage/lcov.info
-      #       sonar.exclusions=**/test/**,**/coverage/**,**/.nyc_output/**,**/reports/**,sured-plugin/**,**/reports_bck/**,**/node_modules/**,**/dist/**
-      #   condition: and(
-      #     succeeded(),
-      #     ne(variables['msName'], 'app-administration-vue2'),
-      #     ne(variables['msName'], 'app-sellers-vue2'),
-      #     ne(variables['Build.SourceBranchName'], 'master'),
-      #     ne(variables['Build.SourceBranchName'], 'staging')
-      #     )
+      - task: SonarQubePrepare@7
+        displayName: "⚙️ Prepare SonarQube Analysis"
+        inputs:
+          SonarQube: "SonarQubeConection"
+          scannerMode: "CLI"
+          configMode: "manual"
+          cliProjectKey: "pruebas-microfronted-$(msName)"
+          cliProjectName: "pruebas-microfronted-$(msName)"
+          cliSources: "$(System.DefaultWorkingDirectory)/$(file)/$(msName)"
+          extraProperties: |
+            sonar.javascript.lcov.reportPaths=$(System.DefaultWorkingDirectory)/$(file)/$(msName)/coverage/lcov.info
+            sonar.exclusions=**/test/**,**/coverage/**,**/.nyc_output/**,**/reports/**,sured-plugin/**,**/reports_bck/**,**/node_modules/**,**/dist/**
+        condition: and(
+          succeeded(),
+          ne(variables['msName'], 'app-administration-vue2'),
+          ne(variables['msName'], 'app-sellers-vue2'),
+          ne(variables['Build.SourceBranchName'], 'master'),
+          ne(variables['Build.SourceBranchName'], 'staging')
+          )
 
-      # - script: |
-      #     response=$(echo $SONARQUBE_SCANNER_PARAMS | sed -E 's#"sonar\.branch\.name":"[^"]+",##g')
-      #     json=$(echo "$response" | sed 's/"sonar.token":\*\*\*/"sonar.token":"***"/')
-      #     echo "$json" | jq
-      #     echo "##vso[task.setvariable variable=SONARQUBE_SCANNER_PARAMS]$response"
-      #   displayName: "⚙️ Set Variable — SONARQUBE_SCANNER_PARAMS"
-      #   condition: and(
-      #     succeeded(),
-      #     ne(variables['msName'], 'app-administration-vue2'),
-      #     ne(variables['msName'], 'app-sellers-vue2'),
-      #     ne(variables['Build.SourceBranchName'], 'master'),
-      #     ne(variables['Build.SourceBranchName'], 'staging')
-      #     )
+      - script: |
+          response=$(echo $SONARQUBE_SCANNER_PARAMS | sed -E 's#"sonar\.branch\.name":"[^"]+",##g')
+          json=$(echo "$response" | sed 's/"sonar.token":\*\*\*/"sonar.token":"***"/')
+          echo "$json" | jq
+          echo "##vso[task.setvariable variable=SONARQUBE_SCANNER_PARAMS]$response"
+        displayName: "⚙️ Set Variable — SONARQUBE_SCANNER_PARAMS"
+        condition: and(
+          succeeded(),
+          ne(variables['msName'], 'app-administration-vue2'),
+          ne(variables['msName'], 'app-sellers-vue2'),
+          ne(variables['Build.SourceBranchName'], 'master'),
+          ne(variables['Build.SourceBranchName'], 'staging')
+          )
 
-      # - script: |
-      #     pnpm test --filter=...$(msName)
-      #   displayName: "🧪 Run Tests for Microservice: $(msName)"
-      #   continueOnError: true
-      #   condition: and(
-      #     succeeded(),
-      #     ne(variables['msName'], 'app-administration-vue2'),
-      #     ne(variables['msName'], 'app-sellers-vue2'),
-      #     ne(variables['Build.SourceBranchName'], 'master'),
-      #     ne(variables['Build.SourceBranchName'], 'staging')
-      #     )
+      - script: |
+          pnpm test --filter=...$(msName)
+        displayName: "🧪 Run Tests for Microservice: $(msName)"
+        continueOnError: true
+        condition: and(
+          succeeded(),
+          ne(variables['msName'], 'app-administration-vue2'),
+          ne(variables['msName'], 'app-sellers-vue2'),
+          ne(variables['Build.SourceBranchName'], 'master'),
+          ne(variables['Build.SourceBranchName'], 'staging')
+          )
 
-      # - script: |
-      #     pnpm coverage --filter=...$(msName)
-      #     ls -la $(System.DefaultWorkingDirectory)/$(file)/$(msName)/coverage
-      #   displayName: "🔎 Coverage Analysis: $(msName)"
-      #   continueOnError: true
-      #   condition: and(
-      #     succeeded(),
-      #     ne(variables['msName'], 'app-administration-vue2'),
-      #     ne(variables['msName'], 'app-sellers-vue2'),
-      #     ne(variables['Build.SourceBranchName'], 'master'),
-      #     ne(variables['Build.SourceBranchName'], 'staging')
-      #     )
+      - script: |
+          pnpm coverage --filter=...$(msName)
+          ls -la $(System.DefaultWorkingDirectory)/$(file)/$(msName)/coverage
+        displayName: "🔎 Coverage Analysis: $(msName)"
+        continueOnError: true
+        condition: and(
+          succeeded(),
+          ne(variables['msName'], 'app-administration-vue2'),
+          ne(variables['msName'], 'app-sellers-vue2'),
+          ne(variables['Build.SourceBranchName'], 'master'),
+          ne(variables['Build.SourceBranchName'], 'staging')
+          )
 
-      # - task: SonarQubeAnalyze@7
-      #   displayName: "📡 Run Sonar Analysis"
-      #   condition: and(
-      #     succeeded(),
-      #     ne(variables['msName'], 'app-administration-vue2'),
-      #     ne(variables['msName'], 'app-sellers-vue2'),
-      #     ne(variables['Build.SourceBranchName'], 'master'),
-      #     ne(variables['Build.SourceBranchName'], 'staging')
-      #     )
+      - task: SonarQubeAnalyze@7
+        displayName: "📡 Run Sonar Analysis"
+        condition: and(
+          succeeded(),
+          ne(variables['msName'], 'app-administration-vue2'),
+          ne(variables['msName'], 'app-sellers-vue2'),
+          ne(variables['Build.SourceBranchName'], 'master'),
+          ne(variables['Build.SourceBranchName'], 'staging')
+          )
 
-      # - task: SonarQubePublish@7
-      #   displayName: "📤 Publish Static Code Analysis Results"
-      #   inputs:
-      #     pollingTimeoutSec: 400
-      #   condition: and(
-      #     succeeded(),
-      #     ne(variables['msName'], 'app-administration-vue2'),
-      #     ne(variables['msName'], 'app-sellers-vue2'),
-      #     ne(variables['Build.SourceBranchName'], 'master'),
-      #     ne(variables['Build.SourceBranchName'], 'staging')
-      #     )
+      - task: SonarQubePublish@7
+        displayName: "📤 Publish Static Code Analysis Results"
+        inputs:
+          pollingTimeoutSec: 400
+        condition: and(
+          succeeded(),
+          ne(variables['msName'], 'app-administration-vue2'),
+          ne(variables['msName'], 'app-sellers-vue2'),
+          ne(variables['Build.SourceBranchName'], 'master'),
+          ne(variables['Build.SourceBranchName'], 'staging')
+          )
 
-      # - script: |
-      #     echo "Esperando Quality Gate..."
+      - script: |
+          echo "Esperando Quality Gate..."
 
-      #     status=$(curl -s -u "$SONAR_TOKEN:" "$SONAR_HOST_URL/api/qualitygates/project_status?projectKey=pruebas-microfronted-$(msName)")
-      #     metrics_response=$(curl -s -u "$SONAR_TOKEN:" "$SONAR_HOST_URL/api/measures/component?component=pruebas-microfronted-$(msName)&metricKeys=coverage,duplicated_lines_density")
+          status=$(curl -s -u "$SONAR_TOKEN:" "$SONAR_HOST_URL/api/qualitygates/project_status?projectKey=pruebas-microfronted-$(msName)")
+          metrics_response=$(curl -s -u "$SONAR_TOKEN:" "$SONAR_HOST_URL/api/measures/component?component=pruebas-microfronted-$(msName)&metricKeys=coverage,duplicated_lines_density")
 
-      #     coverage=$(echo "$metrics_response" | jq -r '.component.measures[] | select(.metric=="coverage") | .value')
-      #     duplication=$(echo "$metrics_response" | jq -r '.component.measures[] | select(.metric=="duplicated_lines_density") | .value')
+          coverage=$(echo "$metrics_response" | jq -r '.component.measures[] | select(.metric=="coverage") | .value')
+          duplication=$(echo "$metrics_response" | jq -r '.component.measures[] | select(.metric=="duplicated_lines_density") | .value')
 
-      #     status_code=$(echo "$status" | jq -r '.projectStatus.status')
-      #     echo "🔹 Proyecto: pruebas-microfronted-$(msName) | Coverage: $coverage | Lines Duplications: $duplication | Estado: $status_code"
+          status_code=$(echo "$status" | jq -r '.projectStatus.status')
+          echo "🔹 Proyecto: pruebas-microfronted-$(msName) | Coverage: $coverage | Lines Duplications: $duplication | Estado: $status_code"
 
-      #     if [[ "$status_code" == "ERROR" ]]; then
-      #       echo "##vso[task.logissue type=error]❌ El proyecto falló su Quality Gate."
-      #       exit 99
-      #     else
-      #       echo "✅ El proyecto pasó su Quality Gate."
-      #     fi
-      #   env:
-      #     SONAR_TOKEN: $(SONAR_TOKEN)
-      #     SONAR_HOST_URL: $(SONAR_HOST_URL)
-      #   displayName: "🛡️ Quality Gate Check: $(msName)"
-      #   continueOnError: true
-      #   condition: and(
-      #     succeeded(),
-      #     ne(variables['msName'], 'app-administration-vue2'),
-      #     ne(variables['msName'], 'app-sellers-vue2'),
-      #     ne(variables['Build.SourceBranchName'], 'master'),
-      #     ne(variables['Build.SourceBranchName'], 'staging')
-      #     )
+          if [[ "$status_code" == "ERROR" ]]; then
+            echo "##vso[task.logissue type=error]❌ El proyecto falló su Quality Gate."
+            exit 99
+          else
+            echo "✅ El proyecto pasó su Quality Gate."
+          fi
+        env:
+          SONAR_TOKEN: $(SONAR_TOKEN)
+          SONAR_HOST_URL: $(SONAR_HOST_URL)
+        displayName: "🛡️ Quality Gate Check: $(msName)"
+        continueOnError: true
+        condition: and(
+          succeeded(),
+          ne(variables['msName'], 'app-administration-vue2'),
+          ne(variables['msName'], 'app-sellers-vue2'),
+          ne(variables['Build.SourceBranchName'], 'master'),
+          ne(variables['Build.SourceBranchName'], 'staging')
+          )
 
       # - script: |
       #     if [ -d "$(System.DefaultWorkingDirectory)/$(file)/$(msName)/dist" ]; then
