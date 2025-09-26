@@ -98,14 +98,14 @@ jobs:
       - script: |
           if [[ "$(msName)" == "app-administration-vue2" ]]; then
             echo -e "\n📁 Archivos .env.local para app-administration-vue2"
-            printenv | grep '^ADMIN_' | sed 's/^VUE2_//' > $(System.DefaultWorkingDirectory)/app-legacy/app-administration-vue2/.env.local
+            printenv | grep '^VUE2_' | sed 's/^VUE2_//' > $(System.DefaultWorkingDirectory)/app-legacy/app-administration-vue2/.env.local
             printenv | grep '^ADMIN_' | sed 's/^ADMIN_//' >> $(System.DefaultWorkingDirectory)/app-legacy/app-administration-vue2/.env.local
             ls -la app-legacy/app-administration-vue2/.env.local
             cat app-legacy/app-administration-vue2/.env.local
 
           elif [[ "$(msName)" == "app-sellers-vue2" ]]; then
             echo -e "\n📁 Archivos .env.local para app-sellers-vue2"
-            printenv | grep '^SELLERS_' | sed 's/^VUE2_//' > $(System.DefaultWorkingDirectory)/app-legacy/app-sellers-vue2/.env.local
+            printenv | grep '^VUE2_' | sed 's/^VUE2_//' > $(System.DefaultWorkingDirectory)/app-legacy/app-sellers-vue2/.env.local
             printenv | grep '^SELLERS_' | sed 's/^SELLERS_//' >> $(System.DefaultWorkingDirectory)/app-legacy/app-sellers-vue2/.env.local
             ls -la app-legacy/app-sellers-vue2/.env.local
             cat app-legacy/app-sellers-vue2/.env.local
