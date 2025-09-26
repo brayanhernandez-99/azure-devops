@@ -1,5 +1,5 @@
 jobs:
-  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/master') }}:
+  #- ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/master') }}:
       - ${{ each region in parameters.red }}:
           - template: ./job/job-fronted.yml
             parameters:
@@ -7,8 +7,8 @@ jobs:
               red: ${{ parameters.red }}
               apps: ${{ parameters.apps }}
 
-  - ${{ if ne(variables['Build.SourceBranch'], 'refs/heads/master') }}:
-      - template: ./job/job-fronted.yml
-        parameters:
-          red: antioquia
-          apps: ${{ parameters.apps }}
+  # - ${{ if ne(variables['Build.SourceBranch'], 'refs/heads/master') }}:
+  #     - template: ./job/job-fronted.yml
+  #       parameters:
+  #         red: antioquia
+  #         apps: ${{ parameters.apps }}
