@@ -15,8 +15,8 @@ stages:
               - template: ../ci/build/build-fronted.yml
                 parameters:
                   region: ${{ region }}
-                red: ${{ parameters.red }}
-                apps: ${{ parameters.apps }}
+                  red: ${{ parameters.red }}
+                  apps: ${{ parameters.apps }}
 
   - ${{ if ne(variables['Build.SourceBranch'], 'refs/heads/master') }}:
       - ${{ each region in parameters.red }}:
