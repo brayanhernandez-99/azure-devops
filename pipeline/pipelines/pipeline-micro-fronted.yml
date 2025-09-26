@@ -2,7 +2,7 @@ stages:
   - stage: semantic_version_integration
     displayName: "🏷️ Semantic Version MicroFrontend"
     variables:
-      - template: ./variables/groups-transversal-variables.yml
+      - template: ../variables/groups-transversal-variables.yml
     jobs:
       - template: ../ci/semantic-version-integration.yml
         parameters:
@@ -13,7 +13,7 @@ stages:
     displayName: "📦 Build MicroFrontend"
     dependsOn: semantic_version_integration
     variables:
-      - template: ./variables/groups-transversal-variables.yml
+      - template: ../variables/groups-transversal-variables.yml
     jobs:
       - template: ../ci/build/build-fronted.yml
         parameters:
@@ -24,7 +24,7 @@ stages:
   - stage: deploy_micro_frontend
     displayName: "🚀 Deploy MicroFrontend"
     variables:
-      - template: ./variables/groups-transversal-variables.yml
+      - template: ../variables/groups-transversal-variables.yml
     dependsOn: build_micro_frontend
     jobs:
       - job: jobY
