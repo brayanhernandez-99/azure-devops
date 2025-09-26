@@ -21,8 +21,7 @@ build_development_antioquia:
     - name: jobY
       depends_on: [jobX]
 
-
-
+      
 # /project-root
 #   /ci
 #     templates/

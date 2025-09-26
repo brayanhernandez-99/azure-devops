@@ -1,4 +1,23 @@
 parameters:
+  - name: apps
+    type: object
+    default:
+      - "app-administration-vue2"
+      - "app-sellers-vue2"
+      - "awards"
+      - "biometrics"
+      - "commissions"
+      - "conciliation"
+      - "dashboard"
+      - "dynamic-storage"
+      - "external-wager"
+      - "hierarchies"
+      - "invictus"
+      - "login"
+      - "lotteries"
+      - "money-control"
+      - "users"
+
   - name: release
     type: string
     values:
@@ -19,10 +38,6 @@ parameters:
       - cauca
       - boyaca
 
-  - name: apps
-    type: object
-    default: {}
-
 resources:
   repositories:
     - repository: self
@@ -34,16 +49,19 @@ resources:
     # MicroFronted pipeline
     #
     - ${{ if and(eq(parameters.release, 'aws-s3'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/develop'), startsWith(variables['Build.SourceBranch'], 'refs/heads/staging'), startsWith(variables['Build.SourceBranch'], 'refs/heads/master'))) }}:
-        - template: new/pipelines/pipeline-micro-fronted.yml
+        - template: pipelines/pipeline-micro-fronted.yml
           parameters:
+            red: ${{ parameters.red }}
+            apps: ${{ parameters.apps }}
             release: ${{ parameters.release }}
 
     #
     # Electron pipeline
     #
     - ${{ if and(eq(parameters.release, 'exe'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/develop'), startsWith(variables['Build.SourceBranch'], 'refs/heads/staging'), startsWith(variables['Build.SourceBranch'], 'refs/heads/master'))) }}:
-        - template: new/ci/pipelines/micro-fronted.yml
+        - template: pipeline/pipeline-electron.yml
           parameters:
+            red: ${{ parameters.red }}
             release: ${{ parameters.release }}
 
   #

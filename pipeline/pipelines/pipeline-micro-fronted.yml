@@ -1,0 +1,23 @@
+stages:
+  - stage: "semantic_version_integration"
+    displayName: "🔖 Semantic Version MicroFrontend"
+    jobs:
+      - template: ../ci/semantic-version-integration.yml
+        parameters:
+          apps: ${{ parameters.apps }}
+          release: ${{ parameters.release }}
+
+  - stage: "build_micro_frontend"
+    dependsOn: semantic_version_integration
+    displayName: "📦 Build MicroFronted"
+    jobs:
+      - name: jobA
+
+      - name: jobB
+        depends_on: [jobA]
+
+  - stage: "deploy_micro_frontend"
+    dependsOn: build_micro_frontend
+    displayName: "🚀 Deploy MicroFronted"
+    jobs:
+      - name: jobY
