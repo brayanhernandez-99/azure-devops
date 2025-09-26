@@ -4,7 +4,7 @@ stages:
     dependsOn: []
 
     variables:
-      - template: ../variables/groups-transversal-variables-new.yml
+      - template: ../variables/groups-transversal-variables.yml
 
     jobs:
       - ${{ if eq(parameters.release, 'aws-ecs') }}:

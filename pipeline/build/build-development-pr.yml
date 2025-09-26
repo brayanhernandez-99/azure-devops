@@ -20,7 +20,7 @@ stages:
       eq(variables['Build.Reason'], 'PullRequest'),or(startsWith(variables['System.PullRequest.SourceBranch'], 'refs/heads/feature/'),startsWith(variables['System.PullRequest.SourceBranch'], 'refs/heads/hotfix/')))
 
     variables:
-      - template: ../variables/groups-transversal-variables-new.yml
+      - template: ../variables/groups-transversal-variables.yml
 
     jobs:
       - ${{ if eq(parameters.release, 'aws-ecs') }}:
