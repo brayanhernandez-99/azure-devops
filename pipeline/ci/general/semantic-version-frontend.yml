@@ -11,9 +11,6 @@ jobs:
           ${{ ms }}:
             msName: ${{ ms }}
 
-    variables:
-      - template: ../../variables/groups-transversal-variables.yml
-
     steps:
       - checkout: self
         fetchDepth: 0

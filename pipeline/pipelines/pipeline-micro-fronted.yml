@@ -1,3 +1,6 @@
+variables:
+  - template: ./variables/groups-transversal-variables.yml
+
 stages:
   - stage: semantic_version_integration
     displayName: "🏷️ Semantic Version MicroFrontend"
