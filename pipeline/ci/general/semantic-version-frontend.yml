@@ -1,5 +1,6 @@
 jobs:
   - job: "semantic_version_microfronted"
+    displayName: "🔖"
     pool:
       name: "Azure Pipelines"
       VmImage: ubuntu-22.04
