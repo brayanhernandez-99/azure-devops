@@ -19,7 +19,7 @@ variables:
   # Master or tags → por red
   - ${{ if and(eq(parameters.region, 'antioquia'), eq(variables['Build.SourceBranchName'], 'master')) }}:
       - group: trasversal-aws-devops
-
+      
   - ${{ if and(eq(parameters.region, 'cap'), eq(variables['Build.SourceBranchName'], 'master')) }}:
       - group: trasversal-aws-devops
 
