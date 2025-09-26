@@ -9,13 +9,13 @@ jobs:
       - template: ../../variables/groups-transversal-variables.yml
         parameters:
           region: ${{ parameters.region }}
-      
+
     strategy:
       matrix:
         ${{ each ms in parameters.apps }}:
           ${{ ms }}:
             msName: ${{ ms }}
-    
+
     steps:
       - script: |
           if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
@@ -126,60 +126,36 @@ jobs:
 
         displayName: "⚙️ Generate .env"
 
-      # - script: |
-      #     echo -e "\n🛠 Generando .env.local para invictus"          
-      #     printenv | grep '^INVICTUS_' | sed 's/^INVICTUS_//' > $(System.DefaultWorkingDirectory)/apps/invictus/.env
-      #     cp $(System.DefaultWorkingDirectory)/apps/invictus/.env $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.env
-      #     cat $(System.DefaultWorkingDirectory)/apps/invictus/.env
+      - script: |
+          cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
+          echo "🔧 Actualizando versión en $(file)/$(msName)/package.json a $(msVersion)"
+          jq --arg version "$(msVersion)" '.version = $version' package.json > tmp.json && mv tmp.json package.json
+        displayName: "🧪 Temporary version for build"
 
-      #     echo -e "\n🛠 Generando .env para $(msName)"
-      #     cat $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.env
-      #   displayName: "📝 Generate .env — Invictus"
+      - script: |
+          echo "Comentando app-legacy/*"
+          sed -i '/app-legacy\//s/  -/  # -/' pnpm-workspace.yaml
+          cat pnpm-workspace.yaml
+        displayName: "💬 Comment app-legacy/*"
+        condition: and(
+          succeeded(),
+          ne(variables['msName'], 'app-administration-vue2'),
+          ne(variables['msName'], 'app-sellers-vue2')
+          )
 
-      # - script: |
-      #     echo -e "\n🛠 Generando .env para VIT"
-      #     printenv | grep '^VITE_' > $(System.DefaultWorkingDirectory)/.env
-      #     cat $(System.DefaultWorkingDirectory)/.env
+      - script: |
+          cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
+          pnpm i
 
-      #     echo -e "\n📁 Archivos .env VIT"
-      #     ls -la
-      #   displayName: "📝 Generate .env — VIT"
-
-      # - script: |
-      #     echo -e "VITE_APP_VERSION=\$npm_package_version\nVITE_BASE_URL=" > $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.env
-      #     cat $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.env
-      #   displayName: "📝 Copy .env"
-
-      # - script: |
-      #     cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
-      #     echo "🔧 Actualizando versión en $(file)/$(msName)/package.json a $(msVersion)"
-      #     jq --arg version "$(msVersion)" '.version = $version' package.json > tmp.json && mv tmp.json package.json
-      #   displayName: "🧪 Temporary version for build"
-
-      # - script: |
-      #     echo "Comentando app-legacy/*"
-      #     sed -i '/app-legacy\//s/  -/  # -/' pnpm-workspace.yaml
-      #     cat pnpm-workspace.yaml
-      #   displayName: "💬 Comment app-legacy/*"
-      #   condition: and(
-      #     succeeded(),
-      #     ne(variables['msName'], 'app-administration-vue2'),
-      #     ne(variables['msName'], 'app-sellers-vue2')
-      #     )
-
-      # - script: |
-      #     cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
-      #     pnpm i
-
-      #     OUTPUT=$(pnpm ls --depth=0 || true)
-      #     if [[ -z "$OUTPUT" ]]; then
-      #       echo "##vso[task.logissue type=error]❌ No se instalaron dependencias, esperar que se actualicen las dependencias a nivel global"
-      #       exit 99  
-      #     else
-      #       echo "✅ Dependencias Instaladas:"
-      #       echo "$OUTPUT"
-      #     fi
-      #   displayName: "📦 Install MicroFrontend Dependencies"
+          OUTPUT=$(pnpm ls --depth=0 || true)
+          if [[ -z "$OUTPUT" ]]; then
+            echo "##vso[task.logissue type=error]❌ No se instalaron dependencias, esperar que se actualicen las dependencias a nivel global"
+            exit 99
+          else
+            echo "✅ Dependencias Instaladas:"
+            echo "$OUTPUT"
+          fi
+        displayName: "📦 Install MicroFrontend Dependencies"
 
       # - script: |
       #     cat $(System.DefaultWorkingDirectory)/app-legacy/app-administration-vue2/.env.local
@@ -348,7 +324,7 @@ jobs:
       #         msName=$(msName)
       #         msName=${msName%-vue2}
       #         echo $msName
-      #       else 
+      #       else
       #         msName=$(msName)
       #       fi
       #       aws s3 cp ./$(file)/$(msName)/dist s3://mf-prueba-$msName-$(ACCOUNT_ID_INVIC)/$(msVersion)/ --recursive
