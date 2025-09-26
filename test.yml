@@ -1,25 +1,25 @@
-stages:
-  - semantic_version_integration
-  - microservices_development
-  - build_development_antioquia
+# stages:
+#   - semantic_version_integration
+#   - microservices_development
+#   - build_development_antioquia
 
-semantic_version_integration:
-  jobs:
-    - name: job1
+# semantic_version_integration:
+#   jobs:
+#     - name: job1
 
-microservices_development:
-  jobs:
-    - name: jobA
+# microservices_development:
+#   jobs:
+#     - name: jobA
 
-    - name: jobB
-      depends_on: [jobA]
+#     - name: jobB
+#       depends_on: [jobA]
 
-build_development_antioquia:
-  jobs:
-    - name: jobX
+# build_development_antioquia:
+#   jobs:
+#     - name: jobX
 
-    - name: jobY
-      depends_on: [jobX]
+#     - name: jobY
+#       depends_on: [jobX]
 
       
 # /project-root
@@ -31,3 +31,27 @@ build_development_antioquia:
 #       microservices-development.yml
 #       build-development-antioquia.yml
 
+
+  # - stage: build_micro_frontend
+  #   displayName: "📦 Build MicroFrontend"
+  #   dependsOn: semantic_version_integration
+  #   jobs:
+  #     - job: jobA
+  #       displayName: "Job A"
+  #       steps:
+  #         - script: echo "Running Job A"
+
+  #     - job: jobB
+  #       displayName: "Job B"
+  #       dependsOn: jobA
+  #       steps:
+  #         - script: echo "Running Job B, which depends on Job A"
+
+  # - stage: deploy_micro_frontend
+  #   displayName: "🚀 Deploy MicroFrontend"
+  #   dependsOn: build_micro_frontend
+  #   jobs:
+  #     - job: jobY
+  #       displayName: "Job Y"
+  #       steps:
+  #         - script: echo "Running Deployment Job Y"

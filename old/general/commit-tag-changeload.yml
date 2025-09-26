@@ -1,19 +1,29 @@
 jobs:
   - job: "commit_tag_version"
+    ${{ if in(parameters.release, 'aws-s3') }}:
+      dependsOn:
+        - "aws_s3"
+      condition: in(dependencies.aws_s3.result, 'Succeeded', 'SucceededWithIssues')
     ${{ if in(parameters.release, 'aws-ecs') }}:
       dependsOn:
-        - "DeployECS"
-      condition: in(dependencies.DeployECS.result, 'Succeeded', 'SucceededWithIssues')
+        - "aws_ecs"
+      condition: in(dependencies.aws_ecs.result, 'Succeeded', 'SucceededWithIssues')
 
     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
-      displayName: "⚡ Commit and Tag Version Develop"
+      displayName: "Commit and Tag Version Develop"
     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
-      displayName: "⚡ Commit and Tag Version Staging"
+      displayName: "Commit and Tag Version Staging"
     ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'antioquia')) }}:
-      displayName: "⚡ Commit and Tag Version Master"
+      displayName: "Commit and Tag Version Master"
     pool:
       name: Azure Pipelines
       vmImage: "ubuntu-22.04"
+
+    strategy:
+      matrix:
+        ${{ each ms in parameters.apps }}:
+          ${{ ms }}:
+            msName: ${{ ms }}
 
     steps:
       - checkout: self
@@ -28,7 +38,7 @@ jobs:
           echo "##vso[task.setvariable variable=repoID]$REPO_ID"
         env:
           AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
-        displayName: "📌 Set Repository ID"
+        displayName: "ID Repositorio"
 
       - script: |
           echo "id del repositorio $(Build.Repository.Name) = $(repoID)"
@@ -56,7 +66,7 @@ jobs:
           echo "{\"idpr\": \"$PR_ID\" }" > $(Build.ArtifactStagingDirectory)/idpr/idpr.json
         env:
           AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
-        displayName: "📌 Set Pull Request ID"
+        displayName: "ID Pull Request"
         condition: not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
 
       - script: |
@@ -70,10 +80,16 @@ jobs:
           echo "##vso[task.setvariable variable=filteredCommits]$SAFE_COMMITS"
         env:
           AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
-        displayName: "📝 Pull Request Commit Details"
+        displayName: "Details of Pull Request Commits"
         condition: not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
 
       - script: |
+          if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
+            cd $(System.DefaultWorkingDirectory)/app-legacy/$(msName)
+          else 
+            cd $(System.DefaultWorkingDirectory)/apps/$(msName)
+          fi
+
           CURRENT_BRANCH=$(echo $(Build.SourceBranch))
           echo $CURRENT_BRANCH
 
@@ -131,9 +147,9 @@ jobs:
               echo "🚀 Próxima versión : $NEXT_VERSION"
             fi
 
-            mkdir -p $(Build.ArtifactStagingDirectory)/
-            touch $(Build.ArtifactStagingDirectory)/version.json
-            echo "{ \"ms\": \"$(Build.Repository.Name)\", \"version\": \"$NEXT_VERSION\" }" > $(Build.ArtifactStagingDirectory)/version.json
+            mkdir -p $(Build.ArtifactStagingDirectory)/$(msName)
+            touch $(Build.ArtifactStagingDirectory)/$(msName)/version.json
+            echo "{ \"ms\": \"$(msName)\", \"version\": \"$NEXT_VERSION\" }" > $(Build.ArtifactStagingDirectory)/$(msName)/version.json
 
             echo "##vso[task.setvariable variable=cleanNEXT_VERSION]$NEXT_VERSION"
           fi
@@ -144,6 +160,14 @@ jobs:
           raw_branch=$(Build.SourceBranch)
           clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
 
+          if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
+            cd $(System.DefaultWorkingDirectory)/app-legacy/$(msName)
+            echo "🔧 Actualizando versión en app-legacy/$(msName)/package.json a $(cleanNEXT_VERSION)"
+          else 
+            cd $(System.DefaultWorkingDirectory)/apps/$(msName)
+            echo "🔧 Actualizando versión en apps/$(msName)/package.json a $(cleanNEXT_VERSION)"
+          fi
+
           jq --arg version "$(cleanNEXT_VERSION)" '.version = $version' package.json > tmp.json && mv tmp.json package.json
 
           git config user.name "pipeline"
@@ -152,13 +176,13 @@ jobs:
           git checkout version/$clean_branch
           git pull origin version/$clean_branch
           git add package.json
-          git commit -m "chore($(Build.Repository.Name)): bump version to $(cleanNEXT_VERSION)"
+          git commit -m "chore($(msName)): bump version to $(cleanNEXT_VERSION)"
           git push origin version/$clean_branch
-        displayName: "⚡ Bump Version & Push — $(Build.Repository.Name)"
+        displayName: "Update version and push MS:$(msName)"
 
   - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/master') }}:
       - job: "create_publish_versioning"
-        displayName: "📦 Create & Publish Version"
+        displayName: "📦 Create and Publish Versioning"
         dependsOn: "commit_tag_version"
         pool:
           vmImage: "ubuntu-22.04"

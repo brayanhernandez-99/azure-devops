@@ -1,20 +1,18 @@
 jobs:
-  - job: "commit_tag_version"
-    dependsOn:
-      - build_electron_windows
-      - build_electron_linux
-    condition: |
-      and(in(dependencies.build_electron_windows.result, 'Succeeded', 'SucceededWithIssues'),in(dependencies.build_electron_linux.result, 'Succeeded', 'SucceededWithIssues'))
-
-    ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
-      displayName: "Commit and Tag Version Develop"
-    ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
-      displayName: "Commit and Tag Version Staging"
-    ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'antioquia')) }}:
-      displayName: "Commit and Tag Version Master"
+  - job: "semantic_version_microfronted"
+    displayName: "🏷️ version"
     pool:
-      name: Azure Pipelines
-      vmImage: "ubuntu-22.04"
+      name: "Azure Pipelines"
+      VmImage: ubuntu-22.04
+
+    strategy:
+      matrix:
+        ${{ each ms in parameters.apps }}:
+          ${{ ms }}:
+            msName: ${{ ms }}
+
+    variables:
+      - template: ../../variables/groups-transversal-variables.yml
 
     steps:
       - checkout: self
@@ -22,19 +20,69 @@ jobs:
         persistCredentials: true
 
       - script: |
+          if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
+            fileselect=app-legacy
+            echo "Ruta de archivo del mf: $fileselect"
+            echo "##vso[task.setvariable variable=file]$fileselect"
+          else
+            fileselect=apps
+            echo "Ruta de archivo del mf: $fileselect"
+            echo "##vso[task.setvariable variable=file]$fileselect"
+          fi
+        displayName: "📂 Select File"
+
+      - script: |
+          echo -e "\n📌 Verificando si feature está actualizada con master y si hay cambios relevantes..."
+
+          git fetch origin master
+
+          # Encuentra el punto de bifurcación (base común)
+          MERGE_BASE=$(git merge-base HEAD origin/master)
+
+          # Verifica si la rama está actualizada
+          if [ "$MERGE_BASE" = "$(git rev-parse origin/master)" ]; then
+            echo -e "\n✅ La rama feature está actualizada con master."
+          else
+            echo -e "\n⚠️ La rama feature NO contiene todos los commits de master. Verificando cambios relevantes en master..."
+
+            # Obtén los archivos cambiados en master desde el punto de bifurcación
+            CHANGED_FILES=$(git diff --name-only "$MERGE_BASE".."origin/master")
+
+            echo "🔍 Archivos nuevos en master desde el punto de bifurcación:"
+            echo "$CHANGED_FILES"
+
+            # Filtrar cambios relevantes (ignorar carpeta pipeline/)
+            RELEVANT_CHANGES=$(echo "$CHANGED_FILES" | grep -vE '^pipeline/')
+
+            if [[ -z "$RELEVANT_CHANGES" ]]; then
+              echo -e "\nℹ️ Solo hay cambios en archivos ignorados (pipeline/). Continuando..."
+            else
+              echo -e "\n##vso[task.logissue type=error]❌ Cambios relevantes detectados en master y no están integrados. Debes actualizar tu rama."
+              exit 99
+            fi
+          fi
+        displayName: "🔎 Validate Feature or Hotfix Branch is Up to Date"
+        condition: and(succeeded(), or(
+          startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'),
+          startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
+
+      - script: |
           REPO_ID=$(curl -s -u ":$AZURE_DEVOPS_CLI_PAT" \
             "https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories?api-version=5.0" \
             | jq -r '.value[] | select(.name == "$(Build.Repository.Name)").id')
-          echo "id del repositorio $(Build.Repository.Name) = $REPO_ID"
+          echo -e "\nℹ️id del repositorio $(Build.Repository.Name): $REPO_ID"
           echo "##vso[task.setvariable variable=repoID]$REPO_ID"
         env:
           AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
         displayName: "📌 Set Repository ID"
+        condition: and(
+          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
+          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
 
       - script: |
-          echo "id del repositorio $(Build.Repository.Name) = $(repoID)"
-
           CURRENT_BRANCH=$(echo $(Build.SourceBranch))
+          echo -e "\nℹ️id repositorio $(Build.Repository.Name): $(repoID)"
+          echo "Branch Actual: $CURRENT_BRANCH"
 
           if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
             CURRENT_BRANCH_PR=refs/heads/feature
@@ -58,10 +106,12 @@ jobs:
         env:
           AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
         displayName: "📌 Set Pull Request ID"
-        condition: not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
+        condition: and(succeeded(),
+          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
+          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
 
       - script: |
-          echo "Pull Request ID recuperado: $(ultimoPR)"
+          echo -e "\nℹ️id repositorio $(Build.Repository.Name): $(repoID)"Pull Request ID recuperado: $(ultimoPR)"
           echo "id del repositorio $(Build.Repository.Name) = $(repoID)" 
           COMMITS=$(curl -s -u ":$AZURE_DEVOPS_CLI_PAT" \
             "https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories/$(repoID)/pullRequests/$(ultimoPR)/commits?api-version=7.0" \
@@ -72,16 +122,24 @@ jobs:
         env:
           AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
         displayName: "📝 Pull Request Commit Details"
-        condition: not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
+        condition: and(succeeded(),
+          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
+          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
 
       - script: |
+          cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
           CURRENT_BRANCH=$(echo $(Build.SourceBranch))
-          echo $CURRENT_BRANCH
+          echo -e "\nℹ️ Branch Actual: $CURRENT_BRANCH"
 
-          if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|master|staging|feature/.+)$ ]]; then
+          if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|master|staging|feature/.+|hotfix/.+)$ ]]; then
 
             if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
               clean_branch=develop
+              echo $clean_branch
+            fi
+
+            if [[ "$CURRENT_BRANCH" == refs/heads/hotfix/* ]]; then
+              clean_branch=master
               echo $clean_branch
             fi
 
@@ -97,6 +155,13 @@ jobs:
               echo $COMMITS
             fi
 
+            if [[ "$CURRENT_BRANCH" == refs/heads/hotfix/* ]]; then
+              BASE=$(git merge-base HEAD origin/master)
+              COMMITS=$(git log --pretty=format:"%s" $BASE..HEAD | grep -vi "Auto-generated pipeline config")
+              echo "📝 Commits de la rama hotfix"
+              echo $COMMITS
+            fi
+            
             if [[ "$CURRENT_BRANCH" == refs/heads/develop ]]; then
               COMMITS=$(echo "$(filteredCommits)" | tr '|' '\n')
               echo "📝 Commits de la rama feature a develop:"
@@ -155,7 +220,7 @@ jobs:
 
             if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|staging|feature/.+)$ ]]; then
               git checkout version/$clean_branch
-              VERSION_ACTUAL=$(jq -r .version  package.json)
+              VERSION_ACTUAL=$(jq -r .version package.json)
               BASE_VERSION_BRANCH=$(echo "$VERSION_ACTUAL" | sed -E "s/-${clean_branch}\.[0-9]+//")
               echo "versión base actual: $BASE_VERSION_BRANCH"
 
@@ -164,7 +229,7 @@ jobs:
               git checkout version/master
               VERSION_ACTUAL_MASTER=$(jq -r .version package.json)
               echo "versión base master: $VERSION_ACTUAL_MASTER"
-
+              
               git checkout version/$clean_branch
 
               if [[ "$BASE_VERSION_BRANCH" == "$VERSION_ACTUAL_MASTER" ]]; then
@@ -182,6 +247,7 @@ jobs:
                 # Las bases son diferentes, solo incrementa el prerelease
                 NEXT_VERSION="$BASE_VERSION_BRANCH-$clean_branch.$((CURRENT_PRERELEASE + 1))"
               fi
+
               echo -e "\n🔍 Versiones Detectadas"
               echo "📌 Anterior versión : $VERSION_ACTUAL"
               echo "🚀 Próxima versión : $NEXT_VERSION"
@@ -190,6 +256,7 @@ jobs:
             if [[ "$CURRENT_BRANCH" == refs/heads/master ]]; then
               git checkout version/$clean_branch
               VERSION_ACTUAL_MASTER=$(jq -r .version package.json)
+
               NEXT_BASE_VERSION=$(bump_version "$VERSION_ACTUAL_MASTER" "$RELEASE_TYPE")
               NEXT_VERSION="$NEXT_BASE_VERSION"
 
@@ -198,39 +265,53 @@ jobs:
               echo "🚀 Próxima versión : $NEXT_VERSION"
             fi
 
-            mkdir -p $(Build.ArtifactStagingDirectory)/electron
-            touch $(Build.ArtifactStagingDirectory)/electron/version.json
-            echo "{ \"release\": \"exe\", \"version\": \"$NEXT_VERSION\" }" > $(Build.ArtifactStagingDirectory)/electron/version.json
+            if [[ "$CURRENT_BRANCH" == refs/heads/hotfix/* ]]; then
+              git checkout version/$clean_branch
+              VERSION_ACTUAL_MASTER=$(jq -r .version package.json)
+
+              NEXT_BASE_VERSION=$(bump_version "$VERSION_ACTUAL_MASTER" "$RELEASE_TYPE")
+              NEXT_VERSION="$NEXT_BASE_VERSION"
+
+              echo -e "\n🔍 Versiones Detectadas"
+              echo "📌 Anterior versión : $VERSION_ACTUAL_MASTER"
+              echo "🚀 Próxima versión : $NEXT_VERSION"
+            fi
+
+            mkdir -p $(Build.ArtifactStagingDirectory)/$(msName)
+            touch $(Build.ArtifactStagingDirectory)/$(msName)/version.json
+            echo "{ \"ms\": \"$(msName)\", \"version\": \"$NEXT_VERSION\" }" > $(Build.ArtifactStagingDirectory)/$(msName)/version.json
 
             echo "##vso[task.setvariable variable=cleanNEXT_VERSION]$NEXT_VERSION"
           fi
         displayName: "🔍 Detect next version"
         name: SemanticJob
 
+      - task: PublishBuildArtifacts@1
+        inputs:
+          PathtoPublish: "$(Build.ArtifactStagingDirectory)"
+          ArtifactName: "versions"
+          publishLocation: "Container"
+        displayName: "📦 Publish Versioned Artifacts by Microservice"
+
       - script: |
           raw_branch=$(Build.SourceBranch)
           clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
-
-          echo "🔧 Actualizando versión en $(Build.Repository.Name)/package.json a $(cleanNEXT_VERSION)"
-          jq --arg version "$(cleanNEXT_VERSION)" '.version = $version' package.json > tmp.json && mv tmp.json package.json
 
           git config user.name "pipeline"
           git config user.email "pipelineUX@ux.technology"
 
           git checkout version/$clean_branch
+
+          cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
+          echo "🔧 Actualizando versión en $(file)/$(msName)/package.json a $(cleanNEXT_VERSION)"
+          jq --arg version "$(cleanNEXT_VERSION)" '.version = $version' package.json > tmp.json && mv tmp.json package.json
+
           git pull origin version/$clean_branch
           git add package.json
-          git commit -m "chore($(Build.Repository.Name)): bump version to $(cleanNEXT_VERSION)"
+          git commit -m "chore($(msName)): bump version to $(cleanNEXT_VERSION)"
           git push origin version/$clean_branch
-        displayName: "⚡ Bump Version & Push — $(Build.Repository.Name)"
-
-  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/master') }}:
-      - job: "create_publish_versioning"
-        displayName: "Create and Publish Versioning"
-        dependsOn: "commit_tag_version"
-        pool:
-          vmImage: "ubuntu-22.04"
-        steps:
-          - task: git-tag-on-release-task@9
-            displayName: "📦 Create and Publish Versioning Tag"
-            continueOnError: true
+        displayName: "⚡ Bump Version & Push — $(msName)"
+        condition: and(succeeded(),
+          ne(variables['Build.SourceBranchName'], 'master'),
+          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
+          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
