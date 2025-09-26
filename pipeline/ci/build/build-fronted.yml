@@ -111,7 +111,10 @@ jobs:
             cat app-legacy/app-sellers-vue2/.env.local
           else
             echo -e "\n📁 Archivos .env para $(msName)"
-            printenv | grep -i '^$(msName)_' | sed 's/^$(msName)_//' > $(System.DefaultWorkingDirectory)/apps/$(msName)/.env
+            msName="$(msName)"
+            msNameUpper="${msName^^}"
+
+            printenv | grep '^$(msNameUpper)_' | sed 's/^$(msNameUpper)_//' > $(System.DefaultWorkingDirectory)/apps/$(msName)/.env
             ls -la apps/$(msName)/.env
             cat apps/$(msName)/.env
           fi
