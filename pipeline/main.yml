@@ -45,24 +45,25 @@ resources:
       type: git
       ref: $(Build.SourceBranch)
 
-    #
-    # MicroFronted pipeline
-    #
-    - ${{ if and(eq(parameters.release, 'aws-s3'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/develop'), startsWith(variables['Build.SourceBranch'], 'refs/heads/staging'), startsWith(variables['Build.SourceBranch'], 'refs/heads/master'))) }}:
-        - template: pipelines/pipeline-micro-fronted.yml
-          parameters:
-            red: ${{ parameters.red }}
-            apps: ${{ parameters.apps }}
-            release: ${{ parameters.release }}
+stages:
+  #
+  # MicroFronted pipeline
+  #
+  - ${{ if and(eq(parameters.release, 'aws-s3'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/develop'), startsWith(variables['Build.SourceBranch'], 'refs/heads/staging'), startsWith(variables['Build.SourceBranch'], 'refs/heads/master'))) }}:
+      - template: pipelines/pipeline-micro-fronted.yml
+        parameters:
+          red: ${{ parameters.red }}
+          apps: ${{ parameters.apps }}
+          release: ${{ parameters.release }}
 
-    #
-    # Electron pipeline
-    #
-    - ${{ if and(eq(parameters.release, 'exe'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/develop'), startsWith(variables['Build.SourceBranch'], 'refs/heads/staging'), startsWith(variables['Build.SourceBranch'], 'refs/heads/master'))) }}:
-        - template: pipeline/pipeline-electron.yml
-          parameters:
-            red: ${{ parameters.red }}
-            release: ${{ parameters.release }}
+  #
+  # Electron pipeline
+  #
+  - ${{ if and(eq(parameters.release, 'exe'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/develop'), startsWith(variables['Build.SourceBranch'], 'refs/heads/staging'), startsWith(variables['Build.SourceBranch'], 'refs/heads/master'))) }}:
+      - template: pipeline/pipeline-electron.yml
+        parameters:
+          red: ${{ parameters.red }}
+          release: ${{ parameters.release }}
 
   #
   #
