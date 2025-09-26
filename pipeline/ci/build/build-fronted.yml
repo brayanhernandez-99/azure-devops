@@ -98,26 +98,26 @@ jobs:
       - script: |
           if [[ "$(msName)" == "app-administration-vue2" ]]; then
             echo -e "\n📁 Archivos .env.local para app-administration-vue2"
-            printenv | grep '^VUE2_' | sed 's/^VUE2_//' > $(System.DefaultWorkingDirectory)/app-legacy/app-administration-vue2/.env.local
-            printenv | grep '^ADMIN_' | sed 's/^ADMIN_//' >> $(System.DefaultWorkingDirectory)/app-legacy/app-administration-vue2/.env.local
+            printenv | grep "^VUE2_" | sed "s/^VUE2_//" > $(System.DefaultWorkingDirectory)/app-legacy/app-administration-vue2/.env.local
+            printenv | grep "^ADMIN_" | sed "s/^ADMIN_//" >> $(System.DefaultWorkingDirectory)/app-legacy/app-administration-vue2/.env.local
             ls -la app-legacy/app-administration-vue2/.env.local
             cat app-legacy/app-administration-vue2/.env.local
 
           elif [[ "$(msName)" == "app-sellers-vue2" ]]; then
             echo -e "\n📁 Archivos .env.local para app-sellers-vue2"
-            printenv | grep '^VUE2_' | sed 's/^VUE2_//' > $(System.DefaultWorkingDirectory)/app-legacy/app-sellers-vue2/.env.local
-            printenv | grep '^SELLERS_' | sed 's/^SELLERS_//' >> $(System.DefaultWorkingDirectory)/app-legacy/app-sellers-vue2/.env.local
+            printenv | grep "^VUE2_" | sed "s/^VUE2_//" > $(System.DefaultWorkingDirectory)/app-legacy/app-sellers-vue2/.env.local
+            printenv | grep "^SELLERS_" | sed "s/^SELLERS_//" >> $(System.DefaultWorkingDirectory)/app-legacy/app-sellers-vue2/.env.local
             ls -la app-legacy/app-sellers-vue2/.env.local
             cat app-legacy/app-sellers-vue2/.env.local
           else
             echo -e "\n📁 Archivos .env para $(msName)"
-            printenv | grep -i '^$(msName)_' | sed 's/^$(msName)_//' > $(System.DefaultWorkingDirectory)/apps/$(msName)/.env
+            printenv | grep -i "^$(msName)_" |sed -E "s/^($(msName))_//I" > $(System.DefaultWorkingDirectory)/apps/$(msName)/.env
             ls -la apps/$(msName)/.env
             cat apps/$(msName)/.env
           fi
 
           echo -e "\n📁 Archivos .env para el path raiz"
-          printenv | grep '^ROOT_' | sed 's/^ROOT_//' > $(System.DefaultWorkingDirectory)/.env
+          printenv | grep "^ROOT_" | sed "s/^ROOT_//" > $(System.DefaultWorkingDirectory)/.env
           ls -la .env
           cat .env
 
