@@ -3,37 +3,37 @@ variables:
   - group: trasversal-azure-devops
   - group: trasversal-versions-invictus
 
-  # Develop or Feature branch
-  - ${{ if or( startsWith(variables['Build.SourceBranch'], 'refs/heads/feature'), startsWith(variables['Build.SourceBranch'], 'refs/heads/develop')) }}:
+  # Develop - Feature - Hotfix
+  - ${{ if or(eq(variables['Build.SourceBranchName'], 'develop'), startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')) }}:
       - group: variables-electron-develop
       - group: trasversal-aws-developer
 
-  # Staging branch
-  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
+  # Staging
+  - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
       - group: variables-electron-staging
       - group: trasversal-aws-qa
 
   # Master or tags → por red
-  - ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'antioquia')) }}:
+  - ${{ if and(eq(parameters.region, 'antioquia'), eq(variables['Build.SourceBranchName'], 'master')) }}:
       - group: variables-electron-master-antioquia
       - group: trasversal-aws-master-antioquia
 
-  - ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'cap')) }}:
+  - ${{ if and(eq(parameters.region, 'cap'), eq(variables['Build.SourceBranchName'], 'master')) }}:
       - group: variables-electron-master-cap
       - group: trasversal-aws-master-cap
 
-  - ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'tolima')) }}:
+  - ${{ if and(eq(parameters.region, 'tolima'), eq(variables['Build.SourceBranchName'], 'master')) }}:
       - group: variables-electron-master-tolima
       - group: trasversal-aws-master-tolima
 
-  - ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'huila')) }}:
+  - ${{ if and(eq(parameters.region, 'huila'), eq(variables['Build.SourceBranchName'], 'master')) }}:
       - group: variables-electron-master-huila
       - group: trasversal-aws-master-huila
 
-  - ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'cauca')) }}:
+  - ${{ if and(eq(parameters.region, 'cauca'), eq(variables['Build.SourceBranchName'], 'master')) }}:
       - group: variables-electron-master-cauca
       - group: trasversal-aws-master-cauca
 
-  - ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'boyaca')) }}:
+  - ${{ if and(eq(parameters.region, 'boyaca'), eq(variables['Build.SourceBranchName'], 'master')) }}:
       - group: variables-electron-master-boyaca
       - group: trasversal-aws-master-boyaca
