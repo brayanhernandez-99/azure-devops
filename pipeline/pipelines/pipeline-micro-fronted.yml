@@ -18,19 +18,6 @@ stages:
                   red: ${{ parameters.red }}
                   apps: ${{ parameters.apps }}
 
-  - ${{ if ne(variables['Build.SourceBranch'], 'refs/heads/master') }}:
-      - ${{ each region in parameters.red }}:
-          - stage: build_micro_frontend
-            displayName: "📦 Build MicroFrontend"
-            jobs:
-              - template: ../ci/build/build-fronted.yml
-                parameters:
-                  region: ${{ region }}
-                  red: ${{ parameters.red }}
-                  apps: ${{ parameters.apps }}
-
-  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/master') }}:
-      - ${{ each region in parameters.red }}:
           - stage: deploy_micro_frontend_${{ region }}
             displayName: "🚀 Deploy MicroFrontend ${{ region }}"
             dependsOn: build_micro_frontend_${{ region }}
@@ -41,12 +28,20 @@ stages:
                   - script: echo "Running Deployment Job Y"
 
   - ${{ if ne(variables['Build.SourceBranch'], 'refs/heads/master') }}:
-      - ${{ each region in parameters.red }}:
-          - stage: deploy_micro_frontend
-            displayName: "🚀 Deploy MicroFrontend"
-            dependsOn: build_micro_frontend
-            jobs:
-              - job: jobY
-                displayName: "Job Y"
-                steps:
-                  - script: echo "Running Deployment Job Y"
+      - stage: build_micro_frontend
+        displayName: "📦 Build MicroFrontend"
+        jobs:
+          - template: ../ci/build/build-fronted.yml
+            parameters:
+              region: ${{ region }}
+              red: ${{ parameters.red }}
+              apps: ${{ parameters.apps }}
+
+      - stage: deploy_micro_frontend
+        displayName: "🚀 Deploy MicroFrontend"
+        dependsOn: build_micro_frontend
+        jobs:
+          - job: jobY
+            displayName: "Job Y"
+            steps:
+              - script: echo "Running Deployment Job Y"
