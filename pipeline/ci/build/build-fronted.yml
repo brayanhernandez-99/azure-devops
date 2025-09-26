@@ -4,9 +4,10 @@ jobs:
           - template: ./job/job-fronted.yml
             parameters:
               region: ${{ region }}
+              red: ${{ parameters.red }}
               apps: ${{ parameters.apps }}
 
   - ${{ if ne(variables['Build.SourceBranch'], 'refs/heads/master') }}:
       - template: ./job/job-fronted.yml
         parameters:
-          region: antioquia
+          red: antioquia

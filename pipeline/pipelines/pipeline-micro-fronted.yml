@@ -8,7 +8,7 @@ stages:
           release: ${{ parameters.release }}
 
   - stage: build_micro_frontend
-    displayName: "📦 Build MicroFrontend +"
+    displayName: "📦 Build MicroFrontend"
     dependsOn: semantic_version_integration
     jobs:
       - template: ../ci/build/build-fronted.yml

@@ -1,10 +1,9 @@
 jobs:
   - job: build_micro_frontend
-    displayName: "📦 Build MicroFrontend ${{ parameters.region }} ++"
+    displayName: "📦 build"
     pool:
-      vmImage: ubuntu-22.04
-    variables:
-      versionNode: $[coalesce(variables.nodeVersion, '18.20')]
+      name: "Azure Pipelines"
+      VmImage: ubuntu-22.04
 
     strategy:
       matrix:
