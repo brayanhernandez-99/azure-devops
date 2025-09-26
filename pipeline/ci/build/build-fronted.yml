@@ -7,7 +7,9 @@ jobs:
 
     variables:
       - template: ../../variables/groups-transversal-variables.yml
-      
+        parameters:
+          red: ${{ parameters.region }}
+
     strategy:
       matrix:
         ${{ each ms in parameters.apps }}:
