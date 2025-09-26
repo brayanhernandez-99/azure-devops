@@ -176,7 +176,7 @@ jobs:
             echo "✅ Build generado correctamente en $DIST_PATH"
             ls -la "$DIST_PATH"
           fi
-        displayName: "🛠️ Build MicroFrontend $(msName)"
+        displayName: "⚙️ Build MicroFrontend $(msName)"
 
       - script: |
           echo "Descomentando app-legacy/*"
@@ -315,25 +315,12 @@ jobs:
           ne(variables['Build.SourceBranchName'], 'staging')
           )
 
-      # - script: |
-      #     if [ -d "$(System.DefaultWorkingDirectory)/$(file)/$(msName)/dist" ]; then
-      #       if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
-      #         msName=$(msName)
-      #         msName=${msName%-vue2}
-      #         echo $msName
-      #       else
-      #         msName=$(msName)
-      #       fi
-      #       aws s3 cp ./$(file)/$(msName)/dist s3://mf-prueba-$msName-$(ACCOUNT_ID_INVIC)/$(msVersion)/ --recursive
-      #     else
-      #       echo "##vso[task.logissue type=error]❌ No se encontro la carpeta dist, por ende no compilo el proyecto $msName"
-      #       exit 99
-      #     fi
-      #   displayName: "📦 Upload Files to S3 Bucket"
-      #   condition: and(
-      #     not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
-      #     not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
-      #   env:
-      #     AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVIC)
-      #     AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVIC)
-      #     AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+      - task: PublishBuildArtifacts@1
+        inputs:
+          PathtoPublish: '$(System.DefaultWorkingDirectory)/$(file)/$(msName)/dist'
+          ArtifactName: 'build-$(msName)'
+          publishLocation: 'Container'
+        displayName: "📤 Publish Dist Files"
+        # condition: and(
+        #   not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
+        #   not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))

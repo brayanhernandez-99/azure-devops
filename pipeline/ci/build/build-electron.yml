@@ -1,0 +1,23 @@
+jobs:
+  - job: build_electron
+    displayName: "📦 build electron"
+    pool:
+      name: "Azure Pipelines"
+      VmImage: ubuntu-22.04
+
+    variables:
+      - template: ../../variables/groups-transversal-variables-electron.yml
+        parameters:
+          region: ${{ parameters.region }}
+
+steps:
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      artifactName: "build-${{ parameters.apps }}"
+      path: "$(Pipeline.Workspace)/frontend/${{ parameters.apps }}"
+    displayName: "📥 Download Dist Files"
+
+  - script: |
+      echo "Archivos descargados:"
+      ls -R $(Pipeline.Workspace)/frontend/${{ parameters.apps }}
+    displayName: "👀 Verificar archivos descargados"
