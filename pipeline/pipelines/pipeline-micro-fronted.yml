@@ -7,15 +7,25 @@ stages:
           apps: ${{ parameters.apps }}
           release: ${{ parameters.release }}
 
-  - stage: build_micro_frontend
-    displayName: "📦 Build MicroFrontend"
-    dependsOn: semantic_version_integration
-    jobs:
-      - template: ../ci/build/build-fronted.yml
-        parameters:
-          red: ${{ parameters.red }}
-          apps: ${{ parameters.apps }}
-          release: ${{ parameters.release }}
+  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/master') }}:
+      - ${{ each region in parameters.red }}:
+          - stage: build_micro_frontend_${{ region }}
+            displayName: "📦 Build MicroFrontend ${{ region }}"
+          - template: ../ci/build/build-fronted.yml
+            parameters:
+              region: ${{ region }}
+              red: ${{ parameters.red }}
+              apps: ${{ parameters.apps }}
+
+  - ${{ if ne(variables['Build.SourceBranch'], 'refs/heads/master') }}:
+      - ${{ each region in parameters.red }}:
+          - stage: build_micro_frontend
+            displayName: "📦 Build MicroFrontend"
+          - template: ../ci/build/build-fronted.yml
+            parameters:
+              region: ${{ region }}
+              red: ${{ parameters.red }}
+              apps: ${{ parameters.apps }}
 
   - stage: deploy_micro_frontend
     displayName: "🚀 Deploy MicroFrontend"
