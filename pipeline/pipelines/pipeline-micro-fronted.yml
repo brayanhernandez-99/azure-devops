@@ -12,6 +12,7 @@ stages:
   - ${{ each region in parameters.red }}:
     - stage: build_micro_frontend_${{ region }}
       displayName: "📦 Build MicroFrontend ${{ region }}"
+      dependsOn: semantic_version_integration
       jobs:
         - template: ../ci/build/build-fronted.yml
           parameters:
@@ -31,6 +32,7 @@ stages:
   # - ${{ if ne(variables['Build.SourceBranch'], 'refs/heads/master') }}:
   #     - stage: build_micro_frontend
   #       displayName: "📦 Build MicroFrontend"
+  #       dependsOn: semantic_version_integration
   #       jobs:
   #         - template: ../ci/build/build-fronted.yml
   #           parameters:
