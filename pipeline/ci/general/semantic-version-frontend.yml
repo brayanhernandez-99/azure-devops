@@ -1,5 +1,5 @@
 jobs:
-  - job: "semantic_version_microfronted"
+  - job: "semantic_version_micro_fronted"
     displayName: "🏷️ version"
     pool:
       name: "Azure Pipelines"
@@ -22,11 +22,11 @@ jobs:
       - script: |
           if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
             fileselect=app-legacy
-            echo "Ruta de archivo del mf: $fileselect"
+            echo -e "\nℹ️ Ruta de archivo del mf: $fileselect"
             echo "##vso[task.setvariable variable=file]$fileselect"
           else
             fileselect=apps
-            echo "Ruta de archivo del mf: $fileselect"
+            echo -e "\nℹ️ Ruta de archivo del mf: $fileselect"
             echo "##vso[task.setvariable variable=file]$fileselect"
           fi
         displayName: "📂 Select File"
