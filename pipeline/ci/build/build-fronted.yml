@@ -1,16 +1,19 @@
 jobs:
   - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/master') }}:
       - ${{ each region in parameters.red }}:
-          - job: build_micro_frontend_${{ region }}
-            steps:
-              - template: ./job/job-fronted.yml
-                parameters:
-                  region: ${{ region }}
-                  apps: ${{ parameters.apps }}
-
-  - ${{ if ne(variables['Build.SourceBranch'], 'refs/heads/master') }}:
-      - job: build_micro_frontend
-        steps:
           - template: ./job/job-fronted.yml
             parameters:
-              region: antioquia
+              region: ${{ region }}
+              apps: ${{ parameters.apps }}
+
+          # - job: build_micro_frontend_${{ region }}
+          #   steps:
+          #     - template: ./job/job-fronted.yml
+          #       parameters:
+          #         region: ${{ region }}
+          #         apps: ${{ parameters.apps }}
+
+  - ${{ if ne(variables['Build.SourceBranch'], 'refs/heads/master') }}:
+      - template: ./job/job-fronted.yml
+        parameters:
+          region: antioquia
