@@ -29,11 +29,24 @@ stages:
                   red: ${{ parameters.red }}
                   apps: ${{ parameters.apps }}
 
-  - stage: deploy_micro_frontend
-    displayName: "🚀 Deploy MicroFrontend"
-    dependsOn: build_micro_frontend
-    jobs:
-      - job: jobY
-        displayName: "Job Y"
-        steps:
-          - script: echo "Running Deployment Job Y"
+  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/master') }}:
+      - ${{ each region in parameters.red }}:
+          - stage: deploy_micro_frontend_${{ region }}
+            displayName: "🚀 Deploy MicroFrontend ${{ region }}"
+            dependsOn: build_micro_frontend_${{ region }}
+            jobs:
+              - job: jobY
+                displayName: "Job Y"
+                steps:
+                  - script: echo "Running Deployment Job Y"
+
+  - ${{ if ne(variables['Build.SourceBranch'], 'refs/heads/master') }}:
+      - ${{ each region in parameters.red }}:
+          - stage: deploy_micro_frontend
+            displayName: "🚀 Deploy MicroFrontend"
+            dependsOn: build_micro_frontend
+            jobs:
+              - job: jobY
+                displayName: "Job Y"
+                steps:
+                  - script: echo "Running Deployment Job Y"
