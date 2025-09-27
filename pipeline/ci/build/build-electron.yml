@@ -11,14 +11,25 @@ jobs:
           region: ${{ parameters.region }}
 
     steps:
-      - ${{ each msName in parameters.apps }}:
-          - task: DownloadPipelineArtifact@2
-            inputs:
-              artifactName: "build-${{ msName }}"
-              path: "$(Pipeline.Workspace)/frontend/${{ msName }}"
-            displayName: "📥 Download Dist Files"
 
           - script: |
-              echo "Archivos descargados:"
-              ls -R $(Pipeline.Workspace)/frontend/${{ msName }}
-            displayName: "👀 Verificar archivos descargados"
+              echo -e "\nℹ️ Descargando builds: ${{ join(', ', parameters.apps) }}"
+              
+              apps="${{ join(' ', parameters.apps) }}"
+              for app in $apps; do
+                echo "Descargando build-${app} ..."
+                echo "##vso[artifact.download artifactname=build-${app};targetPath=$(Pipeline.Workspace)/builds/${app}]"
+                echo "✅ build-${app} descargado"
+              done
+
+
+              builds="$(ls $(Pipeline.Workspace)/builds | wc -l)"
+              if [[ "$builds" == "2"]]; then
+                echo -e "\n📁 Todos los build de las apps han sido descargados: $builds"
+                ls -la $(Pipeline.Workspace)/builds
+              else
+                echo -e "\n❌ Error no se descargaron todos los builds de las apps: $builds"
+                ls -la $(Pipeline.Workspace)/builds
+                exit 99
+              fi
+            displayName: "📥 Download Dist Files"
