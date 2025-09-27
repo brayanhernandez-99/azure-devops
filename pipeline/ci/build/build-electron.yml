@@ -11,13 +11,14 @@ jobs:
           region: ${{ parameters.region }}
 
     steps:
-      - task: DownloadPipelineArtifact@2
-        inputs:
-          artifactName: "build-${{ parameters.apps }}"
-          path: "$(Pipeline.Workspace)/frontend/${{ parameters.apps }}"
-        displayName: "📥 Download Dist Files"
+      - ${{ each msName in parameters.apps }}:
+          - task: DownloadPipelineArtifact@2
+            inputs:
+              artifactName: "build-${{ msName }}"
+              path: "$(Pipeline.Workspace)/frontend/${{ msName }}"
+            displayName: "📥 Download Dist Files"
 
-      - script: |
-          echo "Archivos descargados:"
-          ls -R $(Pipeline.Workspace)/frontend/${{ parameters.apps }}
-        displayName: "👀 Verificar archivos descargados"
+          - script: |
+              echo "Archivos descargados:"
+              ls -R $(Pipeline.Workspace)/frontend/${{ msName }}
+            displayName: "👀 Verificar archivos descargados"
