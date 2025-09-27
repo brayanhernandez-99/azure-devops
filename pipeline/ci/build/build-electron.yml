@@ -1,5 +1,8 @@
 jobs:
-  - job: build_electron
+  #
+  # Electron Linux
+  #
+  - job: build_electron_linux
     displayName: "📦 build electron"
     pool:
       name: "Azure Pipelines"
@@ -11,25 +14,30 @@ jobs:
           region: ${{ parameters.region }}
 
     steps:
+      - ${{ each app in parameters.apps }}:
+          - task: DownloadPipelineArtifact@2
+            inputs:
+              artifact: build-${{ app }}
+              path: $(Pipeline.Workspace)/builds/${{ app }}
+            displayName: "📥 Descargar build-${{ app }}"
 
-          - script: |
-              echo -e "\nℹ️ Descargando builds: ${{ join(', ', parameters.apps) }}"
-              
-              apps="${{ join(' ', parameters.apps) }}"
-              for app in $apps; do
-                echo "Descargando build-${app} ..."
-                echo "##vso[artifact.download artifactname=build-${app};targetPath=$(Pipeline.Workspace)/builds/${app}]"
-                echo "✅ build-${app} descargado"
-              done
+      - task: DownloadBuildArtifacts@0
+        inputs:
+          artifactName: "versions"
+          downloadPath: "$(Pipeline.Workspace)/downloaded-versions"
+        displayName: "📥 Download Version Artifact"
 
-
-              builds="$(ls $(Pipeline.Workspace)/builds | wc -l)"
-              if [[ "$builds" == "2"]]; then
-                echo -e "\n📁 Todos los build de las apps han sido descargados: $builds"
-                ls -la $(Pipeline.Workspace)/builds
-              else
-                echo -e "\n❌ Error no se descargaron todos los builds de las apps: $builds"
-                ls -la $(Pipeline.Workspace)/builds
-                exit 99
-              fi
-            displayName: "📥 Download Dist Files"
+      - script: |
+          echo -e "\n📁 Archivo version.json:"
+          ls -la $(Pipeline.Workspace)/downloaded-versions/versions/electron/
+          VERSION_FILE="$(Pipeline.Workspace)/downloaded-versions/versions/electron/version.json"
+          if [[ -f "$VERSION_FILE" ]]; then
+            VERSION=$(jq -r '.version' $VERSION_FILE)
+            VERSION_CLEAN=$(echo "$VERSION" | cut -d'-' -f1)     
+            echo -e "\n🚀 Versión detectada para $(Build.Repository.Name): $VERSION_CLEAN"
+            echo "##vso[task.setvariable variable=msVersion]$VERSION_CLEAN"
+          else
+            echo -e "\n##vso[task.logissue type=error]❌ No se encontro archivo de versión para $(Build.Repository.Name)"
+            exit 99
+          fi
+        displayName: "📚 Read version"
