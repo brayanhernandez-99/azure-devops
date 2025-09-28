@@ -1,3 +1,7 @@
+parameters:
+  - name: apps
+    type: object
+
 jobs:
   - job: "semantic_version_micro_fronted"
     displayName: "🏷️ version"
@@ -131,7 +135,7 @@ jobs:
           fi
         displayName: "🔍 Check for 'console.log' in changes"
         condition: startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')
-        
+
       - script: |
           if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
             fileselect=app-legacy

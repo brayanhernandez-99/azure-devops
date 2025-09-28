@@ -1,3 +1,7 @@
+parameters:
+  - name: branch
+    type: string
+    
 jobs:
   - job: "semantic_version_electron"
     displayName: "🏷️ Semantic Version Electron"
@@ -13,11 +17,7 @@ jobs:
       - script: |
           echo -e "\nℹ️ Pipeline branch: ${{ parameters.branch }}"
           branch="${{ parameters.branch }}"
-          
-          
-          echo "Branch Actual: $(echo $(Build.SourceBranch))"          
-
-
+        
           if [[ "$branch" == "develop" || "$branch" == "staging" || "$branch" == "master" ]]; then
             echo "➡️ Checkout branch: $branch in electron repository"
             cd $(Build.SourcesDirectory)/electron || exit 99
