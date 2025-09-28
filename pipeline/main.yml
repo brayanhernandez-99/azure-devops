@@ -31,8 +31,8 @@ parameters:
   - name: release
     type: string
 
-  - name: electronBranch
-    type: string
+  # - name: electronBranch
+  #   type: string
 
 resources:
   repositories:
@@ -44,7 +44,7 @@ resources:
     - repository: electron
       name: Invictus/electron-app-invictus
       type: git
-      ref: refs/heads/develop
+      ref: refs/heads/master
 
 stages:
   #
@@ -56,7 +56,6 @@ stages:
           red: ${{ parameters.red }}
           apps: ${{ parameters.apps }}
           release: ${{ parameters.release }}
-          electronBranch: ${{ parameters.electronBranch }}
 
   #
   # Electron pipeline
