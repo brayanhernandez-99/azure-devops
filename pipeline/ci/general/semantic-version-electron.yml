@@ -157,7 +157,7 @@ jobs:
             echo -e "\n✅ No se encontraron sentencias 'console.log' en los cambios"
           fi
         displayName: "🔍 Check for 'console.log' in changes"
-        condition: and(succeeded(), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')), ne('${{ parameters.microFronted }}', true))
+        condition: and(succeeded(), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')), ne(${{ parameters.microFronted }}, true))
 
       - script: |
           CURRENT_BRANCH=$(echo $(Build.SourceBranch))
