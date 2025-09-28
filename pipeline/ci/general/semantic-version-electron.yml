@@ -32,7 +32,7 @@ jobs:
           echo "ℹ️ Branch Actual: $CURRENT_BRANCH"
           echo "ℹ️ Branch Checkout: $electronBranch"
         displayName: "📌 Set Electron Branch"
-        condition: ne(variables['Build.Repository.Name'], 'Pruebas-apps-microfrontend-azure')
+        condition: and(succeeded(), eq(${{ parameters.microFronted }}, true))
 
       - script: |
           echo -e "\n🔀 Cambiando a la rama: electron@$(electronBranch)"
@@ -40,7 +40,7 @@ jobs:
           git checkout $(electronBranch)
           git pull origin $(electronBranch)
         displayName: "🔄 Checkout electron@$(electronBranch)"
-        condition: ne(variables['Build.Repository.Name'], 'Pruebas-apps-microfrontend-azure')
+        condition: and(succeeded(), eq(${{ parameters.microFronted }}, true))
 
       - script: |
           echo -e "\n📌 Verificando si feature está actualizada con master y si hay cambios relevantes..."
@@ -157,7 +157,7 @@ jobs:
             echo -e "\n✅ No se encontraron sentencias 'console.log' en los cambios"
           fi
         displayName: "🔍 Check for 'console.log' in changes"
-        condition: startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')
+        condition: and(succeeded(), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')), ne(${{ parameters.microFronted }}, true))
 
       - script: |
           CURRENT_BRANCH=$(echo $(Build.SourceBranch))

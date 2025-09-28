@@ -131,8 +131,8 @@ jobs:
             echo -e "\n✅ No se encontraron sentencias 'console.log' en los cambios"
           fi
         displayName: "🔍 Check for 'console.log' in changes"
-        condition: startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')
-
+        condition: and(succeeded(), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
+  
       - script: |
           if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
             fileselect=app-legacy

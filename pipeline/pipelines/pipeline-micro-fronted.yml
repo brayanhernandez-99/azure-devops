@@ -6,7 +6,6 @@ stages:
         parameters:
           apps: ${{ parameters.apps }}
           release: ${{ parameters.release }}
-          electronBranch: ${{ parameters.electronBranch }}
 
   #####################################################################
 
@@ -29,6 +28,7 @@ stages:
           - template: ../ci/semantic-version-integration.yml
             parameters:
               release: exe
+              microFronted: true
 
       - ${{ each region in parameters.red }}:
           - stage: build_electron_${{ region }}
@@ -38,6 +38,7 @@ stages:
               - template: ../ci/build/build-electron.yml
                 parameters:
                   region: ${{ region }}
+                  microFronted: true
 
           - stage: deploy_micro_frontend_${{ region }}
             displayName: "🚀 Deploy MicroFrontend ${{ region }}"
