@@ -15,11 +15,11 @@ jobs:
           electronBranch="unknown"
           
           case "$CURRENT_BRANCH" in
-            refs/heads/feature/*) electronBranch="refs/heads/develop"; ;;
-            refs/heads/hotfix/*)  electronBranch="refs/heads/develop"; ;;
-            refs/heads/develop)   electronBranch="refs/heads/develop"; ;;
-            refs/heads/staging)   electronBranch="refs/heads/staging"; ;;
-            refs/heads/master)    electronBranch="refs/heads/master"; ;;
+            refs/heads/feature/*) electronBranch="develop"; ;;
+            refs/heads/hotfix/*)  electronBranch="develop"; ;;
+            refs/heads/develop)   electronBranch="develop"; ;;
+            refs/heads/staging)   electronBranch="staging"; ;;
+            refs/heads/master)    electronBranch="master"; ;;
           esac  
 
           if [[ "$electronBranch" == "unknown" ]]; then
