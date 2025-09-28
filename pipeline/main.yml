@@ -46,7 +46,7 @@ resources:
       ref: $(Build.SourceBranch)
 
     - repository: electron
-      name: $(System.TeamProject)/electron-app-invictus
+      name: Invictus/electron-app-invictus
       type: git
 
 stages:
