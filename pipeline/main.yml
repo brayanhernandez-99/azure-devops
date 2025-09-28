@@ -39,16 +39,17 @@ parameters:
       # - boyaca
 
 variables:
-  - name: electronBranch
-    value: refs/heads/develop
+  - ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')) }}:
+      - name: electronBranch
+        value: refs/heads/develop
 
   - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
-    - name: electronBranch
-      value: refs/heads/staging
+      - name: electronBranch
+        value: refs/heads/staging
 
   - ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
-    - name: electronBranch
-      value: refs/heads/master
+      - name: electronBranch
+        value: refs/heads/master
 
 resources:
   repositories:
