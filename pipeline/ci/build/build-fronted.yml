@@ -191,8 +191,8 @@ jobs:
             echo "##vso[task.logissue type=error]❌ Error: No se generó el build o la carpeta dist está vacía."
             exit 99
           else
-            mkdir -p $(Build.ArtifactStagingDirectory)/dists
-            cp -R $DIST_PATH $(Build.ArtifactStagingDirectory)/dists/$(msName)
+            mkdir -p "$(Build.ArtifactStagingDirectory)/dists/${{ parameters.region }}"
+            cp -R $DIST_PATH $(Build.ArtifactStagingDirectory)/dists/${{ parameters.region }}/$(msName)
 
             echo "✅ Build generado correctamente en $DIST_PATH"
             ls -la "$DIST_PATH"
@@ -321,7 +321,7 @@ jobs:
       - task: PublishBuildArtifacts@1
         inputs:
           #PathtoPublish: "$(System.DefaultWorkingDirectory)/$(file)/$(msName)/dist"
-          PathtoPublish: "$(Build.ArtifactStagingDirectory)/dists"
+          PathtoPublish: "$(Build.ArtifactStagingDirectory)/dists/${{ parameters.region }}"
           ArtifactName: "dists"
           publishLocation: "Container"
         displayName: "📤 Publish Dist Files"
