@@ -15,11 +15,11 @@ jobs:
           electronBranch="unknown"
           
           case "$CURRENT_BRANCH" in
-            refs/heads/feature/*) electronBranch="develop"; ;;
-            refs/heads/hotfix/*)  electronBranch="develop"; ;;
-            refs/heads/develop)   electronBranch="develop"; ;;
-            refs/heads/staging)   electronBranch="staging"; ;;
-            refs/heads/master)    electronBranch="master"; ;;
+            refs/heads/feature/*) electronBranch="refs/heads/develop"; ;;
+            refs/heads/hotfix/*)  electronBranch="refs/heads/develop"; ;;
+            refs/heads/develop)   electronBranch="refs/heads/develop"; ;;
+            refs/heads/staging)   electronBranch="refs/heads/staging"; ;;
+            refs/heads/master)    electronBranch="refs/heads/master"; ;;
           esac  
 
           if [[ "$electronBranch" == "unknown" ]]; then
@@ -90,9 +90,9 @@ jobs:
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
 
       - script: |
-          echo "id del repositorio $(Build.Repository.Name) = $(repoID)"
-
           CURRENT_BRANCH=$(echo $(Build.SourceBranch))
+          echo -e "\nℹ️ id repositorio $(Build.Repository.Name): $(repoID)"
+          echo "Branch Actual: $CURRENT_BRANCH"
 
           if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
             CURRENT_BRANCH_PR=refs/heads/feature
