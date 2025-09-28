@@ -48,7 +48,6 @@ resources:
     - repository: electron
       name: Invictus/electron-app-invictus
       type: git
-      ref: refs/heads/master
 
 stages:
   #
