@@ -1,4 +1,14 @@
 parameters:
+  - name: red
+    type: object
+    default:
+      - antioquia
+      - cap
+      - tolima
+      - huila
+      - cauca
+      - boyaca
+
   - name: apps
     type: object
     default:
@@ -20,30 +30,9 @@ parameters:
 
   - name: release
     type: string
-    values:
-      - aws-s3
-      - aws-ecs
-      - apk
-      - exe
-      - iac
-      - rpc
-
-  - name: red
-    type: object
-    default:
-      - antioquia
-      - cap
-      - tolima
-      - huila
-      - cauca
-      - boyaca
 
   - name: electronBranch
     type: string
-    values:
-      - refs/heads/develop
-      - refs/heads/staging
-      - refs/heads/master
 
 resources:
   repositories:
