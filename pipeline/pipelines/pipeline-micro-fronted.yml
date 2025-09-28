@@ -40,7 +40,7 @@ stages:
   - ${{ each region in parameters.red }}:
       - stage: deploy_micro_frontend_${{ region }}
         displayName: "🚀 Deploy MicroFrontend ${{ region }}"
-        dependsOn: build_electron_${{ region }}
+        dependsOn: build_electron_cap
         jobs:
           - job: jobY
             displayName: "Job Y"
