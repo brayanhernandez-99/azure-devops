@@ -41,9 +41,9 @@ parameters:
 resources:
   repositories:
     - repository: self
-      name: $(System.TeamProject)/$(Build.Repository.Name)
       type: git
-      ref: $(Build.SourceBranch)
+      # name: $(System.TeamProject)/$(Build.Repository.Name)
+      # ref: $(Build.SourceBranch)
 
     - repository: electron
       name: Invictus/electron-app-invictus
