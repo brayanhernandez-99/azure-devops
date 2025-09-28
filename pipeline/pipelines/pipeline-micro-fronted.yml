@@ -13,7 +13,7 @@ stages:
   - ${{ each region in parameters.red }}:
       - stage: build_micro_frontend_${{ region }}
         displayName: "📦 Build MicroFrontend ${{ region }}"
-        dependsOn: semantic_version_integration_electron
+        dependsOn: semantic_version_micro_fronted
         jobs:
           - template: ../ci/build/build-fronted.yml
             parameters:
@@ -31,7 +31,7 @@ stages:
 
   - stage: semantic_version_integration_electron
     displayName: "🏷️ Semantic Version Electron"
-    # dependsOn: build_electron_cap
+    dependsOn: build_electron_cap
     jobs:
       - template: ../ci/semantic-version-integration.yml
         parameters:
