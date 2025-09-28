@@ -58,7 +58,6 @@ stages:
         jobs:
           - template: ../ci/build/build-fronted.yml
             parameters:
-              region: ${{ region }}
               apps: ${{ parameters.apps }}
 
       - stage: semantic_version_electron
@@ -73,10 +72,9 @@ stages:
         displayName: "📦 Build Electron"
         dependsOn: semantic_version_electron
         jobs:
-          - job: jobY
-            displayName: "Job Y"
-            steps:
-              - script: echo "Running Deployment Job Y"
+          - template: ../ci/build/build-electron.yml
+            parameters:
+              apps: ${{ parameters.apps }}
 
       - stage: deploy_micro_frontend
         displayName: "🚀 Deploy MicroFrontend"
