@@ -38,6 +38,13 @@ parameters:
       # - cauca
       # - boyaca
 
+  - name: electronBranch
+    type: string
+    values:
+      - refs/heads/develop
+      - refs/heads/staging
+      - refs/heads/master
+
 resources:
   repositories:
     - repository: self
@@ -45,20 +52,10 @@ resources:
       type: git
       ref: $(Build.SourceBranch)
 
-    - repository: electron_develop
+    - repository: electron
       name: Invictus/electron-app-invictus
       type: git
-      ref: refs/heads/develop
-
-    - repository: electron_staging
-      name: Invictus/electron-app-invictus
-      type: git
-      ref: refs/heads/staging
-
-    - repository: electron_master
-      name: Invictus/electron-app-invictus
-      type: git
-      ref: refs/heads/master
+      ref: ${{ parameters.electronBranch }}
 
 stages:
   #
