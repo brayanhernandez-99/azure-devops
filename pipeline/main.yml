@@ -20,13 +20,13 @@ parameters:
 
   - name: release
     type: string
-    values:
-      - aws-s3
-      - aws-ecs
-      - apk
-      - exe
-      - iac
-      - rpc
+    # values:
+    #   - aws-s3
+    #   - aws-ecs
+    #   - apk
+    #   - exe
+    #   - iac
+    #   - rpc
 
   - name: red
     type: object
@@ -40,10 +40,10 @@ parameters:
 
   - name: electronBranch
     type: string
-    values:
-      - refs/heads/develop
-      - refs/heads/staging
-      - refs/heads/master
+    # values:
+    #   - refs/heads/develop
+    #   - refs/heads/staging
+    #   - refs/heads/master
 
 resources:
   repositories:
