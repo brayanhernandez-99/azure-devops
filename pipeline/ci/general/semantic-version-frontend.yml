@@ -14,7 +14,6 @@ jobs:
     steps:
       - checkout: self
         fetchDepth: 0
-        ref: refs/heads/master
         persistCredentials: true
 
       - script: |
