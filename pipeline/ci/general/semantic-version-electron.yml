@@ -28,16 +28,16 @@ jobs:
           fi
 
           echo "##vso[task.setvariable variable=electronBranch]$electronBranch"
-          echo -e "\nℹ️ Branch Actual: $CURRENT_BRANCH"
-          echo "Branch Checkout: $(electronBranch)"
-        displayName: "🧭 🔀 Set Electron Branch"
+          echo ""
+          echo "ℹ️ Branch Actual: $CURRENT_BRANCH"
+          echo "ℹ️ Branch Checkout: $electronBranch"
+        displayName: "📌 Set Electron Branch"
 
       - script: |
           echo -e "\n🔀 Cambiando a la rama: electron@$(electronBranch)"
-          cd $(Build.SourcesDirectory)/electron
-          git fetch origin ${{ parameters.electronBranch }}
-          git checkout ${{ parameters.electronBranch }}
-          git pull origin ${{ parameters.electronBranch }}
+          git fetch origin $(electronBranch)
+          git checkout $(electronBranch)
+          git pull origin $(electronBranch)
         displayName: "🔄 Checkout electron@$(electronBranch)"
 
       - script: |
