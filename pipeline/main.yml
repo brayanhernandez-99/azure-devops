@@ -13,7 +13,7 @@ parameters:
     type: object
     default:
       - "app-administration-vue2"
-      - "app-sellers-vue2"
+      # - "app-sellers-vue2"
       # - "awards"
       # - "biometrics"
       # - "commissions"
