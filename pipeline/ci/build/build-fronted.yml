@@ -32,16 +32,7 @@ jobs:
         displayName: "📥 Download Version Artifact"
 
       - script: |
-          echo "********************"
-          pwd
-          echo -e "\n********************"
-          ls -ltra
-          echo "********************"
-
-
           echo -e "\nℹ️ Pipeline branch: $(Build.SourceBranch)"
-
-
           ls -R $(Pipeline.Workspace)/downloaded-versions/versions/$(msName)
           VERSION_FILE="$(Pipeline.Workspace)/downloaded-versions/versions/$(msName)/version.json"
           if [[ -f "$VERSION_FILE" ]]; then
@@ -329,7 +320,6 @@ jobs:
 
       - task: PublishBuildArtifacts@1
         inputs:
-          #PathtoPublish: "$(System.DefaultWorkingDirectory)/$(file)/$(msName)/dist"
           PathtoPublish: "$(Build.ArtifactStagingDirectory)/dists"
           ArtifactName: "dists"
           publishLocation: "Container"

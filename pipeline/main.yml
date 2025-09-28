@@ -45,7 +45,17 @@ resources:
       type: git
       ref: $(Build.SourceBranch)
 
-    - repository: electron
+    - repository: electron_develop
+      name: Invictus/electron-app-invictus
+      type: git
+      ref: refs/heads/develop
+
+    - repository: electron_staging
+      name: Invictus/electron-app-invictus
+      type: git
+      ref: refs/heads/staging
+
+    - repository: electron_master
       name: Invictus/electron-app-invictus
       type: git
       ref: refs/heads/master
