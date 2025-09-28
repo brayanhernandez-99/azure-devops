@@ -14,12 +14,18 @@ jobs:
           region: ${{ parameters.region }}
 
     steps:
-      - ${{ each app in parameters.apps }}:
-          - task: DownloadPipelineArtifact@2
-            inputs:
-              artifact: build-${{ app }}
-              path: $(Pipeline.Workspace)/builds/${{ app }}
-            displayName: "📥 Descargar build-${{ app }}"
+      - task: DownloadPipelineArtifact@2
+        inputs:
+          artifact: dists
+          path: $(Pipeline.Workspace)/downloaded-dists
+        displayName: "📥 Download Dist Files"
+
+      # - ${{ each app in parameters.apps }}:
+      #     - task: DownloadPipelineArtifact@2
+      #       inputs:
+      #         artifact: build-${{ app }}
+      #         path: $(Pipeline.Workspace)/builds/${{ app }}
+      #       displayName: "📥 Descargar build-${{ app }}"
 
       - task: DownloadBuildArtifacts@0
         inputs:
@@ -41,4 +47,3 @@ jobs:
             exit 99
           fi
         displayName: "📚 Read version"
-
