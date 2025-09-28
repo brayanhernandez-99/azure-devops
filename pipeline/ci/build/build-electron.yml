@@ -13,12 +13,6 @@ jobs:
         parameters:
           region: ${{ parameters.region }}
 
-    strategy:
-      matrix:
-        ${{ each region in parameters.red }}:
-          ${{ region }}:
-            regionName: ${{ region }}
-
     steps:
       - checkout: electron
         fetchDepth: 0

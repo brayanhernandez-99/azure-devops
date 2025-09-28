@@ -38,7 +38,6 @@ stages:
               - template: ../ci/build/build-electron.yml
                 parameters:
                   region: ${{ region }}
-                  red: ${{ parameters.red }}
 
           - stage: deploy_micro_frontend_${{ region }}
             displayName: "🚀 Deploy MicroFrontend ${{ region }}"
