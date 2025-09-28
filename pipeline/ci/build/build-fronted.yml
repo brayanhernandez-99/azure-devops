@@ -28,11 +28,6 @@ jobs:
         displayName: "📥 Download Version Artifact"
 
       - script: |
-          echo "**********************"
-          echo "Region: ${{ parameters.region }}"
-          echo "**********************"
-
-
           ls -R $(Pipeline.Workspace)/downloaded-versions/versions/$(msName)
           VERSION_FILE="$(Pipeline.Workspace)/downloaded-versions/versions/$(msName)/version.json"
           if [[ -f "$VERSION_FILE" ]]; then
