@@ -12,7 +12,7 @@ parameters:
   - name: apps
     type: object
     default:
-      # - "app-administration-vue2"
+      - "app-administration-vue2"
       - "app-sellers-vue2"
       # - "awards"
       # - "biometrics"
@@ -20,7 +20,7 @@ parameters:
       # - "conciliation"
       # - "dashboard"
       # - "dynamic-storage"
-      - "external-wager"
+      # - "external-wager"
       # - "hierarchies"
       # - "invictus"
       # - "login"
