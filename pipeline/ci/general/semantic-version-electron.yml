@@ -9,7 +9,8 @@ jobs:
       - checkout: electron
         fetchDepth: 0
         persistCredentials: true
-
+        ref: refs/heads/feature/nueva-funcionalidad
+        
       - script: |
           electronBranch="refs/heads/master"
           echo -e "\nℹ️ Pipeline branch: $electronBranch"
