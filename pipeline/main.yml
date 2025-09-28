@@ -38,27 +38,17 @@ parameters:
       # - cauca
       # - boyaca
 
-# variables:
-#   - name: electronBranch
-#     value: refs/heads/develop
-
-#   - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
-#       - name: electronBranch
-#         value: refs/heads/staging
-
-#   - ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
-#       - name: electronBranch
-#         value: refs/heads/master
-
 variables:
   - name: electronBranch
-    value: $[ 
-      coalesce(
-        eq(variables['Build.SourceBranchName'], 'staging') ? 'refs/heads/staging' :
-        eq(variables['Build.SourceBranchName'], 'master') ? 'refs/heads/master' :
-        'refs/heads/develop'
-      )
-    ]
+    value: refs/heads/develop
+
+  - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
+    - name: electronBranch
+      value: refs/heads/staging
+
+  - ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
+    - name: electronBranch
+      value: refs/heads/master
 
 resources:
   repositories:
