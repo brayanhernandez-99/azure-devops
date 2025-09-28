@@ -21,6 +21,10 @@ jobs:
             msName: ${{ ms }}
 
     steps:
+      - checkout: electron
+        fetchDepth: 0
+        persistCredentials: true
+
       - task: DownloadBuildArtifacts@0
         inputs:
           artifactName: "versions"
@@ -28,6 +32,16 @@ jobs:
         displayName: "📥 Download Version Artifact"
 
       - script: |
+          echo "********************"
+          pwd
+          echo -e "\n********************
+          ll
+          echo "********************"
+
+
+          echo -e "\nℹ️ Pipeline branch: $(Build.SourceBranch)"
+
+
           ls -R $(Pipeline.Workspace)/downloaded-versions/versions/$(msName)
           VERSION_FILE="$(Pipeline.Workspace)/downloaded-versions/versions/$(msName)/version.json"
           if [[ -f "$VERSION_FILE" ]]; then

@@ -11,8 +11,14 @@ jobs:
         persistCredentials: true
         
       - script: |
-          electronBranch="refs/heads/master"
-          echo -e "\nℹ️ Pipeline branch: $electronBranch"
+          echo "********************"
+          pwd
+          echo -e "\n********************
+          ll
+          echo "********************"
+
+
+          echo -e "\nℹ️ Pipeline branch: $(Build.SourceBranch)"
         displayName: "🔄 Checkout electron on parameters branch"
 
       # - script: |
@@ -51,13 +57,6 @@ jobs:
       #     startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
 
       - script: |
-          echo "********************"
-          pwd
-          echo -e "\n********************
-          ll
-          echo "********************"
-
-
           REPO_NAME="$(Build.Repository.Name)"
           REPO_ID=$(curl -s -u ":$AZURE_DEVOPS_CLI_PAT" \
             "https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories?api-version=5.0" \
