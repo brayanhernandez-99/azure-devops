@@ -12,10 +12,6 @@ jobs:
             msName: ${{ ms }}
 
     steps:
-      - checkout: self
-        fetchDepth: 0
-        persistCredentials: true
-
       - script: |
           echo -e "\n📌 Verificando si feature está actualizada con master y si hay cambios relevantes..."
           echo "Branch Actual: $(echo $(Build.SourceBranch))"          

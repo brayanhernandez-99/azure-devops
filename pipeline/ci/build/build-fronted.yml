@@ -21,10 +21,6 @@ jobs:
             msName: ${{ ms }}
 
     steps:
-      - checkout: electron
-        fetchDepth: 0
-        persistCredentials: true
-
       - task: DownloadBuildArtifacts@0
         inputs:
           artifactName: "versions"
@@ -330,7 +326,7 @@ jobs:
       - task: PublishBuildArtifacts@1
         inputs:
           #PathtoPublish: "$(System.DefaultWorkingDirectory)/$(file)/$(msName)/dist"
-          PathtoPublish: "$(Build.ArtifactStagingDirectory)/dists/${{ parameters.region }}"
+          PathtoPublish: "$(Build.ArtifactStagingDirectory)/dists"
           ArtifactName: "dists"
           publishLocation: "Container"
         displayName: "📤 Publish Dist Files"

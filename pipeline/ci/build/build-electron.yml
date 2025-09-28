@@ -34,6 +34,16 @@ jobs:
         displayName: "📥 Download Version Artifact"
 
       - script: |
+          echo "********************"
+          pwd
+          echo -e "\n********************
+          ll
+          echo "********************"
+
+
+          echo -e "\nℹ️ Pipeline branch: $(Build.SourceBranch)"
+
+
           echo -e "\n📁 Archivo version.json:"
           ls -la $(Pipeline.Workspace)/downloaded-versions/versions/electron/
           VERSION_FILE="$(Pipeline.Workspace)/downloaded-versions/versions/electron/version.json"
