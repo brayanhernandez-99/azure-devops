@@ -37,13 +37,11 @@ resources:
       name: $(System.TeamProject)/$(Build.Repository.Name)
       type: git
       ref: $(Build.SourceBranch)
-      path: self 
 
     - repository: electron
       name: Invictus/electron-app-invictus
       type: git
       ref: refs/heads/master
-      path: electron
 
 stages:
   #
