@@ -31,7 +31,7 @@ stages:
 
   - stage: semantic_version_integration_electron
     displayName: "🏷️ Semantic Version Electron"
-    dependsOn: build_electron_cap
+    # dependsOn: build_electron_cap
     jobs:
       - template: ../ci/semantic-version-integration.yml
         parameters:
