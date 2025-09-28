@@ -6,6 +6,7 @@ jobs:
       - template: ./general/semantic-version-frontend.yml
         parameters:
           apps: ${{ parameters.apps }}
+          electronBranch: ${{ parameters.electronBranch }}
 
   - ${{ if eq(parameters.release, 'exe') }}:
       - template: ./general/semantic-version-electron.yml

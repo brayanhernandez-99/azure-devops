@@ -6,26 +6,9 @@ jobs:
       VmImage: ubuntu-22.04
 
     steps:
-      - ${{ if eq(variables['Build.Repository.Name'], 'Pruebas-apps-microfrontend-azure') }}:
-          - ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')) }}:
-              - checkout: electron_develop
-                fetchDepth: 0
-                persistCredentials: true
-
-          - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
-              - checkout: electron_staging
-                fetchDepth: 0
-                persistCredentials: true
-
-          - ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
-              - checkout: electron_master
-                fetchDepth: 0
-                persistCredentials: true
-
-      - ${{ if eq(variables['Build.Repository.Name'], 'electron-app-invictus') }}:
-          - checkout: self
-            fetchDepth: 0
-            persistCredentials: true
+      - checkout: electron
+        fetchDepth: 0
+        persistCredentials: true
 
       - script: |
           echo -e "\nℹ️ Pipeline branch: "
