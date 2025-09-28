@@ -15,7 +15,7 @@ jobs:
 
     strategy:
       matrix:
-        ${{ each region in parameters.region }}:
+        ${{ each region in parameters.red }}:
           ${{ region }}:
             regionName: ${{ region }}
 

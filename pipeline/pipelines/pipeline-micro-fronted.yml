@@ -38,7 +38,7 @@ stages:
               - template: ../ci/build/build-electron.yml
                 parameters:
                   region: ${{ region }}
-                  apps: ${{ parameters.apps }}
+                  red: ${{ parameters.red }}
 
           - stage: deploy_micro_frontend_${{ region }}
             displayName: "🚀 Deploy MicroFrontend ${{ region }}"
@@ -73,8 +73,6 @@ stages:
         dependsOn: semantic_version_electron
         jobs:
           - template: ../ci/build/build-electron.yml
-            parameters:
-              apps: ${{ parameters.apps }}
 
       - stage: deploy_micro_frontend
         displayName: "🚀 Deploy MicroFrontend"
