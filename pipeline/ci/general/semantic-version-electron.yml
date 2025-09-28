@@ -15,7 +15,7 @@ jobs:
           git branch 
 
           echo -e "\nℹ️ branch -r: "
-          git branch -R
+          git branch -r
         displayName: "🔄 Checkout electron on parameters branch"
 
       - script: |

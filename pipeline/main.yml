@@ -31,9 +31,6 @@ parameters:
   - name: release
     type: string
 
-  # - name: electronBranch
-  #   type: string
-
 resources:
   repositories:
     - repository: self

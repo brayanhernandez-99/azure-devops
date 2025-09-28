@@ -1,7 +1,3 @@
-# parameters:
-#   - name: region
-#     type: object
-
 jobs:
   - job: build_micro_frontend_${{ parameters.region }}
     displayName: "📦 build"

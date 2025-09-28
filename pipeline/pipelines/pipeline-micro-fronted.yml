@@ -1,25 +1,25 @@
 stages:
-  - stage: semantic_version_micro_fronted
-    displayName: "🏷️ Semantic Version MicroFrontend"
-    jobs:
-      - template: ../ci/semantic-version-integration.yml
-        parameters:
-          apps: ${{ parameters.apps }}
-          release: ${{ parameters.release }}
-          electronBranch: ${{ parameters.electronBranch }}
+  # - stage: semantic_version_micro_fronted
+  #   displayName: "🏷️ Semantic Version MicroFrontend"
+  #   jobs:
+  #     - template: ../ci/semantic-version-integration.yml
+  #       parameters:
+  #         apps: ${{ parameters.apps }}
+  #         release: ${{ parameters.release }}
+  #         electronBranch: ${{ parameters.electronBranch }}
   #
   #####################################################################
   #
   #- ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
   - ${{ each region in parameters.red }}:
-      - stage: build_micro_frontend_${{ region }}
-        displayName: "📦 Build MicroFrontend ${{ region }}"
-        dependsOn: semantic_version_micro_fronted
-        jobs:
-          - template: ../ci/build/build-fronted.yml
-            parameters:
-              region: ${{ region }}
-              apps: ${{ parameters.apps }}
+      # - stage: build_micro_frontend_${{ region }}
+      #   displayName: "📦 Build MicroFrontend ${{ region }}"
+      #   dependsOn: semantic_version_micro_fronted
+      #   jobs:
+      #     - template: ../ci/build/build-fronted.yml
+      #       parameters:
+      #         region: ${{ region }}
+      #         apps: ${{ parameters.apps }}
 
   - stage: semantic_version_integration_electron
     displayName: "🏷️ Semantic Version Electron"
