@@ -158,7 +158,7 @@ jobs:
             msName=$(msName)
             msName=${msName%-vue2}
             echo "Name MS:$msName"
-            npm run build
+            pnpm run build
           else
             pnpm add -D dotenv-cli
             pnpm build --filter=...$(msName)

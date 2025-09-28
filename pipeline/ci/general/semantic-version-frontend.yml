@@ -17,18 +17,6 @@ jobs:
         persistCredentials: true
 
       - script: |
-          if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
-            fileselect=app-legacy
-            echo -e "\nℹ️ Ruta de archivo del mf: $fileselect"
-            echo "##vso[task.setvariable variable=file]$fileselect"
-          else
-            fileselect=apps
-            echo -e "\nℹ️ Ruta de archivo del mf: $fileselect"
-            echo "##vso[task.setvariable variable=file]$fileselect"
-          fi
-        displayName: "📂 Select File"
-
-      - script: |
           echo -e "\n📌 Verificando si feature está actualizada con master y si hay cambios relevantes..."
 
           git fetch origin master
@@ -67,18 +55,15 @@ jobs:
           REPO_ID=$(curl -s -u ":$AZURE_DEVOPS_CLI_PAT" \
             "https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories?api-version=5.0" \
             | jq -r '.value[] | select(.name == "$(Build.Repository.Name)").id')
-          echo -e "\nℹ️id del repositorio $(Build.Repository.Name): $REPO_ID"
+          echo -e "\nℹ️ id del repositorio $(Build.Repository.Name): $REPO_ID"
           echo "##vso[task.setvariable variable=repoID]$REPO_ID"
         env:
           AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
         displayName: "📌 Set Repository ID"
-        condition: and(
-          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
-          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
 
       - script: |
           CURRENT_BRANCH=$(echo $(Build.SourceBranch))
-          echo -e "\nℹ️id repositorio $(Build.Repository.Name): $(repoID)"
+          echo -e "\nℹ️ id repositorio $(Build.Repository.Name): $(repoID)"
           echo "Branch Actual: $CURRENT_BRANCH"
 
           if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
@@ -108,8 +93,8 @@ jobs:
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
 
       - script: |
-          echo -e "\nℹ️id repositorio $(Build.Repository.Name): $(repoID)"Pull Request ID recuperado: $(ultimoPR)"
-          echo "id del repositorio $(Build.Repository.Name) = $(repoID)" 
+          echo -e "\nℹ️ Pull Request ID recuperado: $(ultimoPR)"
+          echo "id del repositorio $(Build.Repository.Name) = $(repoID)"
           COMMITS=$(curl -s -u ":$AZURE_DEVOPS_CLI_PAT" \
             "https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories/$(repoID)/pullRequests/$(ultimoPR)/commits?api-version=7.0" \
             | jq -r '.value[].comment' | grep -E 'feat:|fix:|!')
@@ -122,6 +107,38 @@ jobs:
         condition: and(succeeded(),
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
+
+      - script: |
+          sourceBranch="${BUILD_SOURCEBRANCH/refs\/heads\//}"
+          targetBranch="master"
+
+          echo -e "\n🔎 Verificando que no se hayan agregado nuevas sentencias console.log..."
+          echo "Branch actual: $sourceBranch"
+          echo "Branch destino: $targetBranch"
+
+          git fetch origin "$targetBranch"
+          diff=$(git --no-pager diff "origin/$targetBranch..origin/$sourceBranch")
+
+          if echo "$diff" | grep -qE '^\+.*console\.log'; then
+            echo -e "\n❌ Se encontro 'console.log' en los cambios"
+            exit 99
+          else
+            echo -e "\n✅ No se encontraron sentencias 'console.log' en los cambios"
+          fi
+        condition: startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')
+        displayName: "🔍 Check for 'console.log' in changes"
+        
+      - script: |
+          if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
+            fileselect=app-legacy
+            echo -e "\nℹ️ Ruta de archivo del mf: $fileselect"
+            echo "##vso[task.setvariable variable=file]$fileselect"
+          else
+            fileselect=apps
+            echo -e "\nℹ️ Ruta de archivo del mf: $fileselect"
+            echo "##vso[task.setvariable variable=file]$fileselect"
+          fi
+        displayName: "📂 Select File"
 
       - script: |
           cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
@@ -281,14 +298,13 @@ jobs:
             echo "##vso[task.setvariable variable=cleanNEXT_VERSION]$NEXT_VERSION"
           fi
         displayName: "🔍 Detect next version"
-        name: SemanticJob
 
       - task: PublishBuildArtifacts@1
         inputs:
           PathtoPublish: "$(Build.ArtifactStagingDirectory)"
           ArtifactName: "versions"
           publishLocation: "Container"
-        displayName: "📦 Publish Versioned Artifacts by Microservice"
+        displayName: "📦 Public artifact version"
 
       - script: |
           raw_branch=$(Build.SourceBranch)

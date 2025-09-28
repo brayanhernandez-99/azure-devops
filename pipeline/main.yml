@@ -45,6 +45,11 @@ resources:
       type: git
       ref: $(Build.SourceBranch)
 
+    - repository: electron
+      name: $(System.TeamProject)/electron-app-invictus
+      type: git
+      ref: $(Build.SourceBranch)
+
 stages:
   #
   # MicroFronted pipeline

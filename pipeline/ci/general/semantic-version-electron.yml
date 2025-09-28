@@ -1,6 +1,6 @@
 jobs:
   - job: "semantic_version_electron"
-    displayName: "🏷️ Semantic Versioning Electron"
+    displayName: "🏷️ Semantic Version Electron"
     pool:
       name: "Azure Pipelines"
       VmImage: ubuntu-22.04
@@ -9,7 +9,7 @@ jobs:
       - template: ../variables/groups-transversal-variables-new.yml
 
     steps:
-      - checkout: self
+      - checkout: electron
         fetchDepth: 0
         persistCredentials: true
 
@@ -43,28 +43,10 @@ jobs:
               exit 99
             fi
           fi
-        displayName: "Validate feature branch is up to date"
-        condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
-
-      - script: |
-          sourceBranch="${BUILD_SOURCEBRANCH/refs\/heads\//}"
-          targetBranch="master"
-
-          echo -e "\n🔎 Verificando que no se hayan agregado nuevas sentencias console.log..."
-          echo "Branch actual: $sourceBranch"
-          echo "Branch destino: $targetBranch"
-
-          git fetch origin "$targetBranch"
-          diff=$(git --no-pager diff "origin/$targetBranch..origin/$sourceBranch")
-
-          if echo "$diff" | grep -qE '^\+.*console\.log'; then
-            echo -e "\n❌ Se encontro 'console.log' en los cambios"
-            exit 99
-          else
-            echo -e "\n✅ No se encontraron sentencias 'console.log' en los cambios"
-          fi
-        condition: startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')
-        displayName: "🔍 Check for 'console.log' in changes"
+        displayName: "🔎 Validate Feature or Hotfix Branch is Up to Date"
+        condition: and(succeeded(), or(
+          startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'),
+          startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
 
       - script: |
           REPO_ID=$(curl -s -u ":$AZURE_DEVOPS_CLI_PAT" \
@@ -74,7 +56,7 @@ jobs:
           echo "##vso[task.setvariable variable=repoID]$REPO_ID"
         env:
           AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
-        displayName: "ID Repositorio"
+        displayName: "📌 Set Repository ID"
 
       - script: |
           echo "id del repositorio $(Build.Repository.Name) = $(repoID)"
@@ -102,12 +84,14 @@ jobs:
           echo "{\"idpr\": \"$PR_ID\" }" > $(Build.ArtifactStagingDirectory)/idpr/idpr.json
         env:
           AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
-        displayName: "ID Pull Request"
-        condition: not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
+        displayName: "📌 Set Pull Request ID"
+        condition: and(succeeded(),
+          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
+          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
 
       - script: |
-          echo "Pull Request ID recuperado: $(ultimoPR)"
-          echo "id del repositorio $(Build.Repository.Name) = $(repoID)" 
+          echo -e "\nℹ️ Pull Request ID recuperado: $(ultimoPR)"
+          echo "id del repositorio $(Build.Repository.Name) = $(repoID)"
           COMMITS=$(curl -s -u ":$AZURE_DEVOPS_CLI_PAT" \
             "https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories/$(repoID)/pullRequests/$(ultimoPR)/commits?api-version=7.0" \
             | jq -r '.value[].comment' | grep -E 'feat:|fix:|!')
@@ -116,12 +100,34 @@ jobs:
           echo "##vso[task.setvariable variable=filteredCommits]$SAFE_COMMITS"
         env:
           AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
-        displayName: "Details of Pull Request Commits"
-        condition: not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
+        displayName: "📝 Pull Request Commit Details"
+        condition: and(succeeded(),
+          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
+          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
+
+      - script: |
+          sourceBranch="${BUILD_SOURCEBRANCH/refs\/heads\//}"
+          targetBranch="master"
+
+          echo -e "\n🔎 Verificando que no se hayan agregado nuevas sentencias console.log..."
+          echo "Branch actual: $sourceBranch"
+          echo "Branch destino: $targetBranch"
+
+          git fetch origin "$targetBranch"
+          diff=$(git --no-pager diff "origin/$targetBranch..origin/$sourceBranch")
+
+          if echo "$diff" | grep -qE '^\+.*console\.log'; then
+            echo -e "\n❌ Se encontro 'console.log' en los cambios"
+            exit 99
+          else
+            echo -e "\n✅ No se encontraron sentencias 'console.log' en los cambios"
+          fi
+        condition: startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')
+        displayName: "🔍 Check for 'console.log' in changes"
 
       - script: |
           CURRENT_BRANCH=$(echo $(Build.SourceBranch))
-          echo $CURRENT_BRANCH
+          echo -e "\nℹ️ Branch Actual: $CURRENT_BRANCH"
 
           if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|master|staging|feature/.+)$ ]]; then
 
@@ -250,7 +256,6 @@ jobs:
             echo "##vso[task.setvariable variable=cleanNEXT_VERSION]$NEXT_VERSION"
           fi
         displayName: "🔍 Detect next version"
-        name: SemanticJob
 
       - task: PublishBuildArtifacts@1
         inputs:
