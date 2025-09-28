@@ -67,11 +67,10 @@ jobs:
           startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
 
       - script: |
-          REPO_NAME="$(Build.Repository.Name)"
           REPO_ID=$(curl -s -u ":$AZURE_DEVOPS_CLI_PAT" \
             "https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories?api-version=5.0" \
-            | jq -r --arg name "$REPO_NAME" '.value[] | select(.name == $name).id')
-          echo -e "\nℹ️ id del repositorio $(Build.Repository.Name): $REPO_ID"
+            | jq -r '.value[] | select(.name == "$(Build.Repository.Name)").id')
+          echo "id del repositorio $(Build.Repository.Name) = $REPO_ID"
           echo "##vso[task.setvariable variable=repoID]$REPO_ID"
         env:
           AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
