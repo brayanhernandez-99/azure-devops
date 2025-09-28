@@ -14,6 +14,7 @@ stages:
       - template: ../ci/semantic-version-integration.yml
         parameters:
           release: exe
+          branch: develop
 
   #- ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
   - ${{ each region in parameters.red }}:
