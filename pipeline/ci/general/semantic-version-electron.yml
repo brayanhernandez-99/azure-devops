@@ -1,7 +1,3 @@
-parameters:
-  - name: branch
-    type: string
-    
 jobs:
   - job: "semantic_version_electron"
     displayName: "🏷️ Semantic Version Electron"
@@ -15,64 +11,46 @@ jobs:
         persistCredentials: true
 
       - script: |
-          echo -e "\nℹ️ Pipeline branch: ${{ parameters.branch }}"
-          branch="${{ parameters.branch }}"
-        
-          if [[ "$branch" == "develop" || "$branch" == "staging" || "$branch" == "master" ]]; then
-            echo "➡️ Checkout branch: $branch in electron repository"
-            cd $(Build.SourcesDirectory)/electron || exit 99
-
-            if [ ! -d "$(Build.SourcesDirectory)/electron" ]; then
-                echo -e "\n ⚠️ El directorio electron no existe"
-                exit 99
-            fi
-                
-            cd "$(Build.SourcesDirectory)/electron"
-            git fetch origin $branch
-            git checkout $branch
-            git pull origin $branch
-          else
-            echo -e "\n⚠️ Branch [$branch] no está en la lista permitida (develop, staging, master)."
-            exit 99
-          fi
+          electronBranch="refs/heads/master"
+          echo -e "\nℹ️ Pipeline branch: $electronBranch"
         displayName: "🔄 Checkout electron on parameters branch"
         workingDirectory: $(Build.SourcesDirectory)/electron
 
-      - script: |
-          echo -e "\n📌 Verificando si feature está actualizada con master y si hay cambios relevantes..."
-          echo "Branch Actual: $(echo $(Build.SourceBranch))"          
-          git fetch origin master
+      # - script: |
+      #     echo -e "\n📌 Verificando si feature está actualizada con master y si hay cambios relevantes..."
+      #     echo "Branch Actual: $(echo $(Build.SourceBranch))"          
+      #     git fetch origin master
 
-          # Encuentra el punto de bifurcación (base común)
-          MERGE_BASE=$(git merge-base HEAD origin/master)
+      #     # Encuentra el punto de bifurcación (base común)
+      #     MERGE_BASE=$(git merge-base HEAD origin/master)
 
-          # Verifica si la rama está actualizada
-          if [ "$MERGE_BASE" = "$(git rev-parse origin/master)" ]; then
-            echo -e "\n✅ La rama feature esta actualizada con master."
-          else
-            echo -e "\n⚠️ La rama feature NO contiene todos los commits de master. Verificando cambios relevantes en master..."
+      #     # Verifica si la rama está actualizada
+      #     if [ "$MERGE_BASE" = "$(git rev-parse origin/master)" ]; then
+      #       echo -e "\n✅ La rama feature esta actualizada con master."
+      #     else
+      #       echo -e "\n⚠️ La rama feature NO contiene todos los commits de master. Verificando cambios relevantes en master..."
 
-            # Obtén los archivos cambiados en master desde el punto de bifurcación
-            CHANGED_FILES=$(git diff --name-only "$MERGE_BASE".."origin/master")
+      #       # Obtén los archivos cambiados en master desde el punto de bifurcación
+      #       CHANGED_FILES=$(git diff --name-only "$MERGE_BASE".."origin/master")
 
-            echo "🔍 Archivos nuevos en master desde el punto de bifurcación:"
-            echo "$CHANGED_FILES"
+      #       echo "🔍 Archivos nuevos en master desde el punto de bifurcación:"
+      #       echo "$CHANGED_FILES"
 
-            # Filtrar cambios relevantes (ignorar carpeta pipeline/)
-            RELEVANT_CHANGES=$(echo "$CHANGED_FILES" | grep -vE '^pipeline/')
+      #       # Filtrar cambios relevantes (ignorar carpeta pipeline/)
+      #       RELEVANT_CHANGES=$(echo "$CHANGED_FILES" | grep -vE '^pipeline/')
 
-            if [[ -z "$RELEVANT_CHANGES" ]]; then
-              echo -e "\nℹ️ Solo hay cambios en archivos ignorados (pipeline/). Continuando..."
-            else
-              echo -e "\n##vso[task.logissue type=error]❌ Cambios relevantes detectados en master y no están integrados. Debes actualizar tu rama."
-              exit 99
-            fi
-          fi
-        displayName: "🔎 Validate Feature or Hotfix Branch is Up to Date"
-        workingDirectory: $(Build.SourcesDirectory)/electron
-        condition: and(succeeded(), or(
-          startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'),
-          startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
+      #       if [[ -z "$RELEVANT_CHANGES" ]]; then
+      #         echo -e "\nℹ️ Solo hay cambios en archivos ignorados (pipeline/). Continuando..."
+      #       else
+      #         echo -e "\n##vso[task.logissue type=error]❌ Cambios relevantes detectados en master y no están integrados. Debes actualizar tu rama."
+      #         exit 99
+      #       fi
+      #     fi
+      #   displayName: "🔎 Validate Feature or Hotfix Branch is Up to Date"
+      #   workingDirectory: $(Build.SourcesDirectory)/electron
+      #   condition: and(succeeded(), or(
+      #     startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'),
+      #     startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
 
       - script: |
           REPO_NAME="$(Build.Repository.Name)"

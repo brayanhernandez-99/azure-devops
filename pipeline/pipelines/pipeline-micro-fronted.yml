@@ -1,85 +1,78 @@
-- ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')) }}:
-  parameters:
-    - name: release
-      type: string
-      value: develop
+stages:
+  - stage: semantic_version_micro_fronted
+    displayName: "🏷️ Semantic Version MicroFrontend"
+    jobs:
+      - template: ../ci/semantic-version-integration.yml
+        parameters:
+          apps: ${{ parameters.apps }}
+          release: ${{ parameters.release }}
+  #
+  #####################################################################
+  #
+  #- ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
+  - ${{ each region in parameters.red }}:
+      - stage: build_micro_frontend_${{ region }}
+        displayName: "📦 Build MicroFrontend ${{ region }}"
+        dependsOn: semantic_version_integration_electron
+        jobs:
+          - template: ../ci/build/build-fronted.yml
+            parameters:
+              region: ${{ region }}
+              apps: ${{ parameters.apps }}
 
-- ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/heads/staging/')) }}:
-  parameters:
-    - name: release
-      type: string
-      value: staging
+      - stage: build_electron_${{ region }}
+        displayName: "📦 Build Electron ${{ region }}"
+        dependsOn: build_micro_frontend_${{ region }}
+        jobs:
+          - template: ../ci/build/build-electron.yml
+            parameters:
+              region: ${{ region }}
+              apps: ${{ parameters.apps }}
 
-  stages:
-    - stage: semantic_version_micro_fronted
-      displayName: "🏷️ Semantic Version MicroFrontend"
-      jobs:
-        - template: ../ci/semantic-version-integration.yml
-          parameters:
-            apps: ${{ parameters.apps }}
-            release: ${{ parameters.release }}
+  - stage: semantic_version_integration_electron
+    displayName: "🏷️ Semantic Version Electron"
+    dependsOn: build_electron_${{ parameters.apps }}
+    jobs:
+      - template: ../ci/semantic-version-integration.yml
+        parameters:
+          release: exe
 
-    #- ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
-    - ${{ each region in parameters.red }}:
-        - stage: build_micro_frontend_${{ region }}
-          displayName: "📦 Build MicroFrontend ${{ region }}"
-          dependsOn: semantic_version_integration_electron
-          jobs:
-            - template: ../ci/build/build-fronted.yml
-              parameters:
-                region: ${{ region }}
-                apps: ${{ parameters.apps }}
+  - ${{ each region in parameters.red }}:
+      - stage: deploy_micro_frontend_${{ region }}
+        displayName: "🚀 Deploy MicroFrontend ${{ region }}"
+        dependsOn: build_electron_${{ region }}
+        jobs:
+          - job: jobY
+            displayName: "Job Y"
+            steps:
+              - script: echo "Running Deployment Job Y"
+#
+#####################################################################
+#
 
-        - stage: build_electron_${{ region }}
-          displayName: "📦 Build Electron ${{ region }}"
-          dependsOn: build_micro_frontend_${{ region }}
-          jobs:
-            - template: ../ci/build/build-electron.yml
-              parameters:
-                region: ${{ region }}
-                apps: ${{ parameters.apps }}
+# - ${{ if ne(variables['Build.SourceBranchName'], 'master') }}:
+#     - stage: build_micro_frontend
+#       displayName: "📦 Build MicroFrontend"
+#       dependsOn: semantic_version_integration_electron
+#       jobs:
+#         - template: ../ci/build/build-fronted.yml
+#           parameters:
+#             apps: ${{ parameters.apps }}
 
-        - stage: deploy_micro_frontend_${{ region }}
-          displayName: "🚀 Deploy MicroFrontend ${{ region }}"
-          dependsOn: build_electron_${{ region }}
-          jobs:
-            - job: jobY
-              displayName: "Job Y"
-              steps:
-                - script: echo "Running Deployment Job Y"
+#     - stage: build_electron
+#       displayName: "📦 Build Electron"
+#       dependsOn: build_micro_frontend
+#       jobs:
+#         - job: jobY
+#           displayName: "Job Y"
+#           steps:
+#             - script: echo "Running Deployment Job Y"
 
-    - stage: semantic_version_integration_electron
-      displayName: "🏷️ Semantic Version Electron"
-      dependsOn: semantic_version_micro_fronted
-      jobs:
-        - template: ../ci/semantic-version-integration.yml
-          parameters:
-            release: exe
-            branch: staging
-
-    # - ${{ if ne(variables['Build.SourceBranchName'], 'master') }}:
-    #     - stage: build_micro_frontend
-    #       displayName: "📦 Build MicroFrontend"
-    #       dependsOn: semantic_version_integration_electron
-    #       jobs:
-    #         - template: ../ci/build/build-fronted.yml
-    #           parameters:
-    #             apps: ${{ parameters.apps }}
-
-    #     - stage: build_electron
-    #       displayName: "📦 Build Electron"
-    #       dependsOn: build_micro_frontend
-    #       jobs:
-    #         - job: jobY
-    #           displayName: "Job Y"
-    #           steps:
-    #             - script: echo "Running Deployment Job Y"
-
-    #     - stage: deploy_micro_frontend
-    #       displayName: "🚀 Deploy MicroFrontend"
-    #       dependsOn: build_electron
-    #       jobs:
-    #         - job: jobY
-    #           displayName: "Job Y"
-    #           steps:
-    #             - script: echo "Running Deployment Job Y"
+#     - stage: deploy_micro_frontend
+#       displayName: "🚀 Deploy MicroFrontend"
+#       dependsOn: build_electron
+#       jobs:
+#         - job: jobY
+#           displayName: "Job Y"
+#           steps:
+#             - script: echo "Running Deployment Job Y"
