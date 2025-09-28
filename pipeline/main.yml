@@ -4,10 +4,10 @@ parameters:
     default:
       - antioquia
       - cap
-      - tolima
-      - huila
-      - cauca
-      - boyaca
+      # - tolima
+      # - huila
+      # - cauca
+      # - boyaca
 
   - name: apps
     type: object
