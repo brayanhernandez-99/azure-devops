@@ -67,12 +67,15 @@ stages:
           - template: ../ci/semantic-version-integration.yml
             parameters:
               release: exe
+              microFronted: true
 
       - stage: build_electron
         displayName: "📦 Build Electron"
         dependsOn: semantic_version_electron
         jobs:
           - template: ../ci/build/build-electron.yml
+            parameters:
+              microFronted: true
 
       - stage: deploy_micro_frontend
         displayName: "🚀 Deploy MicroFrontend"
