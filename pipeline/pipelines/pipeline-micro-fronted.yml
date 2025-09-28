@@ -1,11 +1,4 @@
 stages:
-  - stage: semantic_version_integration_electron
-    displayName: "🏷️ Semantic Version Electron"
-    jobs:
-      - template: ../ci/semantic-version-integration.yml
-        parameters:
-          release: exe
-
   - stage: semantic_version_micro_fronted
     displayName: "🏷️ Semantic Version MicroFrontend"
     dependsOn: semantic_version_integration_electron
@@ -14,6 +7,13 @@ stages:
         parameters:
           apps: ${{ parameters.apps }}
           release: ${{ parameters.release }}
+
+  - stage: semantic_version_integration_electron
+    displayName: "🏷️ Semantic Version Electron"
+    jobs:
+      - template: ../ci/semantic-version-integration.yml
+        parameters:
+          release: exe
 
   #- ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
   - ${{ each region in parameters.red }}:

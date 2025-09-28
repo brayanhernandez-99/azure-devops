@@ -4,13 +4,13 @@ parameters:
     default:
       # - "app-administration-vue2"
       - "app-sellers-vue2"
-      - "awards"
+      # - "awards"
       # - "biometrics"
       # - "commissions"
       # - "conciliation"
       # - "dashboard"
       # - "dynamic-storage"
-      # - "external-wager"
+      - "external-wager"
       # - "hierarchies"
       # - "invictus"
       # - "login"
@@ -38,6 +38,18 @@ parameters:
       # - cauca
       # - boyaca
 
+variables:
+  - name: electronBranch
+    value: refs/heads/develop
+
+  - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
+      - name: electronBranch
+        value: refs/heads/staging
+
+  - ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
+      - name: electronBranch
+        value: refs/heads/master
+
 resources:
   repositories:
     - repository: self
@@ -48,7 +60,7 @@ resources:
     - repository: electron
       name: $(System.TeamProject)/electron-app-invictus
       type: git
-      ref: $(Build.SourceBranch)
+      ref: ${{ variables.electronBranch }}
 
 stages:
   #
