@@ -13,6 +13,10 @@ jobs:
       - script: |
           echo -e "\nℹ️ Pipeline branch: ${{ parameters.branch }}"
           branch="${{ parameters.branch }}"
+          
+          
+          echo "Branch Actual: $(echo $(Build.SourceBranch))"          
+
 
           if [[ "$branch" == "develop" || "$branch" == "staging" || "$branch" == "master" ]]; then
             echo "➡️ Checkout branch: $branch in electron repository"
@@ -80,7 +84,9 @@ jobs:
         env:
           AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
         displayName: "📌 Set Repository ID"
-        workingDirectory: $(Build.SourcesDirectory)/electron
+        condition: and(
+          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
+          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
 
       - script: |
           echo "id del repositorio $(Build.Repository.Name) = $(repoID)"
@@ -291,7 +297,7 @@ jobs:
           ArtifactName: "versions"
           publishLocation: "Container"
         displayName: "📦 Public artifact version"
-        #workingDirectory: $(Build.SourcesDirectory)/electron
+#        workingDirectory: $(Build.SourcesDirectory)/electron
 
       - script: |
           raw_branch=$(Build.SourceBranch)
