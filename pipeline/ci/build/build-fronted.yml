@@ -21,6 +21,10 @@ jobs:
             msName: ${{ ms }}
 
     steps:
+      - checkout: self
+        fetchDepth: 0
+        persistCredentials: true
+
       - task: DownloadBuildArtifacts@0
         inputs:
           artifactName: "versions"
