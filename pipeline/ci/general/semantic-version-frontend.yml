@@ -61,6 +61,9 @@ jobs:
         env:
           AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
         displayName: "📌 Set Repository ID"
+        condition: and(
+          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
+          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
 
       - script: |
           CURRENT_BRANCH=$(echo $(Build.SourceBranch))

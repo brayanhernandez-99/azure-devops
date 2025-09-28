@@ -9,6 +9,7 @@ jobs:
       - checkout: electron
         fetchDepth: 0
         persistCredentials: true
+        path: $(Build.SourcesDirectory)/electron
 
       - script: |
           echo -e "\nℹ️ Pipeline branch: ${{ parameters.branch }}"
