@@ -40,7 +40,7 @@ jobs:
 
       - script: |
           echo -e "\n📁 Archivo version.json:"
-          ls -la $(Pipeline.Workspace)/downloaded-versions/versions/version-apk
+          ls -l $(Pipeline.Workspace)/downloaded-versions/versions/version-apk
           VERSION_FILE="$(Pipeline.Workspace)/downloaded-versions/versions/version-apk/version.json"
           if [[ -f "$VERSION_FILE" ]]; then
             VERSION=$(jq -r '.version' $VERSION_FILE)
@@ -55,7 +55,7 @@ jobs:
 
       - script: |
           echo -e "\n📁 Archivo version.json:"
-          ls -la $(Pipeline.Workspace)/downloaded-versions/versions/version-pubspec-apk
+          ls -l $(Pipeline.Workspace)/downloaded-versions/versions/version-pubspec-apk
           VERSION_FILE="$(Pipeline.Workspace)/downloaded-versions/versions/version-pubspec-apk/version.json"
           if [[ -f "$VERSION_FILE" ]]; then
             VERSION=$(jq -r '.version' $VERSION_FILE)
@@ -150,7 +150,7 @@ jobs:
 
       - script: |
           echo "✔️ Verificando entorno Flutter y Android SDK..."
-          echo -e "\n📦 ANDROID_HOME: $ANDROID_HOME" && ls -la "$ANDROID_HOME"
+          echo -e "\n📦 ANDROID_HOME: $ANDROID_HOME" && ls -l "$ANDROID_HOME"
           echo -e "\n🌀 Flutter versión:" && flutter --version
           echo -e "\n📥 Ejecutando flutter pub get..."
           flutter pub get
@@ -160,7 +160,7 @@ jobs:
           echo "Verificando carpeta assets"
           if [ -d "assets" ] && [ "$(ls -A assets)" ]; then
             echo "✅ Assets encontrados"
-            ls -la assets
+            ls -l assets
           else
             echo "❌ Error: No se encontraron assets"
             exit 99
@@ -174,7 +174,7 @@ jobs:
           aws s3 cp s3://repository-native/app-seller/android/keystore/$(KEY_ALIAS).jks android/app/keystore/            
           if [ -d "android/app/keystore" ] && [ "$(ls -A android/app/keystore/$(KEY_ALIAS).jks)" ]; then    
             echo "✅ Keystore descargado"
-            ls -la android/app/keystore/*
+            ls -l android/app/keystore/*
           else
             echo "❌ Error: No se descargo el Keystore"
             exit 99
@@ -210,7 +210,7 @@ jobs:
           echo "storeFile=keystore/$KEY_ALIAS.jks" >> android/key.properties
 
           echo "✅ File key.properties creado"
-          ls -la android/key.properties
+          ls -l android/key.properties
           cat android/key.properties | sed -E 's/^(keyPassword|storePassword)=.*/\1=*** /'
         displayName: "🔐 Assign Keystore"
         env:
@@ -232,7 +232,7 @@ jobs:
             echo "✅ Apk encontrado"
             SHA1_APK=$(shasum -a 1 build/app/outputs/flutter-apk/app-profile.apk | awk '{print $1}')
             SHA1_FLUTTER=$(cut -d ' ' -f1 build/app/outputs/flutter-apk/app-profile.apk.sha1)
-            ls -la build/app/outputs/flutter-apk
+            ls -l build/app/outputs/flutter-apk
 
             echo -e "\n🔐 SHA-1 Apk: $SHA1_APK"
             echo "🔐 SHA-1 Flutter: $SHA1_FLUTTER"

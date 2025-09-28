@@ -55,12 +55,12 @@ stages:
 
                   if [ -f "$DOCKERFILE_PATH" ]; then
                     echo "✅ Ya existe el Dockerfile en $DOCKERFILE_PATH"
-                    ls -la $(Build.Repository.Name)
+                    ls -l $(Build.Repository.Name)
                   else
                     echo "⚠️ No existe el Dockerfile. Copiando desde templates..."
                     cp pipelines-templates/pipeline/docker/Dockerfile $(Build.Repository.Name)/Dockerfile
                     echo "✅ Dockerfile copiado exitosamente."
-                    ls -la $(Build.Repository.Name)
+                    ls -l $(Build.Repository.Name)
                   fi
                 displayName: "📝 Check or Copy Dockerfile"
 
@@ -95,7 +95,7 @@ stages:
                     //$REPO_DOMAIN/$REPO_PATH/:_authToken=$token
                     registry=$REPO_URL
                     EOF
-                    ls -la $npmrcPath
+                    ls -l $npmrcPath
 
                 displayName: "🔐 Setup CodeArtifact & npm config"
                 env:
@@ -201,12 +201,12 @@ stages:
 
                   if [ -f "$DOCKERFILE_PATH" ]; then
                     echo "✅ Ya existe el Dockerfile en $DOCKERFILE_PATH"
-                    ls -la $(Build.Repository.Name)
+                    ls -l $(Build.Repository.Name)
                   else
                     echo "⚠️ No existe el Dockerfile. Copiando desde templates..."
                     cp pipelines-templates/pipeline/docker/Dockerfile $(Build.Repository.Name)/Dockerfile
                     echo "✅ Dockerfile copiado exitosamente."
-                    ls -la $(Build.Repository.Name)
+                    ls -l $(Build.Repository.Name)
                   fi
                 displayName: "📝 Check or Copy Dockerfile"
 
@@ -241,7 +241,7 @@ stages:
                     //$REPO_DOMAIN/$REPO_PATH/:_authToken=$token
                     registry=$REPO_URL
                     EOF
-                    ls -la $npmrcPath
+                    ls -l $npmrcPath
                 displayName: "🔐 Setup CodeArtifact & npm config"
                 env:
                   AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
@@ -346,12 +346,12 @@ stages:
 
                   if [ -f "$DOCKERFILE_PATH" ]; then
                     echo "✅ Ya existe el Dockerfile en $DOCKERFILE_PATH"
-                    ls -la $(Build.Repository.Name)
+                    ls -l $(Build.Repository.Name)
                   else
                     echo "⚠️ No existe el Dockerfile. Copiando desde templates..."
                     cp pipelines-templates/pipeline/docker/Dockerfile $(Build.Repository.Name)/Dockerfile
                     echo "✅ Dockerfile copiado exitosamente."
-                    ls -la $(Build.Repository.Name)
+                    ls -l $(Build.Repository.Name)
                   fi
                 displayName: "📝 Check or Copy Dockerfile"
 
@@ -386,7 +386,7 @@ stages:
                     //$REPO_DOMAIN/$REPO_PATH/:_authToken=$token
                     registry=$REPO_URL
                     EOF
-                    ls -la $npmrcPath
+                    ls -l $npmrcPath
                 displayName: "🔐 Setup CodeArtifact & npm config"
                 env:
                   AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)

@@ -314,7 +314,7 @@ jobs:
 
       - script: |
           echo -e "\n📁 Archivo version.json:"
-          ls -la $(Pipeline.Workspace)/downloaded-versions/versions/electron/
+          ls -l $(Pipeline.Workspace)/downloaded-versions/versions/electron/
           VERSION_FILE="$(Pipeline.Workspace)/downloaded-versions/versions/electron/version.json"
           if [[ -f "$VERSION_FILE" ]]; then
             VERSION=$(jq -r '.version' $VERSION_FILE)
@@ -356,7 +356,7 @@ jobs:
             //$REPO_DOMAIN/$REPO_PATH/:_authToken=$token
             registry=$REPO_URL
             EOF
-            ls -la .npmrc
+            ls -l .npmrc
         displayName: "🔐 Setup CodeArtifact & npm config"
         env:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)

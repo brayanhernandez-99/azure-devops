@@ -42,7 +42,7 @@ jobs:
 
           if [[ "$DISTS_COUNT" == "1" ]]; then
             echo -e "\n📁 Dists generados correctamente en: $DISTS_PATH"
-            ls -la "$DISTS_PATH"
+            ls -l "$DISTS_PATH"
           else
             echo -e "\n⚠️ Error no tiene exactamente todos los dists en: $DISTS_PATH"
             exit 99
@@ -53,7 +53,7 @@ jobs:
           echo -e "\nℹ️ Pipeline branch: $(Build.SourceBranch)"
 
           echo -e "\n📁 Archivo version.json:"
-          ls -la $(Pipeline.Workspace)/downloaded-versions/versions/electron/
+          ls -l $(Pipeline.Workspace)/downloaded-versions/versions/electron/
           VERSION_FILE="$(Pipeline.Workspace)/downloaded-versions/versions/electron/version.json"
           if [[ -f "$VERSION_FILE" ]]; then
             VERSION=$(jq -r '.version' $VERSION_FILE)
@@ -64,8 +64,7 @@ jobs:
             echo -e "\n##vso[task.logissue type=error]❌ No se encontro archivo de versión para $(Build.Repository.Name)"
             exit 99
           fi
-        displayName:
-          "📚 Read version"
+        displayName: "📚 Read version"
 
           # DIST_PATH="$(System.DefaultWorkingDirectory)/$(file)/$(msName)/dist"
 

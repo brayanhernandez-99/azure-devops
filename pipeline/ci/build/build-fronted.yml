@@ -83,7 +83,7 @@ jobs:
             //$REPO_DOMAIN/$REPO_PATH/:_authToken=$token
             registry=$REPO_URL
             EOF
-            ls -la $npmrcPath
+            ls -l $npmrcPath
         displayName: "🔐 Setup CodeArtifact & npm config"
         env:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
@@ -107,25 +107,25 @@ jobs:
             echo -e "\n📁 Archivos .env.local para app-administration-vue2"
             printenv | grep "^VUE2_" | sed "s/^VUE2_//" > $(System.DefaultWorkingDirectory)/app-legacy/app-administration-vue2/.env.local
             printenv | grep "^ADMIN_" | sed "s/^ADMIN_//" >> $(System.DefaultWorkingDirectory)/app-legacy/app-administration-vue2/.env.local
-            ls -la app-legacy/app-administration-vue2/.env.local
+            ls -l app-legacy/app-administration-vue2/.env.local
             cat app-legacy/app-administration-vue2/.env.local
 
           elif [[ "$(msName)" == "app-sellers-vue2" ]]; then
             echo -e "\n📁 Archivos .env.local para app-sellers-vue2"
             printenv | grep "^VUE2_" | sed "s/^VUE2_//" > $(System.DefaultWorkingDirectory)/app-legacy/app-sellers-vue2/.env.local
             printenv | grep "^SELLERS_" | sed "s/^SELLERS_//" >> $(System.DefaultWorkingDirectory)/app-legacy/app-sellers-vue2/.env.local
-            ls -la app-legacy/app-sellers-vue2/.env.local
+            ls -l app-legacy/app-sellers-vue2/.env.local
             cat app-legacy/app-sellers-vue2/.env.local
           else
             echo -e "\n📁 Archivos .env para $(msName)"
             printenv | grep -i "^$(msName)_" |sed -E "s/^($(msName))_//I" > $(System.DefaultWorkingDirectory)/apps/$(msName)/.env
-            ls -la apps/$(msName)/.env
+            ls -l apps/$(msName)/.env
             cat apps/$(msName)/.env
           fi
 
           echo -e "\n📁 Archivos .env para el path raiz"
           printenv | grep "^ROOT_" | sed "s/^ROOT_//" > $(System.DefaultWorkingDirectory)/.env
-          ls -la .env
+          ls -l .env
           cat .env
         displayName: "⚙️ Generate .env"
 
@@ -189,7 +189,7 @@ jobs:
             cp -R $DIST_PATH $(Build.ArtifactStagingDirectory)/dists/${{ parameters.region }}/$(msName)
 
             echo "✅ Build generado correctamente en $DIST_PATH"
-            ls -la "$DIST_PATH"
+            ls -l "$DIST_PATH"
           fi
         displayName: "⚙️ Build MicroFrontend $(msName)"
 
@@ -256,7 +256,7 @@ jobs:
 
       - script: |
           pnpm coverage --filter=...$(msName)
-          ls -la $(System.DefaultWorkingDirectory)/$(file)/$(msName)/coverage
+          ls -l $(System.DefaultWorkingDirectory)/$(file)/$(msName)/coverage
         displayName: "🔎 Coverage Analysis: $(msName)"
         continueOnError: true
         condition: and(succeeded(),

@@ -61,12 +61,12 @@ stages:
 
                   if [ -f "$DOCKERFILE_PATH" ]; then
                     echo "✅ Ya existe el Dockerfile en $DOCKERFILE_PATH"
-                    ls -la $(Build.Repository.Name)/apps/$(msName)
+                    ls -l $(Build.Repository.Name)/apps/$(msName)
                   else
                     echo "⚠️ No existe el Dockerfile. Copiando desde templates..."
                     cp pipelines-templates/pipeline/docker/Dockerfile $(Build.Repository.Name)/apps/$(msName)/Dockerfile
                     echo "✅ Dockerfile copiado exitosamente."
-                    ls -la $(Build.Repository.Name)/apps/$(msName)
+                    ls -l $(Build.Repository.Name)/apps/$(msName)
                   fi
                 displayName: "Check or Copy Dockerfile"
 
@@ -184,12 +184,12 @@ stages:
 
                   if [ -f "$DOCKERFILE_PATH" ]; then
                     echo "✅ Ya existe el Dockerfile en $DOCKERFILE_PATH"
-                    ls -la $(Build.Repository.Name)/apps/$(msName)
+                    ls -l $(Build.Repository.Name)/apps/$(msName)
                   else
                     echo "⚠️ No existe el Dockerfile. Copiando desde templates..."
                     cp pipelines-templates/pipeline/docker/Dockerfile $(Build.Repository.Name)/apps/$(msName)/Dockerfile
                     echo "✅ Dockerfile copiado exitosamente."
-                    ls -la $(Build.Repository.Name)/apps/$(msName)
+                    ls -l $(Build.Repository.Name)/apps/$(msName)
                   fi
                 displayName: "Check or Copy Dockerfile"
 
@@ -307,12 +307,12 @@ stages:
 
                   if [ -f "$DOCKERFILE_PATH" ]; then
                     echo "✅ Ya existe el Dockerfile en $DOCKERFILE_PATH"
-                    ls -la $(Build.Repository.Name)/apps/$(msName)
+                    ls -l $(Build.Repository.Name)/apps/$(msName)
                   else
                     echo "⚠️ No existe el Dockerfile. Copiando desde templates..."
                     cp pipelines-templates/pipeline/docker/Dockerfile $(Build.Repository.Name)/apps/$(msName)/Dockerfile
                     echo "✅ Dockerfile copiado exitosamente."
-                    ls -la $(Build.Repository.Name)/apps/$(msName)
+                    ls -l $(Build.Repository.Name)/apps/$(msName)
                   fi
                 displayName: "Check or Copy Dockerfile"
 
