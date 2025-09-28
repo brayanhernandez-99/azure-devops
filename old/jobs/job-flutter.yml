@@ -87,7 +87,7 @@ jobs:
               esac ;;
           esac
 
-          if [ "$environment" = "unknown" ] || [ "$region" = "unknown" ]; then
+          if [ "$environment" == "unknown" ] || [ "$region" == "unknown" ]; then
             echo "⚠️ Environment [$environment] no reconocido"
             echo "⚠️ Región [$region] no reconocida"
             exit 99

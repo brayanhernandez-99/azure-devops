@@ -11,17 +11,36 @@ jobs:
         persistCredentials: true
 
       - script: |
-          echo -e "\nℹ️ Pipeline branch: "
-          git branch 
+          CURRENT_BRANCH="$(Build.SourceBranch)"
+          electronBranch="unknown"
+          
+          case "$CURRENT_BRANCH" in
+            refs/heads/feature/*) electronBranch="develop"; ;;
+            refs/heads/hotfix/*)  electronBranch="develop"; ;;
+            refs/heads/develop)   electronBranch="develop"; ;;
+            refs/heads/staging)   electronBranch="staging"; ;;
+            refs/heads/master)    electronBranch="master"; ;;
+          esac  
 
-          echo -e "\nℹ️ branch -r: "
-          git branch -r
-        displayName: "🔄 Checkout electron on parameters branch"
+          if [[ "$electronBranch" == "unknown" ]]; then
+            echo -e "\n⚠️ Electron Branch [$electronBranch] no reconocida"
+            exit 99
+          fi
+
+          echo "##vso[task.setvariable variable=electronBranch]$electronBranch"
+          echo -e "\nℹ️ Branch Actual: $CURRENT_BRANCH"
+          echo "Branch Checkout: $(electronBranch)"
+        displayName: "🧭 🔀 Set Electron Branch"
 
       - script: |
-          echo -e "\nℹ️ Pipeline branch: "
-          git branch 
+          echo -e "\n🔀 Cambiando a la rama: electron@$(electronBranch)"
+          cd $(Build.SourcesDirectory)/electron
+          git fetch origin ${{ parameters.electronBranch }}
+          git checkout ${{ parameters.electronBranch }}
+          git pull origin ${{ parameters.electronBranch }}
+        displayName: "🔄 Checkout electron@$(electronBranch)"
 
+      - script: |
           echo -e "\n📌 Verificando si feature está actualizada con master y si hay cambios relevantes..."
           echo "Branch Actual: $(echo $(Build.SourceBranch))"          
           git fetch origin master

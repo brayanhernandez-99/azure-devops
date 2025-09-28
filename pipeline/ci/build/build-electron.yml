@@ -38,13 +38,13 @@ jobs:
 
       - script: |
           DISTS_PATH="$(Pipeline.Workspace)/downloaded-dists/${{ parameters.region }}"
-          DISTS_COUNT=$(ls $DISTS_PATH | wc -l)
+          DISTS_COUNT=$(ls "$DISTS_PATH" | wc -l)
 
           if [[ "$DISTS_COUNT" == "1" ]]; then
-            echo -e "\n📁 Dists generados correctamente en: $DIST_PATH "
-            ls -la "$DIST_PATH"
+            echo -e "\n📁 Dists generados correctamente en: $DISTS_PATH"
+            ls -la "$DISTS_PATH"
           else
-            echo -e "\n⚠️ Error no tiene exactamente todos los dists en: $DIST_PATH "
+            echo -e "\n⚠️ Error no tiene exactamente todos los dists en: $DISTS_PATH"
             exit 99
           fi
         displayName: "🔎 Validate downloaded dists"
