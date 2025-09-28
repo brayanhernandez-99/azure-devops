@@ -12,14 +12,14 @@ stages:
   #
   #- ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
   - ${{ each region in parameters.red }}:
-      # - stage: build_micro_frontend_${{ region }}
-      #   displayName: "📦 Build MicroFrontend ${{ region }}"
-      #   dependsOn: semantic_version_micro_fronted
-      #   jobs:
-      #     - template: ../ci/build/build-fronted.yml
-      #       parameters:
-      #         region: ${{ region }}
-      #         apps: ${{ parameters.apps }}
+    # - stage: build_micro_frontend_${{ region }}
+    #   displayName: "📦 Build MicroFrontend ${{ region }}"
+    #   dependsOn: semantic_version_micro_fronted
+    #   jobs:
+    #     - template: ../ci/build/build-fronted.yml
+    #       parameters:
+    #         region: ${{ region }}
+    #         apps: ${{ parameters.apps }}
 
   - stage: semantic_version_integration_electron
     displayName: "🏷️ Semantic Version Electron"
