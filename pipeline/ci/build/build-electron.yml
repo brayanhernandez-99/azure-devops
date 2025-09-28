@@ -41,3 +41,4 @@ jobs:
             exit 99
           fi
         displayName: "📚 Read version"
+

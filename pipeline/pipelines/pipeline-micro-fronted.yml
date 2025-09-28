@@ -1,7 +1,6 @@
 stages:
   - stage: semantic_version_micro_fronted
     displayName: "🏷️ Semantic Version MicroFrontend"
-    dependsOn: semantic_version_integration_electron
     jobs:
       - template: ../ci/semantic-version-integration.yml
         parameters:
@@ -10,6 +9,7 @@ stages:
 
   - stage: semantic_version_integration_electron
     displayName: "🏷️ Semantic Version Electron"
+    dependsOn: semantic_version_micro_fronted
     jobs:
       - template: ../ci/semantic-version-integration.yml
         parameters:
