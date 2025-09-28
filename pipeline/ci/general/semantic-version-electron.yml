@@ -290,7 +290,7 @@ jobs:
           ArtifactName: "versions"
           publishLocation: "Container"
         displayName: "📦 Public artifact version"
-        workingDirectory: $(Build.SourcesDirectory)/electron
+        #workingDirectory: $(Build.SourcesDirectory)/electron
 
       - script: |
           raw_branch=$(Build.SourceBranch)
