@@ -44,7 +44,7 @@ resources:
     - repository: electron
       name: Invictus/electron-app-invictus
       type: git
-      ref: ${{ parameters.electronBranch }}
+      ref: refs/heads/develop
 
 stages:
   #
