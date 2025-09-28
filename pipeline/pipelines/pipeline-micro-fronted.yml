@@ -21,32 +21,32 @@ stages:
     #         region: ${{ region }}
     #         apps: ${{ parameters.apps }}
 
-  - stage: semantic_version_integration_electron
-    displayName: "🏷️ Semantic Version Electron"
-    #dependsOn: build_micro_frontend_cap
-    jobs:
-      - template: ../ci/semantic-version-integration.yml
-        parameters:
-          release: exe
+    - stage: semantic_version_integration_electron
+      displayName: "🏷️ Semantic Version Electron"
+      #dependsOn: build_micro_frontend_cap
+      jobs:
+        - template: ../ci/semantic-version-integration.yml
+          parameters:
+            release: exe
 
-  - ${{ each region in parameters.red }}:
-      - stage: build_electron_${{ region }}
-        displayName: "📦 Build Electron ${{ region }}"
-        dependsOn: semantic_version_integration_electron
-        jobs:
-          - template: ../ci/build/build-electron.yml
-            parameters:
-              region: ${{ region }}
-              apps: ${{ parameters.apps }}
+    - ${{ each region in parameters.red }}:
+        - stage: build_electron_${{ region }}
+          displayName: "📦 Build Electron ${{ region }}"
+          dependsOn: semantic_version_integration_electron
+          jobs:
+            - template: ../ci/build/build-electron.yml
+              parameters:
+                region: ${{ region }}
+                apps: ${{ parameters.apps }}
 
-      - stage: deploy_micro_frontend_${{ region }}
-        displayName: "🚀 Deploy MicroFrontend ${{ region }}"
-        dependsOn: build_electron_${{ region }}
-        jobs:
-          - job: jobY
-            displayName: "Job Y"
-            steps:
-              - script: echo "Running Deployment Job Y"
+        - stage: deploy_micro_frontend_${{ region }}
+          displayName: "🚀 Deploy MicroFrontend ${{ region }}"
+          dependsOn: build_electron_${{ region }}
+          jobs:
+            - job: jobY
+              displayName: "Job Y"
+              steps:
+                - script: echo "Running Deployment Job Y"
 #
 #####################################################################
 #
