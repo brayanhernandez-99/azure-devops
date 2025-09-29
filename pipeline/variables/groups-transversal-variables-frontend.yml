@@ -20,9 +20,12 @@ variables:
   # Staging
   - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
       - group: trasversal-aws-staging
-      - group: variables-microfrontend-vue2-staging
-      - group: variables-microfrontend-staging
+      - group: variables-microfrontend-vue2-staging-old
+      - group: variables-microfrontend-staging-old
       - group: variables-microservices-staging
+    #   - group: variables-microfrontend-vue2-staging
+    #   - group: variables-microfrontend-staging
+    #   - group: variables-microservices-staging
 
   # Master or tags → por red
   - ${{ if and(eq(parameters.region, 'antioquia'), eq(variables['Build.SourceBranchName'], 'master')) }}:
