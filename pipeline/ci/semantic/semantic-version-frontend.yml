@@ -5,6 +5,9 @@ jobs:
       name: "Azure Pipelines"
       VmImage: ubuntu-22.04
 
+    variables:
+      - template: ../../variables/groups-transversal-variables.yml
+
     strategy:
       matrix:
         ${{ each ms in parameters.apps }}:
@@ -132,7 +135,7 @@ jobs:
           fi
         displayName: "🔍 Check for 'console.log' in changes"
         condition: and(succeeded(), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
-  
+
       - script: |
           if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
             fileselect=app-legacy

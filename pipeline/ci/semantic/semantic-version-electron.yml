@@ -5,6 +5,9 @@ jobs:
       name: "Azure Pipelines"
       VmImage: ubuntu-22.04
 
+    variables:
+      - template: ../../variables/groups-transversal-variables.yml
+
     steps:
       - checkout: electron
         fetchDepth: 0
