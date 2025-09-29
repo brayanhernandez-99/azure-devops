@@ -130,7 +130,6 @@ jobs:
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
 
       - script: |
-          echo -e "\n📁 Generando .env"
           CURRENT_BRANCH="$(Build.SourceBranch)"
           region="unknown"
           environment="unknown"
@@ -178,6 +177,7 @@ jobs:
           echo "##vso[task.setvariable variable=region]$region"
           echo -e "\n✅ Archivo .env creado correctamente"
           ls -la $(System.DefaultWorkingDirectory)
+          echo -e "\n📁 Generando .env"
           cat $envPath
         displayName: "⚙️ Generate .env"
 
@@ -447,12 +447,10 @@ jobs:
           script: |
             $ErrorActionPreference = "Stop"
 
-            Write-Host "`n📁 Generando .env"
             $currentBranch="$(Build.SourceBranch)"
             $region = "unknown"
             $environment = "unknown"
             $red = "${{ parameters.region }}"
-
 
             switch -Wildcard ($currentBranch) {
               "refs/heads/feature/*" { $environment = "dev"; $region = "dev"; }
@@ -499,6 +497,7 @@ jobs:
 
             Write-Host "`n✅ Archivo .env creado correctamente"
             Get-ChildItem -Path "$(System.DefaultWorkingDirectory)" -Force | Format-Table Mode, LastWriteTime, Length, Name -AutoSize
+            Write-Host "`n📁 Generando .env"
             Get-Content -Path $envPath
 
       - task: UsePythonVersion@0
