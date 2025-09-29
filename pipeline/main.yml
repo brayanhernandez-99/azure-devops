@@ -1,4 +1,7 @@
 parameters:
+  - name: release
+    type: string
+
   - name: red
     type: object
     default:
@@ -27,9 +30,6 @@ parameters:
       # - "lotteries"
       # - "money-control"
       # - "users"
-
-  - name: release
-    type: string
 
 resources:
   repositories:
