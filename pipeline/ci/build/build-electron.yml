@@ -354,9 +354,8 @@ jobs:
             if (Test-Path $versionFile) {
               $json = Get-Content $versionFile | ConvertFrom-Json
               $version = $json.version
-              $baseVersion = $version.Split('-')[0]
-              Write-Host "`n🚀 Versión detectada para .exe: $baseVersion"
-              Write-Host "##vso[task.setvariable variable=version]$baseVersion"
+              Write-Host "`n🚀 Versión detectada para .exe: $version"
+              Write-Host "##vso[task.setvariable variable=version]$version"
             } else {
               Write-Host "`n❌ No se encontro archivo de versión para .exe"
               exit 99
@@ -500,19 +499,19 @@ jobs:
 
             Write-Host "`n✅ Archivo .env creado correctamente"
             Get-ChildItem -Path "$(System.DefaultWorkingDirectory)" -Force | Format-Table Mode, LastWriteTime, Length, Name -AutoSize
-            Get-ChildItem -Path $envPath | Format-Table Mode, LastWriteTime, Length, Name -AutoSize
+            Get-Content -Path $envPath
 
       - task: UsePythonVersion@0
         displayName: "🔧 Use Python $(versionPython)"
         inputs:
-          versionSpec: "$(versionPython)"
+          versionSpec: "$(pythonVersion)"
           addToPath: true
 
       - task: NodeTool@0
         displayName: "🔧 Install Nodejs $(versionNode)"
         inputs:
           versionSource: "spec"
-          versionSpec: "$(versionNode)"
+          versionSpec: "$(nodeVersion)"
 
       - task: PowerShell@2
         displayName: "📝 Update version in package.json"
