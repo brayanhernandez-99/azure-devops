@@ -96,6 +96,7 @@ jobs:
 
           echo -e "\n📁 Dists copiados en: $(System.DefaultWorkingDirectory)/apps"
           ls -l $(System.DefaultWorkingDirectory)
+          echo -e "\n📁 Dists apps"
           ls -l $(System.DefaultWorkingDirectory)/apps
         displayName: "📥 Copy Dists"
 
@@ -177,16 +178,16 @@ jobs:
         displayName: "⚙️ Generate .env"
 
       - task: UsePythonVersion@0
-        displayName: "🔧 Use Python $(versionPython)"
+        displayName: "🔧 Use Python $(pythonVersion)"
         inputs:
-          versionSpec: "$(versionPython)"
+          versionSpec: "$(pythonVersion)"
           addToPath: true
 
       - task: NodeTool@0
-        displayName: "🔧 Install Nodejs $(versionNode)"
+        displayName: "🔧 Install Nodejs $(nodeVersion)"
         inputs:
           versionSource: "spec"
-          versionSpec: "$(versionNode)"
+          versionSpec: "$(nodeVersion)"
 
       - script: |
           echo -e "\n📦 Modificando versión en package.json: $(msVersion)"
