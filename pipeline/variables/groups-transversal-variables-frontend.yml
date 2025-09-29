@@ -2,21 +2,26 @@ variables:
   - group: trasversal-aws-deployment
   - group: trasversal-azure-devops
   - group: trasversal-versions-invictus
-  - group: trasversal-microfrontend-vue2
-  - group: trasversal-microfrontend
+  - group: trasversal-microfrontend-vue2-dev-old
+  - group: trasversal-microfrontend-dev-old
+#   - group: trasversal-microfrontend-vue2
+#   - group: trasversal-microfrontend
 
   # Develop - Feature - Hotfix
   - ${{ if or(eq(variables['Build.SourceBranchName'], 'develop'), startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')) }}:
       - group: trasversal-aws-develop
-      - group: variables-microfrontend-vue2-develop
-      - group: trasversal-microfrontend-develop
+      - group: variables-microfrontend-vue2-develop-old
+      - group: variables-microfrontend-develop-old
       - group: variables-microservices-develop
+    #   - group: variables-microfrontend-vue2-develop
+    #   - group: variables-microfrontend-develop
+    #   - group: variables-microservices-develop
 
   # Staging
   - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
       - group: trasversal-aws-staging
       - group: variables-microfrontend-vue2-staging
-      - group: trasversal-microfrontend-staging
+      - group: variables-microfrontend-staging
       - group: variables-microservices-staging
 
   # Master or tags → por red

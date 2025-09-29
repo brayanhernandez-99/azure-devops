@@ -162,9 +162,16 @@ jobs:
             exit 99
           fi
 
+          # cat <<EOF > .env
+          # DOMAIN_ADMIN="${BASE_URL_ELECTRON_ADMIN}"
+          # DOMAIN_SELLER="${BASE_URL_ELECTRON_SELLERS}"
+          # TARGET="linux"
+          # TARGET_ENVIRONMENT="$environment"
+          # EOF
+
           cat <<EOF > .env
-          DOMAIN_ADMIN="${BASE_URL_ELECTRON_ADMIN}"
-          DOMAIN_SELLER="${BASE_URL_ELECTRON_SELLERS}"
+          DOMAIN_ADMIN="Administradores|mdiAccountChild|invictus-admin-api-dev.ux.technology/"
+          DOMAIN_SELLER="Vendedores|mdiAccountChild|https://invictus-sellers-api-dev.ux.technology/"
           TARGET="linux"
           TARGET_ENVIRONMENT="$environment"
           EOF
