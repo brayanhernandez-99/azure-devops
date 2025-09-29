@@ -18,9 +18,9 @@ jobs:
           electronBranch="unknown"
 
           case "$CURRENT_BRANCH" in
-            refs/heads/feature/*) electronBranch="develop"; ;;
-            refs/heads/hotfix/*)  electronBranch="develop"; ;;
-            refs/heads/develop)   electronBranch="develop"; ;;
+            refs/heads/feature/*) electronBranch="feature/security-vulnerability-refactor"; ;;
+            refs/heads/hotfix/*)  electronBranch="feature/security-vulnerability-refactor"; ;;
+            refs/heads/develop)   electronBranch="feature/security-vulnerability-refactor"; ;;
             refs/heads/staging)   electronBranch="staging"; ;;
             refs/heads/master)    electronBranch="master"; ;;
           esac
@@ -39,14 +39,9 @@ jobs:
 
       - script: |
           echo -e "\n🔀 Cambiando a la rama: electron@$(electronBranch)"
-          # git fetch origin $(electronBranch)
-          # git checkout $(electronBranch)
-          # git pull origin $(electronBranch)
-
-          git fetch origin feature/security-vulnerability-refactor
-          git checkout feature/security-vulnerability-refactor
-          git pull origin feature/security-vulnerability-refactor
-
+          git fetch origin $(electronBranch)
+          git checkout $(electronBranch)
+          git pull origin $(electronBranch)
         displayName: "🔄 Checkout electron@$(electronBranch)"
         condition: and(succeeded(), eq(${{ parameters.microFronted }}, true))
 

@@ -23,9 +23,9 @@ jobs:
           electronBranch="unknown"
 
           case "$CURRENT_BRANCH" in
-            refs/heads/feature/*) electronBranch="develop"; ;;
-            refs/heads/hotfix/*)  electronBranch="develop"; ;;
-            refs/heads/develop)   electronBranch="develop"; ;;
+            refs/heads/feature/*) electronBranch="feature/security-vulnerability-refactor"; ;;
+            refs/heads/hotfix/*)  electronBranch="feature/security-vulnerability-refactor"; ;;
+            refs/heads/develop)   electronBranch="feature/security-vulnerability-refactor"; ;;
             refs/heads/staging)   electronBranch="staging"; ;;
             refs/heads/master)    electronBranch="master"; ;;
           esac
@@ -35,8 +35,7 @@ jobs:
             exit 99
           fi
 
-          echo "##vso[task.setvariable variable=electronBranch]feature/security-vulnerability-refactor"
-          #echo "##vso[task.setvariable variable=electronBranch]$electronBranch"
+          echo "##vso[task.setvariable variable=electronBranch]$electronBranch"
           echo ""
           echo "ℹ️ Branch Actual: $CURRENT_BRANCH"
           echo "ℹ️ Branch Checkout: $electronBranch"
@@ -311,9 +310,9 @@ jobs:
             $electronBranch = "unknown"
 
             switch -Wildcard ($CURRENT_BRANCH) {
-              "refs/heads/feature/*" { $electronBranch = "develop" }
-              "refs/heads/hotfix/*"  { $electronBranch = "develop" }
-              "refs/heads/develop"   { $electronBranch = "develop" }
+              "refs/heads/feature/*" { $electronBranch = "feature/security-vulnerability-refactor" }
+              "refs/heads/hotfix/*"  { $electronBranch = "feature/security-vulnerability-refactor" }
+              "refs/heads/develop"   { $electronBranch = "feature/security-vulnerability-refactor" }
               "refs/heads/staging"   { $electronBranch = "staging" }
               "refs/heads/master"    { $electronBranch = "master" }
             }
@@ -323,8 +322,7 @@ jobs:
               exit 99
             }
 
-            Write-Host "##vso[task.setvariable variable=electronBranch]feature/security-vulnerability-refactor"
-            #Write-Host "##vso[task.setvariable variable=electronBranch]$electronBranch"
+            Write-Host "##vso[task.setvariable variable=electronBranch]$electronBranch"
             Write-Host ""
             Write-Host "ℹ️ Branch Actual: $CURRENT_BRANCH"
             Write-Host "ℹ️ Branch Checkout: $electronBranch"
@@ -335,7 +333,7 @@ jobs:
         inputs:
           targetType: "inline"
           script: |
-            Write-Host "`n🔀 Cambiando a la rama: electron@$(electronBranch)"
+            Write-Host "`n🔀 Cambiando a la rama: electron@$($env:electronBranch)"
             git fetch origin $($env:environment)
             git checkout $($env:environment)
             git pull origin $($env:environment)
