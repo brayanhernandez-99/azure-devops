@@ -54,13 +54,28 @@ jobs:
         inputs:
           artifactName: "versions"
           downloadPath: "$(Pipeline.Workspace)/downloaded-versions"
-        displayName: "📥 Download Version Artifact"
+        displayName: "📥 Download Version"
+
+      - script: |
+          echo -e "\n📁 Archivo version.json:"
+          ls -l $(Pipeline.Workspace)/downloaded-versions/versions/electron/
+          VERSION_FILE="$(Pipeline.Workspace)/downloaded-versions/versions/electron/version.json"
+          if [[ -f "$VERSION_FILE" ]]; then
+            VERSION=$(jq -r '.version' $VERSION_FILE)
+            VERSION_CLEAN=$(echo "$VERSION" | cut -d'-' -f1)     
+            echo -e "\n🚀 Versión detectada para $(Build.Repository.Name): $VERSION_CLEAN"
+            echo "##vso[task.setvariable variable=msVersion]$VERSION_CLEAN"
+          else
+            echo -e "\n##vso[task.logissue type=error]❌ No se encontro archivo de versión para $(Build.Repository.Name)"
+            exit 99
+          fi
+        displayName: "📚 Read Version"
 
       - task: DownloadPipelineArtifact@2
         inputs:
           artifact: dists
           path: $(Pipeline.Workspace)/downloaded-dists
-        displayName: "📥 Download Dist Files"
+        displayName: "📥 Download Dists"
 
       - script: |
           DISTS_PATH="$(Pipeline.Workspace)/downloaded-dists/${{ parameters.region }}"
@@ -76,19 +91,188 @@ jobs:
         displayName: "🔎 Validate downloaded dists"
 
       - script: |
-          echo -e "\nℹ️ Pipeline branch: $(Build.SourceBranch)"
+          DISTS_PATH="$(Pipeline.Workspace)/downloaded-dists/${{ parameters.region }}"
+          cp -R $DISTS_PATH $(System.DefaultWorkingDirectory)/apps
 
-          echo -e "\n📁 Archivo version.json:"
-          ls -l $(Pipeline.Workspace)/downloaded-versions/versions/electron/
-          VERSION_FILE="$(Pipeline.Workspace)/downloaded-versions/versions/electron/version.json"
-          if [[ -f "$VERSION_FILE" ]]; then
-            VERSION=$(jq -r '.version' $VERSION_FILE)
-            VERSION_CLEAN=$(echo "$VERSION" | cut -d'-' -f1)     
-            echo -e "\n🚀 Versión detectada para $(Build.Repository.Name): $VERSION_CLEAN"
-            echo "##vso[task.setvariable variable=msVersion]$VERSION_CLEAN"
-          else
-            echo -e "\n##vso[task.logissue type=error]❌ No se encontro archivo de versión para $(Build.Repository.Name)"
+          echo -e "\n📁 Dists copiados en: $(System.DefaultWorkingDirectory)/apps"
+          ls -l $(System.DefaultWorkingDirectory)
+          ls -l $(System.DefaultWorkingDirectory)/apps
+        displayName: "📥 Copy Dists"
+
+      - task: Bash@3
+        name: AuthCodeArtifact
+        inputs:
+          targetType: "inline"
+          script: |
+            echo -e "\n🔐 Obteniendo token de AWS CodeArtifact..."
+            token=$(aws codeartifact get-authorization-token \
+              --domain matrixtech-npm-repository \
+              --domain-owner "$ACCOUNT_ID_DEPLOY" \
+              --region "$AWS_DEFAULT_REGION" \
+              --query authorizationToken \
+              --output text)
+
+            REPO_DOMAIN="matrixtech-npm-repository-$ACCOUNT_ID_DEPLOY.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com"
+            REPO_PATH="npm/matrixtech-npm-repository"
+            REPO_URL="https://$REPO_DOMAIN/$REPO_PATH"
+
+            echo "Configurando npm..."
+            npm config set "//$REPO_DOMAIN/$REPO_PATH/:_authToken" "$token"
+            npm config set registry "$REPO_URL"
+
+            echo "Verificando identidad de AWS..."
+            aws sts get-caller-identity
+
+            echo -e "\nGenerando archivo .npmrc"
+            cat <<EOF > ".npmrc"
+            //$REPO_DOMAIN/$REPO_PATH/:_authToken=$token
+            registry=$REPO_URL
+            EOF
+            ls -l .npmrc
+        displayName: "🔐 Setup CodeArtifact & npm config"
+        env:
+          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
+          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+
+      - script: |
+          CURRENT_BRANCH="$(Build.SourceBranch)"
+          environment="unknown"
+          region="unknown"
+
+          case "$CURRENT_BRANCH" in
+            refs/heads/feature/*) environment="dev"; region="dev"; ;;
+            refs/heads/hotfix/*)  environment="dev"; region="dev"; ;;
+            refs/heads/develop)   environment="dev"; region="dev"; ;;
+            refs/heads/staging)   environment="qa";  region="qa"; ;;
+            refs/heads/master) 
+              case "$red" in
+                "antioquia") environment="production"; region="matrixtech"; ;;
+                "cap")       environment="production"; region="cap"; ;;
+                "tolima")    environment="production"; region="seapto"; ;;
+                "huila")     environment="production"; region="suchance"; ;;
+                "cauca")     environment="production"; region="acertemos"; ;;
+                "boyaca")    environment="production"; region="jer"; ;;
+              esac ;;
+          esac
+
+          if [ "$environment" = "unknown" ] || [ "$region" = "unknown" ]; then
+            echo "⚠️ Environment [$environment] no reconocido"
+            echo "⚠️ Región [$region] no reconocida"
             exit 99
           fi
-        displayName: "📚 Read Electron Version"
 
+          cat <<EOF > .env
+          DOMAIN_ADMIN="${BASE_URL_ELECTRON_ADMIN}"
+          DOMAIN_SELLER="${BASE_URL_ELECTRON_SELLERS}"
+          TARGET="linux"
+          TARGET_ENVIRONMENT="$environment"
+          EOF
+
+          echo "##vso[task.setvariable variable=environment]$environment"
+          echo "##vso[task.setvariable variable=region]$region"
+          echo -e "\n✅ Archivo .env creado correctamente"
+          cat .env
+        displayName: "⚙️ Generate .env"
+        env:
+          red: ${{ parameters.red }}
+
+      - task: UsePythonVersion@0
+        displayName: "🔧 Use Python $(versionPython)"
+        inputs:
+          versionSpec: "$(versionPython)"
+          addToPath: true
+
+      - task: NodeTool@0
+        displayName: "🔧 Install Nodejs $(versionNode)"
+        inputs:
+          versionSource: "spec"
+          versionSpec: "$(versionNode)"
+
+      - script: |
+          echo -e "\n📦 Modificando versión en package.json: $(msVersion)"
+          PACKAGE_PATH="$(Build.SourcesDirectory)/package.json"
+
+          if [[ -f "$PACKAGE_PATH" ]]; then
+            jq --arg ver "$(msVersion)" '.version = $ver' "$PACKAGE_PATH" > "$PACKAGE_PATH.tmp" && mv "$PACKAGE_PATH.tmp" "$PACKAGE_PATH"
+
+            echo -e "\n✅ Versión en package.json actualizada correctamente."
+            cat "$PACKAGE_PATH"
+          else
+            echo -e "\n❌ No se encontró el archivo package.json en la ruta [$PACKAGE_PATH]"
+            exit 99
+          fi
+        displayName: "📝 Update version in package.json"
+
+      - script: |
+          echo -e "\n📦 Instalando dependencias ubuntu..."
+          sudo apt-get update
+          sudo apt-get install -y libcups2-dev
+
+          echo -e "\n📦 Instalando dependencias node..."
+          npm_config_legacy_peer_deps=true npm i
+
+          echo -e "\n📦 Dependencias instaladas:"
+          npm list --depth=0
+        displayName: "⚙️ Install dependencies"
+
+      - script: |
+          echo -e "\n📦 Build electron"
+          npm_config_legacy_peer_deps=true npm run build
+        displayName: "📦 Build electron"
+
+      - script: |
+          echo -e "\n📝 Validando build electron..."
+
+          BASE_PATH="$(Build.SourcesDirectory)/release/$(environment)/$(msVersion)"
+          REGION_PATH="$BASE_PATH/$(region)"
+          mkdir -p "$REGION_PATH"
+          all_found=true
+
+          FILES_TO_COPY=(
+            "InvictusUX-$(msVersion).AppImage"
+            "latest-linux.yml"
+          )
+
+          for file in "${FILES_TO_COPY[@]}"; do
+            source_path="$BASE_PATH/$file"
+            destination_path="$REGION_PATH/$file"
+
+            if [ -f "$source_path" ]; then
+              cp -f "$source_path" "$destination_path"
+              echo "📂 Copiado: $file -> $destination_path"
+            else
+              echo "⚠️ Archivo no encontrado $file -> $source_path"
+              all_found=false
+            fi
+          done
+
+          if [ "$all_found" = false ]; then
+            echo -e "\n❌ Error: archivos requeridos no encontrados."
+            exit 99
+          else
+            echo -e "\n📂 Directorio: $REGION_PATH"
+            ls -l "$REGION_PATH"
+          fi
+        displayName: "🔍 Validate Build"
+
+      - script: |
+          echo -e "\n📦 Cargando al Bucket S3..."
+          BASE_PATH="$(Build.SourcesDirectory)/release/$(environment)/$(msVersion)/$(region)"
+
+          echo -e "\n📂 Archivos a cargar: $BASE_PATH"
+          ls -l "$BASE_PATH"
+
+          #aws s3 cp "$BASE_PATH" "s3://e-remote/invictus-electron/linux/$(region)" --recursive --acl public-read
+          aws s3 cp "$BASE_PATH" "s3://e-remote/invictus-electron/linux/dev-test/$(region)" --recursive --acl public-read
+          
+          echo -e "\n✅ Archivos subidos exitosamente."
+          echo "🔗 APP: InvictusUX-$(msVersion).AppImage"
+          echo "🔗 URL: https://e-remote.s3.us-east-1.amazonaws.com/invictus-electron/linux/$(environment)/InvictusUX-$(msVersion).AppImage"
+
+        displayName: "📤 Upload Bucket S3"
+        #condition: not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
+        env:
+          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
+          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)

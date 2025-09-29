@@ -25,7 +25,7 @@ jobs:
         inputs:
           artifactName: "versions"
           downloadPath: "$(Pipeline.Workspace)/downloaded-versions"
-        displayName: "📥 Download Version Artifact"
+        displayName: "📥 Download Version"
 
       - script: |
           echo -e "\nℹ️ Pipeline branch: $(Build.SourceBranch)"
@@ -39,7 +39,7 @@ jobs:
             echo "##vso[task.logissue type=error]❌ No se encontró archivo de versión para [$(msName)]"
             exit 99
           fi
-        displayName: "📚 Read Microservice Versions"
+        displayName: "📚 Read Version"
 
       - script: |
           if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
