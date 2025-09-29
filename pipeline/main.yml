@@ -15,7 +15,7 @@ parameters:
   - name: apps
     type: object
     default:
-      - "app-administration-vue2"
+      # - "app-administration-vue2"
       # - "app-sellers-vue2"
       # - "awards"
       # - "biometrics"
@@ -26,7 +26,7 @@ parameters:
       # - "external-wager"
       # - "hierarchies"
       # - "invictus"
-      # - "login"
+      - "login"
       # - "lotteries"
       # - "money-control"
       # - "users"
