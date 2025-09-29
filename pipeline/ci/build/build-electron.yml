@@ -89,6 +89,7 @@ jobs:
             ls -l $(System.DefaultWorkingDirectory)/apps
           else
             echo -e "\n⚠️ Error no tiene exactamente todos los dists en: $DISTS_PATH"
+            ls -l $(System.DefaultWorkingDirectory)/apps
             exit 99
           fi
         displayName: "🔎 Validate and Copy Dists"
@@ -393,6 +394,7 @@ jobs:
             }
             else {
               Write-Host "`n⚠️ Error no tiene exactamente todos los dists en: $DISTS_PATH"
+              Get-ChildItem -Path "$DEST_PATH" | Format-Table Mode, LastWriteTime, Length, Name
               exit 99
             }
 
