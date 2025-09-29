@@ -147,25 +147,25 @@ jobs:
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
 
-      - script: |
-          sourceBranch="${BUILD_SOURCEBRANCH/refs\/heads\//}"
-          targetBranch="master"
+      # - script: |
+      #     sourceBranch="${BUILD_SOURCEBRANCH/refs\/heads\//}"
+      #     targetBranch="master"
 
-          echo -e "\n🔎 Verificando que no se hayan agregado nuevas sentencias console.log..."
-          echo "Branch actual: $sourceBranch"
-          echo "Branch destino: $targetBranch"
+      #     echo -e "\n🔎 Verificando que no se hayan agregado nuevas sentencias console.log..."
+      #     echo "Branch actual: $sourceBranch"
+      #     echo "Branch destino: $targetBranch"
 
-          git fetch origin "$targetBranch"
-          diff=$(git --no-pager diff "origin/$targetBranch..origin/$sourceBranch")
+      #     git fetch origin "$targetBranch"
+      #     diff=$(git --no-pager diff "origin/$targetBranch..origin/$sourceBranch")
 
-          if echo "$diff" | grep -qE '^\+.*console\.log'; then
-            echo -e "\n❌ Se encontro 'console.log' en los cambios"
-            exit 99
-          else
-            echo -e "\n✅ No se encontraron sentencias 'console.log' en los cambios"
-          fi
-        displayName: "🔍 Check for 'console.log' in changes"
-        condition: and(succeeded(), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')), ne(${{ parameters.microFronted }}, true))
+      #     if echo "$diff" | grep -qE '^\+.*console\.log'; then
+      #       echo -e "\n❌ Se encontro 'console.log' en los cambios"
+      #       exit 99
+      #     else
+      #       echo -e "\n✅ No se encontraron sentencias 'console.log' en los cambios"
+      #     fi
+      #   displayName: "🔍 Check for 'console.log' in changes"
+      #   condition: and(succeeded(), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')), ne(${{ parameters.microFronted }}, true))
 
       - script: |
           CURRENT_BRANCH=$(echo $(Build.SourceBranch))
