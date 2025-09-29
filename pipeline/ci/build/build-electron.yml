@@ -177,7 +177,7 @@ jobs:
           echo "##vso[task.setvariable variable=environment]$environment"
           echo "##vso[task.setvariable variable=region]$region"
           echo -e "\n✅ Archivo .env creado correctamente"
-          cat $(System.DefaultWorkingDirectory)
+          ls -la $(System.DefaultWorkingDirectory)
           cat $envPath
         displayName: "⚙️ Generate .env"
 
@@ -500,7 +500,7 @@ jobs:
 
             Write-Host "`n✅ Archivo .env creado correctamente"
             Get-ChildItem -Path "$(System.DefaultWorkingDirectory)" -Force | Format-Table Mode, LastWriteTime, Length, Name -AutoSize
-            Get-ChildItem -Path $envPath -Force | Format-Table Mode, LastWriteTime, Length, Name -AutoSize
+            Get-ChildItem -Path $envPath | Format-Table Mode, LastWriteTime, Length, Name -AutoSize
 
       - task: UsePythonVersion@0
         displayName: "🔧 Use Python $(versionPython)"
