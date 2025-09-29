@@ -392,7 +392,7 @@ jobs:
               Get-ChildItem -Path "$DEST_PATH" | Format-Table Mode, LastWriteTime, Length, Name
             }
             else {
-              Write-Host "`n⚠️ Error: Se esperaban exactamente 1 dist, pero se encontraron $DISTS_COUNT en: $DISTS_PATH"
+              Write-Host "`n⚠️ Error no tiene exactamente todos los dists en: $DISTS_PATH"
               exit 99
             }
 
