@@ -166,7 +166,7 @@ jobs:
             echo "✅ Dependencias Instaladas:"
             echo "$OUTPUT"
           fi
-        displayName: "📦 Install MicroFrontend Dependencies"
+        displayName: "📦 Install Dependencies"
 
       - script: |
           if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
@@ -191,7 +191,7 @@ jobs:
             echo "✅ Build generado correctamente en $DIST_PATH"
             ls -l "$DIST_PATH"
           fi
-        displayName: "⚙️ Build MicroFrontend $(msName)"
+        displayName: "⚙️ Build $(msName)"
 
       - script: |
           echo "Descomentando app-legacy/*"

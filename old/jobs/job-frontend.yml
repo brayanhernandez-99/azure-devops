@@ -176,7 +176,7 @@ jobs:
             echo "✅ Dependencias Instaladas:"
             echo "$OUTPUT"
           fi
-        displayName: "📦 Install MicroFrontend Dependencies"
+        displayName: "📦 Install Dependencies"
 
       - script: |
           cat $(System.DefaultWorkingDirectory)/app-legacy/app-administration-vue2/.env.local
@@ -200,7 +200,7 @@ jobs:
             echo "✅ Build generado correctamente en $DIST_PATH"
             ls -l "$DIST_PATH"
           fi
-        displayName: "🛠️ Build MicroFrontend $(msName)"
+        displayName: "🛠️ Build $(msName)"
 
       - script: |
           echo "Descomentando app-legacy/*"
