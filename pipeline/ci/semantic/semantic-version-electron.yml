@@ -31,7 +31,6 @@ jobs:
           fi
 
           echo "##vso[task.setvariable variable=electronBranch]$electronBranch"
-          echo ""
           echo "ℹ️ Branch Actual: $CURRENT_BRANCH"
           echo "ℹ️ Branch Checkout: $electronBranch"
         displayName: "📌 Set Electron Branch"

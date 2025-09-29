@@ -323,7 +323,6 @@ jobs:
             }
 
             Write-Host "##vso[task.setvariable variable=electronBranch]$electronBranch"
-            Write-Host ""
             Write-Host "ℹ️ Branch Actual: $CURRENT_BRANCH"
             Write-Host "ℹ️ Branch Checkout: $electronBranch"
         condition: and(succeeded(), eq(${{ parameters.microFronted }}, true))
