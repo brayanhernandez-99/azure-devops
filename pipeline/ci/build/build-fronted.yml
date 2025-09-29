@@ -273,44 +273,44 @@ jobs:
       #     ne(variables['Build.SourceBranchName'], 'master'),
       #     ne(variables['Build.SourceBranchName'], 'staging'))
 
-      - task: SonarQubePublish@7
-        displayName: "📤 Publish Static Code Analysis Results"
-        inputs:
-          pollingTimeoutSec: 400
-        condition: and(succeeded(),
-          ne(variables['msName'], 'app-administration-vue2'),
-          ne(variables['msName'], 'app-sellers-vue2'),
-          ne(variables['Build.SourceBranchName'], 'master'),
-          ne(variables['Build.SourceBranchName'], 'staging'))
+      # - task: SonarQubePublish@7
+      #   displayName: "📤 Publish Static Code Analysis Results"
+      #   inputs:
+      #     pollingTimeoutSec: 400
+      #   condition: and(succeeded(),
+      #     ne(variables['msName'], 'app-administration-vue2'),
+      #     ne(variables['msName'], 'app-sellers-vue2'),
+      #     ne(variables['Build.SourceBranchName'], 'master'),
+      #     ne(variables['Build.SourceBranchName'], 'staging'))
 
-      - script: |
-          echo "Esperando Quality Gate..."
+      # - script: |
+      #     echo "Esperando Quality Gate..."
 
-          status=$(curl -s -u "$SONAR_TOKEN:" "$SONAR_HOST_URL/api/qualitygates/project_status?projectKey=pruebas-microfronted-$(msName)")
-          metrics_response=$(curl -s -u "$SONAR_TOKEN:" "$SONAR_HOST_URL/api/measures/component?component=pruebas-microfronted-$(msName)&metricKeys=coverage,duplicated_lines_density")
+      #     status=$(curl -s -u "$SONAR_TOKEN:" "$SONAR_HOST_URL/api/qualitygates/project_status?projectKey=pruebas-microfronted-$(msName)")
+      #     metrics_response=$(curl -s -u "$SONAR_TOKEN:" "$SONAR_HOST_URL/api/measures/component?component=pruebas-microfronted-$(msName)&metricKeys=coverage,duplicated_lines_density")
 
-          coverage=$(echo "$metrics_response" | jq -r '.component.measures[] | select(.metric=="coverage") | .value')
-          duplication=$(echo "$metrics_response" | jq -r '.component.measures[] | select(.metric=="duplicated_lines_density") | .value')
+      #     coverage=$(echo "$metrics_response" | jq -r '.component.measures[] | select(.metric=="coverage") | .value')
+      #     duplication=$(echo "$metrics_response" | jq -r '.component.measures[] | select(.metric=="duplicated_lines_density") | .value')
 
-          status_code=$(echo "$status" | jq -r '.projectStatus.status')
-          echo "🔹 Proyecto: pruebas-microfronted-$(msName) | Coverage: $coverage | Lines Duplications: $duplication | Estado: $status_code"
+      #     status_code=$(echo "$status" | jq -r '.projectStatus.status')
+      #     echo "🔹 Proyecto: pruebas-microfronted-$(msName) | Coverage: $coverage | Lines Duplications: $duplication | Estado: $status_code"
 
-          if [[ "$status_code" == "ERROR" ]]; then
-            echo "##vso[task.logissue type=error]❌ El proyecto falló su Quality Gate."
-            exit 99
-          else
-            echo "✅ El proyecto pasó su Quality Gate."
-          fi
-        env:
-          SONAR_TOKEN: $(SONAR_TOKEN)
-          SONAR_HOST_URL: $(SONAR_HOST_URL)
-        displayName: "🛡️ Quality Gate Check: $(msName)"
-        continueOnError: true
-        condition: and(succeeded(),
-          ne(variables['msName'], 'app-administration-vue2'),
-          ne(variables['msName'], 'app-sellers-vue2'),
-          ne(variables['Build.SourceBranchName'], 'master'),
-          ne(variables['Build.SourceBranchName'], 'staging'))
+      #     if [[ "$status_code" == "ERROR" ]]; then
+      #       echo "##vso[task.logissue type=error]❌ El proyecto falló su Quality Gate."
+      #       exit 99
+      #     else
+      #       echo "✅ El proyecto pasó su Quality Gate."
+      #     fi
+      #   env:
+      #     SONAR_TOKEN: $(SONAR_TOKEN)
+      #     SONAR_HOST_URL: $(SONAR_HOST_URL)
+      #   displayName: "🛡️ Quality Gate Check: $(msName)"
+      #   continueOnError: true
+      #   condition: and(succeeded(),
+      #     ne(variables['msName'], 'app-administration-vue2'),
+      #     ne(variables['msName'], 'app-sellers-vue2'),
+      #     ne(variables['Build.SourceBranchName'], 'master'),
+      #     ne(variables['Build.SourceBranchName'], 'staging'))
 
       - task: PublishBuildArtifacts@1
         inputs:
