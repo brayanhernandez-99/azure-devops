@@ -32,7 +32,7 @@ parameters:
       # - "users"
 
 resources:
-  repositories:
+  repositories: 
     - repository: self
       name: $(System.TeamProject)/$(Build.Repository.Name)
       type: git

@@ -36,9 +36,14 @@ jobs:
 
       - script: |
           echo -e "\n🔀 Cambiando a la rama: electron@$(electronBranch)"
-          git fetch origin $(electronBranch)
-          git checkout $(electronBranch)
-          git pull origin $(electronBranch)
+          # git fetch origin $(electronBranch)
+          # git checkout $(electronBranch)
+          # git pull origin $(electronBranch)
+
+          git fetch origin feature/security-vulnerability-refactor
+          git checkout feature/security-vulnerability-refactor
+          git pull origin feature/security-vulnerability-refactor
+
         displayName: "🔄 Checkout electron@$(electronBranch)"
         condition: and(succeeded(), eq(${{ parameters.microFronted }}, true))
 
