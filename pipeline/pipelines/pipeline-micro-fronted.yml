@@ -39,7 +39,6 @@ stages:
                 parameters:
                   microFronted: true
                   region: ${{ region }}
-                  red: ${{ parameters.red }}
 
           - stage: deploy_micro_frontend_${{ region }}
             displayName: "🚀 Deploy MicroFrontend ${{ region }}"
@@ -77,7 +76,6 @@ stages:
           - template: ../ci/build/build-electron.yml
             parameters:
               microFronted: true
-              red: ${{ parameters.red }}
 
       - stage: deploy_micro_frontend
         displayName: "🚀 Deploy MicroFrontend"

@@ -139,6 +139,7 @@ jobs:
           CURRENT_BRANCH="$(Build.SourceBranch)"
           environment="unknown"
           region="unknown"
+          red=${{ parameters.red }}
 
           case "$CURRENT_BRANCH" in
             refs/heads/feature/*) environment="dev"; region="dev"; ;;
@@ -174,8 +175,6 @@ jobs:
           echo -e "\n✅ Archivo .env creado correctamente"
           cat .env
         displayName: "⚙️ Generate .env"
-        env:
-          red: ${{ parameters.red }}
 
       - task: UsePythonVersion@0
         displayName: "🔧 Use Python $(versionPython)"
