@@ -95,13 +95,14 @@ jobs:
       - script: |
           set -e
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-apigateway-metabase
-          terragrunt plan --all --non-interactive
-          terragrunt apply --all --non-interactive
-
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-apigateway-domain-names-metabase
           terragrunt plan --all --non-interactive
-          terragrunt apply --all --non-interactive
+          terragrunt destroy --all --non-interactive
+
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-apigateway-metabase
+          terragrunt plan --all --non-interactive
+          terragrunt destroy --all --non-interactive
+
 
           
 
