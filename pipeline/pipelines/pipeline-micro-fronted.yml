@@ -76,7 +76,6 @@ stages:
           - template: ../ci/build/build-electron.yml
             parameters:
               microFronted: true
-              #region: 
 
       - stage: deploy_micro_frontend
         displayName: "🚀 Deploy MicroFrontend"

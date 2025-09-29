@@ -62,9 +62,8 @@ jobs:
           VERSION_FILE="$(Pipeline.Workspace)/downloaded-versions/versions/electron/version.json"
           if [[ -f "$VERSION_FILE" ]]; then
             VERSION=$(jq -r '.version' $VERSION_FILE)
-            VERSION_CLEAN=$(echo "$VERSION" | cut -d'-' -f1)     
-            echo -e "\n🚀 Versión detectada para $(Build.Repository.Name): $VERSION_CLEAN"
-            echo "##vso[task.setvariable variable=msVersion]$VERSION_CLEAN"
+            echo -e "\n🚀 Versión detectada para $(Build.Repository.Name): $VERSION"
+            echo "##vso[task.setvariable variable=msVersion]$VERSION"
           else
             echo -e "\n##vso[task.logissue type=error]❌ No se encontro archivo de versión para $(Build.Repository.Name)"
             exit 99
