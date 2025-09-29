@@ -16,16 +16,6 @@ jobs:
       - template: ./semantic/semantic-version-flutter.yml
 
 
-
-stages:
-  - stage: "deploy_integration_${{ parameters.red }}"
-    ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
-      displayName: "🚀 Deploy Integration Develop"
-    ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
-      displayName: "🚀 Deploy Integration Staging"
-    ${{ if or(eq(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')) }}:
-      displayName: "🚀 Deploy Integration Master ${{ parameters.red }}"
-
     ${{ if eq(parameters.release, 'aws-ecs') }}:
       dependsOn:
         - "artifacts_managment"
