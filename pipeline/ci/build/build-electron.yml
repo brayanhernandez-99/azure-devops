@@ -3,7 +3,7 @@ jobs:
   # Electron Linux
   #
   - job: build_electron_linux
-    displayName: "📦 build electron"
+    displayName: "📦 build electron Linux"
     pool:
       name: "Azure Pipelines"
       VmImage: ubuntu-22.04
@@ -287,7 +287,7 @@ jobs:
   # Electron Windows
   #
   - job: build_electron_windows
-    displayName: "📦 build electron"
+    displayName: "📦 build electron Windows"
     pool:
       name: "Azure Pipelines"
       vmImage: "windows-latest"
