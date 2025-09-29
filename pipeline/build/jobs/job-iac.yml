@@ -105,11 +105,13 @@ jobs:
 
 
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-vpc
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-vpn
           terragrunt plan --all --non-interactive
           terragrunt apply --all --non-interactive
 
-
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-load-balancer
+          terragrunt plan --all --non-interactive
+          terragrunt apply --all --non-interactive
 
         displayName: "✔️ Plan"
         workingDirectory: $(Build.SourcesDirectory)/iac-terragrunt/invictus/
