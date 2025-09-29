@@ -77,7 +77,7 @@ stages:
           - template: ../ci/build/build-electron.yml
             parameters:
               microFronted: true
-              region: ${{ region }}
+              region: antioquia
               red: ${{ parameters.red }}
 
       - stage: deploy_micro_frontend
