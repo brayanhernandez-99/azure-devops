@@ -80,7 +80,7 @@ jobs:
           DISTS_PATH="$(Pipeline.Workspace)/downloaded-dists/${{ parameters.region }}"
           DISTS_COUNT=$(ls "$DISTS_PATH" | wc -l)
 
-          if [[ "$DISTS_COUNT" == "1" ]]; then
+          if [[ "$DISTS_COUNT" == "15" ]]; then
             cp -R $DISTS_PATH $(System.DefaultWorkingDirectory)/apps
 
             echo -e "\n📁 Dists copiados en: $(System.DefaultWorkingDirectory)/apps"
@@ -382,7 +382,7 @@ jobs:
 
             $DISTS_COUNT = (Get-ChildItem -Path $DISTS_PATH | Measure-Object).Count
 
-            if ($DISTS_COUNT -eq 1) {
+            if ($DISTS_COUNT -eq 15) {
               Write-Host "`n✅ Se encontró 1 dist. Copiando a: $DEST_PATH"
               Copy-Item -Path "$DISTS_PATH\*" -Destination $DEST_PATH -Recurse -Force
 
