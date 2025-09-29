@@ -81,23 +81,17 @@ jobs:
           DISTS_COUNT=$(ls "$DISTS_PATH" | wc -l)
 
           if [[ "$DISTS_COUNT" == "1" ]]; then
-            echo -e "\n📁 Dists generados correctamente en: $DISTS_PATH"
-            ls -l "$DISTS_PATH"
+            cp -R $DISTS_PATH $(System.DefaultWorkingDirectory)/apps
+
+            echo -e "\n📁 Dists copiados en: $(System.DefaultWorkingDirectory)/apps"
+            ls -l $(System.DefaultWorkingDirectory)
+            echo -e "\n📁 Dists apps"
+            ls -l $(System.DefaultWorkingDirectory)/apps
           else
             echo -e "\n⚠️ Error no tiene exactamente todos los dists en: $DISTS_PATH"
             exit 99
           fi
-        displayName: "🔎 Validate downloaded dists"
-
-      - script: |
-          DISTS_PATH="$(Pipeline.Workspace)/downloaded-dists/${{ parameters.region }}"
-          cp -R $DISTS_PATH $(System.DefaultWorkingDirectory)/apps
-
-          echo -e "\n📁 Dists copiados en: $(System.DefaultWorkingDirectory)/apps"
-          ls -l $(System.DefaultWorkingDirectory)
-          echo -e "\n📁 Dists apps"
-          ls -l $(System.DefaultWorkingDirectory)/apps
-        displayName: "📥 Copy Dists"
+        displayName: "🔎 Validate and Copy Dists "
 
       - task: Bash@3
         name: AuthCodeArtifact
