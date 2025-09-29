@@ -265,7 +265,7 @@ jobs:
 
           #aws s3 cp "$BASE_PATH" "s3://e-remote/invictus-electron/linux/$(region)" --recursive --acl public-read
           aws s3 cp "$BASE_PATH" "s3://e-remote/invictus-electron/linux/dev-test/$(region)" --recursive --acl public-read
-          
+
           echo -e "\n✅ Archivos subidos exitosamente."
           echo "🔗 APP: InvictusUX-$(msVersion).AppImage"
           echo "🔗 URL: https://e-remote.s3.us-east-1.amazonaws.com/invictus-electron/linux/$(environment)/InvictusUX-$(msVersion).AppImage"
