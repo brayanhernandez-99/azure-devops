@@ -501,8 +501,6 @@ jobs:
             Write-Host "`n✅ Archivo .env creado correctamente"
             Get-Content $(System.DefaultWorkingDirectory)
             Get-Content $envPath
-        env:
-          red: ${{ parameters.red }}
 
       - task: UsePythonVersion@0
         displayName: "🔧 Use Python $(versionPython)"
