@@ -137,9 +137,9 @@ jobs:
 
       - script: |
           CURRENT_BRANCH="$(Build.SourceBranch)"
-          environment="unknown"
           region="unknown"
-          red=${{ parameters.red }}
+          environment="unknown"
+          red=${{ parameters.region }}
 
           case "$CURRENT_BRANCH" in
             refs/heads/feature/*) environment="dev"; region="dev"; ;;
