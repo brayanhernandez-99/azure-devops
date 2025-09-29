@@ -333,9 +333,9 @@ jobs:
           targetType: "inline"
           script: |
             Write-Host "`n🔀 Cambiando a la rama: electron@$($env:electronBranch)"
-            git fetch origin $($env:environment)
-            git checkout $($env:environment)
-            git pull origin $($env:environment)
+            git fetch origin $($env:electronBranch)
+            git checkout $($env:electronBranch)
+            git pull origin $($env:electronBranch)
         condition: and(succeeded(), eq(${{ parameters.microFronted }}, true))
 
       - task: DownloadBuildArtifacts@0
