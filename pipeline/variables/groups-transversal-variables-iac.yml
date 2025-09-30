@@ -24,6 +24,7 @@ variables:
       - group: cloudfront-antioquia-cap
       #- group: parameters-infrastructure-antioquia-cap
       #- group: secrets-infrastructure-antioquia-cap
+      #- group: autoscaling-infrastructure-antioquia-cap
 
   - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/feature/gana') }}:
       - group: trasversal-aws-antioquia
@@ -31,6 +32,7 @@ variables:
       - group: cloudfront-antioquia
       #- group: parameters-infrastructure-antioquia
       #- group: secrets-infrastructure-antioquia
+      #- group: autoscaling-infrastructure-antioquia
 
   - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/feature/santander') }}:
       - group: trasversal-aws-santander
@@ -38,6 +40,7 @@ variables:
       - group: cloudfront-santander
       #- group: parameters-infrastructure-antioquia
       #- group: secrets-infrastructure-antioquia
+      #- group: autoscaling-infrastructure-santander
 
 #   # Master or tags → por red
 #   - ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'antioquia')) }}:
