@@ -5,6 +5,7 @@ variables:
   - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/feature/develop') }}:
       - group: trasversal-aws-develop
       - group: variables-infrastructure-develop
+      - group: cloudfront-develop
       - group: parameters-infrastructure-develop
       - group: secrets-infrastructure-develop
       - group: autoscaling-infrastructure-develop
@@ -12,24 +13,28 @@ variables:
 #   - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/feature/staging') }}:
     #   - group: trasversal-aws-staging
     #   - group: variables-infrastructure-staging
+    #   - group: cloudfront-staging
     #   - group: parameters-infrastructure-staging
     #   - group: secrets-infrastructure-staging
 
   - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/feature/cap') }}:
       - group: trasversal-aws-antioquia-cap
       - group: variables-infrastructure-antioquia-cap
+      - group: cloudfront-antioquia-cap
       #- group: parameters-infrastructure-antioquia-cap
       #- group: secrets-infrastructure-antioquia-cap
 
   - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/feature/gana') }}:
       - group: trasversal-aws-antioquia
       - group: variables-infrastructure-antioquia
+      - group: cloudfront-antioquia
       #- group: parameters-infrastructure-antioquia
       #- group: secrets-infrastructure-antioquia
 
   - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/feature/santander') }}:
       - group: trasversal-aws-santander
       - group: variables-infrastructure-santander
+      - group: cloudfront-santander
       #- group: parameters-infrastructure-antioquia
       #- group: secrets-infrastructure-antioquia
 
