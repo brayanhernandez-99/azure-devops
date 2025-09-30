@@ -7,6 +7,7 @@ variables:
       - group: variables-infrastructure-develop
       - group: parameters-infrastructure-develop
       - group: secrets-infrastructure-develop
+      - group: autoscaling-infrastructure-develop
 
 #   - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/feature/staging') }}:
     #   - group: trasversal-aws-staging
