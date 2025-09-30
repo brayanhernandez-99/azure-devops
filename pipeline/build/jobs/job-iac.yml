@@ -104,15 +104,17 @@ jobs:
           # terragrunt apply --all --non-interactive
 
           
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-vpc-link
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-vpc
           terragrunt plan --all --non-interactive
-          terragrunt destroy --all --non-interactive
+          terragrunt apply --all --non-interactive
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-load-balancer
           terragrunt plan --all --non-interactive
-          terragrunt destroy --all --non-interactive
+          terragrunt apply --all --non-interactive
 
-        
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-vpc-link
+          terragrunt plan --all --non-interactive
+          terragrunt apply --all --non-interactive
 
         displayName: "✔️ Plan"
         workingDirectory: $(Build.SourcesDirectory)/iac-terragrunt/invictus/
