@@ -107,7 +107,7 @@ jobs:
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-vpc
           # terragrunt plan --all --non-interactive
           terragrunt destroy --all --non-interactive
-          
+
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-vpn
           # terragrunt plan --all --non-interactive
           terragrunt destroy --all --non-interactive
@@ -116,7 +116,9 @@ jobs:
           # terragrunt plan --all --non-interactive
           terragrunt destroy --all --non-interactive
 
-
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-vpc-link
+          # terragrunt plan --all --non-interactive
+          terragrunt destroy --all --non-interactive
 
 
 
