@@ -108,7 +108,23 @@ jobs:
             terragrunt plan --all --non-interactive
             terragrunt apply --all --non-interactive
 
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/awards/aws-service-ecs
+            terragrunt plan --all --non-interactive
+            terragrunt apply --all --non-interactive
+
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/bff-administration/aws-service-ecs
+            terragrunt plan --all --non-interactive
+            terragrunt apply --all --non-interactive
+
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/bff-integration/aws-service-ecs
+            terragrunt plan --all --non-interactive
+            terragrunt apply --all --non-interactive
+
             cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/bff-sellers/aws-service-ecs
+            terragrunt plan --all --non-interactive
+            terragrunt apply --all --non-interactive
+
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/biometrics/aws-service-ecs
             terragrunt plan --all --non-interactive
             terragrunt apply --all --non-interactive
 
