@@ -198,6 +198,9 @@ jobs:
         - script: |
             set -e
 
+            cd $(Build.SourcesDirectory)/iac-template-terraform/modules/aws/aws-service-load-balancer
+            terraform import aws_lb.nlb invictus-nlb
+
             cd $(Build.SourcesDirectory)/iac-template-terraform/modules/aws/aws-service-vpc-link
             terraform import aws_api_gateway_vpc_link.vpc_link s2sxes
 
