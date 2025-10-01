@@ -344,7 +344,12 @@ jobs:
             set -e
 
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-iam-profile
+            terragrunt plan --all --non-interactive
+            terragrunt apply --all --non-interactive
+
+
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-sqs
             terragrunt plan --all --non-interactive
             terragrunt apply --all --non-interactive
 
