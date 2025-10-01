@@ -2,21 +2,21 @@ variables:
   - group: trasversal-aws-deployment
   - group: trasversal-infrastructure-invictus
 
-  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/feature/develop') }}:
-      - group: trasversal-aws-develop
-      - group: variables-infrastructure-develop
-      - group: cloudfront-develop
-      - group: parameters-infrastructure-develop
-      - group: secrets-infrastructure-develop
-      - group: autoscaling-infrastructure-develop
+#   - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/feature/develop') }}:
+#       - group: trasversal-aws-develop
+#       - group: variables-infrastructure-develop
+#       - group: cloudfront-develop
+#       - group: parameters-infrastructure-develop
+#       - group: secrets-infrastructure-develop
+#       - group: autoscaling-infrastructure-develop
 
-#   - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/feature/staging') }}:
-    #   - group: trasversal-aws-staging
-    #   - group: variables-infrastructure-staging
-    #   - group: cloudfront-staging
-    #   - group: parameters-infrastructure-staging
-    #   - group: secrets-infrastructure-staging
-    #   - group: autoscaling-infrastructure-staging
+  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/feature/staging') }}:
+      - group: trasversal-aws-staging
+      - group: variables-infrastructure-staging
+      - group: cloudfront-staging
+      - group: parameters-infrastructure-staging
+      - group: secrets-infrastructure-staging
+      - group: autoscaling-infrastructure-staging
 
   - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/feature/cap') }}:
       - group: trasversal-aws-antioquia-cap

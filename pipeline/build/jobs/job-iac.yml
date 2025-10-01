@@ -18,7 +18,7 @@ jobs:
   #             steps:
   #               - script: echo "Aprobación recibida. Iniciando despliegues..."
 
-  - ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/develop') }}:
+  - ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/staging') }}:
     - job: "build_iac_sebas"
       displayName: "Build Infrastructure"
       pool:
@@ -96,70 +96,70 @@ jobs:
         - script: |
             set -e
 
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-apigateway-metabase
-            # terragrunt plan --all --non-interactive
-            # terragrunt apply --all --non-interactive
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-apigateway-metabase
+            terragrunt plan --all --non-interactive
+            terragrunt apply --all --non-interactive
 
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-apigateway-domain-names-metabase
-            # terragrunt plan --all --non-interactive
-            # terragrunt apply --all --non-interactive
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-apigateway-domain-names-metabase
+            terragrunt plan --all --non-interactive
+            terragrunt apply --all --non-interactive
 
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/astro/aws-service-ecs
-            # terragrunt plan --all --non-interactive
-            # terragrunt apply --all --non-interactive
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/astro/aws-service-ecs
+            terragrunt plan --all --non-interactive
+            terragrunt apply --all --non-interactive
 
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/awards/aws-service-ecs
-            # terragrunt plan --all --non-interactive
-            # terragrunt apply --all --non-interactive
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/awards/aws-service-ecs
+            terragrunt plan --all --non-interactive
+            terragrunt apply --all --non-interactive
 
 
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/bff-administration/aws-service-ecs
-            # terragrunt plan --all --non-interactive
-            # terragrunt apply --all --non-interactive
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/bff-administration/aws-service-ecs
+            terragrunt plan --all --non-interactive
+            terragrunt apply --all --non-interactive
 
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/bff-integration/aws-service-ecs
-            # terragrunt plan --all --non-interactive
-            # terragrunt apply --all --non-interactive
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/bff-integration/aws-service-ecs
+            terragrunt plan --all --non-interactive
+            terragrunt apply --all --non-interactive
 
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/bff-sellers/aws-service-ecs
-            # terragrunt plan --all --non-interactive
-            # terragrunt apply --all --non-interactive
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/bff-sellers/aws-service-ecs
+            terragrunt plan --all --non-interactive
+            terragrunt apply --all --non-interactive
 
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/biometrics/aws-service-ecs
-            # terragrunt plan --all --non-interactive
-            # terragrunt apply --all --non-interactive
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/biometrics/aws-service-ecs
+            terragrunt plan --all --non-interactive
+            terragrunt apply --all --non-interactive
 
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/collected/aws-service-ecs
-            # terragrunt plan --all --non-interactive
-            # terragrunt apply --all --non-interactive
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/collected/aws-service-ecs
+            terragrunt plan --all --non-interactive
+            terragrunt apply --all --non-interactive
 
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/conciliation/aws-service-ecs
-            # terragrunt plan --all --non-interactive
-            # terragrunt apply --all --non-interactive
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/conciliation/aws-service-ecs
+            terragrunt plan --all --non-interactive
+            terragrunt apply --all --non-interactive
 
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/dynamic-storage/aws-service-ecs
-            # terragrunt plan --all --non-interactive
-            # terragrunt apply --all --non-interactive
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/dynamic-storage/aws-service-ecs
+            terragrunt plan --all --non-interactive
+            terragrunt apply --all --non-interactive
 
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/external-wager/aws-service-ecs
-            # terragrunt plan --all --non-interactive
-            # terragrunt apply --all --non-interactive
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/external-wager/aws-service-ecs
+            terragrunt plan --all --non-interactive
+            terragrunt apply --all --non-interactive
 
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/generic-services/aws-service-ecs
-            # terragrunt plan --all --non-interactive
-            # terragrunt apply --all --non-interactive
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/generic-services/aws-service-ecs
+            terragrunt plan --all --non-interactive
+            terragrunt apply --all --non-interactive
 
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/hierarchies/aws-service-ecs
-            # terragrunt plan --all --non-interactive
-            # terragrunt apply --all --non-interactive
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/hierarchies/aws-service-ecs
+            terragrunt plan --all --non-interactive
+            terragrunt apply --all --non-interactive
 
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/legacy/aws-service-ecs
-            # terragrunt plan --all --non-interactive
-            # terragrunt apply --all --non-interactive
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/legacy/aws-service-ecs
+            terragrunt plan --all --non-interactive
+            terragrunt apply --all --non-interactive
 
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/lotteries/aws-service-ecs
-            # terragrunt plan --all --non-interactive
-            # terragrunt apply --all --non-interactive
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/lotteries/aws-service-ecs
+            terragrunt plan --all --non-interactive
+            terragrunt apply --all --non-interactive
 
             cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/lotteries-games/aws-service-ecs
             terragrunt plan --all --non-interactive
@@ -217,41 +217,41 @@ jobs:
             # terragrunt plan --all --non-interactive
             # terragrunt apply --all --non-interactive
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/remittances/aws-service-ecs
-            terragrunt plan --all --non-interactive
-            terragrunt apply --all --non-interactive
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/remittances/aws-service-ecs
+            # terragrunt plan --all --non-interactive
+            # terragrunt apply --all --non-interactive
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/reports/aws-service-ecs
-            terragrunt plan --all --non-interactive
-            terragrunt apply --all --non-interactive
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/reports/aws-service-ecs
+            # terragrunt plan --all --non-interactive
+            # terragrunt apply --all --non-interactive
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/security/aws-service-ecs
-            terragrunt plan --all --non-interactive
-            terragrunt apply --all --non-interactive
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/security/aws-service-ecs
+            # terragrunt plan --all --non-interactive
+            # terragrunt apply --all --non-interactive
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/sellers/aws-service-ecs
-            terragrunt plan --all --non-interactive
-            terragrunt apply --all --non-interactive
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/sellers/aws-service-ecs
+            # terragrunt plan --all --non-interactive
+            # terragrunt apply --all --non-interactive
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/shopping-cart/aws-service-ecs
-            terragrunt plan --all --non-interactive
-            terragrunt apply --all --non-interactive
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/shopping-cart/aws-service-ecs
+            # terragrunt plan --all --non-interactive
+            # terragrunt apply --all --non-interactive
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/siga/aws-service-ecs
-            terragrunt plan --all --non-interactive
-            terragrunt apply --all --non-interactive
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/siga/aws-service-ecs
+            # terragrunt plan --all --non-interactive
+            # terragrunt apply --all --non-interactive
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/transaction/aws-service-ecs
-            terragrunt plan --all --non-interactive
-            terragrunt apply --all --non-interactive
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/transaction/aws-service-ecs
+            # terragrunt plan --all --non-interactive
+            # terragrunt apply --all --non-interactive
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/transaction-notifier/aws-service-ecs
-            terragrunt plan --all --non-interactive
-            terragrunt apply --all --non-interactive
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/transaction-notifier/aws-service-ecs
+            # terragrunt plan --all --non-interactive
+            # terragrunt apply --all --non-interactive
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/wiretransfer/aws-service-ecs
-            terragrunt plan --all --non-interactive
-            terragrunt apply --all --non-interactive
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/wiretransfer/aws-service-ecs
+            # terragrunt plan --all --non-interactive
+            # terragrunt apply --all --non-interactive
 
             
 
