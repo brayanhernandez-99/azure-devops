@@ -49,6 +49,8 @@ variables:
       #- group: parameters-infrastructure-antioquia
       #- group: secrets-infrastructure-antioquia
       #- group: autoscaling-infrastructure-santander
+
+      
 #   # Master or tags → por red
 #   - ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'antioquia')) }}:
 #       # - group: trasversal-aws-master-antioquia
