@@ -345,33 +345,24 @@ jobs:
 
 
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-iot-policies
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-apigateway-metabase
             terragrunt plan --all --non-interactive
             terragrunt apply --all --non-interactive
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-kinesis-ckm
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-apigateway-domain-names-metabase
             terragrunt plan --all --non-interactive
             terragrunt apply --all --non-interactive
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-ecs-cluster
-            terragrunt plan --all --non-interactive
-            terragrunt apply --all --non-interactive
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-s3
-            terragrunt plan --all --non-interactive
-            terragrunt apply --all --non-interactive
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-s3-repository-configuration
-            terragrunt plan --all --non-interactive
-            terragrunt apply --all --non-interactive
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-cognito
-            terragrunt plan --all --non-interactive
-            terragrunt apply --all --non-interactive
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-cognito
+            # terragrunt plan --all --non-interactive
+            # terragrunt apply --all --non-interactive
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-cognito-identity-pool
-            terragrunt plan --all --non-interactive
-            terragrunt apply --all --non-interactive
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-cognito-identity-pool
+            # terragrunt plan --all --non-interactive
+            # terragrunt apply --all --non-interactive
 
 
 
