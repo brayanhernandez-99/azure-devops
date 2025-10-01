@@ -374,27 +374,18 @@ jobs:
           targetType: "inline"
           script: |
             $DISTS_PATH = "$(Pipeline.Workspace)\downloaded-dists\${{ parameters.region }}"
-            $DEST_PATH = "$(System.DefaultWorkingDirectory)\apps"
-
-            if (-Not (Test-Path $DISTS_PATH)) {
-              Write-Host "`n❌ El directorio $DISTS_PATH no existe"
-              exit 99
-            }
-
-            $DISTS_COUNT = (Get-ChildItem -Path $DISTS_PATH | Measure-Object).Count
+            $DISTS_COUNT = (Get-ChildItem -Path $DISTS_PATH).Count
 
             if ($DISTS_COUNT -eq 15) {
-              Write-Host "`n✅ Se encontró 1 dist. Copiando a: $DEST_PATH"
-              Copy-Item -Path "$DISTS_PATH\*" -Destination $DEST_PATH -Recurse -Force
+              Copy-Item -Path "$DISTS_PATH\*" -Destination "$(System.DefaultWorkingDirectory)\apps" -Recurse -Force
 
-              Write-Host "`n📁 Dists copiados en: $DEST_PATH"
-              Get-ChildItem -Path "$(System.DefaultWorkingDirectory)" | Format-Table Mode, LastWriteTime, Length, Name
+              Write-Host "`n📁 Dists copiados en: $(System.DefaultWorkingDirectory)\apps"
+              Get-ChildItem -Path "$(System.DefaultWorkingDirectory)" | Format-Table
               Write-Host "`n📁 Dists apps"
-              Get-ChildItem -Path "$DEST_PATH" | Format-Table Mode, LastWriteTime, Length, Name
-            }
-            else {
+              Get-ChildItem -Path "$(System.DefaultWorkingDirectory)\apps" | Format-Table
+            } else {
               Write-Host "`n⚠️ Error no tiene exactamente todos los dists en: $DISTS_PATH"
-              Get-ChildItem -Path "$DEST_PATH" | Format-Table Mode, LastWriteTime, Length, Name
+              Get-ChildItem -Path "$(System.DefaultWorkingDirectory)\apps" | Format-Table
               exit 99
             }
 
