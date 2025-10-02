@@ -328,7 +328,9 @@ jobs:
           jq --arg version "$(cleanNEXT_VERSION)" '.version = $version' package.json > tmp.json && mv tmp.json package.json
 
           git pull origin version/$clean_branch
-          git add package.json
+          git pull origin $clean_branch
+          git add .
+          #git add package.json
           git commit -m "chore($(msName)): bump version to $(cleanNEXT_VERSION)"
           git push origin version/$clean_branch
         displayName: "⚡ Bump Version & Push — $(msName)"
