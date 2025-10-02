@@ -96,16 +96,6 @@ jobs:
         - script: |
             set -e
 
-
-
-
-            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-dynamodb
-            terragrunt plan --all --non-interactive
-            terragrunt apply --all --non-interactive
-
-
-
-
             # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-apigateway-metabase
             # terragrunt plan --all --non-interactive
             # terragrunt apply --all --non-interactive
@@ -357,6 +347,7 @@ jobs:
             # terragrunt plan --all --non-interactive
             # terragrunt apply --all --non-interactive
             
+
             cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-dynamodb
             terragrunt plan --all --non-interactive
             terragrunt apply --all --non-interactive
