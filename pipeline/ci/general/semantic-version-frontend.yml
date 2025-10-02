@@ -322,7 +322,7 @@ jobs:
           git config user.email "pipelineUX@ux.technology"
 
           git checkout version/$clean_branch
-          git fetch origin $clean_branch
+          git fetch origin $clean_branch 
           git reset --hard origin/$clean_branch 
 
           cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
