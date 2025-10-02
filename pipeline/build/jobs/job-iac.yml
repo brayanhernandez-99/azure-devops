@@ -96,11 +96,14 @@ jobs:
         - script: |
             set -e
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-secret-manager-aes
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-secret-manager-funds
+            terragrunt plan --all --non-interactive
+            terragrunt apply --all --non-interactive
+            
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-secret-manager-iot
             terragrunt plan --all --non-interactive
             terragrunt apply --all --non-interactive
 
-            
             # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-apigateway-metabase
             # terragrunt plan --all --non-interactive
             # terragrunt apply --all --non-interactive
@@ -348,7 +351,11 @@ jobs:
             set -e
   
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-secret-manager-aes
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-secret-manager-funds
+            terragrunt plan --all --non-interactive
+            terragrunt apply --all --non-interactive
+            
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-secret-manager-iot
             terragrunt plan --all --non-interactive
             terragrunt apply --all --non-interactive
 
