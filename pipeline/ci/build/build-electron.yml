@@ -26,7 +26,7 @@ jobs:
             refs/heads/feature/*) electronBranch="feature/security-vulnerability-refactor"; ;;
             refs/heads/hotfix/*)  electronBranch="feature/security-vulnerability-refactor"; ;;
             refs/heads/develop)   electronBranch="feature/security-vulnerability-refactor"; ;;
-            refs/heads/staging)   electronBranch="staging"; ;;
+            refs/heads/staging)   electronBranch="feature/security-vulnerability-refactor"; ;;
             refs/heads/master)    electronBranch="master"; ;;
           esac
 
