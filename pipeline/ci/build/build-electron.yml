@@ -375,11 +375,9 @@ jobs:
           script: |
             $DISTS_PATH = "$(Pipeline.Workspace)\downloaded-dists\dists\${{ parameters.region }}"
             $DISTS_COUNT = (Get-ChildItem -Path $DISTS_PATH).Count
-            Write-Host "`n📁 Dists copiados en: $DISTS_PATH"
-            Get-ChildItem -Path "$DISTS_PATH" | Select-Object Mode, LastWriteTime, Length, Name | Format-Table
-            Write-Host "📦 DISTS_COUNT: $DISTS_COUNT"
 
             if ($DISTS_COUNT -eq 15) {
+              New-Item -Path $(System.DefaultWorkingDirectory)\apps -ItemType Directory | Out-Null
               Copy-Item -Path "$DISTS_PATH\*" -Destination "$(System.DefaultWorkingDirectory)\apps" -Recurse -Force
 
               Write-Host "`n📁 Dists copiados en: $(System.DefaultWorkingDirectory)\apps"
