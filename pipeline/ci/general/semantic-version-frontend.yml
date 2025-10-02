@@ -321,12 +321,11 @@ jobs:
           git config user.name "pipeline"
           git config user.email "pipelineUX@ux.technology"
 
-          git checkout version/$clean_branch
-
           cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
           echo "🔧 Actualizando versión en $(file)/$(msName)/package.json a $(cleanNEXT_VERSION)"
           jq --arg version "$(cleanNEXT_VERSION)" '.version = $version' package.json > tmp.json && mv tmp.json package.json
 
+          git checkout version/$clean_branch
           git pull origin version/$clean_branch
           git add package.json
           git commit -m "chore($(msName)): bump version to $(cleanNEXT_VERSION)"
