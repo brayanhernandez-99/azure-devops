@@ -481,7 +481,7 @@ jobs:
             $envContent = @"
             DOMAIN_ADMIN="Administradores|mdiAccountChild|invictus-admin-api-qa.ux.technology/"
             DOMAIN_SELLER="Vendedores|mdiAccountChild|https://invictus-sellers-api-qa.ux.technology/"
-            TARGET="linux"
+            TARGET="windows"
             TARGET_ENVIRONMENT="$environment"
             "@
 
@@ -495,13 +495,13 @@ jobs:
             Get-Content -Path $envPath
 
       - task: UsePythonVersion@0
-        displayName: "🔧 Use Python $(versionPython)"
+        displayName: "🔧 Use Python $(pythonVersion)"
         inputs:
           versionSpec: "$(pythonVersion)"
           addToPath: true
 
       - task: NodeTool@0
-        displayName: "🔧 Install Nodejs $(versionNode)"
+        displayName: "🔧 Install Nodejs $(nodeVersion)"
         inputs:
           versionSource: "spec"
           versionSpec: "$(nodeVersion)"
