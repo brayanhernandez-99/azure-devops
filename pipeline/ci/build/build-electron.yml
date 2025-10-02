@@ -314,7 +314,7 @@ jobs:
               "refs/heads/feature/*" { $electronBranch = "feature/security-vulnerability-refactor" }
               "refs/heads/hotfix/*"  { $electronBranch = "feature/security-vulnerability-refactor" }
               "refs/heads/develop"   { $electronBranch = "feature/security-vulnerability-refactor" }
-              "refs/heads/staging"   { $electronBranch = "staging" }
+              "refs/heads/staging"   { $electronBranch = "feature/security-vulnerability-refactor" }
               "refs/heads/master"    { $electronBranch = "master" }
             }
 
@@ -373,7 +373,7 @@ jobs:
         inputs:
           targetType: "inline"
           script: |
-            $DISTS_PATH = "$(Pipeline.Workspace)\downloaded-dists\${{ parameters.region }}"
+            $DISTS_PATH = "$(Pipeline.Workspace)\downloaded-dists\dists\${{ parameters.region }}"
             $DISTS_COUNT = (Get-ChildItem -Path $DISTS_PATH).Count
             Write-Host "`n📁 Dists copiados en: $DISTS_PATH"
             Get-ChildItem -Path "$DISTS_PATH" | Select-Object Mode, LastWriteTime, Length, Name | Format-Table
