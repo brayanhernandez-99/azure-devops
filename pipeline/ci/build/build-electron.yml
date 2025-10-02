@@ -168,8 +168,8 @@ jobs:
 
           envPath="$(System.DefaultWorkingDirectory)/.env"
           cat <<EOF > $envPath
-          DOMAIN_ADMIN="Administradores|mdiAccountChild|invictus-admin-api-dev.ux.technology/"
-          DOMAIN_SELLER="Vendedores|mdiAccountChild|https://invictus-sellers-api-dev.ux.technology/"
+          DOMAIN_ADMIN="Administradores|mdiAccountChild|invictus-admin-api-qa.ux.technology/"
+          DOMAIN_SELLER="Vendedores|mdiAccountChild|https://invictus-sellers-api-qa.ux.technology/"
           TARGET="linux"
           TARGET_ENVIRONMENT="$environment"
           EOF
@@ -479,8 +479,8 @@ jobs:
 
             $envPath = "$(System.DefaultWorkingDirectory)/.env"
             $envContent = @"
-            DOMAIN_ADMIN="Administradores|mdiAccountChild|invictus-admin-api-dev.ux.technology/"
-            DOMAIN_SELLER="Vendedores|mdiAccountChild|https://invictus-sellers-api-dev.ux.technology/"
+            DOMAIN_ADMIN="Administradores|mdiAccountChild|invictus-admin-api-qa.ux.technology/"
+            DOMAIN_SELLER="Vendedores|mdiAccountChild|https://invictus-sellers-api-qa.ux.technology/"
             TARGET="linux"
             TARGET_ENVIRONMENT="$environment"
             "@
