@@ -81,10 +81,10 @@ jobs:
         - task: replacetokens@5
           inputs:
             targetFiles: |
-              $(Build.SourcesDirectory)/iac-terragrunt/invictus/**/terragrunt.hcl
-              $(Build.SourcesDirectory)/iac-terragrunt/invictus/root.hcl
-              $(Build.SourcesDirectory)/iac-terragrunt/invictus/backend.tf
-              $(Build.SourcesDirectory)/iac-terragrunt/invictus/provider.tf
+              $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/terragrunt.hcl
+              $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/root.hcl
+              $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/backend.tf
+              $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/provider.tf
             encoding: "auto"
             writeBOM: true
             actionOnMissing: "warn" # 'fail', 'warn' o 'ignore'
