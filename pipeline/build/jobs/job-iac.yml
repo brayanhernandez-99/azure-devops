@@ -97,13 +97,13 @@ jobs:
             set -e
 
             
-            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/initial-infrastructure/aws-service-apigateway-metabase
-            terragrunt plan --all --non-interactive --no-color
-            terragrunt apply --all --non-interactive --no-color
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/initial-infrastructure/aws-service-apigateway-metabase
+            # terragrunt plan --all --non-interactive --no-color
+            # terragrunt apply --all --non-interactive --no-color
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/initial-infrastructure/aws-service-apigateway-domain-names-metabase
-            terragrunt plan --all --non-interactive --no-color
-            terragrunt apply --all --non-interactive --no-color
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/initial-infrastructure/aws-service-apigateway-domain-names-metabase
+            # terragrunt plan --all --non-interactive --no-color
+            # terragrunt apply --all --non-interactive --no-color
 
             cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/initial-infrastructure/aws-service-iam-profile/ecs-task-execution-role
             terragrunt plan --all --non-interactive --no-color
