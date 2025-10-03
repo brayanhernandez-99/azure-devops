@@ -46,9 +46,9 @@ variables:
       - group: trasversal-aws-master-tolima
       - group: variables-infrastructure-tolima
       - group: cloudfront-tolima
-      #- group: parameters-infrastructure-antioquia
-      #- group: secrets-infrastructure-antioquia
-      #- group: autoscaling-infrastructure-santander
+      - group: parameters-infrastructure-tolima
+      - group: secrets-infrastructure-tolima
+      - group: autoscaling-infrastructure-tolima
 
       
 #   # Master or tags → por red
