@@ -19,7 +19,7 @@ jobs:
   #               - script: echo "Aprobación recibida. Iniciando despliegues..."
 
   - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/tolima') }}:
-    - job: "build_iac_sebas"
+    - job: "build_iac_sebas_tolima"
       displayName: "Build Infrastructure"
       pool:
         name: "Azure Pipelines"
