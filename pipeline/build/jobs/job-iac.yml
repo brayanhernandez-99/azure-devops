@@ -114,7 +114,7 @@ jobs:
             # terragrunt apply --all --non-interactive
 
           displayName: "✔️ Plan"
-          workingDirectory: $(Build.SourcesDirectory)/iac-terragrunt/invictus/
+          workingDirectory: $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima
           env:
             AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
             AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
