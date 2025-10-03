@@ -81,7 +81,7 @@ jobs:
         - task: replacetokens@5
           inputs:
             targetFiles: |
-              $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/terragrunt.hcl
+              $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/**/terragrunt.hcl
               $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/root.hcl
               $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/backend.tf
               $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/provider.tf
