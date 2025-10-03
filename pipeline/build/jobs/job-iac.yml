@@ -198,11 +198,34 @@ jobs:
         - script: |
             set -e
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-secret-manager-aes
+
+
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-ssm-parameter
             terragrunt plan --all --non-interactive
             terragrunt apply --all --non-interactive
 
-            
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/online-games/aws-service-secret-manager-betplay
+            terragrunt plan --all --non-interactive
+            terragrunt apply --all --non-interactive
+
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/papelery/aws-service-sqs
+            terragrunt plan --all --non-interactive
+            terragrunt apply --all --non-interactive
+
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/papelery/aws-service-ssm-parameter
+            terragrunt plan --all --non-interactive
+            terragrunt apply --all --non-interactive
+
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/remittances/aws-service-secret-manager-coltefinancierasecret
+            terragrunt plan --all --non-interactive
+            terragrunt apply --all --non-interactive
+
+
+
+
+
+
+
             # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-apigateway-metabase
             # terragrunt plan --all --non-interactive
             # terragrunt apply --all --non-interactive
@@ -450,11 +473,10 @@ jobs:
             set -e
   
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-secret-manager-aes
-            terragrunt plan --all --non-interactive
-            terragrunt apply --all --non-interactive
-
-
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-ssm-parameter
+            # terragrunt plan --all --non-interactive
+            # terragrunt apply --all --non-interactive
+            
 
           displayName: "✔️ Plan"
           workingDirectory: $(Build.SourcesDirectory)/iac-terragrunt/invictus/
