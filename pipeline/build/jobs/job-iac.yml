@@ -473,6 +473,12 @@ jobs:
             # terragrunt apply --all --non-interactive
             
 
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/legacy/aws-service-secret-manager
+            terragrunt plan --all --non-interactive
+            terragrunt apply --all --non-interactive
+            
+
+
           displayName: "✔️ Plan"
           workingDirectory: $(Build.SourcesDirectory)/iac-terragrunt/invictus/
           env:
