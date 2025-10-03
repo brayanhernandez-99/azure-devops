@@ -113,9 +113,9 @@ jobs:
             # terragrunt plan --all --non-interactive --no-color
             # terragrunt apply --all --non-interactive --no-color
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/initial-infrastructure/aws-service-secret-manager-aes
-            terragrunt plan --all --non-interactive --no-color
-            terragrunt apply --all --non-interactive --no-color
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/initial-infrastructure/aws-service-secret-manager-aes
+            # terragrunt plan --all --non-interactive --no-color
+            # terragrunt apply --all --non-interactive --no-color
 
             cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/initial-infrastructure/aws-service-ssm-parameter
             terragrunt plan --all --non-interactive --no-color
