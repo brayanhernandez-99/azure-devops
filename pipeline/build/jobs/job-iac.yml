@@ -18,7 +18,7 @@ jobs:
   #             steps:
   #               - script: echo "Aprobación recibida. Iniciando despliegues..."
 
-  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/tolima') }}:
+  - ${{ if eq(variables['Build.SourceBranchName'], 'tolima') }}:
     - job: "build_iac_sebas_tolima"
       displayName: "Build Infrastructure"
       pool:

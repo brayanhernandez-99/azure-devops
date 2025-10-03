@@ -149,6 +149,11 @@ stages:
       - template: build/build-iac.yml
         parameters:
           release: ${{ parameters.release }}
+  
+  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/tolima') }}:
+      - template: build/build-iac.yml
+        parameters:
+          release: ${{ parameters.release }}
 
   # Build repo-configuration para feature, hotfix, develop, staging
   - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), eq(variables['Build.SourceBranch'], 'refs/heads/develop'), eq(variables['Build.SourceBranch'], 'refs/heads/staging')), eq(parameters.release, 'rpc')) }}:
