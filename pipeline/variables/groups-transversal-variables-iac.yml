@@ -43,7 +43,7 @@ variables:
       #- group: autoscaling-infrastructure-santander
 
   - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/tolima') }}:
-      - group: trasversal-aws-master-tolima
+      - group: trasversal-aws-tolima
       - group: variables-infrastructure-tolima
       - group: cloudfront-tolima
       - group: parameters-infrastructure-tolima
