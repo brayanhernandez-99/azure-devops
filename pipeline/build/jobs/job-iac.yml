@@ -125,25 +125,25 @@ jobs:
 
             cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/redis
             terragrunt plan --all --non-interactive --no-color
-            # terragrunt apply --all --non-interactive --no-color
+            terragrunt apply --all --non-interactive --no-color
 
             echo "*********************remittances***********************"
 
             cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/remittances
             terragrunt plan --all --non-interactive --no-color
-            # terragrunt apply --all --non-interactive --no-color
+            terragrunt apply --all --non-interactive --no-color
 
             echo "*********************reports***********************"
 
             cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/reports
             terragrunt plan --all --non-interactive --no-color
-            # terragrunt apply --all --non-interactive --no-color
+            terragrunt apply --all --non-interactive --no-color
 
             echo "*********************security***********************"
 
             cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/security
             terragrunt plan --all --non-interactive --no-color
-            # terragrunt apply --all --non-interactive --no-color
+            terragrunt apply --all --non-interactive --no-color
 
           displayName: "✔️ Plan"
           workingDirectory: $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima
