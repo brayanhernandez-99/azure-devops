@@ -123,25 +123,13 @@ jobs:
 
             # echo "*********************redis***********************"
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/sellers
+            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/transaction-notifier
             terragrunt plan --all --non-interactive --no-color
             terragrunt apply --all --non-interactive --no-color
 
             echo "*********************remittances***********************"
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/shopping-cart
-            terragrunt plan --all --non-interactive --no-color
-            terragrunt apply --all --non-interactive --no-color
-
-            echo "*********************reports***********************"
-
-            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/siga
-            terragrunt plan --all --non-interactive --no-color
-            terragrunt apply --all --non-interactive --no-color
-
-            echo "*********************security***********************"
-
-            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/transaction
+            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/wiretransfer
             terragrunt plan --all --non-interactive --no-color
             terragrunt apply --all --non-interactive --no-color
 
