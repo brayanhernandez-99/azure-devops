@@ -121,17 +121,23 @@ jobs:
             # terragrunt plan --all --non-interactive --no-color
             # terragrunt apply --all --non-interactive --no-color
 
-            echo "*********************admin¨***********************"
+            echo "*********************sellers***********************"
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/bff-administration
+            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/bff-sellers
             terragrunt plan --all --non-interactive --no-color
-            terragrunt apply --all --non-interactive --no-color
+            # terragrunt apply --all --non-interactive --no-color
 
-            echo "*********************integration***********************"
+            echo "*********************biome***********************"
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/bff-integration
+            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/biometrics
             terragrunt plan --all --non-interactive --no-color
-            terragrunt apply --all --non-interactive --no-color
+            # terragrunt apply --all --non-interactive --no-color
+
+            echo "*********************collected***********************"
+
+            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/collected
+            terragrunt plan --all --non-interactive --no-color
+            # terragrunt apply --all --non-interactive --no-color
 
           displayName: "✔️ Plan"
           workingDirectory: $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima
