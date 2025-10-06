@@ -125,19 +125,19 @@ jobs:
 
             cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/conciliation
             terragrunt plan --all --non-interactive --no-color
-            # terragrunt apply --all --non-interactive --no-color
+            terragrunt apply --all --non-interactive --no-color
 
             echo "*********************dynamic***********************"
 
             cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/dynamic-storage
             terragrunt plan --all --non-interactive --no-color
-            # terragrunt apply --all --non-interactive --no-color
+            terragrunt apply --all --non-interactive --no-color
 
             echo "*********************external***********************"
 
             cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/external-wager
             terragrunt plan --all --non-interactive --no-color
-            # terragrunt apply --all --non-interactive --no-color
+            terragrunt apply --all --non-interactive --no-color
 
           displayName: "✔️ Plan"
           workingDirectory: $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima
