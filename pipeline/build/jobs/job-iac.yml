@@ -121,28 +121,28 @@ jobs:
             # terragrunt plan --all --non-interactive --no-color
             # terragrunt apply --all --non-interactive --no-color
 
-            # echo "*********************online-games***********************"
+            # echo "*********************redis***********************"
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/recharges
+            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/redis
             terragrunt plan --all --non-interactive --no-color
-            terragrunt apply --all --non-interactive --no-color
-
-            # # echo "*********************papelery***********************"
-
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/promotional
-            # terragrunt plan --all --non-interactive --no-color
             # terragrunt apply --all --non-interactive --no-color
 
-            # echo "*********************payment-voucher***********************"
+            echo "*********************remittances***********************"
 
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/raffles
-            # terragrunt plan --all --non-interactive --no-color
+            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/remittances
+            terragrunt plan --all --non-interactive --no-color
             # terragrunt apply --all --non-interactive --no-color
 
-            # echo "*********************notifier***********************"
+            echo "*********************reports***********************"
 
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/notifier
-            # terragrunt plan --all --non-interactive --no-color
+            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/reports
+            terragrunt plan --all --non-interactive --no-color
+            # terragrunt apply --all --non-interactive --no-color
+
+            echo "*********************security***********************"
+
+            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/security
+            terragrunt plan --all --non-interactive --no-color
             # terragrunt apply --all --non-interactive --no-color
 
           displayName: "✔️ Plan"
