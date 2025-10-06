@@ -121,23 +121,23 @@ jobs:
             # terragrunt plan --all --non-interactive --no-color
             # terragrunt apply --all --non-interactive --no-color
 
-            echo "*********************conciliation***********************"
+            echo "*********************generic-services***********************"
 
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/conciliation
-            # terragrunt plan --all --non-interactive --no-color
-            # terragrunt apply --all --non-interactive --no-color
-
-            echo "*********************dynamic***********************"
-
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/dynamic-storage
-            # terragrunt plan --all --non-interactive --no-color
-            # terragrunt apply --all --non-interactive --no-color
-
-            echo "*********************external-wager***********************"
-
-            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/external-wager
+            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/generic-services
             terragrunt plan --all --non-interactive --no-color
-            terragrunt apply --all --non-interactive --no-color
+            # terragrunt apply --all --non-interactive --no-color
+
+            echo "*********************hierarchies***********************"
+
+            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/hierarchies
+            terragrunt plan --all --non-interactive --no-color
+            # terragrunt apply --all --non-interactive --no-color
+
+            echo "*********************legacy***********************"
+
+            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/legacy
+            terragrunt plan --all --non-interactive --no-color
+            # terragrunt apply --all --non-interactive --no-color
 
           displayName: "✔️ Plan"
           workingDirectory: $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima
