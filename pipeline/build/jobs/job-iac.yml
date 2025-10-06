@@ -121,19 +121,19 @@ jobs:
             # terragrunt plan --all --non-interactive --no-color
             # terragrunt apply --all --non-interactive --no-color
 
-            echo "*********************millonario***********************"
+            echo "*********************online-games***********************"
 
             cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/online-games
             terragrunt plan --all --non-interactive --no-color
             # terragrunt apply --all --non-interactive --no-color
 
-            echo "*********************money-control***********************"
+            echo "*********************papelery***********************"
 
             cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/papelery
             terragrunt plan --all --non-interactive --no-color
             # terragrunt apply --all --non-interactive --no-color
 
-            echo "*********************notifications***********************"
+            echo "*********************payment-voucher***********************"
 
             cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/payment-voucher
             terragrunt plan --all --non-interactive --no-color
