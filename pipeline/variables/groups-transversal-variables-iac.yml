@@ -22,6 +22,7 @@ variables:
       - group: trasversal-aws-antioquia-cap
       - group: variables-infrastructure-antioquia-cap
       - group: cloudfront-antioquia-cap
+      - group: parameters-infrastructure-antioquia
       #- group: parameters-infrastructure-antioquia-cap
       #- group: secrets-infrastructure-antioquia-cap
       #- group: autoscaling-infrastructure-antioquia-cap
@@ -30,6 +31,7 @@ variables:
       - group: trasversal-aws-antioquia
       - group: variables-infrastructure-antioquia
       - group: cloudfront-antioquia
+      - group: parameters-infrastructure-antioquia-cap
       #- group: parameters-infrastructure-antioquia
       #- group: secrets-infrastructure-antioquia
       #- group: autoscaling-infrastructure-antioquia
@@ -38,6 +40,7 @@ variables:
       - group: trasversal-aws-santander
       - group: variables-infrastructure-santander
       - group: cloudfront-santander
+      - group: parameters-infrastructure-santander
       #- group: parameters-infrastructure-antioquia
       #- group: secrets-infrastructure-antioquia
       #- group: autoscaling-infrastructure-santander
