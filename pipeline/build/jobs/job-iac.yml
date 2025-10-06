@@ -137,7 +137,7 @@ jobs:
 
             cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/external-wager
             terragrunt plan --all --non-interactive --no-color
-            terragrunt apply --all --non-interactive --no-color
+            # terragrunt apply --all --non-interactive --no-color
 
           displayName: "✔️ Plan"
           workingDirectory: $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima
