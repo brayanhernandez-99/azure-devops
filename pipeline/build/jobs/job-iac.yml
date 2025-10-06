@@ -121,23 +121,29 @@ jobs:
             # terragrunt plan --all --non-interactive --no-color
             # terragrunt apply --all --non-interactive --no-color
 
-            echo "*********************generic-services***********************"
+            echo "*********************millonario***********************"
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/lotteries
+            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/millonario
             terragrunt plan --all --non-interactive --no-color
-            terragrunt apply --all --non-interactive --no-color
+            # terragrunt apply --all --non-interactive --no-color
 
-            echo "*********************hierarchies***********************"
+            echo "*********************money-control***********************"
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/lotteries-games
+            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/money-control
             terragrunt plan --all --non-interactive --no-color
-            terragrunt apply --all --non-interactive --no-color
+            # terragrunt apply --all --non-interactive --no-color
 
-            echo "*********************legacy***********************"
+            echo "*********************notifications***********************"
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/metabase
+            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/notifications
             terragrunt plan --all --non-interactive --no-color
-            terragrunt apply --all --non-interactive --no-color
+            # terragrunt apply --all --non-interactive --no-color
+
+            echo "*********************notifier***********************"
+
+            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/notifier
+            terragrunt plan --all --non-interactive --no-color
+            # terragrunt apply --all --non-interactive --no-color
 
           displayName: "✔️ Plan"
           workingDirectory: $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima
