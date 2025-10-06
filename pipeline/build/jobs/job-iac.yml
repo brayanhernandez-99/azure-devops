@@ -123,21 +123,21 @@ jobs:
 
             echo "*********************generic-services***********************"
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/generic-services
+            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/lotteries
             terragrunt plan --all --non-interactive --no-color
-            terragrunt apply --all --non-interactive --no-color
+            # terragrunt apply --all --non-interactive --no-color
 
             echo "*********************hierarchies***********************"
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/hierarchies
+            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/lotteries-games
             terragrunt plan --all --non-interactive --no-color
-            terragrunt apply --all --non-interactive --no-color
+            # terragrunt apply --all --non-interactive --no-color
 
             echo "*********************legacy***********************"
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/legacy
+            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/metabase
             terragrunt plan --all --non-interactive --no-color
-            terragrunt apply --all --non-interactive --no-color
+            # terragrunt apply --all --non-interactive --no-color
 
           displayName: "✔️ Plan"
           workingDirectory: $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima
