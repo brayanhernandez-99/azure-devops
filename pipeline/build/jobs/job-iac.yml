@@ -123,15 +123,15 @@ jobs:
 
             echo "*********************conci***********************"
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/conciliation
-            terragrunt plan --all --non-interactive --no-color
-            terragrunt apply --all --non-interactive --no-color
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/conciliation
+            # terragrunt plan --all --non-interactive --no-color
+            # terragrunt apply --all --non-interactive --no-color
 
             echo "*********************dynamic***********************"
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/dynamic-storage
-            terragrunt plan --all --non-interactive --no-color
-            terragrunt apply --all --non-interactive --no-color
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/dynamic-storage
+            # terragrunt plan --all --non-interactive --no-color
+            # terragrunt apply --all --non-interactive --no-color
 
             echo "*********************external***********************"
 
