@@ -123,19 +123,19 @@ jobs:
 
             echo "*********************sellers***********************"
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/bff-sellers
+            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/conciliation
             terragrunt plan --all --non-interactive --no-color
             terragrunt apply --all --non-interactive --no-color
 
             echo "*********************biome***********************"
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/biometrics
+            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/dynamic-storage
             terragrunt plan --all --non-interactive --no-color
             terragrunt apply --all --non-interactive --no-color
 
             echo "*********************collected***********************"
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/collected
+            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/external-wager
             terragrunt plan --all --non-interactive --no-color
             terragrunt apply --all --non-interactive --no-color
 
