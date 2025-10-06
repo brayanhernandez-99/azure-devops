@@ -121,29 +121,9 @@ jobs:
             # terragrunt plan --all --non-interactive --no-color
             # terragrunt apply --all --non-interactive --no-color
 
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/astro/aws-service-ecs
-            # terragrunt plan --all --non-interactive --no-color
+            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/awards
+            terragrunt plan --all --non-interactive --no-color
             # terragrunt apply --all --non-interactive --no-color
-
-            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/astro/aws-service-s3
-            terragrunt plan --all --non-interactive --no-color
-            terragrunt apply --all --non-interactive --no-color
-
-            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/astro/aws-service-secret-manager
-            terragrunt plan --all --non-interactive --no-color
-            terragrunt apply --all --non-interactive --no-color
-
-            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/astro/aws-service-secret-manager-betplay
-            terragrunt plan --all --non-interactive --no-color
-            terragrunt apply --all --non-interactive --no-color
-
-            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/astro/aws-service-sqs
-            terragrunt plan --all --non-interactive --no-color
-            terragrunt apply --all --non-interactive --no-color
-
-            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/astro/aws-service-ssm-parameter
-            terragrunt plan --all --non-interactive --no-color
-            terragrunt apply --all --non-interactive --no-color
 
           displayName: "✔️ Plan"
           workingDirectory: $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima
