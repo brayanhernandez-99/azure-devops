@@ -123,21 +123,21 @@ jobs:
 
             # echo "*********************online-games***********************"
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/products
+            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/recharges
             terragrunt plan --all --non-interactive --no-color
-            terragrunt apply --all --non-interactive --no-color
+            # terragrunt apply --all --non-interactive --no-color
 
-            # echo "*********************papelery***********************"
+            # # echo "*********************papelery***********************"
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/promotional
-            terragrunt plan --all --non-interactive --no-color
-            terragrunt apply --all --non-interactive --no-color
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/promotional
+            # terragrunt plan --all --non-interactive --no-color
+            # terragrunt apply --all --non-interactive --no-color
 
-            echo "*********************payment-voucher***********************"
+            # echo "*********************payment-voucher***********************"
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/raffles
-            terragrunt plan --all --non-interactive --no-color
-            terragrunt apply --all --non-interactive --no-color
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/raffles
+            # terragrunt plan --all --non-interactive --no-color
+            # terragrunt apply --all --non-interactive --no-color
 
             # echo "*********************notifier***********************"
 
