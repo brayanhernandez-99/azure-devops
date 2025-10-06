@@ -123,27 +123,27 @@ jobs:
 
             echo "*********************millonario***********************"
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/millonario
+            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/online-games
             terragrunt plan --all --non-interactive --no-color
-            terragrunt apply --all --non-interactive --no-color
+            # terragrunt apply --all --non-interactive --no-color
 
             echo "*********************money-control***********************"
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/money-control
+            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/papelery
             terragrunt plan --all --non-interactive --no-color
-            terragrunt apply --all --non-interactive --no-color
+            # terragrunt apply --all --non-interactive --no-color
 
             echo "*********************notifications***********************"
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/notifications
+            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/payment-voucher
             terragrunt plan --all --non-interactive --no-color
-            terragrunt apply --all --non-interactive --no-color
+            # terragrunt apply --all --non-interactive --no-color
 
-            echo "*********************notifier***********************"
+            # echo "*********************notifier***********************"
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/notifier
-            terragrunt plan --all --non-interactive --no-color
-            terragrunt apply --all --non-interactive --no-color
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/notifier
+            # terragrunt plan --all --non-interactive --no-color
+            # terragrunt apply --all --non-interactive --no-color
 
           displayName: "✔️ Plan"
           workingDirectory: $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima
