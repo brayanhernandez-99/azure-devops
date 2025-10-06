@@ -125,19 +125,19 @@ jobs:
 
             cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/products
             terragrunt plan --all --non-interactive --no-color
-            # terragrunt apply --all --non-interactive --no-color
+            terragrunt apply --all --non-interactive --no-color
 
             # echo "*********************papelery***********************"
 
             cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/promotional
             terragrunt plan --all --non-interactive --no-color
-            # terragrunt apply --all --non-interactive --no-color
+            terragrunt apply --all --non-interactive --no-color
 
             echo "*********************payment-voucher***********************"
 
             cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/raffles
             terragrunt plan --all --non-interactive --no-color
-            # terragrunt apply --all --non-interactive --no-color
+            terragrunt apply --all --non-interactive --no-color
 
             # echo "*********************notifier***********************"
 
