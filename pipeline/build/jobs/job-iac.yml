@@ -575,18 +575,19 @@ jobs:
             set -e
 
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/bff-administration
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/biometrics
+            terragrunt plan --all --non-interactive --no-color
+            terragrunt apply --all --non-interactive --no-color
+
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/collected
             terragrunt plan --all --non-interactive --no-color
             terragrunt apply --all --non-interactive --no-color
             
-            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/bff-integration
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/conciliation
             terragrunt plan --all --non-interactive --no-color
             terragrunt apply --all --non-interactive --no-color
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/bff-sellers
-            terragrunt plan --all --non-interactive --no-color
-            terragrunt apply --all --non-interactive --no-color
-
+            
 
           displayName: "✔️ Plan"
           workingDirectory: $(Build.SourcesDirectory)/iac-terragrunt/invictus/
