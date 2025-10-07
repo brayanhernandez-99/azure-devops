@@ -221,15 +221,15 @@ jobs:
 
             cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/huila/astro
             terragrunt plan --all --non-interactive --no-color
-            terragrunt apply --all --non-interactive --no-color
+            # terragrunt apply --all --non-interactive --no-color
 
             cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/huila/awards
             terragrunt plan --all --non-interactive --no-color
-            terragrunt apply --all --non-interactive --no-color
+            # terragrunt apply --all --non-interactive --no-color
 
             cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/huila/bff-administration
             terragrunt plan --all --non-interactive --no-color
-            terragrunt apply --all --non-interactive --no-color
+            # terragrunt apply --all --non-interactive --no-color
 
             
 
@@ -572,7 +572,22 @@ jobs:
             set -e
 
           
-            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/astro
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/astro/aws-service-secret-manager
+            # terragrunt plan --all --non-interactive --no-color
+            # terragrunt apply --all --non-interactive --no-color
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/astro/aws-service-secret-manager-betplay
+            # terragrunt plan --all --non-interactive --no-color
+            # terragrunt apply --all --non-interactive --no-color
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/astro/aws-service-sqs
+            # terragrunt plan --all --non-interactive --no-color
+            # terragrunt apply --all --non-interactive --no-color
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/astro/aws-service-s3
+            # terragrunt plan --all --non-interactive --no-color
+            # terragrunt apply --all --non-interactive --no-color
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/astro/aws-service-ecs
+            terragrunt plan --all --non-interactive --no-color
+            terragrunt apply --all --non-interactive --no-color
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/astro/aws-service-ssm-parameter
             terragrunt plan --all --non-interactive --no-color
             terragrunt apply --all --non-interactive --no-color
 
