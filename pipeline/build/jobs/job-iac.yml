@@ -218,30 +218,20 @@ jobs:
         - script: |
             set -e
 
+
+            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/huila/astro
+            terragrunt plan --all --non-interactive --no-color
+            terragrunt apply --all --non-interactive --no-color
+
+            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/huila/awards
+            terragrunt plan --all --non-interactive --no-color
+            terragrunt apply --all --non-interactive --no-color
+
+            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/huila/bff-administration
+            terragrunt plan --all --non-interactive --no-color
+            terragrunt apply --all --non-interactive --no-color
+
             
-            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/huila/initial-infrastructure/aws-service-apigateway-metabase
-            terragrunt plan --all --non-interactive --no-color
-            terragrunt apply --all --non-interactive --no-color
-
-            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/huila/initial-infrastructure/aws-service-apigateway-domain-names-metabase
-            terragrunt plan --all --non-interactive --no-color
-            terragrunt apply --all --non-interactive --no-color
-
-            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/huila/initial-infrastructure/aws-service-iam-profile/ecs-task-execution-role
-            terragrunt plan --all --non-interactive --no-color
-            terragrunt apply --all --non-interactive --no-color
-
-            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/huila/metabase/aws-service-ecs
-            terragrunt plan --all --non-interactive --no-color
-            terragrunt apply --all --non-interactive --no-color
-
-            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/huila/initial-infrastructure/aws-service-kinesis-ckm
-            terragrunt plan --all --non-interactive --no-color
-            terragrunt apply --all --non-interactive --no-color
-
-            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/huila/initial-infrastructure/aws-service-ssm-parameter
-            terragrunt plan --all --non-interactive --no-color
-            terragrunt apply --all --non-interactive --no-color
 
           displayName: "✔️ Plan"
           workingDirectory: $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/huila
