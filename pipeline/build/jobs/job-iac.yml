@@ -219,15 +219,15 @@ jobs:
             set -e
 
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/huila/astro
+            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/huila/bff-integration
             terragrunt plan --all --non-interactive --no-color
             terragrunt apply --all --non-interactive --no-color
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/huila/awards
+            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/huila/bff-sellers
             terragrunt plan --all --non-interactive --no-color
             terragrunt apply --all --non-interactive --no-color
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/huila/bff-administration
+            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/huila/biometrics
             terragrunt plan --all --non-interactive --no-color
             terragrunt apply --all --non-interactive --no-color
 
