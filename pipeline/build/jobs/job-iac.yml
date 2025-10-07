@@ -581,39 +581,16 @@ jobs:
         - script: |
             set -e
 
-
-
-
-
-            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-millonario-policy
-            terragrunt plan --all --non-interactive --no-color
-            terragrunt apply --all --non-interactive --no-color
-            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-money-control-policy
-            terragrunt plan --all --non-interactive --no-color
-            terragrunt apply --all --non-interactive --no-color
-            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-notifications-policy
-            terragrunt plan --all --non-interactive --no-color
-            terragrunt apply --all --non-interactive --no-color
-            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-papelery-policy
-            terragrunt plan --all --non-interactive --no-color
-            terragrunt apply --all --non-interactive --no-color
-            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-promotional-policy
-            terragrunt plan --all --non-interactive --no-color
-            terragrunt apply --all --non-interactive --no-color
-
-
-
-
           
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-raffles-policy
-            # terragrunt plan --all --non-interactive --no-color
-            # terragrunt apply --all --non-interactive --no-color
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-recharges-policy
-            # terragrunt plan --all --non-interactive --no-color
-            # terragrunt apply --all --non-interactive --no-color
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-users-policy
-            # terragrunt plan --all --non-interactive --no-color
-            # terragrunt apply --all --non-interactive --no-color
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-raffles-policy
+            terragrunt plan --all --non-interactive --no-color
+            terragrunt apply --all --non-interactive --no-color
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-recharges-policy
+            terragrunt plan --all --non-interactive --no-color
+            terragrunt apply --all --non-interactive --no-color
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-users-policy
+            terragrunt plan --all --non-interactive --no-color
+            terragrunt apply --all --non-interactive --no-color
 
 
 
