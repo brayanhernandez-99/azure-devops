@@ -219,19 +219,19 @@ jobs:
             set -e
 
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/huila/payment-voucher
+            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/huila/promotional
             terragrunt plan --all --non-interactive --no-color
             terragrunt apply --all --non-interactive --no-color
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/huila/payments
+            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/huila/raffles
             terragrunt plan --all --non-interactive --no-color
             terragrunt apply --all --non-interactive --no-color
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/huila/products
+            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/huila/recharges
             terragrunt plan --all --non-interactive --no-color
             terragrunt apply --all --non-interactive --no-color
 
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/huila/papelery
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/huila/redis
             # terragrunt plan --all --non-interactive --no-color
             # terragrunt apply --all --non-interactive --no-color
 
