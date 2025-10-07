@@ -219,19 +219,19 @@ jobs:
             set -e
 
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/huila/external-wager
+            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/huila/lotteries
             terragrunt plan --all --non-interactive --no-color
             terragrunt apply --all --non-interactive --no-color
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/huila/generic-services
+            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/huila/lotteries-games
             terragrunt plan --all --non-interactive --no-color
             terragrunt apply --all --non-interactive --no-color
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/huila/hierarchies
+            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/huila/millonario
             terragrunt plan --all --non-interactive --no-color
             terragrunt apply --all --non-interactive --no-color
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/huila/legacy
+            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/huila/money-control
             terragrunt plan --all --non-interactive --no-color
             terragrunt apply --all --non-interactive --no-color
 
