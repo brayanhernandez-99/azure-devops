@@ -62,7 +62,7 @@ variables:
     - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/huila') }}:
       - group: trasversal-aws-huila
       - group: variables-infrastructure-huila
-      - group: cloudfront-huila
+    #   - group: cloudfront-huila
       - group: parameters-infrastructure-huila
       - group: secrets-infrastructure-huila
       - group: autoscaling-infrastructure-huila
