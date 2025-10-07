@@ -221,15 +221,15 @@ jobs:
 
             cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/huila/astro
             terragrunt plan --all --non-interactive --no-color
-            # terragrunt apply --all --non-interactive --no-color
+            terragrunt apply --all --non-interactive --no-color
 
             cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/huila/awards
             terragrunt plan --all --non-interactive --no-color
-            # terragrunt apply --all --non-interactive --no-color
+            terragrunt apply --all --non-interactive --no-color
 
             cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/huila/bff-administration
             terragrunt plan --all --non-interactive --no-color
-            # terragrunt apply --all --non-interactive --no-color
+            terragrunt apply --all --non-interactive --no-color
 
             
 
