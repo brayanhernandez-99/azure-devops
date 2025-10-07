@@ -149,8 +149,8 @@ stages:
       - template: build/build-iac.yml
         parameters:
           release: ${{ parameters.release }}
-  
-  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/tolima') }}:
+
+  - ${{ if or(eq(variables['Build.SourceBranch'], 'refs/heads/tolima'), eq(variables['Build.SourceBranch'], 'refs/heads/huila')) }}:
       - template: build/build-iac.yml
         parameters:
           release: ${{ parameters.release }}
