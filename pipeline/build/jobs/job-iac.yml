@@ -219,20 +219,23 @@ jobs:
             set -e
 
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/huila/collected
+            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/huila/external-wager
             terragrunt plan --all --non-interactive --no-color
             terragrunt apply --all --non-interactive --no-color
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/huila/conciliation
+            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/huila/generic-services
             terragrunt plan --all --non-interactive --no-color
             terragrunt apply --all --non-interactive --no-color
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/huila/dynamic-storage
+            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/huila/hierarchies
             terragrunt plan --all --non-interactive --no-color
             terragrunt apply --all --non-interactive --no-color
 
-            
+            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/huila/legacy
+            terragrunt plan --all --non-interactive --no-color
+            terragrunt apply --all --non-interactive --no-color
 
+          
           displayName: "✔️ Plan"
           workingDirectory: $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/huila
           env:
