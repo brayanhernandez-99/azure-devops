@@ -415,23 +415,26 @@ jobs:
               set -e
 
 
-              cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/millonario/
+              cd $(Build.SorcesDirectory)/iac-terragrunt/invictus/wiretransfer              
               terragrunt plan --all --non-interactive 
               terragrunt apply --all --non-interactive 
 
-              cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/money-control/
+              cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/redis/
               terragrunt plan --all --non-interactive 
               terragrunt apply --all --non-interactive 
 
-              cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/notifications/
+              cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/reports/
               terragrunt plan --all --non-interactive 
               terragrunt apply --all --non-interactive 
 
-              cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/notifier/
+              cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/transaction/
               terragrunt plan --all --non-interactive 
               terragrunt apply --all --non-interactive 
 
-
+              cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/transaction-notifier/
+              terragrunt plan --all --non-interactive 
+              terragrunt apply --all --non-interactive 
+              
 
             displayName: "✔️ Plan"
             workingDirectory: $(Build.SourcesDirectory)/iac-terragrunt/invictus/
