@@ -279,7 +279,7 @@ jobs:
 
             Write-Host "`n✅ Archivos subidos exitosamente."
             Write-Host "🔗 APP: InvictusUX Setup $($env:version).exe"
-            Write-Host "🔗 URL: https://e-remote.s3.us-east-1.amazonaws.com/invictus-electron/windows/$($env:environment)/InvictusUX+Setup+$($env:version).exe"
+            Write-Host "🔗 URL: https://e-remote.s3.us-east-1.amazonaws.com/invictus-electron/windows/$($env:region)/InvictusUX+Setup+$($env:version).exe"
 
         condition: not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
         env:
@@ -494,7 +494,7 @@ jobs:
 
           echo -e "\n✅ Archivos subidos exitosamente."
           echo "🔗 APP: InvictusUX-$(msVersion).AppImage"
-          echo "🔗 URL: https://e-remote.s3.us-east-1.amazonaws.com/invictus-electron/linux/$(environment)/InvictusUX-$(msVersion).AppImage"
+          echo "🔗 URL: https://e-remote.s3.us-east-1.amazonaws.com/invictus-electron/linux/$(region)/InvictusUX-$(msVersion).AppImage"
 
         displayName: "📤 Upload Bucket S3"
         condition: not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
