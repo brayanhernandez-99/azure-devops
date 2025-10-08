@@ -414,19 +414,30 @@ jobs:
           - script: |
               set -e
 
-              cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/legacy/aws-service-secret-manager
-              terragrunt plan --all --non-interactive 
-              terragrunt apply --all --non-interactive 
-              cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/legacy/aws-service-sqs
-              terragrunt plan --all --non-interactive 
-              terragrunt apply --all --non-interactive 
-              cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/legacy/aws-service-ecs
-              terragrunt plan --all --non-interactive 
-              terragrunt apply --all --non-interactive 
-              cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/legacy/aws-service-ssm-parameter
+
+              cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/astro/
               terragrunt plan --all --non-interactive 
               terragrunt apply --all --non-interactive 
 
+              cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/awards/
+              terragrunt plan --all --non-interactive 
+              terragrunt apply --all --non-interactive 
+
+              cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/bff-administration/
+              terragrunt plan --all --non-interactive 
+              terragrunt apply --all --non-interactive 
+
+              cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/bff-integration/
+              terragrunt plan --all --non-interactive 
+              terragrunt apply --all --non-interactive 
+
+              cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/bff-sellers/
+              terragrunt plan --all --non-interactive 
+              terragrunt apply --all --non-interactive 
+
+              cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/biometrics/
+              terragrunt plan --all --non-interactive 
+              terragrunt apply --all --non-interactive 
 
 
             displayName: "✔️ Plan"
