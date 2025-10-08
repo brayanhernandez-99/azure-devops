@@ -128,6 +128,7 @@ jobs:
                   "huila"     { $environment = "production"; $region = "suchance"; }
                   "cauca"     { $environment = "production"; $region = "acertemos"; }
                   "boyaca"    { $environment = "production"; $region = "jer"; }
+                  "santander" { $environment = "production"; $region = "laperla"; }
                 }
               }
             }
@@ -380,6 +381,7 @@ jobs:
                 "huila")     environment="production"; region="suchance"; ;;
                 "cauca")     environment="production"; region="acertemos"; ;;
                 "boyaca")    environment="production"; region="jer"; ;;
+                "santander") environment="production"; region="laperla"; ;;
               esac ;;
           esac
 

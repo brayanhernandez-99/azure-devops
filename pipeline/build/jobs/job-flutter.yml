@@ -84,6 +84,7 @@ jobs:
                 "huila")     environment="prd-suchance"; region="SUCHANCE"; ;;
                 "cauca")     environment="prd-acertemos"; region="ACERTEMOS"; ;;
                 "boyaca")    environment="prd-jer"; region="JER"; ;;
+                "santander") environment="prd-laperla"; region="LAPERLA"; ;;
               esac ;;
           esac
 

@@ -18,6 +18,7 @@ parameters:
       - huila
       - cauca
       - boyaca
+      - santander
 
   - name: apps
     type: object
