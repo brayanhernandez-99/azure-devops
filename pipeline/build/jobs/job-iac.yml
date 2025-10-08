@@ -415,6 +415,24 @@ jobs:
               set -e
 
 
+              # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/payment-voucher/
+              # terragrunt plan --all --non-interactive 
+              # terragrunt apply --all --non-interactive 
+
+              # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/promotional/
+              # terragrunt plan --all --non-interactive 
+              # terragrunt apply --all --non-interactive 
+
+
+
+              cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/raffles/
+              terragrunt plan --all --non-interactive 
+              terragrunt apply --all --non-interactive 
+
+              cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges/
+              terragrunt plan --all --non-interactive 
+              terragrunt apply --all --non-interactive 
+
               cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/shopping-cart/
               terragrunt plan --all --non-interactive 
               terragrunt apply --all --non-interactive 
@@ -422,7 +440,6 @@ jobs:
               cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/siga/
               terragrunt plan --all --non-interactive 
               terragrunt apply --all --non-interactive 
-
 
 
 
