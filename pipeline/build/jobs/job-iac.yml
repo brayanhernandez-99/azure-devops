@@ -415,19 +415,19 @@ jobs:
               set -e
 
 
-              cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/legacy/
+              cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/millonario/
               terragrunt plan --all --non-interactive 
               terragrunt apply --all --non-interactive 
 
-              cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/lotteries/
+              cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/money-control/
               terragrunt plan --all --non-interactive 
               terragrunt apply --all --non-interactive 
 
-              cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/lotteries-games/
+              cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/notifications/
               terragrunt plan --all --non-interactive 
               terragrunt apply --all --non-interactive 
 
-              cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/metabase/
+              cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/notifier/
               terragrunt plan --all --non-interactive 
               terragrunt apply --all --non-interactive 
 
