@@ -432,18 +432,38 @@ jobs:
             # terragrunt apply --all --non-interactive --no-color
 
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/reports
+
+
+
+
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/siga/aws-service-sqs-dlq
             terragrunt plan --all --non-interactive --no-color
             terragrunt apply --all --non-interactive --no-color
-            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/security
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/siga/aws-service-sqs
             terragrunt plan --all --non-interactive --no-color
             terragrunt apply --all --non-interactive --no-color
-            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/sellers
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/siga/aws-service-ecs
             terragrunt plan --all --non-interactive --no-color
             terragrunt apply --all --non-interactive --no-color
-            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/shopping-cart
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/siga/aws-service-ssm-parameter
             terragrunt plan --all --non-interactive --no-color
             terragrunt apply --all --non-interactive --no-color
+
+
+
+
+
+
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/transaction
+            # terragrunt plan --all --non-interactive --no-color
+            # terragrunt apply --all --non-interactive --no-color
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/transaction-notifier
+            # terragrunt plan --all --non-interactive --no-color
+            # terragrunt apply --all --non-interactive --no-color
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/wiretransfer
+            # terragrunt plan --all --non-interactive --no-color
+            # terragrunt apply --all --non-interactive --no-color
+
 
 
           displayName: "✔️ Plan"
