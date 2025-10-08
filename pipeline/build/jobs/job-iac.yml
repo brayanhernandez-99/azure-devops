@@ -419,17 +419,20 @@ jobs:
               # terragrunt plan --all --non-interactive 
               # terragrunt apply --all --non-interactive 
 
-              # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/promotional/
+              # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges/
               # terragrunt plan --all --non-interactive 
               # terragrunt apply --all --non-interactive 
 
 
 
-              cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/raffles/
+
+
+
+              cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/promotional/
               terragrunt plan --all --non-interactive 
               terragrunt apply --all --non-interactive 
 
-              cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges/
+              cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/raffles/
               terragrunt plan --all --non-interactive 
               terragrunt apply --all --non-interactive 
 
