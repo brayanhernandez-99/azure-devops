@@ -219,25 +219,25 @@ jobs:
             set -e
 
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/huila/shopping-cart
-            terragrunt plan --all --non-interactive --no-color
-            terragrunt apply --all --non-interactive --no-color
-
-            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/huila/siga
-            terragrunt plan --all --non-interactive --no-color
-            terragrunt apply --all --non-interactive --no-color
-
-            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/huila/transaction
-            terragrunt plan --all --non-interactive --no-color
-            terragrunt apply --all --non-interactive --no-color
-
-            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/huila/transaction-notifier
-            terragrunt plan --all --non-interactive --no-color
-            terragrunt apply --all --non-interactive --no-color
-
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/huila/wiretransfer
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/huila/shopping-cart
             # terragrunt plan --all --non-interactive --no-color
             # terragrunt apply --all --non-interactive --no-color
+
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/huila/siga
+            # terragrunt plan --all --non-interactive --no-color
+            # terragrunt apply --all --non-interactive --no-color
+
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/huila/transaction
+            # terragrunt plan --all --non-interactive --no-color
+            # terragrunt apply --all --non-interactive --no-color
+
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/huila/transaction-notifier
+            # terragrunt plan --all --non-interactive --no-color
+            # terragrunt apply --all --non-interactive --no-color
+
+            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/huila/wiretransfer
+            terragrunt plan --all --non-interactive --no-color
+            terragrunt apply --all --non-interactive --no-color
 
           
           displayName: "✔️ Plan"
