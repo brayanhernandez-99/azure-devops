@@ -183,4 +183,3 @@ stages:
       - template: build/semantic-version-integration.yml
         parameters:
           release: ${{ parameters.release }}
-          red: ${{ region }}
