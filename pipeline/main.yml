@@ -180,8 +180,7 @@ stages:
 
   # Semantic versioning repo-configuration en master (por región)
   - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(parameters.release, 'rpc')) }}:
-      - ${{ each region in parameters.red }}:
-          - template: build/semantic-version-integration.yml
-            parameters:
-              release: ${{ parameters.release }}
-              red: ${{ region }}
+      - template: build/semantic-version-integration.yml
+        parameters:
+          release: ${{ parameters.release }}
+          red: ${{ region }}
