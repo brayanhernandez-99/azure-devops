@@ -415,15 +415,23 @@ jobs:
               set -e
 
 
-              cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/external-wager/
+              cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/redis/
               terragrunt plan --all --non-interactive 
               terragrunt apply --all --non-interactive 
 
-              cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/generic-services/
+              cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/reports/
               terragrunt plan --all --non-interactive 
               terragrunt apply --all --non-interactive 
 
-              cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/hierarchies/
+              cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/transaction/
+              terragrunt plan --all --non-interactive 
+              terragrunt apply --all --non-interactive 
+
+              cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/transaction-notifier/
+              terragrunt plan --all --non-interactive 
+              terragrunt apply --all --non-interactive 
+                            
+              cd $(Build.SorcesDirectory)/iac-terragrunt/invictus/wiretransfer/              
               terragrunt plan --all --non-interactive 
               terragrunt apply --all --non-interactive 
 
