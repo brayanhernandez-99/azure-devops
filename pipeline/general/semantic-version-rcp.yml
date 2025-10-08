@@ -1,0 +1,118 @@
+jobs:
+  - job: "semantic_version_rcp"
+    displayName: "🔖 Semantic Versioning RCP"
+    pool:
+      name: "Azure Pipelines"
+      VmImage: ubuntu-22.04
+
+    steps:
+      - checkout: self
+        fetchDepth: 0
+        persistCredentials: true
+
+      - script: |
+          echo -e "\n📌 Verificando si feature está actualizada con master y si hay cambios relevantes..."
+
+          git fetch origin master
+
+          # Encuentra el punto de bifurcación (base común)
+          MERGE_BASE=$(git merge-base HEAD origin/master)
+
+          # Verifica si la rama está actualizada
+          if [ "$MERGE_BASE" = "$(git rev-parse origin/master)" ]; then
+            echo -e "\n✅ La rama feature esta actualizada con master."
+          else
+            echo -e "\n⚠️ La rama feature NO contiene todos los commits de master. Verificando cambios relevantes en master..."
+
+            # Obtén los archivos cambiados en master desde el punto de bifurcación
+            CHANGED_FILES=$(git diff --name-only "$MERGE_BASE".."origin/master")
+
+            echo "🔍 Archivos nuevos en master desde el punto de bifurcación:"
+            echo "$CHANGED_FILES"
+
+            # Filtrar cambios relevantes (ignorar carpeta pipeline/)
+            RELEVANT_CHANGES=$(echo "$CHANGED_FILES" | grep -vE '^pipeline/')
+
+            if [[ -z "$RELEVANT_CHANGES" ]]; then
+              echo -e "\nℹ️ Solo hay cambios en archivos ignorados (pipeline/). Continuando..."
+            else
+              echo -e "\n##vso[task.logissue type=error]❌ Cambios relevantes detectados en master y no están integrados. Debes actualizar tu rama."
+              exit 99
+            fi
+          fi
+        displayName: "Validate feature branch is up to date"
+        condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
+
+      - script: |
+          sourceBranch="${BUILD_SOURCEBRANCH/refs\/heads\//}"
+          targetBranch="master"
+
+          echo -e "\n🔎 Verificando que no se hayan agregado nuevas sentencias console.log..."
+          echo "Branch actual: $sourceBranch"
+          echo "Branch destino: $targetBranch"
+
+          git fetch origin "$targetBranch"
+          diff=$(git --no-pager diff "origin/$targetBranch..origin/$sourceBranch")
+
+          if echo "$diff" | grep -qE '^\+.*console\.log'; then
+            echo -e "\n❌ Se encontro 'console.log' en los cambios"
+            exit 99
+          else
+            echo -e "\n✅ No se encontraron sentencias 'console.log' en los cambios"
+          fi
+        condition: startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')
+        displayName: "🔍 Check for 'console.log' in changes"
+
+      - script: |
+          REPO_ID=$(curl -s -u ":$AZURE_DEVOPS_CLI_PAT" \
+            "https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories?api-version=5.0" \
+            | jq -r '.value[] | select(.name == "$(Build.Repository.Name)").id')
+          echo "id del repositorio $(Build.Repository.Name) = $REPO_ID"
+          echo "##vso[task.setvariable variable=repoID]$REPO_ID"
+        env:
+          AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
+        displayName: "ID Repositorio"
+
+      - script: |
+          echo "id del repositorio $(Build.Repository.Name) = $(repoID)"
+
+          CURRENT_BRANCH=$(echo $(Build.SourceBranch))
+
+          if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
+            CURRENT_BRANCH_PR=refs/heads/feature
+          fi
+
+          if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|staging|master)$ ]]; then
+            CURRENT_BRANCH_PR=$(echo $(Build.SourceBranch))
+          fi
+
+          URL="https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories/$(repoID)/pullrequests?searchCriteria.status=completed&searchCriteria.targetRefName=$CURRENT_BRANCH_PR&api-version=5.0"
+          response=$(curl -s -u ":$AZURE_DEVOPS_CLI_PAT" "$URL")
+          echo "$response" | jq '.value[0]'
+          PR_ID=$(echo "$response" | jq -r '.value[0].pullRequestId')
+
+          echo "id del pr $PR_ID"
+          echo "##vso[task.setvariable variable=ultimoPR]$PR_ID"
+
+          mkdir -p $(Build.ArtifactStagingDirectory)/idpr
+          touch $(Build.ArtifactStagingDirectory)/idpr/idpr.json
+          echo "{\"idpr\": \"$PR_ID\" }" > $(Build.ArtifactStagingDirectory)/idpr/idpr.json
+        env:
+          AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
+        displayName: "ID Pull Request"
+        condition: not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
+
+      - script: |
+          echo "Pull Request ID recuperado: $(ultimoPR)"
+          echo "id del repositorio $(Build.Repository.Name) = $(repoID)" 
+          COMMITS=$(curl -s -u ":$AZURE_DEVOPS_CLI_PAT" \
+            "https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories/$(repoID)/pullRequests/$(ultimoPR)/commits?api-version=7.0" \
+            | jq -r '.value[].comment' | grep -E 'feat:|fix:|!')
+          SAFE_COMMITS=$(echo "$COMMITS" | tr '\n' '|')
+          echo $SAFE_COMMITS
+          echo "##vso[task.setvariable variable=filteredCommits]$SAFE_COMMITS"
+        env:
+          AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
+        displayName: "Details of Pull Request Commits"
+        condition: not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
+

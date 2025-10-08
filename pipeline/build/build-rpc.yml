@@ -11,6 +11,10 @@ stages:
     ${{ if or(eq(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')) }}:
       displayName: "📦 Build Repository Configuration Master ${{ parameters.red }}"
 
+    dependsOn:
+      - "semantic_version_integration"
+    condition: in(dependencies.semantic_version_integration.result, 'Succeeded', 'SucceededWithIssues')
+    
     variables:
       - template: ../variables/groups-transversal-variables-rpc.yml
         parameters:
