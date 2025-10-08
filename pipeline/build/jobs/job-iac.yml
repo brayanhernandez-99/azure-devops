@@ -424,13 +424,12 @@ jobs:
               cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges/aws-service-secret-manager-conexred
               terragrunt plan --all --non-interactive 
               terragrunt apply --all --non-interactive 
+              cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges/aws-service-secret-manager-conexred-pines
+              terragrunt plan --all --non-interactive 
+              terragrunt apply --all --non-interactive 
 
 
-
-
-              # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges/aws-service-secret-manager-conexred-pines
-              # terragrunt plan --all --non-interactive 
-              # terragrunt apply --all --non-interactive 
+              
               # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges/aws-service-secret-manager-flypass
               # terragrunt plan --all --non-interactive 
               # terragrunt apply --all --non-interactive 
