@@ -219,19 +219,19 @@ jobs:
             set -e
 
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/huila/remittances
+            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/huila/promotional
             terragrunt plan --all --non-interactive --no-color
             terragrunt apply --all --non-interactive --no-color
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/huila/reports
+            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/huila/raffles
             terragrunt plan --all --non-interactive --no-color
             terragrunt apply --all --non-interactive --no-color
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/huila/security
+            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/huila/recharges
             terragrunt plan --all --non-interactive --no-color
             terragrunt apply --all --non-interactive --no-color
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/huila/sellers
+            cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/huila/redis
             terragrunt plan --all --non-interactive --no-color
             terragrunt apply --all --non-interactive --no-color
 
@@ -416,37 +416,33 @@ jobs:
 
         - script: |
             set -e
-            export TG_LOG=DEBUG
-
 
             # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/legacy
             # terragrunt plan --all --non-interactive --no-color
             # terragrunt apply --all --non-interactive --no-color
-
-
-
-
-            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/online-games
-            terragrunt plan --all --non-interactive --no-color
-            terragrunt apply --all --non-interactive --no-color
-
-            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/papelery
-            terragrunt plan --all --non-interactive --no-color
-            terragrunt apply --all --non-interactive --no-color
-
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/payment-voucher/aws-service-sqs-dlq
-            # terragrunt plan --all --non-interactive --no-color
-            # terragrunt apply --all --non-interactive --no-color
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/payment-voucher/aws-service-sqs
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges
             # terragrunt plan --all --non-interactive --no-color
             # terragrunt apply --all --non-interactive --no-color
 
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/payments
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/payment-voucher/aws-service-secret-manager
             terragrunt plan --all --non-interactive --no-color
             terragrunt apply --all --non-interactive --no-color
-
-
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/payment-voucher/aws-service-secret-manager-alegrasecrets
+            terragrunt plan --all --non-interactive --no-color
+            terragrunt apply --all --non-interactive --no-color
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/payment-voucher/aws-service-secret-manager-company-config
+            terragrunt plan --all --non-interactive --no-color
+            terragrunt apply --all --non-interactive --no-color
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/payment-voucher/aws-service-secret-manager-customer-config
+            terragrunt plan --all --non-interactive --no-color
+            terragrunt apply --all --non-interactive --no-color
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/payment-voucher/aws-service-secret-manager-payment-config
+            terragrunt plan --all --non-interactive --no-color
+            terragrunt apply --all --non-interactive --no-color
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/payment-voucher/aws-service-ssm-parameter
+            terragrunt plan --all --non-interactive --no-color
+            terragrunt apply --all --non-interactive --no-color
 
 
           displayName: "✔️ Plan"
