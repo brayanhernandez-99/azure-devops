@@ -415,15 +415,15 @@ jobs:
               set -e
 
 
-              cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/collected/
+              cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/external-wager/
               terragrunt plan --all --non-interactive 
               terragrunt apply --all --non-interactive 
 
-              cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/conciliation/
+              cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/generic-services/
               terragrunt plan --all --non-interactive 
               terragrunt apply --all --non-interactive 
 
-              cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/dynamic-storage/
+              cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/hierarchies/
               terragrunt plan --all --non-interactive 
               terragrunt apply --all --non-interactive 
 
