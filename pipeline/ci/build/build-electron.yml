@@ -368,28 +368,28 @@ jobs:
           downloadPath: "$(Pipeline.Workspace)/downloaded-dists"
         condition: succeeded()
 
-      - task: PowerShell@2
-        displayName: "🔎 Validate and Copy Dists"
-        inputs:
-          targetType: "inline"
-          script: |
-            $DISTS_PATH = "$(Pipeline.Workspace)\downloaded-dists\dists\${{ parameters.region }}"
-            $DISTS_COUNT = (Get-ChildItem -Path $DISTS_PATH).Count
+      # - task: PowerShell@2
+      #   displayName: "🔎 Validate and Copy Dists"
+      #   inputs:
+      #     targetType: "inline"
+      #     script: |
+      #       $DISTS_PATH = "$(Pipeline.Workspace)\downloaded-dists\dists\${{ parameters.region }}"
+      #       $DISTS_COUNT = (Get-ChildItem -Path $DISTS_PATH).Count
 
-            if ($DISTS_COUNT -eq 15) {
-              New-Item -Path $(System.DefaultWorkingDirectory)\apps -ItemType Directory | Out-Null
-              Copy-Item -Path "$DISTS_PATH\*" -Destination "$(System.DefaultWorkingDirectory)\apps" -Recurse -Force
+      #       if ($DISTS_COUNT -eq 15) {
+      #         New-Item -Path $(System.DefaultWorkingDirectory)\apps -ItemType Directory | Out-Null
+      #         Copy-Item -Path "$DISTS_PATH\*" -Destination "$(System.DefaultWorkingDirectory)\apps" -Recurse -Force
 
-              Write-Host "`n📁 Dists copiados en: $(System.DefaultWorkingDirectory)\apps"
-              Get-ChildItem -Path "$(System.DefaultWorkingDirectory)" | Select-Object Mode, LastWriteTime, Length, Name | Format-Table
-              Write-Host "`n📁 Dists apps"
-              Get-ChildItem -Path "$(System.DefaultWorkingDirectory)\apps" | Select-Object Mode, LastWriteTime, Length, Name | Format-Table
-            } else {
-              Write-Host "`n⚠️ Error no tiene exactamente todos los dists en: $DISTS_PATH"
-              Get-ChildItem -Path "$(System.DefaultWorkingDirectory)\apps" | Select-Object Mode, LastWriteTime, Length, Name | Format-Table
-              exit 99
-            }
-        condition: succeeded()
+      #         Write-Host "`n📁 Dists copiados en: $(System.DefaultWorkingDirectory)\apps"
+      #         Get-ChildItem -Path "$(System.DefaultWorkingDirectory)" | Select-Object Mode, LastWriteTime, Length, Name | Format-Table
+      #         Write-Host "`n📁 Dists apps"
+      #         Get-ChildItem -Path "$(System.DefaultWorkingDirectory)\apps" | Select-Object Mode, LastWriteTime, Length, Name | Format-Table
+      #       } else {
+      #         Write-Host "`n⚠️ Error no tiene exactamente todos los dists en: $DISTS_PATH"
+      #         Get-ChildItem -Path "$(System.DefaultWorkingDirectory)\apps" | Select-Object Mode, LastWriteTime, Length, Name | Format-Table
+      #         exit 99
+      #       }
+      #   condition: succeeded()
 
       - task: PowerShell@2
         displayName: "🔐 Setup CodeArtifact & npm config"
