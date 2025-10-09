@@ -287,6 +287,8 @@ jobs:
           ne(variables['Build.SourceBranchName'], 'master'))
 
       - template: sonarqube/job-sonarqube.yml@sonarqube
+        parameters:
+          msName: $(msName)
 
       # - script: |
       #     echo "Esperando Quality Gate..."
@@ -311,7 +313,6 @@ jobs:
       #     ne(variables['msName'], 'app-administration-vue2'),
       #     ne(variables['msName'], 'app-sellers-vue2'),
       #     ne(variables['Build.SourceBranchName'], 'master'))
-      
       - task: PublishBuildArtifacts@1
         inputs:
           PathtoPublish: "$(Build.ArtifactStagingDirectory)/dists"
