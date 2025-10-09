@@ -63,7 +63,6 @@ jobs:
         condition: succeeded()
 
       - script: |
-          echo -e "\n📁 Archivo version.json:"
           VERSION_FILE="$(Pipeline.Workspace)/versions-downloaded/versions/electron/version.json"
           if [[ -f "$VERSION_FILE" ]]; then
             VERSION=$(jq -r '.version' $VERSION_FILE)
@@ -149,7 +148,7 @@ jobs:
           # DOMAIN_ADMIN="${BASE_URL_ELECTRON_ADMIN}"
           # DOMAIN_SELLER="${BASE_URL_ELECTRON_SELLERS}"
           # TARGET="linux"
-          # TARGET_ENVIRONMENT="$environment"
+          # TARGET_ENVIRONMENT="$(environment)"
           # EOF
 
           envPath="$(System.DefaultWorkingDirectory)/.env"
@@ -157,7 +156,7 @@ jobs:
           DOMAIN_ADMIN="Administradores|mdiAccountChild|invictus-admin-api-qa.ux.technology/"
           DOMAIN_SELLER="Vendedores|mdiAccountChild|https://invictus-sellers-api-qa.ux.technology/"
           TARGET="linux"
-          TARGET_ENVIRONMENT="$environment"
+          TARGET_ENVIRONMENT="$(environment)"
           EOF
 
           echo -e "\n✅ Archivo .env creado correctamente"
@@ -449,7 +448,7 @@ jobs:
             # DOMAIN_ADMIN="$(BASE_URL_ELECTRON_ADMIN)"
             # DOMAIN_SELLER="$(BASE_URL_ELECTRON_SELLERS)"
             # TARGET="windows"
-            # TARGET_ENVIRONMENT="$environment"
+            # TARGET_ENVIRONMENT="$($env:environment)"
             # "@
 
             $envPath = "$(System.DefaultWorkingDirectory)/.env"
@@ -457,7 +456,7 @@ jobs:
             DOMAIN_ADMIN="Administradores|mdiAccountChild|invictus-admin-api-qa.ux.technology/"
             DOMAIN_SELLER="Vendedores|mdiAccountChild|https://invictus-sellers-api-qa.ux.technology/"
             TARGET="windows"
-            TARGET_ENVIRONMENT="$environment"
+            TARGET_ENVIRONMENT="$($env:environment)"
             "@
 
             Set-Content -Path $envPath -Value $envContent -Encoding UTF8
