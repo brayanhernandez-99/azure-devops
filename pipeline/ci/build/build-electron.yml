@@ -78,24 +78,24 @@ jobs:
         displayName: "📥 Download Dists"
         condition: succeeded()
 
-      - script: |
-          DISTS_PATH="$(Pipeline.Workspace)/downloaded-dists/${{ parameters.region }}"
-          DISTS_COUNT=$(ls "$DISTS_PATH" | wc -l)
+      # - script: |
+      #     DISTS_PATH="$(Pipeline.Workspace)/downloaded-dists/${{ parameters.region }}"
+      #     DISTS_COUNT=$(ls "$DISTS_PATH" | wc -l)
 
-          if [[ "$DISTS_COUNT" == "15" ]]; then
-            cp -R $DISTS_PATH $(System.DefaultWorkingDirectory)/apps
+      #     if [[ "$DISTS_COUNT" == "15" ]]; then
+      #       cp -R $DISTS_PATH $(System.DefaultWorkingDirectory)/apps
 
-            echo -e "\n📁 Dists copiados en: $(System.DefaultWorkingDirectory)/apps"
-            ls -l $(System.DefaultWorkingDirectory)
-            echo -e "\n📁 Dists apps"
-            ls -l $(System.DefaultWorkingDirectory)/apps
-          else
-            echo -e "\n⚠️ Error no tiene exactamente todos los dists en: $DISTS_PATH"
-            ls -l $(System.DefaultWorkingDirectory)/apps
-            exit 99
-          fi
-        displayName: "🔎 Validate and Copy Dists"
-        condition: succeeded()
+      #       echo -e "\n📁 Dists copiados en: $(System.DefaultWorkingDirectory)/apps"
+      #       ls -l $(System.DefaultWorkingDirectory)
+      #       echo -e "\n📁 Dists apps"
+      #       ls -l $(System.DefaultWorkingDirectory)/apps
+      #     else
+      #       echo -e "\n⚠️ Error no tiene exactamente todos los dists en: $DISTS_PATH"
+      #       ls -l $(System.DefaultWorkingDirectory)/apps
+      #       exit 99
+      #     fi
+      #   displayName: "🔎 Validate and Copy Dists"
+      #   condition: succeeded()
 
       - task: Bash@3
         name: AuthCodeArtifact
