@@ -1,34 +1,34 @@
-jobs:
-  - ${{ if in(variables['Build.SourceBranch'], 'refs/heads/develop', 'refs/heads/staging', 'refs/heads/master') }}:
-      - deployment: WaitForApproval
-        displayName: "Esperando aprobación"
-        pool:
-          name: "Azure Pipelines"
-          VmImage: ubuntu-22.04
+- ${{ if in(variables['Build.SourceBranch'], 'refs/heads/develop', 'refs/heads/staging', 'refs/heads/master') }}:
+  jobs:
+    - deployment: WaitForApproval
+      displayName: "Esperando aprobación"
+      pool:
+        name: "Azure Pipelines"
+        VmImage: ubuntu-22.04
 
-        ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}:
-          environment: "Deploy develop"
-        ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
-          environment: "Deploy staging"
-        ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
-          environment: "Deploy master"
+      ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}:
+        environment: "Deploy develop"
+      ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
+        environment: "Deploy staging"
+      ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
+        environment: "Deploy master"
 
-        strategy:
-          runOnce:
-            deploy:
-              steps:
-                - script: echo "Aprobación recibida. Iniciando el despliegue..."
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+              - script: echo "Aprobación recibida. Iniciando el despliegue..."
 
-      - ${{ if eq(parameters.release, 'aws-ecs') }}:
-          - template: ./deploy/deploy-backend.yml
+    - ${{ if eq(parameters.release, 'aws-ecs') }}:
+        - template: ./deploy/deploy-backend.yml
 
-      - ${{ if eq(parameters.release, 'aws-s3') }}:
-          - template: ./deploy/deploy-frontend.yml
+    - ${{ if eq(parameters.release, 'aws-s3') }}:
+        - template: ./deploy/deploy-frontend.yml
 
-      - ${{ if eq(parameters.release, 'exe') }}:
-          - template: ./deploy/deploy-electron.yml
-            parameters:
-              apps: ${{ parameters.region }}
+    - ${{ if eq(parameters.release, 'exe') }}:
+        - template: ./deploy/deploy-electron.yml
+          parameters:
+            apps: ${{ parameters.region }}
 
-      - ${{ if eq(parameters.release, 'apk') }}:
-          - template: ./deploy/deploy-flutter.yml
+    - ${{ if eq(parameters.release, 'apk') }}:
+        - template: ./deploy/deploy-flutter.yml
