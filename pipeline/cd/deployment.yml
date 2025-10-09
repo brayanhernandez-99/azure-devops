@@ -3,7 +3,7 @@ jobs:
     steps:
       - script: 
           echo -e "\nℹ️ Validando si cumple las condiciones para el despliegue...""
-        displayName: "🛡️ Validando deployment"
+        displayName: "🛡️ Validate deployment"
 
   - ${{ if in(variables['Build.SourceBranch'], 'refs/heads/develop', 'refs/heads/staging', 'refs/heads/master') }}:
       - deployment: WaitForApproval
