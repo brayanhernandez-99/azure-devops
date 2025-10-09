@@ -416,26 +416,26 @@ jobs:
               # terragrunt apply --all --non-interactive -no-color 
 
 
-              cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/remittances/
-              terragrunt plan --all --non-interactive -no-color 
-              terragrunt apply --all --non-interactive -no-color 
-              cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/reports/
-              terragrunt plan --all --non-interactive -no-color 
-              terragrunt apply --all --non-interactive -no-color 
-              cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/security/
-              terragrunt plan --all --non-interactive -no-color 
-              terragrunt apply --all --non-interactive -no-color 
+              # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/remittances/
+              # terragrunt plan --all --non-interactive -no-color 
+              # terragrunt apply --all --non-interactive -no-color 
+              # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/reports/
+              # terragrunt plan --all --non-interactive -no-color 
+              # terragrunt apply --all --non-interactive -no-color 
+              # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/security/
+              # terragrunt plan --all --non-interactive -no-color 
+              # terragrunt apply --all --non-interactive -no-color 
 
 
-              # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/sellers/
-              # terragrunt plan --all --non-interactive -no-color 
-              # terragrunt apply --all --non-interactive -no-color 
-              # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/shopping-cart/
-              # terragrunt plan --all --non-interactive -no-color 
-              # terragrunt apply --all --non-interactive -no-color 
-              # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/siga/
-              # terragrunt plan --all --non-interactive -no-color 
-              # terragrunt apply --all --non-interactive -no-color 
+              cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/sellers/
+              terragrunt plan --all --non-interactive -no-color 
+              terragrunt apply --all --non-interactive -no-color 
+              cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/shopping-cart/
+              terragrunt plan --all --non-interactive -no-color 
+              terragrunt apply --all --non-interactive -no-color 
+              cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/siga/
+              terragrunt plan --all --non-interactive -no-color 
+              terragrunt apply --all --non-interactive -no-color 
 
 
 
