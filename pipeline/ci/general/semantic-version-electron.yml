@@ -320,5 +320,5 @@ jobs:
           PathtoPublish: "$(Build.ArtifactStagingDirectory)"
           ArtifactName: "versions"
           publishLocation: "Container"
-        displayName: "📦 Publish artifact version"
+        displayName: "📤 Publish artifact version"
         condition: succeeded()
