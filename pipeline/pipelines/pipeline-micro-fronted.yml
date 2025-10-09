@@ -71,7 +71,6 @@ stages:
         dependsOn: semantic_version_electron
         jobs:
           - template: ../ci/build/build-electron.yml
-            parameters:
 
       - stage: deploy_electron
         displayName: "🚀 Deploy Electron"
@@ -80,4 +79,3 @@ stages:
           - template: ../cd/deployment.yml
             parameters:
               release: exe
-              apps: ${{ parameters.apps }}
