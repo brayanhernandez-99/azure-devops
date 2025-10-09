@@ -62,27 +62,7 @@ jobs:
       - script: |
           echo -e "\n📦 Cargando al Bucket S3..."
 
-          BASE_PATH="$(Pipeline.Workspace)/electron-artifacts/linux"
-          echo -e "\n📂 Archivos a cargar: $BASE_PATH"
-          ls -l "$BASE_PATH"
-
-          aws s3 cp "$BASE_PATH" "s3://electron-app-$(ACCOUNT_ID_INVIC)/linux/" --recursive --acl public-read
-
-          echo -e "\n✅ Archivos subidos exitosamente."
-          echo "🔗 APP: InvictusUX-$(msVersion).AppImage"
-          echo "🔗 URL: https://electron-app-$(ACCOUNT_ID_INVIC).s3.us-east-1.amazonaws.com/InvictusUX-$(msVersion).AppImage"
-
-        displayName: "🐧 Upload Bucket S3 Linux"
-        condition: succeeded()
-        env:
-          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
-          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVIC)
-          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVIC)
-
-      - script: |
-          echo -e "\n📦 Cargando al Bucket S3..."
-
-          BASE_PATH="$(Pipeline.Workspace)/electron-artifacts/linux"
+          BASE_PATH="$(Pipeline.Workspace)/electron-artifacts/windows"
           echo -e "\n📂 Archivos a cargar: $BASE_PATH"
           ls -l "$BASE_PATH"
 
