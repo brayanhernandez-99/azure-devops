@@ -28,7 +28,6 @@ stages:
           - template: ../ci/semantic-version-integration.yml
             parameters:
               release: exe
-              microFronted: true
 
       - ${{ each region in parameters.red }}:
           - stage: build_electron_${{ region }}
@@ -37,17 +36,16 @@ stages:
             jobs:
               - template: ../ci/build/build-electron.yml
                 parameters:
-                  microFronted: true
                   region: ${{ region }}
 
-          - stage: deploy_micro_frontend_${{ region }}
-            displayName: "🚀 Deploy MicroFrontend ${{ region }}"
+          - stage: deploy_electron_${{ region }}
+            displayName: "🚀 Deploy Electron ${{ region }}"
             dependsOn: build_electron_${{ region }}
             jobs:
-              - job: jobY
-                displayName: "Job Y"
-                steps:
-                  - script: echo "Running Deployment Job Y"
+              - template: ../cd/deployment.yml
+                parameters:
+                  release: exe
+                  region: ${{ region }}
 
   #####################################################################
 
@@ -67,7 +65,6 @@ stages:
           - template: ../ci/semantic-version-integration.yml
             parameters:
               release: exe
-              microFronted: true
 
       - stage: build_electron
         displayName: "📦 Build Electron"
@@ -75,13 +72,12 @@ stages:
         jobs:
           - template: ../ci/build/build-electron.yml
             parameters:
-              microFronted: true
 
-      - stage: deploy_micro_frontend
-        displayName: "🚀 Deploy MicroFrontend"
+      - stage: deploy_electron
+        displayName: "🚀 Deploy Electron"
         dependsOn: build_electron
         jobs:
-          - job: jobY
-            displayName: "Job Y"
-            steps:
-              - script: echo "Running Deployment Job Y"
+          - template: ../cd/deployment.yml
+            parameters:
+              release: exe
+              apps: ${{ parameters.apps }}

@@ -65,7 +65,7 @@ jobs:
         env:
           AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
         displayName: "📌 Set Repository ID"
-        condition: and(
+        condition: and(succeeded(),
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
 
@@ -147,6 +147,7 @@ jobs:
             echo "##vso[task.setvariable variable=file]$fileselect"
           fi
         displayName: "📂 Select File"
+        condition: succeeded()
 
       - script: |
           cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
@@ -306,13 +307,7 @@ jobs:
             echo "##vso[task.setvariable variable=cleanNEXT_VERSION]$NEXT_VERSION"
           fi
         displayName: "🔍 Detect next version"
-
-      - task: PublishBuildArtifacts@1
-        inputs:
-          PathtoPublish: "$(Build.ArtifactStagingDirectory)"
-          ArtifactName: "versions"
-          publishLocation: "Container"
-        displayName: "📦 Public artifact version"
+        condition: succeeded()
 
       - script: |
           raw_branch=$(Build.SourceBranch)
@@ -335,3 +330,11 @@ jobs:
           ne(variables['Build.SourceBranchName'], 'master'),
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
+
+      - task: PublishBuildArtifacts@1
+        inputs:
+          PathtoPublish: "$(Build.ArtifactStagingDirectory)"
+          ArtifactName: "versions"
+          publishLocation: "Container"
+        displayName: "📦 Publish artifact version"
+        condition: succeeded()

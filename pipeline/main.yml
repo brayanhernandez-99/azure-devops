@@ -16,20 +16,20 @@ parameters:
     type: object
     default:
       - "app-administration-vue2"
-      - "app-sellers-vue2"
-      - "awards"
-      - "biometrics"
-      - "commissions"
-      - "conciliation"
-      - "dashboard"
-      - "dynamic-storage"
-      - "external-wager"
-      - "hierarchies"
-      - "invictus"
-      - "login"
-      - "lotteries"
-      - "money-control"
-      - "users"
+      # - "app-sellers-vue2"
+      # - "awards"
+      # - "biometrics"
+      # - "commissions"
+      # - "conciliation"
+      # - "dashboard"
+      # - "dynamic-storage"
+      # - "external-wager"
+      # - "hierarchies"
+      # - "invictus"
+      # - "login"
+      # - "lotteries"
+      # - "money-control"
+      # - "users"
 
 resources:
   repositories:
@@ -47,7 +47,7 @@ stages:
   #
   # MicroFronted pipeline
   #
-  - ${{ if and(eq(parameters.release, 'aws-s3'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/develop'), startsWith(variables['Build.SourceBranch'], 'refs/heads/staging'), startsWith(variables['Build.SourceBranch'], 'refs/heads/master'))) }}:
+  - ${{ if and(eq(parameters.release, 'aws-s3'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), in(variables['Build.SourceBranch'], 'refs/heads/develop', 'refs/heads/staging', 'refs/heads/master'))) }}:
       - template: pipelines/pipeline-micro-fronted.yml
         parameters:
           red: ${{ parameters.red }}
@@ -57,7 +57,7 @@ stages:
   #
   # Electron pipeline
   #
-  - ${{ if and(eq(parameters.release, 'exe'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/develop'), startsWith(variables['Build.SourceBranch'], 'refs/heads/staging'), startsWith(variables['Build.SourceBranch'], 'refs/heads/master'))) }}:
+  - ${{ if and(eq(parameters.release, 'exe'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), in(variables['Build.SourceBranch'], 'refs/heads/develop', 'refs/heads/staging', 'refs/heads/master'))) }}:
       - template: pipeline/pipeline-electron.yml
         parameters:
           red: ${{ parameters.red }}

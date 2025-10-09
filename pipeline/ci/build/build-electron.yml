@@ -40,7 +40,7 @@ jobs:
           echo "ℹ️ Branch Actual: $CURRENT_BRANCH"
           echo "ℹ️ Branch Checkout: $electronBranch"
         displayName: "📌 Set Electron Branch"
-        condition: and(succeeded(), eq(${{ parameters.microFronted }}, true))
+        condition: succeeded()
 
       - script: |
           echo -e "\n🔀 Cambiando a la rama: electron@$(electronBranch)"
@@ -48,18 +48,18 @@ jobs:
           git checkout $(electronBranch)
           git pull origin $(electronBranch)
         displayName: "🔄 Checkout electron@$(electronBranch)"
-        condition: and(succeeded(), eq(${{ parameters.microFronted }}, true))
+        condition: succeeded()
 
       - task: DownloadBuildArtifacts@0
         inputs:
           artifactName: "versions"
-          downloadPath: "$(Pipeline.Workspace)/downloaded-versions"
+          downloadPath: "$(Pipeline.Workspace)/versions-downloaded"
         displayName: "📥 Download Version"
+        condition: succeeded()
 
       - script: |
           echo -e "\n📁 Archivo version.json:"
-          ls -l $(Pipeline.Workspace)/downloaded-versions/versions/electron/
-          VERSION_FILE="$(Pipeline.Workspace)/downloaded-versions/versions/electron/version.json"
+          VERSION_FILE="$(Pipeline.Workspace)/versions-downloaded/versions/electron/version.json"
           if [[ -f "$VERSION_FILE" ]]; then
             VERSION=$(jq -r '.version' $VERSION_FILE)
             echo -e "\n🚀 Versión detectada para $(Build.Repository.Name): $VERSION"
@@ -69,12 +69,14 @@ jobs:
             exit 99
           fi
         displayName: "📚 Read Version"
+        condition: succeeded()
 
       - task: DownloadPipelineArtifact@2
         inputs:
           artifact: dists
           path: $(Pipeline.Workspace)/downloaded-dists
         displayName: "📥 Download Dists"
+        condition: succeeded()
 
       - script: |
           DISTS_PATH="$(Pipeline.Workspace)/downloaded-dists/${{ parameters.region }}"
@@ -93,6 +95,7 @@ jobs:
             exit 99
           fi
         displayName: "🔎 Validate and Copy Dists"
+        condition: succeeded()
 
       - task: Bash@3
         name: AuthCodeArtifact
@@ -125,6 +128,7 @@ jobs:
             EOF
             ls -l .npmrc
         displayName: "🔐 Setup CodeArtifact & npm config"
+        condition: succeeded()
         env:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
@@ -181,18 +185,21 @@ jobs:
           echo -e "\n📁 Generando .env"
           cat $envPath
         displayName: "⚙️ Generate .env"
+        condition: succeeded()
 
       - task: UsePythonVersion@0
         displayName: "🔧 Use Python $(pythonVersion)"
         inputs:
           versionSpec: "$(pythonVersion)"
           addToPath: true
+        condition: succeeded()
 
       - task: NodeTool@0
         displayName: "🔧 Install Nodejs $(nodeVersion)"
         inputs:
           versionSource: "spec"
           versionSpec: "$(nodeVersion)"
+        condition: succeeded()
 
       - script: |
           echo -e "\n📦 Modificando versión en package.json: $(msVersion)"
@@ -208,6 +215,7 @@ jobs:
             exit 99
           fi
         displayName: "📝 Update version in package.json"
+        condition: succeeded()
 
       - script: |
           echo -e "\n📦 Instalando dependencias ubuntu..."
@@ -220,11 +228,13 @@ jobs:
           echo -e "\n📦 Dependencias instaladas:"
           npm list --depth=0
         displayName: "⚙️ Install dependencies"
+        condition: succeeded()
 
       - script: |
           echo -e "\n📦 Build electron"
           npm_config_legacy_peer_deps=true npm run build
         displayName: "📦 Build electron"
+        condition: succeeded()
 
       - script: |
           echo -e "\n📝 Validando build electron..."
@@ -260,29 +270,16 @@ jobs:
             ls -l "$REGION_PATH"
           fi
         displayName: "🔍 Validate Build"
+        condition: succeeded()
 
-      - script: |
-          echo -e "\n📦 Cargando al Bucket S3..."
-          BASE_PATH="$(Build.SourcesDirectory)/release/$(environment)/$(msVersion)/$(region)"
-
-          echo -e "\n📂 Archivos a cargar: $BASE_PATH"
-          ls -l "$BASE_PATH"
-
-          #aws s3 cp "$BASE_PATH" "s3://e-remote/invictus-electron/linux/$(region)" --recursive --acl public-read
-          aws s3 cp "$BASE_PATH" "s3://e-remote/invictus-electron/linux/dev-test/$(region)" --recursive --acl public-read
-
-          echo -e "\n✅ Archivos subidos exitosamente."
-          echo "🔗 APP: InvictusUX-$(msVersion).AppImage"
-          #echo "🔗 URL: https://e-remote.s3.us-east-1.amazonaws.com/invictus-electron/linux/$(environment)/InvictusUX-$(msVersion).AppImage"
-          echo "🔗 URL: https://e-remote.s3.us-east-1.amazonaws.com/invictus-electron/linux/dev-test/$(environment)/InvictusUX-$(msVersion).AppImage"
-
-        displayName: "📤 Upload Bucket S3"
-        #condition: not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
-        env:
-          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
-          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
-          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
-
+      - task: PublishBuildArtifacts@1
+        inputs:
+          PathtoPublish: "$(Build.ArtifactStagingDirectory)\electron-artifacts"
+          ArtifactName: "electron"
+          publishLocation: "Container"
+        displayName: "📦 Publish artifact electron"
+        condition: succeeded()
+        
   #
   # Electron Windows
   #
@@ -326,7 +323,7 @@ jobs:
             Write-Host "##vso[task.setvariable variable=electronBranch]$electronBranch"
             Write-Host "ℹ️ Branch Actual: $CURRENT_BRANCH"
             Write-Host "ℹ️ Branch Checkout: $electronBranch"
-        condition: and(succeeded(), eq(${{ parameters.microFronted }}, true))
+        condition: succeeded()
 
       - task: PowerShell@2
         displayName: "🔄 Checkout electron@$(electronBranch)"
@@ -337,13 +334,14 @@ jobs:
             git fetch origin $($env:electronBranch)
             git checkout $($env:electronBranch)
             git pull origin $($env:electronBranch)
-        condition: and(succeeded(), eq(${{ parameters.microFronted }}, true))
+        condition: succeeded()
 
       - task: DownloadBuildArtifacts@0
         displayName: "📥 Download Version"
         inputs:
           artifactName: "versions"
-          downloadPath: "$(Pipeline.Workspace)/downloaded-versions"
+          downloadPath: "$(Pipeline.Workspace)/versions-downloaded"
+        condition: succeeded()
 
       - task: PowerShell@2
         displayName: "📚 Read version"
@@ -351,7 +349,7 @@ jobs:
           targetType: "inline"
           script: |
             $ErrorActionPreference = "Stop"
-            $versionFile = "$(Pipeline.Workspace)\downloaded-versions\versions\electron\version.json"
+            $versionFile = "$(Pipeline.Workspace)\versions-downloaded\versions\electron\version.json"
             if (Test-Path $versionFile) {
               $json = Get-Content $versionFile | ConvertFrom-Json
               $version = $json.version
@@ -361,12 +359,14 @@ jobs:
               Write-Host "`n❌ No se encontro archivo de versión para .exe"
               exit 99
             }
+        condition: succeeded()
 
       - task: DownloadBuildArtifacts@0
         displayName: "📥 Download Dists"
         inputs:
           artifactName: "dists"
           downloadPath: "$(Pipeline.Workspace)/downloaded-dists"
+        condition: succeeded()
 
       - task: PowerShell@2
         displayName: "🔎 Validate and Copy Dists"
@@ -389,6 +389,7 @@ jobs:
               Get-ChildItem -Path "$(System.DefaultWorkingDirectory)\apps" | Select-Object Mode, LastWriteTime, Length, Name | Format-Table
               exit 99
             }
+        condition: succeeded()
 
       - task: PowerShell@2
         displayName: "🔐 Setup CodeArtifact & npm config"
@@ -429,6 +430,7 @@ jobs:
 
             Write-Host "`n✅ Archivo .npmrc creado correctamente"
             Get-Item $npmrcPath | Select-Object Mode, LastWriteTime, Length, Name | Format-Table
+        condition: succeeded()
         env:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
@@ -493,18 +495,21 @@ jobs:
             Get-ChildItem -Path "$(System.DefaultWorkingDirectory)" | Select-Object Mode, LastWriteTime, Length, Name | Format-Table
             Write-Host "`n📁 Generando .env"
             Get-Content -Path $envPath
+        condition: succeeded()
 
       - task: UsePythonVersion@0
         displayName: "🔧 Use Python $(pythonVersion)"
         inputs:
           versionSpec: "$(pythonVersion)"
           addToPath: true
+        condition: succeeded()
 
       - task: NodeTool@0
         displayName: "🔧 Install Nodejs $(nodeVersion)"
         inputs:
           versionSource: "spec"
           versionSpec: "$(nodeVersion)"
+        condition: succeeded()
 
       - task: PowerShell@2
         displayName: "📝 Update version in package.json"
@@ -526,6 +531,7 @@ jobs:
               Write-Host "`n❌ No se encontro el archivo package.json en la ruta [$packagePath]"
               exit 99
             }
+        condition: succeeded()
 
       - task: PowerShell@2
         displayName: "🧹 Remove BOM from package.json"
@@ -547,6 +553,7 @@ jobs:
                 Write-Warning "`n❌ package.json no se encontró en $filePath"
                 exit 99
             }
+        condition: succeeded()
 
       - task: PowerShell@2
         displayName: "⚙️ Install dependencies"
@@ -558,6 +565,7 @@ jobs:
 
             Write-Host "`n📦 Dependencias instaladas:"
             npm list --depth=0
+        condition: succeeded()
 
       - task: PowerShell@2
         displayName: "📦 Build electron"
@@ -566,6 +574,7 @@ jobs:
           script: |
             Write-Host "📦 Ejecutando build..."
             npm run build
+        condition: succeeded()
 
       - task: PowerShell@2
         displayName: "🔍 Validate Build"
@@ -602,32 +611,19 @@ jobs:
               Write-Error "`n❌ Error: archivos requeridos no encontrados."
               exit 99
             } else {
+              New-Item -ItemType Directory -Path "$(Build.ArtifactStagingDirectory)\electron-artifacts" | Out-Null
+              New-Item -ItemType Directory -Path "$(Build.ArtifactStagingDirectory)\electron-artifacts\windows" | Out-Null
+              Copy-Item -Path "$basePath\$($env:region)" -Destination "$(Build.ArtifactStagingDirectory)\electron-artifacts\windows" -Recurse -Force
+
               Write-Host "`n📂 Directorio: $basePath\$($env:region)"
               Get-ChildItem "$basePath\$($env:region)" | Select-Object Mode, LastWriteTime, Length, Name | Format-Table
             }
+        condition: succeeded()
 
-      - task: PowerShell@2
-        displayName: "📤 Upload Bucket S3"
+      - task: PublishBuildArtifacts@1
         inputs:
-          targetType: " inline"
-          script: |
-            $ErrorActionPreference = "Stop"
-            Write-Host "📦 Cargando al Bucket S3..."
-
-            $basePath = "$(Build.SourcesDirectory)\release\$($env:environment)\$($env:version)\$($env:region)"
-            Write-Host "`n📂 Archivos a cargar: $basePath"
-            Get-ChildItem "$basePath" | Select-Object Mode, LastWriteTime, Length, Name | Format-Table
-
-            #aws s3 cp "$basePath" "s3://e-remote/invictus-electron/windows/$($env:region)" --recursive --acl public-read
-            aws s3 cp "$basePath" "s3://e-remote/invictus-electron/windows/dev-test/$($env:region)" --recursive --acl public-read
-
-            Write-Host "`n✅ Archivos subidos exitosamente."
-            Write-Host "🔗 APP: InvictusUX Setup $($env:version).exe"
-            #Write-Host "🔗 URL: https://e-remote.s3.us-east-1.amazonaws.com/invictus-electron/windows/$($env:environment)/InvictusUX+Setup+$($env:version).exe"
-            Write-Host "🔗 URL: https://e-remote.s3.us-east-1.amazonaws.com/invictus-electron/windows/dev-test/$($env:environment)/InvictusUX+Setup+$($env:version).exe"
-
-        condition: not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
-        env:
-          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
-          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
-          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+          PathtoPublish: "$(Build.ArtifactStagingDirectory)\electron-artifacts"
+          ArtifactName: "electron"
+          publishLocation: "Container"
+        displayName: "📦 Publish artifact electron"
+        condition: succeeded()

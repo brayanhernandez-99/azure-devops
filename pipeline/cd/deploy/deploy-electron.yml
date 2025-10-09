@@ -1,0 +1,104 @@
+jobs:
+  - job: deploy_electron
+    displayName: "🚀 deploy electron"
+    pool:
+      name: "Azure Pipelines"
+      VmImage: ubuntu-22.04
+
+    variables:
+      - template: ../../variables/groups-transversal-variables-electron.yml
+        parameters:
+          region: ${{ parameters.region }}
+
+    steps:
+      - checkout: self
+        fetchDepth: 0
+        persistCredentials: true
+
+      - task: DownloadBuildArtifacts@0
+        inputs:
+          artifactName: "electron"
+          downloadPath: "$(Pipeline.Workspace)/electron-artifacts"
+        displayName: "📥 Download Electron Artifacts"
+        condition: succeeded()
+
+      - task: DownloadBuildArtifacts@0
+        inputs:
+          artifactName: "versions"
+          downloadPath: "$(Pipeline.Workspace)/versions-downloaded"
+        displayName: "📥 Download Version"
+        condition: succeeded()
+
+      - script: |
+          echo -e "\n📁 Archivo version.json:"
+          VERSION_FILE="$(Pipeline.Workspace)/versions-downloaded/versions/electron/version.json"
+          if [[ -f "$VERSION_FILE" ]]; then
+            VERSION=$(jq -r '.version' $VERSION_FILE)
+            echo -e "\n🚀 Versión detectada para $(Build.Repository.Name): $VERSION"
+            echo "##vso[task.setvariable variable=msVersion]$VERSION"
+          else
+            echo -e "\n##vso[task.logissue type=error]❌ No se encontro archivo de versión para $(Build.Repository.Name)"
+            exit 99
+          fi
+        displayName: "📚 Read Version"
+        condition: succeeded()
+
+      - script: |
+          echo -e "\n📦 Cargando al Bucket S3..."
+          
+          BASE_PATH="$(Pipeline.Workspace)/electron-artifacts/linux"
+          echo -e "\n📂 Archivos a cargar: $BASE_PATH"
+          ls -l "$BASE_PATH"
+
+          aws s3 cp "$BASE_PATH" "s3://electron-app-$(ACCOUNT_ID_INVIC)/linux/" --recursive --acl public-read
+
+          echo -e "\n✅ Archivos subidos exitosamente."
+          echo "🔗 APP: InvictusUX-$(msVersion).AppImage"
+          echo "🔗 URL: https://electron-app-$(ACCOUNT_ID_INVIC).s3.us-east-1.amazonaws.com/InvictusUX-$(msVersion).AppImage"
+
+        displayName: "🐧 Upload Bucket S3 Linux"
+        condition: succeeded()
+        env:
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVIC)
+          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVIC)
+
+      - script: |
+          echo -e "\n📦 Cargando al Bucket S3..."
+          
+          BASE_PATH="$(Pipeline.Workspace)/electron-artifacts/linux"
+          echo -e "\n📂 Archivos a cargar: $BASE_PATH"
+          ls -l "$BASE_PATH"
+
+          aws s3 cp "$BASE_PATH" "s3://electron-app-$(ACCOUNT_ID_INVIC)/linux/" --recursive --acl public-read
+
+          echo -e "\n✅ Archivos subidos exitosamente."
+          echo "🔗 APP: InvictusUX-$(msVersion).AppImage"
+          echo "🔗 URL: https://electron-app-$(ACCOUNT_ID_INVIC).s3.us-east-1.amazonaws.com/InvictusUX-$(msVersion).AppImage"
+
+        displayName: "🐧 Upload Bucket S3 Linux"
+        condition: succeeded()
+        env:
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVIC)
+          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVIC)
+
+      - script: |
+          echo -e "\n📦 Cargando al Bucket S3..."
+          
+          BASE_PATH="$(Pipeline.Workspace)/electron-artifacts/linux"
+          echo -e "\n📂 Archivos a cargar: $BASE_PATH"
+          ls -l "$BASE_PATH"
+
+          aws s3 cp "$BASE_PATH" "s3://electron-app-$(ACCOUNT_ID_INVIC)/windows/" --recursive --acl public-read
+
+          echo -e "\n✅ Archivos subidos exitosamente."
+          echo "🔗 APP: InvictusUX Setup $(msVersion).exe"
+          echo "🔗 URL: https://electron-app-$(ACCOUNT_ID_INVIC).s3.us-east-1.amazonaws.com/InvictusUX+Setup+$(msVersion).exe"
+        
+        displayName: "🖥️ Upload Bucket S3 Windows"
+        condition: succeeded()
+        env:
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVIC)
+          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVIC)

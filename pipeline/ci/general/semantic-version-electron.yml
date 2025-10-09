@@ -34,7 +34,7 @@ jobs:
           echo "ℹ️ Branch Actual: $CURRENT_BRANCH"
           echo "ℹ️ Branch Checkout: $electronBranch"
         displayName: "📌 Set Electron Branch"
-        condition: and(succeeded(), eq(${{ parameters.microFronted }}, true))
+        condition: succeeded()
 
       - script: |
           echo -e "\n🔀 Cambiando a la rama: electron@$(electronBranch)"
@@ -42,7 +42,7 @@ jobs:
           git checkout $(electronBranch)
           git pull origin $(electronBranch)
         displayName: "🔄 Checkout electron@$(electronBranch)"
-        condition: and(succeeded(), eq(${{ parameters.microFronted }}, true))
+        condition: succeeded()
 
       - script: |
           echo -e "\n📌 Verificando si feature está actualizada con master y si hay cambios relevantes..."
@@ -90,7 +90,7 @@ jobs:
         env:
           AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
         displayName: "📌 Set Repository ID"
-        condition: and(
+        condition: and(succeeded(),
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
 
@@ -159,7 +159,7 @@ jobs:
       #       echo -e "\n✅ No se encontraron sentencias 'console.log' en los cambios"
       #     fi
       #   displayName: "🔍 Check for 'console.log' in changes"
-      #   condition: and(succeeded(), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')), ne(${{ parameters.microFronted }}, true))
+      #   condition: and(succeeded(), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
 
       - script: |
           CURRENT_BRANCH=$(echo $(Build.SourceBranch))
@@ -292,31 +292,33 @@ jobs:
             echo "##vso[task.setvariable variable=cleanNEXT_VERSION]$NEXT_VERSION"
           fi
         displayName: "🔍 Detect next version"
+        condition: succeeded()
+
+      - script: |
+          raw_branch=$(Build.SourceBranch)
+          clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
+
+          git config user.name "pipeline"
+          git config user.email "pipelineUX@ux.technology"
+
+          echo "🔧 Actualizando versión en $(Build.Repository.Name)/package.json a $(cleanNEXT_VERSION)"
+          jq --arg version "$(cleanNEXT_VERSION)" '.version = $version' package.json > tmp.json && mv tmp.json package.json
+
+          git checkout version/$clean_branch
+          git pull origin version/$clean_branch
+          git add package.json
+          git commit -m "chore($(Build.Repository.Name)): bump version to $(cleanNEXT_VERSION)"
+          git push origin version/$clean_branch
+        displayName: "⚡ Bump Version & Push — $(Build.Repository.Name)"
+        condition: and(succeeded(),
+          ne(variables['Build.SourceBranchName'], 'master'),
+          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
+          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
 
       - task: PublishBuildArtifacts@1
         inputs:
           PathtoPublish: "$(Build.ArtifactStagingDirectory)"
           ArtifactName: "versions"
           publishLocation: "Container"
-        displayName: "📦 Public artifact version"
-
-      # - script: |
-      #     raw_branch=$(Build.SourceBranch)
-      #     clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
-
-      #     echo "🔧 Actualizando versión en $(Build.Repository.Name)/package.json a $(cleanNEXT_VERSION)"
-      #     jq --arg version "$(cleanNEXT_VERSION)" '.version = $version' package.json > tmp.json && mv tmp.json package.json
-
-      #     git config user.name "pipeline"
-      #     git config user.email "pipelineUX@ux.technology"
-
-      #     git checkout version/$clean_branch
-      #     git pull origin version/$clean_branch
-      #     git add package.json
-      #     git commit -m "chore($(Build.Repository.Name)): bump version to $(cleanNEXT_VERSION)"
-      #     git push origin version/$clean_branch
-      #   displayName: "⚡ Bump Version & Push — $(Build.Repository.Name)"
-      #   condition: and(succeeded(),
-      #     ne(variables['Build.SourceBranchName'], 'master'),
-      #     not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
-      #     not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
+        displayName: "📦 Publish artifact version"
+        condition: succeeded()
