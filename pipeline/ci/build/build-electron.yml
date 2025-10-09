@@ -224,7 +224,9 @@ jobs:
           all_found=true
 
           echo "***********"
+          echo "PATH: $BASE_PATH"
           ls -l $BASE_PATH
+          ls -l $BASE_PATH/*
           echo "***********"
 
           FILES_TO_COPY=(
@@ -300,14 +302,6 @@ jobs:
               "refs/heads/develop"   { $electronBranch = "feature/security-vulnerability-refactor"; $environment = "dev" }
               "refs/heads/staging"   { $electronBranch = "feature/security-vulnerability-refactor"; $environment = "qa" }
               "refs/heads/master"    { $electronBranch = "master"; $environment = "production" }
-            }
-
-            switch -Wildcard ($CURRENT_BRANCH) {
-              "refs/heads/feature/*" { $electronBranch = "feature/security-vulnerability-refactor" }
-              "refs/heads/hotfix/*"  { $electronBranch = "feature/security-vulnerability-refactor" }
-              "refs/heads/develop"   { $electronBranch = "feature/security-vulnerability-refactor" }
-              "refs/heads/staging"   { $electronBranch = "feature/security-vulnerability-refactor" }
-              "refs/heads/master"    { $electronBranch = "master" }
             }
 
             if ($electronBranch -eq "unknown" -or $environment -eq "unknown") {
@@ -458,10 +452,7 @@ jobs:
             TARGET="windows"
             TARGET_ENVIRONMENT="$($env:environment)"
             "@
-
             Set-Content -Path $envPath -Value $envContent -Encoding UTF8
-            Write-Host "##vso[task.setvariable variable=environment]$environment"
-            Write-Host "##vso[task.setvariable variable=region]$region"
 
             Write-Host "`n✅ Archivo .env creado correctamente"
             Get-ChildItem -Path "$(System.DefaultWorkingDirectory)" | Select-Object Mode, LastWriteTime, Length, Name | Format-Table
@@ -558,9 +549,10 @@ jobs:
             New-Item -ItemType Directory -Path $APP_DIR -Force | Out-Null
             $allFound = $true 
 
-            Write-Host "***********""
+            Write-Host "***********"
+            Write-Host "PATH: $BASE_PATH"
             Get-ChildItem -Path $BASE_PATH | Select-Object Mode, LastWriteTime, Length, Name | Format-Table
-            Write-Host "***********""
+            Write-Host "***********"
 
             $filesToCopy = @(
               "InvictusUX Setup $($env:version).exe",
