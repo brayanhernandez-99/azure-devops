@@ -5,7 +5,7 @@ stages:
       - template: ../ci/semantic-version-integration.yml
         parameters:
           apps: ${{ parameters.apps }}
-          release: ${{ parameters.release }}
+          release: aws-s3
 
   #####################################################################
 

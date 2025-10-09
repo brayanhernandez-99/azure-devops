@@ -21,24 +21,29 @@ jobs:
       - script: |
           CURRENT_BRANCH="$(Build.SourceBranch)"
           electronBranch="unknown"
+          environment="unknown"
 
           case "$CURRENT_BRANCH" in
-            refs/heads/feature/*) electronBranch="feature/security-vulnerability-refactor"; ;;
-            refs/heads/hotfix/*)  electronBranch="feature/security-vulnerability-refactor"; ;;
-            refs/heads/develop)   electronBranch="feature/security-vulnerability-refactor"; ;;
-            refs/heads/staging)   electronBranch="feature/security-vulnerability-refactor"; ;;
-            refs/heads/master)    electronBranch="master"; ;;
+            refs/heads/feature/*) electronBranch="feature/security-vulnerability-refactor"; environment="dev"; ;;
+            refs/heads/hotfix/*)  electronBranch="feature/security-vulnerability-refactor"; environment="dev"; ;;
+            refs/heads/develop)   electronBranch="feature/security-vulnerability-refactor"; environment="dev"; ;;
+            refs/heads/staging)   electronBranch="feature/security-vulnerability-refactor"; environment="qa"; ;;
+            refs/heads/master)    electronBranch="master"; environment="production"; ;;
           esac
 
-          if [[ "$electronBranch" == "unknown" ]]; then
-            echo -e "\n⚠️ Electron Branch [$electronBranch] no reconocida"
+          if [[ "$electronBranch" == "unknown" ]] || [[ "$environment" = "unknown" ]]; then
+            echo -e "\n⚠️ ElectronBranch o Environment no reconocidos"
+            echo "⚠️ Electron Branch: [$electronBranch]"
+            echo "⚠️ Environment: [$environment]"
             exit 99
           fi
 
           echo "##vso[task.setvariable variable=electronBranch]$electronBranch"
+          echo "##vso[task.setvariable variable=environment]$environment"
           echo ""
           echo "ℹ️ Branch Actual: $CURRENT_BRANCH"
-          echo "ℹ️ Branch Checkout: $electronBranch"
+          echo "ℹ️ Electron Environment: $environment"
+          echo "ℹ️ Electron Branch Checkout: $electronBranch"
         displayName: "📌 Set Electron Branch"
         condition: succeeded()
 
@@ -135,35 +140,12 @@ jobs:
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
 
       - script: |
-          CURRENT_BRANCH="$(Build.SourceBranch)"
-          region="unknown"
-          environment="unknown"
-          red=${{ parameters.region }}
+          echo -e "\nℹ️ Creando archivo .env..." 
+          echo "Electron Branch: $(electronBranch)"
+          echo "Electron Environment: $(environment)"
 
-          case "$CURRENT_BRANCH" in
-            refs/heads/feature/*) environment="dev"; region="dev"; ;;
-            refs/heads/hotfix/*)  environment="dev"; region="dev"; ;;
-            refs/heads/develop)   environment="dev"; region="dev"; ;;
-            refs/heads/staging)   environment="qa";  region="qa"; ;;
-            refs/heads/master) 
-              case "$red" in
-                "antioquia") environment="production"; region="matrixtech"; ;;
-                "cap")       environment="production"; region="cap"; ;;
-                "tolima")    environment="production"; region="seapto"; ;;
-                "huila")     environment="production"; region="suchance"; ;;
-                "cauca")     environment="production"; region="acertemos"; ;;
-                "boyaca")    environment="production"; region="jer"; ;;
-              esac ;;
-          esac
-
-          if [ "$environment" = "unknown" ] || [ "$region" = "unknown" ]; then
-            echo -e "\n⚠️ Environment o Region no reconocidos"
-            echo "Environment: [$environment]"
-            echo "Región: [$region]"
-            exit 99
-          fi
-
-          # cat <<EOF > .env
+          # envPath="$(System.DefaultWorkingDirectory)/.env"
+          # cat <<EOF > $envPath
           # DOMAIN_ADMIN="${BASE_URL_ELECTRON_ADMIN}"
           # DOMAIN_SELLER="${BASE_URL_ELECTRON_SELLERS}"
           # TARGET="linux"
@@ -178,10 +160,9 @@ jobs:
           TARGET_ENVIRONMENT="$environment"
           EOF
 
-          echo "##vso[task.setvariable variable=environment]$environment"
-          echo "##vso[task.setvariable variable=region]$region"
           echo -e "\n✅ Archivo .env creado correctamente"
           ls -la $(System.DefaultWorkingDirectory)
+
           echo -e "\n📁 Generando .env"
           cat $envPath
         displayName: "⚙️ Generate .env"
@@ -238,48 +219,54 @@ jobs:
 
       - script: |
           echo -e "\n📝 Validando build electron..."
-
           BASE_PATH="$(Build.SourcesDirectory)/release/$(environment)/$(msVersion)"
-          REGION_PATH="$BASE_PATH/$(region)"
-          mkdir -p "$REGION_PATH"
+          APP_DIR="$BASE_PATH/app"
+          mkdir -p $APP_DIR
           all_found=true
+
+          echo "***********"
+          ls -l $BASE_PATH
+          echo "***********"
 
           FILES_TO_COPY=(
             "InvictusUX-$(msVersion).AppImage"
-            # "latest-linux.yml"
+            "latest-linux.yml"
           )
 
           for file in "${FILES_TO_COPY[@]}"; do
             source_path="$BASE_PATH/$file"
-            destination_path="$REGION_PATH/$file"
+            destination_path="$APP_DIR/$file"
 
-            if [ -f "$source_path" ]; then
+            if [[ -f "$source_path" ]]; then
               cp -f "$source_path" "$destination_path"
               echo "📂 Copiado: $file -> $destination_path"
             else
-              echo "⚠️ Archivo no encontrado $file -> $source_path"
+              echo "⚠️ Archivo no encontrado: $file"
               all_found=false
             fi
           done
 
-          if [ "$all_found" = false ]; then
+          if [[ "$all_found" == false ]]; then
             echo -e "\n❌ Error: archivos requeridos no encontrados."
             exit 99
           else
-            echo -e "\n📂 Directorio: $REGION_PATH"
-            ls -l "$REGION_PATH"
+            mkdir -p "$(Build.ArtifactStagingDirectory)/electron-artifacts/linux"
+            cp -R $APP_DIR/* "$(Build.ArtifactStagingDirectory)/electron-artifacts/linux/"
+
+            echo -e "\n📂 Directorio: $APP_DIR"
+            ls -l $APP_DIR
           fi
         displayName: "🔍 Validate Build"
         condition: succeeded()
 
       - task: PublishBuildArtifacts@1
         inputs:
-          PathtoPublish: "$(Build.ArtifactStagingDirectory)\electron-artifacts"
+          PathtoPublish: "$(Build.ArtifactStagingDirectory)/electron-artifacts"
           ArtifactName: "electron"
           publishLocation: "Container"
         displayName: "📦 Publish artifact electron"
         condition: succeeded()
-        
+
   #
   # Electron Windows
   #
@@ -306,6 +293,15 @@ jobs:
           script: |
             $CURRENT_BRANCH = "$(Build.SourceBranch)"
             $electronBranch = "unknown"
+            $environment = "unknown"
+
+            switch -Wildcard ($CURRENT_BRANCH) {
+              "refs/heads/feature/*" { $electronBranch = "feature/security-vulnerability-refactor"; $environment = "dev" }
+              "refs/heads/hotfix/*"  { $electronBranch = "feature/security-vulnerability-refactor"; $environment = "dev" }
+              "refs/heads/develop"   { $electronBranch = "feature/security-vulnerability-refactor"; $environment = "dev" }
+              "refs/heads/staging"   { $electronBranch = "feature/security-vulnerability-refactor"; $environment = "qa" }
+              "refs/heads/master"    { $electronBranch = "master"; $environment = "production" }
+            }
 
             switch -Wildcard ($CURRENT_BRANCH) {
               "refs/heads/feature/*" { $electronBranch = "feature/security-vulnerability-refactor" }
@@ -315,14 +311,19 @@ jobs:
               "refs/heads/master"    { $electronBranch = "master" }
             }
 
-            if ($electronBranch -eq "unknown") {
-              Write-Host "`n⚠️ Electron Branch [$electronBranch] no reconocida"
+            if ($electronBranch -eq "unknown" -or $environment -eq "unknown") {
+              Write-Host "`n⚠️  ElectronBranch o Environment no reconocidos"
+              Write-Host "⚠️ Electron Branch: [$electronBranch]"
+              Write-Host "⚠️ Environment: [$environment]"
               exit 99
             }
 
             Write-Host "##vso[task.setvariable variable=electronBranch]$electronBranch"
+            Write-Host "##vso[task.setvariable variable=environment]$environment"
+            Write-Host ""
             Write-Host "ℹ️ Branch Actual: $CURRENT_BRANCH"
-            Write-Host "ℹ️ Branch Checkout: $electronBranch"
+            Write-Host "ℹ️ Electron Environment: $environment"
+            Write-Host "ℹ️ Electron Branch Checkout: $electronBranch"
         condition: succeeded()
 
       - task: PowerShell@2
@@ -348,7 +349,6 @@ jobs:
         inputs:
           targetType: "inline"
           script: |
-            $ErrorActionPreference = "Stop"
             $versionFile = "$(Pipeline.Workspace)\versions-downloaded\versions\electron\version.json"
             if (Test-Path $versionFile) {
               $json = Get-Content $versionFile | ConvertFrom-Json
@@ -396,7 +396,6 @@ jobs:
         inputs:
           targetType: "inline"
           script: |
-            $ErrorActionPreference = "Stop"
             Write-Host "🔐 Obteniendo token de AWS CodeArtifact..."
 
             $token = aws codeartifact get-authorization-token `
@@ -441,37 +440,11 @@ jobs:
         inputs:
           targetType: "inline"
           script: |
-            $ErrorActionPreference = "Stop"
+            Write-Host "`nℹ️ Creando archivo .env..."
+            Write-Host "Electron Branch: $($env:electronBranch)" 
+            Write-Host "Electron Environment: $($env:environment)"
 
-            $currentBranch="$(Build.SourceBranch)"
-            $region = "unknown"
-            $environment = "unknown"
-            $red = "${{ parameters.region }}"
-
-            switch -Wildcard ($currentBranch) {
-              "refs/heads/feature/*" { $environment = "dev"; $region = "dev"; }
-              "refs/heads/hotix/*"   { $environment = "dev"; $region = "dev"; }
-              "refs/heads/develop"   { $environment = "dev"; $region = "dev"; }
-              "refs/heads/staging"   { $environment = "qa";  $region = "qa"; }
-              "refs/heads/master" {
-                switch ($red) {
-                  "antioquia" { $environment = "production"; $region = "matrixtech"; }
-                  "cap"       { $environment = "production"; $region = "cap"; }
-                  "tolima"    { $environment = "production"; $region = "seapto"; }
-                  "huila"     { $environment = "production"; $region = "suchance"; }
-                  "cauca"     { $environment = "production"; $region = "acertemos"; }
-                  "boyaca"    { $environment = "production"; $region = "jer"; }
-                }
-              }
-            }
-
-            if ($environment -eq "unknown" -or $region -eq "unknown") {
-              Write-Host "`n⚠️ Environment o Region no reconocidos"
-              Write-Host "Environment: [$environment]"
-              Write-Host "Región: [$region]"
-              exit 99
-            }
-
+            # $envPath = "$(System.DefaultWorkingDirectory)/.env"
             # $envContent = @"
             # DOMAIN_ADMIN="$(BASE_URL_ELECTRON_ADMIN)"
             # DOMAIN_SELLER="$(BASE_URL_ELECTRON_SELLERS)"
@@ -493,6 +466,7 @@ jobs:
 
             Write-Host "`n✅ Archivo .env creado correctamente"
             Get-ChildItem -Path "$(System.DefaultWorkingDirectory)" | Select-Object Mode, LastWriteTime, Length, Name | Format-Table
+
             Write-Host "`n📁 Generando .env"
             Get-Content -Path $envPath
         condition: succeeded()
@@ -516,7 +490,6 @@ jobs:
         inputs:
           targetType: "inline"
           script: |
-            $ErrorActionPreference = "Stop"
             Write-Host "📦 Modificando versión en package.json: $env:version"
             $packagePath = "$(Build.SourcesDirectory)\package.json"
 
@@ -538,7 +511,6 @@ jobs:
         inputs:
           targetType: "inline"
           script: |
-            $ErrorActionPreference = "Stop"
             $filePath = "$(Build.SourcesDirectory)\package.json"
 
             if (Test-Path $filePath) {
@@ -581,12 +553,15 @@ jobs:
         inputs:
           targetType: " inline"
           script: |
-            $ErrorActionPreference = "Stop"
             Write-Host "📝 Validando build electron..."
-
-            $basePath = "$(Build.SourcesDirectory)\release\$($env:environment)\$($env:version)"
-            New-Item -ItemType Directory -Path $basePath\$($env:region) -Force | Out-Null
+            $BASE_PATH = "$(Build.SourcesDirectory)\release\$($env:environment)\$($env:version)"
+            $APP_DIR="$BASE_PATH\app"
+            New-Item -ItemType Directory -Path $APP_DIR -Force | Out-Null
             $allFound = $true 
+
+            Write-Host "***********""
+            Get-ChildItem -Path $BASE_PATH | Select-Object Mode, LastWriteTime, Length, Name | Format-Table
+            Write-Host "***********""
 
             $filesToCopy = @(
               "InvictusUX Setup $($env:version).exe",
@@ -595,14 +570,14 @@ jobs:
             )
 
             foreach ($file in $filesToCopy) {
-              $sourcePath      = Join-Path "$basePath" $file
-              $destinationPath = Join-Path "$basePath\$($env:region)" $file
+              $sourcePath      = Join-Path "$BASE_PATH" $file
+              $destinationPath = Join-Path "$APP_DIR" $file
 
               if (Test-Path $sourcePath) {
-                Copy-Item -Path $sourcePath -Destination $destinationPath -Force
+                Copy-Item -Path $sourcePath -Destination $destinationPath -Force | Out-Null
                 Write-Host "📂 Copiado: $file -> $destinationPath"
               } else {
-                Write-Host "⚠️ Archivo no encontrado $file -> $sourcePath"
+                Write-Host "⚠️ Archivo no encontrado $file"
                 $allFound = $false
               }
             }
@@ -613,10 +588,10 @@ jobs:
             } else {
               New-Item -ItemType Directory -Path "$(Build.ArtifactStagingDirectory)\electron-artifacts" | Out-Null
               New-Item -ItemType Directory -Path "$(Build.ArtifactStagingDirectory)\electron-artifacts\windows" | Out-Null
-              Copy-Item -Path "$basePath\$($env:region)" -Destination "$(Build.ArtifactStagingDirectory)\electron-artifacts\windows" -Recurse -Force
+              Copy-Item -Path "$APP_DIR\*" -Destination "$(Build.ArtifactStagingDirectory)\electron-artifacts\windows" -Recurse -Force
 
-              Write-Host "`n📂 Directorio: $basePath\$($env:region)"
-              Get-ChildItem "$basePath\$($env:region)" | Select-Object Mode, LastWriteTime, Length, Name | Format-Table
+              Write-Host "`n📂 Directorio: $APP_DIR"
+              Get-ChildItem "$APP_DIR" | Select-Object Mode, LastWriteTime, Length, Name | Format-Table
             }
         condition: succeeded()
 
