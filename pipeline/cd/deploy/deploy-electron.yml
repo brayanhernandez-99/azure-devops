@@ -11,10 +11,6 @@ jobs:
           region: ${{ parameters.region }}
 
     steps:
-      - checkout: self
-        fetchDepth: 0
-        persistCredentials: true
-
       - task: DownloadBuildArtifacts@0
         inputs:
           artifactName: "electron"
@@ -45,7 +41,7 @@ jobs:
 
       - script: |
           echo -e "\n📦 Cargando al Bucket S3..."
-          
+
           BASE_PATH="$(Pipeline.Workspace)/electron-artifacts/linux"
           echo -e "\n📂 Archivos a cargar: $BASE_PATH"
           ls -l "$BASE_PATH"
@@ -65,7 +61,7 @@ jobs:
 
       - script: |
           echo -e "\n📦 Cargando al Bucket S3..."
-          
+
           BASE_PATH="$(Pipeline.Workspace)/electron-artifacts/linux"
           echo -e "\n📂 Archivos a cargar: $BASE_PATH"
           ls -l "$BASE_PATH"
@@ -85,7 +81,7 @@ jobs:
 
       - script: |
           echo -e "\n📦 Cargando al Bucket S3..."
-          
+
           BASE_PATH="$(Pipeline.Workspace)/electron-artifacts/linux"
           echo -e "\n📂 Archivos a cargar: $BASE_PATH"
           ls -l "$BASE_PATH"
@@ -95,7 +91,7 @@ jobs:
           echo -e "\n✅ Archivos subidos exitosamente."
           echo "🔗 APP: InvictusUX Setup $(msVersion).exe"
           echo "🔗 URL: https://electron-app-$(ACCOUNT_ID_INVIC).s3.us-east-1.amazonaws.com/InvictusUX+Setup+$(msVersion).exe"
-        
+
         displayName: "🖥️ Upload Bucket S3 Windows"
         condition: succeeded()
         env:
