@@ -36,12 +36,15 @@ resources:
     - repository: self
       name: $(System.TeamProject)/$(Build.Repository.Name)
       type: git
-      ref: $(Build.SourceBranch)
+      #ref: $(Build.SourceBranch)
 
     - repository: electron
       name: Invictus/electron-app-invictus
       type: git
-      ref: refs/heads/master
+
+    - repository: sonarqube
+      name: Invictus/security-sonarqube
+      type: git
 
 stages:
   #
