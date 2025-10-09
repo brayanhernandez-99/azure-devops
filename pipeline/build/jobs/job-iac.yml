@@ -325,13 +325,15 @@ jobs:
               set -e
 
 
-              cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-s3-electron-app
-              terragrunt plan --all --non-interactive 
-              terragrunt apply --all --non-interactive 
-
-              cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-s3-flutter-apk
-              terragrunt plan --all --non-interactive 
-              terragrunt apply --all --non-interactive 
+                cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/astro/
+                terragrunt plan --all --non-interactive 
+                terragrunt apply --all --non-interactive 
+                cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/awards/
+                terragrunt plan --all --non-interactive 
+                terragrunt apply --all --non-interactive 
+                cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/bff-administration/
+                terragrunt plan --all --non-interactive 
+                terragrunt apply --all --non-interactive 
 
 
             displayName: "✔️ Plan"
