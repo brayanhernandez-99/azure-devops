@@ -22,15 +22,15 @@ stages:
 
       - stage: semantic_version_electron
         displayName: "🏷️ Semantic Version Electron"
-        dependsOn:
-          - build_micro_frontend_antioquia
-          - build_micro_frontend_cap
-          - build_micro_frontend_tolima
-          - build_micro_frontend_huila
-          - build_micro_frontend_cauca
-          - build_micro_frontend_boyaca
-          - build_micro_frontend_santander
-        #dependsOn: build_micro_frontend_cap
+        # dependsOn:
+        #   - build_micro_frontend_antioquia
+        #   - build_micro_frontend_cap
+        #   - build_micro_frontend_tolima
+        #   - build_micro_frontend_huila
+        #   - build_micro_frontend_cauca
+        #   - build_micro_frontend_boyaca
+        #   - build_micro_frontend_santander
+        dependsOn: build_micro_frontend_cap
         jobs:
           - template: ../ci/semantic-version-integration.yml
             parameters:
