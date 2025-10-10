@@ -99,7 +99,7 @@ jobs:
 
               cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/lotteries-games/aws-service-EventBridge
               terragrunt plan --all --non-interactive --no-color
-              terragrunt destroy --all --non-interactive --no-color
+              terragrunt apply --all --non-interactive --no-color
 
             displayName: "✔️ Plan"
             workingDirectory: $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima
