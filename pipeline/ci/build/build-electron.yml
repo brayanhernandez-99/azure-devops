@@ -223,15 +223,13 @@ jobs:
           mkdir -p $APP_DIR
           all_found=true
 
-          echo "***********"
-          echo "PATH: $BASE_PATH"
-          ls -l $BASE_PATH
-          ls -l $BASE_PATH/*
-          echo "***********"
+          # echo "***********"
+          # ls -l $BASE_PATH/*
+          # echo "***********"
 
           FILES_TO_COPY=(
             "InvictusUX-$(msVersion).AppImage"
-            "latest-linux.yml"
+            # "latest-linux.yml"
           )
 
           for file in "${FILES_TO_COPY[@]}"; do
@@ -549,15 +547,14 @@ jobs:
             New-Item -ItemType Directory -Path $APP_DIR -Force | Out-Null
             $allFound = $true 
 
-            Write-Host "***********"
-            Write-Host "PATH: $BASE_PATH"
-            Get-ChildItem -Path $BASE_PATH | Select-Object Mode, LastWriteTime, Length, Name | Format-Table
-            Write-Host "***********"
+            # Write-Host "***********"
+            # Get-ChildItem -Path $BASE_PATH | Select-Object Mode, LastWriteTime, Length, Name | Format-Table
+            # Write-Host "***********"
 
             $filesToCopy = @(
               "InvictusUX Setup $($env:version).exe",
-              "InvictusUX Setup $($env:version).exe.blockmap",
-              "latest.yml"
+              "InvictusUX Setup $($env:version).exe.blockmap"
+              # "latest.yml"
             )
 
             foreach ($file in $filesToCopy) {
