@@ -18,6 +18,11 @@ jobs:
         displayName: "📥 Download Electron Artifacts"
         condition: succeeded()
 
+      - script: |
+          echo -e "\n📁 Contenido descargado del artifact 'electron':"
+          tree "$(Pipeline.Workspace)/electron-artifacts" || ls -R "$(Pipeline.Workspace)/electron-artifacts"
+        displayName: "🔍 Ver contenido del artifact descargado"
+
       - task: DownloadBuildArtifacts@0
         inputs:
           artifactName: "versions"
