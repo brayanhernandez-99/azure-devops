@@ -1,9 +1,12 @@
 jobs:
-  - job: deploy_validation
-    steps:
-      - script: 
-          echo -e "\nℹ️ Validando si cumple las condiciones para el despliegue...""
-        displayName: "🛡️ Validate deployment"
+  # - job: deploy_validation
+  #   displayName: "🛡️ Validate deployment"
+  #   pool:
+  #     name: "Azure Pipelines"
+  #     vmImage: ubuntu-22.04
+  #   steps:
+  #     - script: echo -e "\nℹ️ Validando si cumple las condiciones para el despliegue..."
+  #       displayName: "🛡️ Validar condiciones de despliegue"
 
   - ${{ if in(variables['Build.SourceBranch'], 'refs/heads/develop', 'refs/heads/staging', 'refs/heads/master') }}:
       - deployment: WaitForApproval
@@ -22,8 +25,8 @@ jobs:
         strategy:
           runOnce:
             deploy:
-              steps:
-                - script: echo "Aprobación recibida. Iniciando el despliegue..."
+              - script: echo "✅ Aprobación recibida. Iniciando el despliegue..."
+                displayName: "🔓 Aprobación confirmada"
 
       - ${{ if eq(parameters.release, 'aws-ecs') }}:
           - template: ./deploy/deploy-backend.yml
