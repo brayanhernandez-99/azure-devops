@@ -1,13 +1,4 @@
 jobs:
-  # - job: deploy_validation
-  #   displayName: "🛡️ Validate deployment"
-  #   pool:
-  #     name: "Azure Pipelines"
-  #     vmImage: ubuntu-22.04
-  #   steps:
-  #     - script: echo -e "\nℹ️ Validando si cumple las condiciones para el despliegue..."
-  #       displayName: "🛡️ Validar condiciones de despliegue"
-
   - deployment: WaitForApproval
     displayName: "🛡️ Waiting for approval"
     pool:
