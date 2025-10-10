@@ -22,8 +22,8 @@ stages:
 
       - stage: semantic_version_electron
         displayName: "🏷️ Semantic Version Electron"
-        #dependsOn: build_micro_frontend_${{ region }}
-        dependsOn: build_micro_frontend_cap
+        dependsOn: build_micro_frontend_${{ region }}
+        #dependsOn: build_micro_frontend_cap
         jobs:
           - template: ../ci/semantic-version-integration.yml
             parameters:

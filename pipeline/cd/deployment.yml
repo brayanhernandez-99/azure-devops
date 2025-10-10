@@ -1,6 +1,6 @@
 jobs:
   - deployment: WaitForApproval
-    displayName: "🛡️ Waiting for approval"
+    displayName: "🛡️ waiting approval"
     ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}:
       environment: "Deploy develop"
     ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
@@ -15,7 +15,7 @@ jobs:
         deploy:
           steps:
             - script: echo "✅ Aprobación recibida. Iniciando el despliegue..."
-              displayName: "🔓 Approval confirmed"
+              displayName: "🔓 Approval Confirmed"
 
   - ${{ if eq(parameters.release, 'aws-ecs') }}:
       - template: ./deploy/deploy-backend.yml
