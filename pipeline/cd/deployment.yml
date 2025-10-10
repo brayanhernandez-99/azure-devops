@@ -26,7 +26,7 @@ jobs:
   - ${{ if eq(parameters.release, 'exe') }}:
       - template: ./deploy/deploy-electron.yml
         parameters:
-          apps: ${{ parameters.region }}
+          region: ${{ parameters.region }}
 
   - ${{ if eq(parameters.release, 'apk') }}:
       - template: ./deploy/deploy-flutter.yml
