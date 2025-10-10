@@ -392,30 +392,21 @@ jobs:
               set -e
 
 
-              cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/reports/aws-service-ssm-parameter
+              cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/redis/aws-service-ssm-parameter
               terragrunt plan --all --non-interactive -no-color 
               terragrunt apply --all --non-interactive -no-color
 
-              cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/security/aws-service-ssm-parameter
+              cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/remittances/aws-service-ssm-parameter
               terragrunt plan --all --non-interactive -no-color 
               terragrunt apply --all --non-interactive -no-color
 
-              cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/sellers/aws-service-ssm-parameter
+              cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/transaction-notifier/aws-service-ssm-parameter
               terragrunt plan --all --non-interactive -no-color 
               terragrunt apply --all --non-interactive -no-color
 
-              cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/shopping-cart/aws-service-ssm-parameter
+              cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/wiretransfer/aws-service-ssm-parameter
               terragrunt plan --all --non-interactive -no-color 
               terragrunt apply --all --non-interactive -no-color
-
-              cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/siga/aws-service-ssm-parameter
-              terragrunt plan --all --non-interactive -no-color 
-              terragrunt apply --all --non-interactive -no-color
-
-              cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/transaction/aws-service-ssm-parameter
-              terragrunt plan --all --non-interactive -no-color 
-              terragrunt apply --all --non-interactive -no-color
-
 
 
             displayName: "✔️ Plan"
