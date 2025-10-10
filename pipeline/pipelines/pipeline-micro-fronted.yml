@@ -75,6 +75,7 @@ stages:
       - stage: deploy_electron
         displayName: "🚀 Deploy Electron"
         dependsOn: build_electron
+        condition: in(variables['Build.SourceBranchName'], 'develop', 'staging', 'master')
         jobs:
           - template: ../cd/deployment.yml
             parameters:
