@@ -73,10 +73,10 @@ stages:
           - template: ../ci/build/build-electron.yml
 
       - ${{ if in(variables['Build.SourceBranchName'], 'develop', 'staging', 'master') }}:
-      - stage: deploy_electron
-        displayName: "🚀 Deploy Electron"
-        dependsOn: build_electron
-        jobs:
-          - template: ../cd/deployment.yml
-            parameters:
-              release: exe
+          - stage: deploy_electron
+            displayName: "🚀 Deploy Electron"
+            dependsOn: build_electron
+            jobs:
+              - template: ../cd/deployment.yml
+                parameters:
+                  release: exe
