@@ -222,7 +222,7 @@ jobs:
       #     ne(variables['msName'], 'app-administration-vue2'),
       #     ne(variables['msName'], 'app-sellers-vue2'),
       #     ne(variables['Build.SourceBranchName'], 'master'))
-      
+
       # - task: SonarQubePrepare@7
       #   displayName: "⚙️ Prepare SonarQube Analysis"
       #   inputs:
@@ -269,6 +269,23 @@ jobs:
       #     ne(variables['msName'], 'app-administration-vue2'),
       #     ne(variables['msName'], 'app-sellers-vue2'),
       #     ne(variables['Build.SourceBranchName'], 'master'))
+
+      # - task: SonarQubeAnalyze@7
+      #   displayName: "📡 Run Sonar Analysis"
+      #   condition: and(succeeded(),
+      #     ne(variables['msName'], 'app-administration-vue2'),
+      #     ne(variables['msName'], 'app-sellers-vue2'),
+      #     ne(variables['Build.SourceBranchName'], 'master'))
+
+      # - task: SonarQubePublish@7
+      #   displayName: "📤 Publish Static Code Analysis Results"
+      #   inputs:
+      #     pollingTimeoutSec: 400
+      #   condition: and(succeeded(),
+      #     ne(variables['msName'], 'app-administration-vue2'),
+      #     ne(variables['msName'], 'app-sellers-vue2'),
+      #     ne(variables['Build.SourceBranchName'], 'master'))
+
       # - template: sonarqube/job-sonarqube.yml@sonarqube
       #   parameters:
       #     msName: $(msName)
