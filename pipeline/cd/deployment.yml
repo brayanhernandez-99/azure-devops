@@ -1,9 +1,9 @@
 jobs:
   - deployment: WaitForApproval
+    displayName: "🛡️ Waiting for approval"
     pool:
       name: "Azure Pipelines"
       VmImage: ubuntu-22.04
-    displayName: "🛡️ Waiting for approval"
     ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}:
       environment: "Deploy develop"
     ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
@@ -13,8 +13,9 @@ jobs:
     strategy:
       runOnce:
         deploy:
-          - script: echo "✅ Aprobación recibida. Iniciando el despliegue..."
-            displayName: "🔓 Approval confirmed"
+          steps:
+            - script: echo "✅ Aprobación recibida. Iniciando el despliegue..."
+              displayName: "🔓 Approval confirmed"
 
   - ${{ if eq(parameters.release, 'aws-ecs') }}:
       - template: ./deploy/deploy-backend.yml
