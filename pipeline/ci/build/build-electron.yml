@@ -585,7 +585,7 @@ jobs:
 
       - task: PublishBuildArtifacts@1
         inputs:
-          PathtoPublish: "$(Build.ArtifactStagingDirectory)\electron-artifacts"
+          PathtoPublish: "$(Build.ArtifactStagingDirectory)/electron-artifacts"
           ArtifactName: "electron"
           publishLocation: "Container"
         displayName: "📤 Publish artifact electron"
