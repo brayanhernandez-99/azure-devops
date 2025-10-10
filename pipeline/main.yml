@@ -39,7 +39,7 @@ resources:
       type: git
 
     - repository: electron
-      name: Invictus/electron-app-invictus
+      name: Invictus/electron-app-invictus-test
       type: git
 
     - repository: sonarqube

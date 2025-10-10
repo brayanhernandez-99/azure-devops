@@ -53,6 +53,7 @@ stages:
                 parameters:
                   release: exe
                   region: ${{ region }}
+                  apps: ${{ parameters.apps }}
 
   #####################################################################
 
@@ -87,3 +88,4 @@ stages:
               - template: ../cd/deployment.yml
                 parameters:
                   release: exe
+                  apps: ${{ parameters.apps }}
