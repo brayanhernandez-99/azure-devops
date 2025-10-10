@@ -97,6 +97,7 @@ jobs:
               set -e
 
               cd $(Build.SourcesDirectory)/iac-terragrunt/project/invictus/tolima/initial-infrastructure/aws-service-kinesis-ckm
+              terragrunt plan --all --non-interactive --no-color
               terragrunt apply --all --non-interactive -- -refresh-only --no-color
 
 
