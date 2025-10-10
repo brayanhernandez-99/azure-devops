@@ -1,6 +1,5 @@
 jobs:
   - deployment: WaitForApproval
-    environment: "Deploy develop"
     displayName: "🛡️ Waiting for approval"
     ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}:
       environment: "Deploy develop"
