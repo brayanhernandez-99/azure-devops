@@ -1,5 +1,5 @@
 jobs:
-  - job: "commit_tag_version_frontend"
+  - job: "commit_tag_version_frontend_${{ parameters.region }}"
     displayName: "🏷️ Commit and tag Frontend"
     pool:
       name: Azure Pipelines
