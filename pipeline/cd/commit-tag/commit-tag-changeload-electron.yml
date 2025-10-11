@@ -221,7 +221,7 @@ jobs:
   - ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
       - job: "create_publish_versioning_electron"
         displayName: "Create and Publish Versioning"
-        dependsOn: "commit_tag_version"
+        dependsOn: "commit_tag_version_electron"
         pool:
           vmImage: "ubuntu-22.04"
         steps:
