@@ -219,7 +219,7 @@ jobs:
         condition: succeeded()
 
   - ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
-      - job: "create_publish_versioning"
+      - job: "create_publish_versioning_electron"
         displayName: "Create and Publish Versioning"
         dependsOn: "commit_tag_version"
         pool:

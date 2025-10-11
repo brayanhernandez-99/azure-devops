@@ -1,5 +1,5 @@
 jobs:
-  - job: "commit_tag_version_frontend_${{ parameters.region }}"
+  - job: "commit_tag_version_frontend"
     displayName: "🏷️ Commit and tag Frontend"
     pool:
       name: Azure Pipelines
@@ -172,7 +172,7 @@ jobs:
         condition: succeeded()
 
   - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/master') }}:
-      - job: "create_publish_versioning"
+      - job: "create_publish_versioning_frontend"
         displayName: "📦 Create and Publish Versioning"
         dependsOn: "commit_tag_version"
         pool:
