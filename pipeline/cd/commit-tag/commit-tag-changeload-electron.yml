@@ -1,6 +1,6 @@
 jobs:
   - job: "commit_tag_version_electron"
-    displayName: "🏷️ Commit and tag Electron"
+    displayName: "🏷️ commit and tag electron"
     pool:
       name: Azure Pipelines
       vmImage: "ubuntu-22.04"
@@ -220,12 +220,12 @@ jobs:
 
   - ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
       - job: "create_publish_versioning_electron"
-        displayName: "Create and Publish Versioning"
+        displayName: "📦 create and publish versioning electron"
         dependsOn: "commit_tag_version_electron"
         pool:
           vmImage: "ubuntu-22.04"
         steps:
           - task: git-tag-on-release-task@9
-            displayName: "📦 Create and Publish Versioning Tag"
+            displayName: "📦 Create and Publish Versioning Tag Electron"
             condition: succeeded()
             continueOnError: true

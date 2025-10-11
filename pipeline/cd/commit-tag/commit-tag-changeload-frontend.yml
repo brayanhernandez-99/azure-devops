@@ -1,6 +1,6 @@
 jobs:
   - job: "commit_tag_version_frontend"
-    displayName: "🏷️ Commit and tag Frontend"
+    displayName: "🏷️ commit and tag frontend"
     pool:
       name: Azure Pipelines
       vmImage: "ubuntu-22.04"
@@ -173,12 +173,12 @@ jobs:
 
   - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/master') }}:
       - job: "create_publish_versioning_frontend"
-        displayName: "📦 Create and Publish Versioning"
+        displayName: "📦 create and publish versioning frontend"
         dependsOn: "commit_tag_version_frontend"
         pool:
           vmImage: "ubuntu-22.04"
         steps:
           - task: git-tag-on-release-task@9
-            displayName: "📦 Create and Publish Versioning Tag"
+            displayName: "📦 Create and Publish Versioning Tag Frontend"
             condition: succeeded()
             continueOnError: true
