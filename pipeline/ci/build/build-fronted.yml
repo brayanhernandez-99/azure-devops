@@ -84,9 +84,9 @@ jobs:
             cat <<EOF > "$npmrcPath"
             //$REPO_DOMAIN/$REPO_PATH/:_authToken=$token
             registry=$REPO_URL
-            ignore-scripts=false
-            enable-pre-post-scripts=true
-            legacy-peer-deps=true
+            # ignore-scripts=false
+            # enable-pre-post-scripts=true
+            # legacy-peer-deps=true
             EOF
             ls -l $npmrcPath
         displayName: "🔐 Setup CodeArtifact & npm config"
@@ -161,12 +161,12 @@ jobs:
         condition: succeeded()
 
       - script: |
-          npm install -g pnpm
+          #npm install -g pnpm
 
           cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
-          pnpm i
+          npm i
           
-          OUTPUT=$(pnpm ls --depth=0 || true)
+          OUTPUT=$(npm ls --depth=0 || true)
           if [[ -z "$OUTPUT" ]]; then
             echo "##vso[task.logissue type=error]❌ No se instalaron dependencias, esperar que se actualicen las dependencias a nivel global"
             exit 99
@@ -181,11 +181,11 @@ jobs:
           if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
             cat $(System.DefaultWorkingDirectory)/app-legacy/$(msName)/.env.local
             cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
-            pnpm run build
+            npm run build
           else
             cat $(System.DefaultWorkingDirectory)/apps/$(msName)/.env
-            pnpm add -D dotenv-cli
-            pnpm build --filter=...$(msName)
+            npm add -D dotenv-cli
+            npm build --filter=...$(msName)
           fi
 
           DIST_PATH="$(System.DefaultWorkingDirectory)/$(file)/$(msName)/dist"
