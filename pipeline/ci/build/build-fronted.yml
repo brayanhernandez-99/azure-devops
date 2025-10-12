@@ -84,9 +84,7 @@ jobs:
             cat <<EOF > "$npmrcPath"
             //$REPO_DOMAIN/$REPO_PATH/:_authToken=$token
             registry=$REPO_URL
-            # ignore-scripts=false
-            # enable-pre-post-scripts=true
-            # legacy-peer-deps=true
+            node-linker=hoisted
             EOF
             ls -l $npmrcPath
         displayName: "🔐 Setup CodeArtifact & npm config"
@@ -161,10 +159,11 @@ jobs:
         condition: succeeded()
 
       - script: |
-          #npm install -g pnpm
+          npm install -g pnpm
+          pnpm add -D prebuild-install
 
           cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
-          npm i
+          pnpm i --ignore-scripts=false --enable-pre-post-scripts=true --legacy-peer-deps=true
           
           OUTPUT=$(npm ls --depth=0 || true)
           if [[ -z "$OUTPUT" ]]; then

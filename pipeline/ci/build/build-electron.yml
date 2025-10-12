@@ -129,9 +129,7 @@ jobs:
             cat <<EOF > ".npmrc"
             //$REPO_DOMAIN/$REPO_PATH/:_authToken=$token
             registry=$REPO_URL
-            ignore-scripts=false
-            enable-pre-post-scripts=true
-            legacy-peer-deps=true
+            node-linker=hoisted
             EOF
             ls -l .npmrc
         displayName: "🔐 Setup CodeArtifact & npm config"
@@ -208,10 +206,10 @@ jobs:
           echo -e "\n📦 Instalando dependencias node..."
           #npm_config_legacy_peer_deps=true npm i
           npm install -g pnpm
-          pnpm i
+          pnpm add -D prebuild-install
+          pnpm i --ignore-scripts=false --enable-pre-post-scripts=true --legacy-peer-deps=true
 
           echo -e "\n📦 Dependencias instaladas:"
-          #npm list --depth=0
           pnpm list --depth=0
         displayName: "⚙️ Install dependencies"
         condition: succeeded()
