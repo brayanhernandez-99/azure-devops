@@ -84,9 +84,6 @@ jobs:
             cat <<EOF > "$npmrcPath"
             //$REPO_DOMAIN/$REPO_PATH/:_authToken=$token
             registry=$REPO_URL
-            node-linker=hoisted
-            ignore-scripts=false
-            strict-peer-dependencies=false
             EOF
             ls -l $npmrcPath
         displayName: "🔐 Setup CodeArtifact & npm config"
@@ -162,6 +159,15 @@ jobs:
 
       - script: |
           npm install -g pnpm
+          
+          echo -e "\nGenerando archivo .pnpmrc"
+          cat <<EOF > ".pnpmrc"
+          node-linker=hoisted
+          ignore-scripts=false
+          strict-peer-dependencies=false
+          EOF
+          ls -l .pnpmrc
+
           pnpm add -D prebuild-install -w
           pnpm add -D dotenv-cli -w
 
