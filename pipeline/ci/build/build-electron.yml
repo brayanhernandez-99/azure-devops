@@ -129,6 +129,9 @@ jobs:
             cat <<EOF > ".npmrc"
             //$REPO_DOMAIN/$REPO_PATH/:_authToken=$token
             registry=$REPO_URL
+            ignore-scripts=false
+            enable-pre-post-scripts=true
+            legacy-peer-deps=true
             EOF
             ls -l .npmrc
         displayName: "🔐 Setup CodeArtifact & npm config"
@@ -203,16 +206,20 @@ jobs:
           sudo apt-get install -y libcups2-dev
 
           echo -e "\n📦 Instalando dependencias node..."
-          npm_config_legacy_peer_deps=true npm i
+          #npm_config_legacy_peer_deps=true npm i
+          npm install -g pnpm
+          pnpm i
 
           echo -e "\n📦 Dependencias instaladas:"
-          npm list --depth=0
+          #npm list --depth=0
+          pnpm list --depth=0
         displayName: "⚙️ Install dependencies"
         condition: succeeded()
 
       - script: |
           echo -e "\n📦 Build electron"
-          npm_config_legacy_peer_deps=true npm run build
+          #npm_config_legacy_peer_deps=true npm run build
+          npm run build
         displayName: "📦 Build electron"
         condition: succeeded()
 
@@ -222,10 +229,6 @@ jobs:
           APP_DIR="$BASE_PATH/app"
           mkdir -p $APP_DIR
           all_found=true
-
-          # echo "***********"
-          # ls -l $BASE_PATH/*
-          # echo "***********"
 
           FILES_TO_COPY=(
             "InvictusUX-$(msVersion).AppImage"
