@@ -84,6 +84,8 @@ jobs:
             cat <<EOF > "$npmrcPath"
             //$REPO_DOMAIN/$REPO_PATH/:_authToken=$token
             registry=$REPO_URL
+            ignore-scripts=false
+            enable-pre-post-scripts=true
             EOF
             ls -l $npmrcPath
         displayName: "🔐 Setup CodeArtifact & npm config"
@@ -181,11 +183,11 @@ jobs:
           if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
             cat $(System.DefaultWorkingDirectory)/app-legacy/$(msName)/.env.local
             cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
-            pnpm run build
+            npm run build
           else
             cat $(System.DefaultWorkingDirectory)/apps/$(msName)/.env
-            pnpm add -D dotenv-cli
-            pnpm build --filter=...$(msName)
+            npm add -D dotenv-cli
+            npm build --filter=...$(msName)
           fi
 
           DIST_PATH="$(System.DefaultWorkingDirectory)/$(file)/$(msName)/dist"
