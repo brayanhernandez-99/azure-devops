@@ -1,6 +1,6 @@
 jobs:
   - job: "commit_tag_version_frontend"
-    displayName: "🏷️ commit and tag frontend"
+    displayName: "🚀 commit and tag frontend"
     pool:
       name: Azure Pipelines
       vmImage: "ubuntu-22.04"
@@ -168,7 +168,7 @@ jobs:
           git add package.json
           git commit -m "chore($(msName)): bump version to $(cleanNEXT_VERSION)"
           git push origin version/$clean_branch
-        displayName: "⚡ Bump Version & Push: $(msName)"
+        displayName: "⚡ Commit Version & Push: $(msName)"
         condition: succeeded()
 
   - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/master') }}:

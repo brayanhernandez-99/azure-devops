@@ -325,7 +325,7 @@ jobs:
           git add package.json
           git commit -m "chore($(msName)): bump version to $(cleanNEXT_VERSION)"
           git push origin version/$clean_branch
-        displayName: "⚡ Bump Version & Push — $(msName)"
+        displayName: "⚡ Commit Version & Push — $(msName)"
         condition: and(succeeded(),
           ne(variables['Build.SourceBranchName'], 'master'),
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
