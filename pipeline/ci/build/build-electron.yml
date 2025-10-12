@@ -129,8 +129,6 @@ jobs:
             cat <<EOF > ".npmrc"
             //$REPO_DOMAIN/$REPO_PATH/:_authToken=$token
             registry=$REPO_URL
-            node-linker=hoisted
-            ignore-scripts=false
             EOF
             ls -l .npmrc
         displayName: "🔐 Setup CodeArtifact & npm config"
