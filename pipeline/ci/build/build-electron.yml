@@ -206,7 +206,7 @@ jobs:
           #npm_config_legacy_peer_deps=true npm i
           npm install -g pnpm
           
-          echo -e "\nGenerando archivo .pnpmrc"
+          echo -e "\n📄 Generando archivo .pnpmrc"
           cat <<EOF > ".pnpmrc"
           node-linker=hoisted
           ignore-scripts=false
@@ -216,9 +216,9 @@ jobs:
           ls -l .pnpmrc
           echo ""
 
-          pnpm add -D prebuild-install -w
-          yes | pnpm approve-builds
+          pnpm add -D prebuild-install
           pnpm i
+          yes | pnpm approve-builds
 
           OUTPUT=$(pnpm ls --depth=0 || true)
           if [[ -z "$OUTPUT" ]]; then
@@ -232,7 +232,7 @@ jobs:
         condition: succeeded()
 
       - script: |
-          echo -e "\n📦 Build electron"
+          echo -e "\n📦 Build Electron..."
           #npm_config_legacy_peer_deps=true npm run build
           pnpm run build
         displayName: "📦 Build electron"

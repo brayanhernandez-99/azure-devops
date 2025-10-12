@@ -158,9 +158,10 @@ jobs:
         condition: succeeded()
 
       - script: |
+          echo -e "\n📦 Instalando dependencias node..."
           npm install -g pnpm
           
-          echo -e "\nGenerando archivo .pnpmrc"
+          echo -e "\n📄 Generando archivo .pnpmrc"
           cat <<EOF > ".pnpmrc"
           node-linker=hoisted
           ignore-scripts=false
@@ -174,8 +175,8 @@ jobs:
           pnpm add -D dotenv-cli -w
 
           cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
-          yes | pnpm approve-builds
           pnpm i
+          yes | pnpm approve-builds
           
           OUTPUT=$(pnpm ls --depth=0 || true)
           if [[ -z "$OUTPUT" ]]; then
@@ -189,6 +190,8 @@ jobs:
         condition: succeeded()
 
       - script: |
+          echo -e "\n📦 Build MicroFrontend..."
+
           if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
             cat $(System.DefaultWorkingDirectory)/app-legacy/$(msName)/.env.local
             cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
