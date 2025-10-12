@@ -166,8 +166,9 @@ jobs:
           ignore-scripts=false
           strict-peer-dependencies=false
           EOF
-          ls -l .pnpmrc
           cat .pnpmrc
+          ls -l .pnpmrc
+          echo ""
 
           pnpm add -D prebuild-install -w
           pnpm add -D dotenv-cli -w
