@@ -219,7 +219,7 @@ jobs:
       - script: |
           echo -e "\n📦 Build electron"
           #npm_config_legacy_peer_deps=true npm run build
-          npm run build
+          pnpm run build
         displayName: "📦 Build electron"
         condition: succeeded()
 
