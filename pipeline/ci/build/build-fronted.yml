@@ -86,6 +86,7 @@ jobs:
             registry=$REPO_URL
             node-linker=hoisted
             ignore-scripts=false
+            strict-peer-dependencies=false
             EOF
             ls -l $npmrcPath
         displayName: "🔐 Setup CodeArtifact & npm config"
@@ -162,6 +163,7 @@ jobs:
       - script: |
           npm install -g pnpm
           pnpm add -D prebuild-install -w
+          pnpm add -D dotenv-cli -w
 
           cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
           pnpm i
@@ -184,8 +186,8 @@ jobs:
             pnpm run build
           else
             cat $(System.DefaultWorkingDirectory)/apps/$(msName)/.env
-            pnpm add -D dotenv-cli
-            pnpm build --filter=...$(msName)
+            #pnpm add -D dotenv-cli
+            pnpm run build --filter=...$(msName)
           fi
 
           DIST_PATH="$(System.DefaultWorkingDirectory)/$(file)/$(msName)/dist"
