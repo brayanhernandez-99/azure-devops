@@ -204,7 +204,6 @@ jobs:
 
           echo -e "\n📦 Instalando dependencias node..."
           #npm_config_legacy_peer_deps=true npm i
-          
           npm install -g pnpm
           
           echo -e "\nGenerando archivo .pnpmrc"
@@ -214,12 +213,20 @@ jobs:
           strict-peer-dependencies=false
           EOF
           ls -l .pnpmrc
+          cat .pnpmrc
 
           pnpm add -D prebuild-install -w
+          yes | pnpm approve-builds
           pnpm i
 
-          echo -e "\n📦 Dependencias instaladas:"
-          pnpm list --depth=0
+          OUTPUT=$(pnpm ls --depth=0 || true)
+          if [[ -z "$OUTPUT" ]]; then
+            echo "##vso[task.logissue type=error]❌ No se instalaron dependencias, esperar que se actualicen las dependencias a nivel global"
+            exit 99
+          else
+            echo -e "\n✅ Dependencias Instaladas:"
+            echo "$OUTPUT"
+          fi
         displayName: "⚙️ Install dependencies"
         condition: succeeded()
 

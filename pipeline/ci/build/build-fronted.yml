@@ -167,11 +167,13 @@ jobs:
           strict-peer-dependencies=false
           EOF
           ls -l .pnpmrc
+          cat .pnpmrc
 
           pnpm add -D prebuild-install -w
           pnpm add -D dotenv-cli -w
 
           cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
+          yes | pnpm approve-builds
           pnpm i
           
           OUTPUT=$(pnpm ls --depth=0 || true)
@@ -179,7 +181,7 @@ jobs:
             echo "##vso[task.logissue type=error]❌ No se instalaron dependencias, esperar que se actualicen las dependencias a nivel global"
             exit 99
           else
-            echo "✅ Dependencias Instaladas:"
+            echo -e "\n✅ Dependencias Instaladas:"
             echo "$OUTPUT"
           fi
         displayName: "📦 Install Dependencies"
