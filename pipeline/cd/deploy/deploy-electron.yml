@@ -11,19 +11,19 @@ jobs:
           region: ${{ parameters.region }}
 
     steps:
-      - task: DownloadBuildArtifacts@0
-        inputs:
-          artifactName: "electron"
-          downloadPath: "$(Pipeline.Workspace)/electron-artifacts"
-        displayName: "📥 Download Electron Artifacts"
-        condition: succeeded()
+      # - task: DownloadBuildArtifacts@0
+      #   inputs:
+      #     artifactName: "electron"
+      #     downloadPath: "$(Pipeline.Workspace)/electron-artifacts"
+      #   displayName: "📥 Download Electron Artifacts"
+      #   condition: succeeded()
 
-      - task: DownloadBuildArtifacts@0
-        inputs:
-          artifactName: "versions"
-          downloadPath: "$(Pipeline.Workspace)/versions-downloaded"
-        displayName: "📥 Download Version"
-        condition: succeeded()
+      # - task: DownloadBuildArtifacts@0
+      #   inputs:
+      #     artifactName: "versions"
+      #     downloadPath: "$(Pipeline.Workspace)/versions-downloaded"
+      #   displayName: "📥 Download Version"
+      #   condition: succeeded()
 
       - script: |
           VERSION_FILE="$(Pipeline.Workspace)/versions-downloaded/versions/electron/version.json"
