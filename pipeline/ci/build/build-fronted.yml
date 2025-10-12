@@ -181,11 +181,11 @@ jobs:
           if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
             cat $(System.DefaultWorkingDirectory)/app-legacy/$(msName)/.env.local
             cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
-            npm run build
+            pnpm run build
           else
             cat $(System.DefaultWorkingDirectory)/apps/$(msName)/.env
-            npm add -D dotenv-cli
-            npm build --filter=...$(msName)
+            pnpm add -D dotenv-cli
+            pnpm build --filter=...$(msName)
           fi
 
           DIST_PATH="$(System.DefaultWorkingDirectory)/$(file)/$(msName)/dist"
