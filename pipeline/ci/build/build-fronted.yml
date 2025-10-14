@@ -164,42 +164,22 @@ jobs:
           echo -e "\n⚙️ Instalando dependencias node..."
           npm install -g pnpm
 
-          export PNPM_TRUSTED_BUILD_SCRIPTS="*"
-          pnpmrcPath="$(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc"
-          # pnpm_buildsPath="$(System.DefaultWorkingDirectory)/.pnpm-builds.json"
-
-          echo -e "\n📄 Generando archivo .pnpmrc en: $pnpmrcPath"
-          cat <<EOF > $pnpmrcPath
+          echo -e "\n📄 Generando archivo .pnpmrc en: $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc"
+          cat <<EOF > "$(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc"
           node-linker=hoisted
           ignore-scripts=false
           allow-build-script=true
           strict-peer-dependencies=false
           EOF
-          ls -l $pnpmrcPath
-          cat $pnpmrcPath
-          
-          # echo -e "\n📄 Generando archivo .pnpm-builds.json en: $pnpm_buildsPath"
-          # cat <<'JSON' > $pnpm_buildsPath
-          # {
-          #   "approvedBuilds": {
-          #     "@tailwindcss/oxide@*": true,
-          #     "aws-crt@*": true,
-          #     "core-js@*": true,
-          #     "electron@*": true,
-          #     "javascript-obfuscator@*": true,
-          #     "vue-demi@*": true
-          #   }
-          # }
-          # JSON
-          # ls -l $pnpm_buildsPath
-          # cat $pnpm_buildsPath
-          # echo ""
-        
-          cat package.json
+          ls -l $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc
+          cat $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc
 
-          cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
-          #pnpm add -D dotenv-cli
-          pnpm install --recursive
+          if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
+            cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
+            pnpm install
+          else
+            pnpm install pnpm run build --filter=...$(msName)
+          fi
           pnpm ignored-builds
 
           OUTPUT=$(pnpm ls --depth=0 || true)
