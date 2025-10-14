@@ -237,7 +237,7 @@ jobs:
           echo ""
 
           #pnpm add -D dotenv-cli
-          pnpm install
+          pnpm install --recursive
           pnpm ignored-builds
 
           OUTPUT=$(pnpm ls --depth=0 || true)
