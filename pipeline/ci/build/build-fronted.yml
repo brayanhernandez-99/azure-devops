@@ -179,7 +179,7 @@ jobs:
           cat $pnpmrcPath
           
           echo -e "\n📄 Generando archivo .pnpm-builds.json en: $pnpm_buildsPath"
-          cat <<EOF > $pnpm_buildsPath
+          cat <<'JSON' > $pnpm_buildsPath
           {
             "approvedBuilds": {
               "@tailwindcss/oxide@*": true,
@@ -190,7 +190,7 @@ jobs:
               "vue-demi@*": true
             }
           }
-          EOF
+          JSON
           ls -l $pnpm_buildsPath
           cat $pnpm_buildsPath
           echo ""
