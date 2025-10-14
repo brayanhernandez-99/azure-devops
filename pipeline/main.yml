@@ -2,12 +2,6 @@ parameters:
   - name: release
     type: string
     values:
-      - aws-s3
-      - aws-ecs
-      - apk
-      - exe
-      - iac
-      - rpc
       - ecs-redes
 
   - name: red
@@ -24,8 +18,8 @@ parameters:
   - name: apps
     type: object
     default:
-      microservice-products: "1.0.3"
-      microservice-reports: "2.5.0"
+      microservice-astro: "3.5.4"
+      microservice-collected: "3.5.1"
 
 resources:
   repositories:
