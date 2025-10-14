@@ -165,7 +165,7 @@ jobs:
           npm install -g pnpm
 
           export PNPM_TRUSTED_BUILD_SCRIPTS="*"
-          pnpmrcPath="$(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc"
+          pnpmrcPath="$(System.DefaultWorkingDirectory)/.pnpmrc"
           pnpm_buildsPath="$(System.DefaultWorkingDirectory)/.pnpm-builds.json"
 
           echo -e "\n📄 Generando archivo .pnpmrc en: $pnpmrcPath"
@@ -195,8 +195,8 @@ jobs:
           cat $pnpm_buildsPath
           echo ""
         
-          cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
-          pnpm add -D dotenv-cli
+          #cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
+          #pnpm add -D dotenv-cli
           pnpm install
           pnpm ignored-builds
 
