@@ -181,10 +181,12 @@ jobs:
           cat <<EOF > ".pnpm-builds.json"
           {
             "approvedBuilds": {
-              "esbuild@0.23.0": true,
-              "@tailwindcss/oxide@4.0.3": true,
-              "electron@32.0.1": true,
-              "vue-demi@0.14.6": true
+              "@tailwindcss/oxide@*": true,
+              "aws-crt@*": true,
+              "core-js@*": true,
+              "electron@*": true,
+              "javascript-obfuscator@*": true,
+              "vue-demi@*": true
             }
           }
           EOF

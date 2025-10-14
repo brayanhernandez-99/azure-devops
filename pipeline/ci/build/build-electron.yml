@@ -220,10 +220,10 @@ jobs:
           cat <<EOF > ".pnpm-builds.json"
           {
             "approvedBuilds": {
-              "esbuild@0.23.0": true,
-              "@tailwindcss/oxide@4.0.3": true,
-              "electron@32.0.1": true,
-              "vue-demi@0.14.6": true
+              "@thiagoelg/node-printer@*": true,
+              "electron@*": true,
+              "esbuild@*": true,
+              "koffi@*": true
             }
           }
           EOF
