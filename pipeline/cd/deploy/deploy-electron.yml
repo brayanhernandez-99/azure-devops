@@ -11,19 +11,19 @@ jobs:
           region: ${{ parameters.region }}
 
     steps:
-      # - task: DownloadBuildArtifacts@0
-      #   inputs:
-      #     artifactName: "electron"
-      #     downloadPath: "$(Pipeline.Workspace)/electron-artifacts"
-      #   displayName: "📥 Download Electron Artifacts"
-      #   condition: succeeded()
+      - task: DownloadBuildArtifacts@0
+        inputs:
+          artifactName: "electron"
+          downloadPath: "$(Pipeline.Workspace)/electron-artifacts"
+        displayName: "📥 Download Electron Artifacts"
+        condition: succeeded()
 
-      # - task: DownloadBuildArtifacts@0
-      #   inputs:
-      #     artifactName: "versions"
-      #     downloadPath: "$(Pipeline.Workspace)/versions-downloaded"
-      #   displayName: "📥 Download Version"
-      #   condition: succeeded()
+      - task: DownloadBuildArtifacts@0
+        inputs:
+          artifactName: "versions"
+          downloadPath: "$(Pipeline.Workspace)/versions-downloaded"
+        displayName: "📥 Download Version"
+        condition: succeeded()
 
       - script: |
           VERSION_FILE="$(Pipeline.Workspace)/versions-downloaded/versions/electron/version.json"
@@ -77,3 +77,9 @@ jobs:
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVIC)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVIC)
+
+      - template: ../commit-tag/commit-tag/commit-tag-changeload-electron.yml
+
+      - template: ../commit-tag/commit-tag/commit-tag-changeload-frontend.yml
+        parameters:
+          apps: ${{ parameters.apps }}
