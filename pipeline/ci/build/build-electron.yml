@@ -205,7 +205,7 @@ jobs:
           echo -e "\n⚙️ Instalando dependencias node..."
           #npm_config_legacy_peer_deps=true npm i
           npm install -g pnpm
-          
+
           echo -e "\n📄 Generando archivo .pnpmrc"
           cat <<EOF > ".pnpmrc"
           node-linker=hoisted
@@ -213,13 +213,28 @@ jobs:
           allow-build-script=true
           strict-peer-dependencies=false
           EOF
+          ls -l .pnpmrc"
           cat .pnpmrc
-          ls -l .pnpmrc
+
+          echo -e "\n📄 Generando archivo .pnpm-builds"
+          cat <<EOF > ".pnpm-builds.json"
+          {
+            "approvedBuilds": {
+              "esbuild@0.23.0": true,
+              "@tailwindcss/oxide@4.0.3": true,
+              "electron@32.0.1": true,
+              "vue-demi@0.14.6": true
+            }
+          }
+          EOF
+          ls -l .pnpm-builds.json
+          cat .pnpm-builds.json
           echo ""
 
-          pnpm add -D prebuild-install -w
-          pnpm add -D dotenv-cli -w
-          PNPM_TRUSTED_BUILD_SCRIPTS="*" pnpm install
+          export PNPM_TRUSTED_BUILD_SCRIPTS="*"
+          pnpm add -D dotenv-cli
+          pnpm install
+          pnpm approve-builds --recursive --yes
 
           OUTPUT=$(pnpm ls --depth=0 || true)
           if [[ -z "$OUTPUT" ]]; then
