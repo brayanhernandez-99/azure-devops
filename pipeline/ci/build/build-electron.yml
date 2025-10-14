@@ -125,7 +125,7 @@ jobs:
             echo "Verificando identidad de AWS..."
             aws sts get-caller-identity
 
-            echo -e "\nGenerando archivo .npmrc"
+            echo -e "\n📄 Generando archivo .npmrc"
             cat <<EOF > ".npmrc"
             //$REPO_DOMAIN/$REPO_PATH/:_authToken=$token
             registry=$REPO_URL
@@ -198,11 +198,11 @@ jobs:
         condition: succeeded()
 
       - script: |
-          echo -e "\n📦 Instalando dependencias ubuntu..."
+          echo -e "\n⚙️ Instalando dependencias ubuntu..."
           sudo apt-get update
           sudo apt-get install -y libcups2-dev
 
-          echo -e "\n📦 Instalando dependencias node..."
+          echo -e "\n⚙️ Instalando dependencias node..."
           #npm_config_legacy_peer_deps=true npm i
           npm install -g pnpm
           
@@ -215,10 +215,10 @@ jobs:
           cat .pnpmrc
           ls -l .pnpmrc
           echo ""
-
-          pnpm add -D prebuild-install
-          pnpm i
-          yes | pnpm approve-builds
+          
+          pnpm add -D prebuild-install -w
+          pnpm add -D dotenv-cli -w
+          pnpm install --ignore-scripts=false
 
           OUTPUT=$(pnpm ls --depth=0 || true)
           if [[ -z "$OUTPUT" ]]; then
