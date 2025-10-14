@@ -217,7 +217,6 @@ jobs:
             cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
             pnpm run build
           else
-            cat $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.env
             pnpm run build --filter=...$(msName)
           fi
 
