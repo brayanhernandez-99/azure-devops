@@ -208,18 +208,10 @@ jobs:
 
       #     echo $(taskDefinitionArnNew)
 
-      #     if { [[ "$(msName)" == "bff-administration" || "$(msName)" == "bff-sellers" ]] && [[ "$RED" == "cap" || "$RED" == "antioquia" ]]; };then
-      #         CLUSTER=$(msName)-cluster
-      #         SERVICES=$(msName)-fg-service
+      #     if [[ "$(cleanMsName)" == "raffle" ]]; then
+      #         SERVICES=raffles
       #     fi
-      #     if { [[ "$(cleanMsName)" == "raffle" ]] && [[ "$RED" == "cap" || "$RED" == "antioquia" ]]; }; then
-      #         CLUSTER=raffles-ms-cluster
-      #         SERVICES=raffles-ms-fg-service
-      #     fi
-      #     if { [[ "$(cleanMsName)" == "notifier" ]] && [[ "$RED" == "cap" || "$RED" == "antioquia" ]]; }; then
-      #         CLUSTER=msnotifier-cluster
-      #         SERVICES=msnotifier-fg-service
-      #     fi
+
       #     echo $CLUSTER
       #     echo $SERVICES
 
