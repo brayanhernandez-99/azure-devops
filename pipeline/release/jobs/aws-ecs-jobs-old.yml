@@ -112,8 +112,8 @@ jobs:
           echo "##vso[task.setvariable variable=taskDefinitionArn]$arn"
         displayName: "Get ARN Task Definition"
         env:
-          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVIC)
-          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVIC)
+          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
+          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
           red: ${{ parameters.red }}
 
@@ -139,8 +139,8 @@ jobs:
           cat taskdef.json
         displayName: "Get current task definition"
         env:
-          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVIC)
-          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVIC)
+          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
+          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
 
       - script: |
@@ -197,8 +197,8 @@ jobs:
 
       #   displayName: "Registrar nueva task definition"
       #   env:
-      #     AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVIC)
-      #     AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVIC)
+      #     AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
+      #     AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
       #     AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
 
       # - script: |
@@ -222,6 +222,6 @@ jobs:
       #       --region $AWS_DEFAULT_REGION
       #   displayName: "Actualizar servicio con nueva task definition"
       #   env:
-      #     AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVIC)
-      #     AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVIC)
+      #     AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
+      #     AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
       #     AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
