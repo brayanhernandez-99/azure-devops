@@ -7,51 +7,26 @@ stages:
     ${{ if or(eq(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')) }}:
       displayName: "🚀 Deploy Integration Master ${{ parameters.red }}"
 
-    ${{ if eq(parameters.release, 'aws-ecs') }}:
+    ${{ if eq(parameters.release, 'ecs-redes') }}:
       dependsOn:
         - "artifacts_managment"
       condition: in(dependencies.artifacts_managment.result, 'Succeeded', 'SucceededWithIssues')
-
-    ${{ if eq(parameters.release, 'aws-s3') }}:
-      dependsOn:
-        - "build_development_${{ parameters.red }}"
-      condition: in(dependencies.build_development_${{ parameters.red }}.result, 'Succeeded', 'SucceededWithIssues')
 
     pool:
       name: "Azure Pipelines"
       VmImage: Ubuntu-20.04
 
     variables:
-      - template: ../variables/groups-transversal-variables.yml
+      - template: ../variables/groups-transversal-variables-ecs-redes.yml
         parameters:
           red: ${{ parameters.red }}
 
     jobs:
       - ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), in(variables['Build.SourceBranch'], 'refs/heads/develop', 'refs/heads/staging', 'refs/heads/master')) }}:
-          - ${{ if in(parameters.release, 'aws-ecs') }}:
+          - ${{ if in(parameters.release, 'ecs-redes') }}:
               - template: jobs/aws-ecs-jobs.yml
-                parameters:
-                  release: ${{ parameters.release }}
-                  # apps: ${{ parameters.apps }}
-                  red: ${{ parameters.red }}
-
-      - ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), in(variables['Build.SourceBranch'], 'refs/heads/develop', 'refs/heads/staging', 'refs/heads/master')) }}:
-          - ${{ if in(parameters.release, 'aws-s3') }}:
-              - template: jobs/aws-s3-jobs.yml
                 parameters:
                   release: ${{ parameters.release }}
                   apps: ${{ parameters.apps }}
                   red: ${{ parameters.red }}
 
-      - ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'antioquia'), eq(parameters.release, 'aws-s3')) }}:
-          - template: ../general/commit-tag-changeload.yml
-            parameters:
-              apps: ${{ parameters.apps }}
-              red: ${{ parameters.red }}
-              release: ${{ parameters.release }}
-
-      - ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'antioquia'), eq(parameters.release, 'aws-ecs')) }}:
-          - template: ../general/commit-tag-changeload-back.yml
-            parameters:
-              red: ${{ parameters.red }}
-              release: ${{ parameters.release }}
