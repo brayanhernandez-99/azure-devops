@@ -164,11 +164,12 @@ jobs:
           echo -e "\n⚙️ Instalando dependencias node..."
           npm install -g pnpm
 
-          pnpmrcPath="$(file)/$(msName)/.pnpmrc"
           export PNPM_TRUSTED_BUILD_SCRIPTS="*"
+          pnpmrcPath="$(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc"
+          pnpm-buildsPath="$(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpm-builds.json"
 
           echo -e "\n📄 Generando archivo .pnpmrc en: $pnpmrcPath"
-          cat <<EOF > "$pnpmrcPath"
+          cat <<EOF > $pnpmrcPath
           node-linker=hoisted
           ignore-scripts=false
           allow-build-script=true
@@ -177,8 +178,8 @@ jobs:
           ls -l $pnpmrcPath
           cat $pnpmrcPath
           
-          echo -e "\n📄 Generando archivo .pnpm-builds"
-          cat <<EOF > ".pnpm-builds.json"
+          echo -e "\n📄 Generando archivo .pnpm-builds.json en: $pnpm-buildsPath"
+          cat <<EOF > $pnpm-buildsPath
           {
             "approvedBuilds": {
               "@tailwindcss/oxide@*": true,
@@ -190,14 +191,14 @@ jobs:
             }
           }
           EOF
-          ls -l .pnpm-builds.json
-          cat .pnpm-builds.json
+          ls -l $pnpm-buildsPath
+          cat $pnpm-buildsPath
           echo ""
         
           cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
           pnpm add -D dotenv-cli
           pnpm install
-          pnpm approve-builds --recursive --yes
+          pnpm ignored-builds
 
           OUTPUT=$(pnpm ls --depth=0 || true)
           if [[ -z "$OUTPUT" ]]; then

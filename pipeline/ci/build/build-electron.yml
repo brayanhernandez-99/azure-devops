@@ -203,35 +203,39 @@ jobs:
           sudo apt-get install -y libcups2-dev
 
           echo -e "\n⚙️ Instalando dependencias node..."
-          #npm_config_legacy_peer_deps=true npm i
           npm install -g pnpm
 
-          echo -e "\n📄 Generando archivo .pnpmrc"
-          cat <<EOF > ".pnpmrc"
+          export PNPM_TRUSTED_BUILD_SCRIPTS="*"
+          pnpmrcPath="$(System.DefaultWorkingDirectory)/.pnpmrc"
+          pnpm-buildsPath="$(System.DefaultWorkingDirectory)/.pnpm-builds.json"
+          
+          echo -e "\n📄 Generando archivo .pnpmrc en: $pnpmrcPath"
+          cat <<EOF > $pnpmrcPath
           node-linker=hoisted
           ignore-scripts=false
           allow-build-script=true
           strict-peer-dependencies=false
           EOF
-          ls -l .pnpmrc"
-          cat .pnpmrc
+          ls -l $pnpmrcPath
+          cat $pnpmrcPath
 
-          echo -e "\n📄 Generando archivo .pnpm-builds"
-          cat <<EOF > ".pnpm-builds.json"
+          echo -e "\n📄 Generando archivo .pnpm-builds.json en: $pnpm-buildsPath"
+          cat <<EOF > $pnpm-buildsPath
           {
             "approvedBuilds": {
-              "@thiagoelg/node-printer@*": true,
+              "@tailwindcss/oxide@*": true,
+              "aws-crt@*": true,
+              "core-js@*": true,
               "electron@*": true,
-              "esbuild@*": true,
-              "koffi@*": true
+              "javascript-obfuscator@*": true,
+              "vue-demi@*": true
             }
           }
           EOF
-          ls -l .pnpm-builds.json
-          cat .pnpm-builds.json
+          ls -l $pnpm-buildsPath
+          cat $pnpm-buildsPath
           echo ""
 
-          export PNPM_TRUSTED_BUILD_SCRIPTS="*"
           pnpm add -D dotenv-cli
           pnpm install
           pnpm approve-builds --recursive --yes
