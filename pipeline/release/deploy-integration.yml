@@ -9,8 +9,8 @@ stages:
 
     ${{ if eq(parameters.release, 'ecs-redes') }}:
       dependsOn:
-        - "artifacts_managment"
-      condition: in(dependencies.artifacts_managment.result, 'Succeeded', 'SucceededWithIssues')
+        - "semantic_version_integration"
+      condition: in(dependencies.semantic_version_integration.result, 'Succeeded', 'SucceededWithIssues')
 
     pool:
       name: "Azure Pipelines"
@@ -24,7 +24,7 @@ stages:
     jobs:
       - ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), in(variables['Build.SourceBranch'], 'refs/heads/develop', 'refs/heads/staging', 'refs/heads/master')) }}:
           - ${{ if in(parameters.release, 'ecs-redes') }}:
-              - template: jobs/aws-ecs-jobs.yml
+              - template: jobs/aws-ecs-jobs-old.yml
                 parameters:
                   release: ${{ parameters.release }}
                   apps: ${{ parameters.apps }}
