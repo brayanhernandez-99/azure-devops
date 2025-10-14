@@ -30,12 +30,12 @@ jobs:
       - template: ./deploy/deploy-electron.yml
         parameters:
           region: ${{ parameters.region }}
-      
-      - template: ./commit-tag-changeload-electron.yml
 
       - template: ./commit-tag-changeload-frontend.yml
         parameters:
           apps: ${{ parameters.apps }}
+
+      - template: ./commit-tag-changeload-electron.yml
 
   - ${{ if eq(parameters.release, 'apk') }}:
       - template: ./deploy/deploy-flutter.yml
