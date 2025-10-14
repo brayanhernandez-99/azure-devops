@@ -1,0 +1,25 @@
+jobs:
+  - job: "semantic_version"
+    displayName: "Semantic Version"
+    pool:
+      name: "Azure Pipelines"
+      VmImage: ubuntu-22.04
+
+    strategy:
+      matrix:
+        ${{ each pair in parameters.apps }}:
+          ${{ pair.Key }}:
+            msName: ${{ pair.Key }}
+            version: ${{ pair.Value }}
+
+    steps:
+      - checkout: self
+        fetchDepth: 0
+        persistCredentials: true
+
+
+      - script: |
+          echo "Procesando $(msName) versión $(version)"
+        displayName: "ID Pull Request"
+  
+

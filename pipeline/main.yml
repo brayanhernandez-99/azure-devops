@@ -8,6 +8,7 @@ parameters:
       - exe
       - iac
       - rpc
+      - ecs-redes
 
   - name: red
     type: object
@@ -22,7 +23,9 @@ parameters:
 
   - name: apps
     type: object
-    default: {}
+    default:
+      - microservice-products: "1.0.3"
+      - microservice-reports: "2.5.0"
 
 resources:
   repositories:
@@ -183,3 +186,10 @@ stages:
       - template: build/semantic-version-integration.yml
         parameters:
           release: ${{ parameters.release }}
+
+ #DEPLOY REDES MOMENTANEMENTE 
+  - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(parameters.release, 'ecs-redes')) }}:
+      - template: build/semantic-version-integration.yml
+        parameters:
+          release: ${{ parameters.release }}
+          apps: ${{ parameters.apps }}
