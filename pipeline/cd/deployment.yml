@@ -29,8 +29,11 @@ jobs:
   - ${{ if eq(parameters.release, 'exe') }}:
       - template: ./deploy/deploy-electron.yml
         parameters:
-          apps: ${{ parameters.apps }}
           region: ${{ parameters.region }}
+
+      - template: ../commit-tag/commit-tag-changeload-frontend.yml
+        parameters:
+          apps: ${{ parameters.apps }}
 
   - ${{ if eq(parameters.release, 'apk') }}:
       - template: ./deploy/deploy-flutter.yml
