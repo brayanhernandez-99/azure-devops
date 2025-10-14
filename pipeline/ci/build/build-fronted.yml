@@ -139,9 +139,12 @@ jobs:
 
       - script: |
           cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
-          echo "🔧 Actualizando versión en $(file)/$(msName)/package.json a $(msVersion)"
+          echo "🔧 Actualizando versión en $(file)/$(msName)/package.json: $(msVersion)"
           jq --arg version "$(msVersion)" '.version = $version' package.json > tmp.json && mv tmp.json package.json
-        displayName: "🧪 Temporary version for build"
+
+          echo -e "\n📁 File package.json:"      
+          cat $(System.DefaultWorkingDirectory)/$(file)/$(msName)/package.json
+        displayName: "📝 Update version in package.json"
         condition: succeeded()
 
       - script: |
