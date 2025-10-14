@@ -64,7 +64,6 @@ jobs:
           targetType: "inline"
           script: |
             CURRENT_BRANCH=$(echo $(Build.SourceBranch))
-            fi
 
             if [[ "$CURRENT_BRANCH" == refs/heads/master ]]; then
               clean_branch=prd
