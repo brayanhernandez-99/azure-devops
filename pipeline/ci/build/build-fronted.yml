@@ -169,6 +169,7 @@ jobs:
           cat <<EOF > "$pnpmrcPath"
           node-linker=hoisted
           ignore-scripts=false
+          allow-build-script=true
           strict-peer-dependencies=false
           EOF
           cat $pnpmrcPath
@@ -179,7 +180,9 @@ jobs:
           pnpm add -D dotenv-cli -w
 
           cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
-          pnpm install --ignore-scripts=false
+          #pnpm install --ignore-scripts=false --strict-peer-dependencies=false
+          pnpm install
+          pnpm approve-builds --recursive --yes
 
           OUTPUT=$(pnpm ls --depth=0 || true)
           if [[ -z "$OUTPUT" ]]; then

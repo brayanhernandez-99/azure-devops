@@ -210,12 +210,13 @@ jobs:
           cat <<EOF > ".pnpmrc"
           node-linker=hoisted
           ignore-scripts=false
+          allow-build-script=true
           strict-peer-dependencies=false
           EOF
           cat .pnpmrc
           ls -l .pnpmrc
           echo ""
-          
+
           pnpm add -D prebuild-install -w
           pnpm add -D dotenv-cli -w
           pnpm install --ignore-scripts=false
