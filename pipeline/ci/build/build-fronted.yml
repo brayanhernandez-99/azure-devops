@@ -197,7 +197,7 @@ jobs:
         
           cat package.json
 
-          #cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
+          cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
           #pnpm add -D dotenv-cli
           pnpm install --recursive
           pnpm ignored-builds
