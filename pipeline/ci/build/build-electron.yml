@@ -207,7 +207,7 @@ jobs:
 
           export PNPM_TRUSTED_BUILD_SCRIPTS="*"
           pnpmrcPath="$(System.DefaultWorkingDirectory)/.pnpmrc"
-          pnpm-buildsPath="$(System.DefaultWorkingDirectory)/.pnpm-builds.json"
+          pnpm_buildsPath="$(System.DefaultWorkingDirectory)/.pnpm-builds.json"
           
           echo -e "\n📄 Generando archivo .pnpmrc en: $pnpmrcPath"
           cat <<EOF > $pnpmrcPath
@@ -219,8 +219,8 @@ jobs:
           ls -l $pnpmrcPath
           cat $pnpmrcPath
 
-          echo -e "\n📄 Generando archivo .pnpm-builds.json en: $pnpm-buildsPath"
-          cat <<EOF > $pnpm-buildsPath
+          echo -e "\n📄 Generando archivo .pnpm-builds.json en: $pnpm_buildsPath"
+          cat <<EOF > $pnpm_buildsPath
           {
             "approvedBuilds": {
               "@tailwindcss/oxide@*": true,
@@ -232,8 +232,8 @@ jobs:
             }
           }
           EOF
-          ls -l $pnpm-buildsPath
-          cat $pnpm-buildsPath
+          ls -l $pnpm_buildsPath
+          cat $pnpm_buildsPath
           echo ""
 
           pnpm add -D dotenv-cli
