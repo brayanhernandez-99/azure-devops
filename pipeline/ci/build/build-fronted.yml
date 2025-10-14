@@ -193,6 +193,7 @@ jobs:
           EOF
           ls -l $pnpm_buildsPath
           cat $pnpm_buildsPath
+          cp $pnpm_buildsPath $(System.DefaultWorkingDirectory)
           echo ""
         
           cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
