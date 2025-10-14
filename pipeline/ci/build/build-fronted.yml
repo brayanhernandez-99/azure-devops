@@ -166,7 +166,7 @@ jobs:
 
           export PNPM_TRUSTED_BUILD_SCRIPTS="*"
           pnpmrcPath="$(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc"
-          pnpm_buildsPath="$(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpm-builds.json"
+          pnpm_buildsPath="$(System.DefaultWorkingDirectory)/.pnpm-builds.json"
 
           echo -e "\n📄 Generando archivo .pnpmrc en: $pnpmrcPath"
           cat <<EOF > $pnpmrcPath
@@ -193,7 +193,6 @@ jobs:
           EOF
           ls -l $pnpm_buildsPath
           cat $pnpm_buildsPath
-          cp $pnpm_buildsPath $(System.DefaultWorkingDirectory)
           echo ""
         
           cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
