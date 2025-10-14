@@ -196,18 +196,13 @@ jobs:
       - script: |
           echo -e "\n📦 Build MicroFrontend..."
 
-          # if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
-          #   cat $(System.DefaultWorkingDirectory)/app-legacy/$(msName)/.env.local
-          #   cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
-          #   pnpm run build
-          # else
-          #   cat $(System.DefaultWorkingDirectory)/apps/$(msName)/.env
-          #   #pnpm add -D dotenv-cli
-          #   pnpm run build --filter=...$(msName)
-          # fi
-
-          cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
-          pnpm run build
+          if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
+            cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
+            pnpm run build
+          else
+            cat $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.env
+            pnpm run build --filter=...$(msName)
+          fi
 
           DIST_PATH="$(System.DefaultWorkingDirectory)/$(file)/$(msName)/dist"
 
