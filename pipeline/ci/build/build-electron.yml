@@ -219,8 +219,7 @@ jobs:
 
           pnpm add -D prebuild-install -w
           pnpm add -D dotenv-cli -w
-          pnpm install
-          pnpm approve-builds --recursive --yes
+          PNPM_TRUSTED_BUILD_SCRIPTS="*" pnpm install
 
           OUTPUT=$(pnpm ls --depth=0 || true)
           if [[ -z "$OUTPUT" ]]; then

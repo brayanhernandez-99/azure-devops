@@ -179,8 +179,7 @@ jobs:
           cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
           pnpm add -D prebuild-install
           pnpm add -D dotenv-cli
-          pnpm install
-          pnpm approve-builds --recursive --yes
+          PNPM_TRUSTED_BUILD_SCRIPTS="*" pnpm install
 
           OUTPUT=$(pnpm ls --depth=0 || true)
           if [[ -z "$OUTPUT" ]]; then
