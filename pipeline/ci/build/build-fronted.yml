@@ -161,9 +161,6 @@ jobs:
         condition: succeeded()
 
       - script: |
-          echo -e "\n⚙️ Instalando dependencias node..."
-          npm install -g pnpm
-
           echo -e "\n📄 Generando archivo .pnpmrc en: $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc"
           cat <<EOF > "$(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc"
           node-linker=hoisted
@@ -173,13 +170,11 @@ jobs:
           EOF
           ls -l $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc
           cat $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc
-
-          if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
-            cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
-            pnpm install
-          else
-            pnpm install pnpm run build --filter=...$(msName)
-          fi
+          
+          cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
+          echo -e "\n⚙️ Instalando dependencias node..."
+          npm install -g pnpm
+          pnpm install
           pnpm ignored-builds
 
           OUTPUT=$(pnpm ls --depth=0 || true)
