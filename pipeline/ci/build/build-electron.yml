@@ -236,9 +236,9 @@ jobs:
           cat $pnpm_buildsPath
           echo ""
 
-          pnpm add -D dotenv-cli
+          #pnpm add -D dotenv-cli
           pnpm install
-          pnpm approve-builds --recursive --yes
+          pnpm ignored-builds
 
           OUTPUT=$(pnpm ls --depth=0 || true)
           if [[ -z "$OUTPUT" ]]; then
