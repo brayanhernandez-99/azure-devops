@@ -45,8 +45,9 @@ stages:
 
   # # Deploy integración si NO es Flutter, No es Electron y es tag, develop, staging
   - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(parameters.release, 'ecs-redes')) }}:
-      - template: release/deploy-integration.yml
-        parameters:
-          release: ${{ parameters.release }}
-          apps: ${{ parameters.apps }}
-          red: antioquia
+      - ${{ each region in parameters.red }}:
+          - template: release/deploy-integration.yml
+            parameters:
+              release: ${{ parameters.release }}
+              apps: ${{ parameters.apps }}
+              red: ${{ region }}
