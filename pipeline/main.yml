@@ -35,157 +35,6 @@ resources:
       ref: $(Build.SourceBranch)
 
 stages:
-  # # Build para PR feature/hotfix con release aws-ecs
-  # - ${{ if and(eq(variables['Build.Reason'], 'PullRequest'), eq(parameters.release, 'aws-ecs')) }}:
-  #     - template: build/build-development-pr.yml
-  #       parameters:
-  #         release: ${{ parameters.release }}
-  #         red: antioquia
-
-  # # Build semantic version si es tag o master con aws-s3
-  # - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), eq(variables['Build.SourceBranch'], 'refs/heads/master')), eq(parameters.release, 'aws-s3')) }}:
-  #     - template: build/semantic-version-integration.yml
-  #       parameters:
-  #         release: ${{ parameters.release }}
-  #         apps: ${{ parameters.apps }}
-
-  # # Build semantic version si es tag, staging o master con aws-ecs
-  # - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), eq(variables['Build.SourceBranch'], 'refs/heads/staging'), eq(variables['Build.SourceBranch'], 'refs/heads/master')), eq(parameters.release, 'aws-ecs')) }}:
-  #     - template: build/semantic-version-integration.yml
-  #       parameters:
-  #         release: ${{ parameters.release }}
-  #         apps: ${{ parameters.apps }}
-
-  # # Build semantic version para Flutter en feature, hotfix, develop, staging, master
-  # - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), eq(variables['Build.SourceBranch'], 'refs/heads/develop'), eq(variables['Build.SourceBranch'], 'refs/heads/staging'), eq(variables['Build.SourceBranch'], 'refs/heads/master')), eq(parameters.release, 'apk')) }}:
-  #     - template: build/semantic-version-integration.yml
-  #       parameters:
-  #         release: ${{ parameters.release }}
-
-  # # Build semantic version para Electron en feature, hotfix, develop, staging, master
-  # - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), eq(variables['Build.SourceBranch'], 'refs/heads/develop'), eq(variables['Build.SourceBranch'], 'refs/heads/staging'), eq(variables['Build.SourceBranch'], 'refs/heads/master')), eq(parameters.release, 'exe')) }}:
-  #     - template: build/semantic-version-integration.yml
-  #       parameters:
-  #         release: ${{ parameters.release }}
-
-  # # Build para feature, hotfix, develop si NO es Flutter y NO es electron
-  # - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), eq(variables['Build.SourceBranch'], 'refs/heads/develop')), ne(parameters.release, 'apk'), ne(parameters.release, 'exe'), ne(parameters.release, 'iac'), ne(parameters.release, 'rpc')) }}:
-  #     - template: build/build-development.yml
-  #       parameters:
-  #         release: ${{ parameters.release }}
-  #         apps: ${{ parameters.apps }}
-  #         red: antioquia
-
-  # # Build staging con release aws-s3
-  # - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/staging'), eq(parameters.release, 'aws-s3')) }}:
-  #     - template: build/build-development.yml
-  #       parameters:
-  #         release: ${{ parameters.release }}
-  #         apps: ${{ parameters.apps }}
-  #         red: antioquia
-
-  # # Build master con release aws-s3 (por región)
-  # - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(parameters.release, 'aws-s3')) }}:
-  #     - ${{ each region in parameters.red }}:
-  #         - template: build/build-master-front.yml
-  #           parameters:
-  #             release: ${{ parameters.release }}
-  #             apps: ${{ parameters.apps }}
-  #             red: ${{ region }}
-
-  # # Build Flutter para feature, hotfix, develop, staging
-  # - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), eq(variables['Build.SourceBranch'], 'refs/heads/develop'), eq(variables['Build.SourceBranch'], 'refs/heads/staging')), eq(parameters.release, 'apk')) }}:
-  #     - template: build/build-flutter.yml
-  #       parameters:
-  #         release: ${{ parameters.release }}
-  #         red: antioquia
-
-  # # Build Electron para feature, hotfix, develop, staging
-  # - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), eq(variables['Build.SourceBranch'], 'refs/heads/develop'), eq(variables['Build.SourceBranch'], 'refs/heads/staging')), eq(parameters.release, 'exe')) }}:
-  #     - template: build/build-electron.yml
-  #       parameters:
-  #         release: ${{ parameters.release }}
-  #         red: antioquia
-
-  # # Build Flutter en master (por región)
-  # - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(parameters.release, 'apk')) }}:
-  #     - ${{ each region in parameters.red }}:
-  #         - template: build/build-flutter.yml
-  #           parameters:
-  #             release: ${{ parameters.release }}
-  #             red: ${{ region }}
-
-  # # Build Electron en master (por región)
-  # - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(parameters.release, 'exe')) }}:
-  #     - ${{ each region in parameters.red }}:
-  #         - template: build/build-electron.yml
-  #           parameters:
-  #             release: ${{ parameters.release }}
-  #             red: ${{ region }}
-
-  # # Release artifact si NO es Flutter ni aws-s3, y es tag, develop, staging, master
-  # - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), eq(variables['Build.SourceBranch'], 'refs/heads/develop'), eq(variables['Build.SourceBranch'], 'refs/heads/staging'), eq(variables['Build.SourceBranch'], 'refs/heads/master')), ne(parameters.release, 'aws-s3'), ne(parameters.release, 'apk'), ne(parameters.release, 'exe'), ne(parameters.release, 'iac'), ne(parameters.release, 'rpc')) }}:
-  #     - template: release/artifacts-managment.yml
-  #       parameters:
-  #         release: ${{ parameters.release }}
-  #         apps: ${{ parameters.apps }}
-  #         red: antioquia
-
-  # # Deploy integración si NO es Flutter, No es Electron y es tag, develop, staging
-  # - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), eq(variables['Build.SourceBranch'], 'refs/heads/develop'), eq(variables['Build.SourceBranch'], 'refs/heads/staging')), ne(parameters.release, 'apk'), ne(parameters.release, 'exe'), ne(parameters.release, 'iac'), ne(parameters.release, 'rpc')) }}:
-  #     - template: release/deploy-integration.yml
-  #       parameters:
-  #         release: ${{ parameters.release }}
-  #         apps: ${{ parameters.apps }}
-  #         red: antioquia
-
-  # # Deploy integración master si NO es Flutter, No es Electron (por región)
-  # - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/master'), ne(parameters.release, 'apk'), ne(parameters.release, 'exe'), ne(parameters.release, 'iac'), ne(parameters.release, 'rpc')) }}:
-  #     - ${{ each region in parameters.red }}:
-  #         - template: release/deploy-integration.yml
-  #           parameters:
-  #             release: ${{ parameters.release }}
-  #             apps: ${{ parameters.apps }}
-  #             red: ${{ region }}
-
-  # # Build version para IAC en feature, hotfix, develop, staging, master
-  # - ${{ if and(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), eq(parameters.release, 'iac')) }}:
-  #     - template: build/build-iac.yml
-  #       parameters:
-  #         release: ${{ parameters.release }}
-
-  # - ${{ if or(eq(variables['Build.SourceBranch'], 'refs/heads/tolima'), eq(variables['Build.SourceBranch'], 'refs/heads/huila')) }}:
-  #     - template: build/build-iac.yml
-  #       parameters:
-  #         release: ${{ parameters.release }}
-
-  # # Build repo-configuration para feature, hotfix, develop, staging
-  # - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), eq(variables['Build.SourceBranch'], 'refs/heads/develop'), eq(variables['Build.SourceBranch'], 'refs/heads/staging')), eq(parameters.release, 'rpc')) }}:
-  #     - template: build/build-rpc.yml
-  #       parameters:
-  #         release: ${{ parameters.release }}
-  #         red: antioquia
-
-  # # Build repo-configuration en master (por región)
-  # - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(parameters.release, 'rpc')) }}:
-  #     - ${{ each region in parameters.red }}:
-  #         - template: build/build-rpc.yml
-  #           parameters:
-  #             release: ${{ parameters.release }}
-  #             red: ${{ region }}
-
-  # # Semantic versioning repo-configuration feature, hotfix, develop, staging
-  # - ${{ if and(or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), eq(variables['Build.SourceBranch'], 'refs/heads/develop'), eq(variables['Build.SourceBranch'], 'refs/heads/staging')), eq(parameters.release, 'rpc')) }}:
-  #     - template: build/semantic-version-integration.yml
-  #       parameters:
-  #         release: ${{ parameters.release }}
-  #         red: antioquia
-
-  # # Semantic versioning repo-configuration en master (por región)
-  # - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(parameters.release, 'rpc')) }}:
-  #     - template: build/semantic-version-integration.yml
-  #       parameters:
-  #         release: ${{ parameters.release }}
 
  #DEPLOY REDES MOMENTANEMENTE 
   - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(parameters.release, 'ecs-redes')) }}:
@@ -193,3 +42,11 @@ stages:
         parameters:
           release: ${{ parameters.release }}
           apps: ${{ parameters.apps }}
+
+  # # Deploy integración si NO es Flutter, No es Electron y es tag, develop, staging
+  - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(parameters.release, 'ecs-redes')) }}:
+      - template: release/deploy-integration.yml
+        parameters:
+          release: ${{ parameters.release }}
+          apps: ${{ parameters.apps }}
+          red: antioquia
