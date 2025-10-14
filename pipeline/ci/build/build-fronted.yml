@@ -176,11 +176,9 @@ jobs:
           ls -l $pnpmrcPath
           echo ""
 
-          pnpm add -D prebuild-install -w
-          pnpm add -D dotenv-cli -w
-
           cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
-          #pnpm install --ignore-scripts=false --strict-peer-dependencies=false
+          pnpm add -D prebuild-install
+          pnpm add -D dotenv-cli
           pnpm install
           pnpm approve-builds --recursive --yes
 

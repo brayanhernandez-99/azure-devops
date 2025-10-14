@@ -219,7 +219,8 @@ jobs:
 
           pnpm add -D prebuild-install -w
           pnpm add -D dotenv-cli -w
-          pnpm install --ignore-scripts=false
+          pnpm install
+          pnpm approve-builds --recursive --yes
 
           OUTPUT=$(pnpm ls --depth=0 || true)
           if [[ -z "$OUTPUT" ]]; then
