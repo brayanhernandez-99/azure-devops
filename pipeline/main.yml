@@ -24,8 +24,8 @@ parameters:
   - name: apps
     type: object
     default:
-      - microservice-products: "1.0.3"
-      - microservice-reports: "2.5.0"
+      microservice-products: "1.0.3"
+      microservice-reports: "2.5.0"
 
 resources:
   repositories:
