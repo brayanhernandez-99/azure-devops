@@ -173,7 +173,7 @@ jobs:
           EOF
           ls -l $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc
           cat $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc
-          
+
           cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
           echo -e "\n⚙️ Instalando dependencias node..."
           npm install -g pnpm
