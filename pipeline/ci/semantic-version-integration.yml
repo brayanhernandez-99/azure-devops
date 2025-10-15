@@ -1,14 +1,20 @@
 jobs:
   - ${{ if eq(parameters.release, 'aws-ecs') }}:
       - template: ./general/semantic-version-backend.yml
+  
+  #####################################################################
 
   - ${{ if eq(parameters.release, 'aws-s3') }}:
       - template: ./general/semantic-version-frontend.yml
         parameters:
           apps: ${{ parameters.apps }}
 
+  #####################################################################
+
   - ${{ if eq(parameters.release, 'exe') }}:
       - template: ./general/semantic-version-electron.yml
+
+  #####################################################################
 
   - ${{ if eq(parameters.release, 'apk') }}:
       - template: ./general/semantic-version-flutter.yml

@@ -17,14 +17,20 @@ jobs:
             - script: echo "✅ Aprobación recibida. Iniciando el despliegue..."
               displayName: "🔓 Approval Confirmed"
 
+  #####################################################################
+
   - ${{ if eq(parameters.release, 'aws-ecs') }}:
       - template: ./deploy/deploy-backend.yml
+
+  #####################################################################
 
   - ${{ if eq(parameters.release, 'aws-s3') }}:
       - template: ./deploy/deploy-frontend.yml
       - template: ./commit-tag/commit-tag-changeload-frontend.yml
         parameters:
           apps: ${{ parameters.apps }}
+
+  #####################################################################
 
   - ${{ if eq(parameters.release, 'exe') }}:
       - template: ./deploy/deploy-electron.yml
@@ -37,6 +43,8 @@ jobs:
               apps: ${{ parameters.apps }}
 
           - template: ./commit-tag/commit-tag-changeload-electron.yml
+
+  #####################################################################
 
   - ${{ if eq(parameters.release, 'apk') }}:
       - template: ./deploy/deploy-flutter.yml
