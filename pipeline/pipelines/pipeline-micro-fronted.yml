@@ -30,7 +30,9 @@ stages:
         #   - build_micro_frontend_cauca
         #   - build_micro_frontend_boyaca
         #   - build_micro_frontend_santander
-        dependsOn: build_micro_frontend_cap
+        dependsOn:
+          - build_micro_frontend_antioquia
+          - build_micro_frontend_cap
         jobs:
           - template: ../ci/semantic-version-integration.yml
             parameters:
