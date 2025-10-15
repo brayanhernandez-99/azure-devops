@@ -537,8 +537,8 @@ jobs:
         inputs:
           targetType: "inline"
           script: |
-            Write-Host "`n📄 Generando archivo .pnpmrc en: $(System.DefaultWorkingDirectory)/.pnpmrc"
-            $filePath = "$(System.DefaultWorkingDirectory)/.env"
+            Write-Host "`n📄 Generando archivo .pnpmrc en: $(System.DefaultWorkingDirectory)\.pnpmrc"
+            $filePath = "$(System.DefaultWorkingDirectory)\.env"
             $fileContent = @"
             node-linker=hoisted
             ignore-scripts=false
@@ -546,7 +546,7 @@ jobs:
             strict-peer-dependencies=false
             "@
             Set-Content -Path $filePath -Value $fileContent -Encoding UTF8
-            Get-ChildItem -Path "$(System.DefaultWorkingDirectory)/.pnpmrc" | Select-Object Mode, LastWriteTime, Length, Name | Format-Table
+            Get-ChildItem -Path "$(System.DefaultWorkingDirectory)\.pnpmrc" | Select-Object Mode, LastWriteTime, Length, Name | Format-Table
             Get-Content -Path $filePath
 
             Write-Host "`n⚙️ Instalando dependencias node..."
