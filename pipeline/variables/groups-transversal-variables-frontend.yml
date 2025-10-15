@@ -23,19 +23,26 @@ variables:
 
   # Master or tags → por red
   - ${{ if and(eq(parameters.region, 'antioquia'), eq(variables['Build.SourceBranchName'], 'master')) }}:
-      - group: trasversal-aws-devops
+      - group: trasversal-aws-antioquia
+      - group: variables-microfrontend-vue2-staging-old
+      - group: variables-microfrontend-staging-old
 
   - ${{ if and(eq(parameters.region, 'cap'), eq(variables['Build.SourceBranchName'], 'master')) }}:
-      - group: trasversal-aws-devops
-
+      - group: trasversal-aws-cap
+      - group: variables-microfrontend-vue2-staging-old
+      - group: variables-microfrontend-staging-old
+      
   - ${{ if and(eq(parameters.region, 'tolima'), eq(variables['Build.SourceBranchName'], 'master')) }}:
-      - group: trasversal-aws-devops
+      - group: trasversal-aws-tolima
 
   - ${{ if and(eq(parameters.region, 'huila'), eq(variables['Build.SourceBranchName'], 'master')) }}:
-      - group: trasversal-aws-devops
+      - group: trasversal-aws-huila
 
   - ${{ if and(eq(parameters.region, 'cauca'), eq(variables['Build.SourceBranchName'], 'master')) }}:
-      - group: trasversal-aws-devops
+      - group: trasversal-aws-cauca
 
   - ${{ if and(eq(parameters.region, 'boyaca'), eq(variables['Build.SourceBranchName'], 'master')) }}:
-      - group: trasversal-aws-devops
+      - group: trasversal-aws-boyaca
+
+  - ${{ if and(eq(parameters.region, 'santander'), eq(variables['Build.SourceBranchName'], 'master')) }}:
+      - group: trasversal-aws-santander

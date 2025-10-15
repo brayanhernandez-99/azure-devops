@@ -143,18 +143,10 @@ jobs:
           echo "Electron Branch: $(electronBranch)"
           echo "Electron Environment: $(environment)"
 
-          # envPath="$(System.DefaultWorkingDirectory)/.env"
-          # cat <<EOF > $envPath
-          # DOMAIN_ADMIN="${BASE_URL_ELECTRON_ADMIN}"
-          # DOMAIN_SELLER="${BASE_URL_ELECTRON_SELLERS}"
-          # TARGET="linux"
-          # TARGET_ENVIRONMENT="$(environment)"
-          # EOF
-
           envPath="$(System.DefaultWorkingDirectory)/.env"
           cat <<EOF > $envPath
-          DOMAIN_ADMIN="Administradores|mdiAccountChild|invictus-admin-api-qa.ux.technology/"
-          DOMAIN_SELLER="Vendedores|mdiAccountChild|https://invictus-sellers-api-qa.ux.technology/"
+          DOMAIN_ADMIN="${BASE_URL_ELECTRON_ADMIN}"
+          DOMAIN_SELLER="${BASE_URL_ELECTRON_SELLERS}"
           TARGET="linux"
           TARGET_ENVIRONMENT="$(environment)"
           EOF
@@ -241,13 +233,9 @@ jobs:
           mkdir -p $APP_DIR
           all_found=true
 
-          echo "***********"
-          ls -l $BASE_PATH
-          echo "***********"
-
           FILES_TO_COPY=(
             "InvictusUX-$(msVersion).AppImage"
-            # "latest-linux.yml"
+            "latest-linux.yml"
           )
 
           for file in "${FILES_TO_COPY[@]}"; do
@@ -452,18 +440,10 @@ jobs:
             Write-Host "Electron Branch: $($env:electronBranch)" 
             Write-Host "Electron Environment: $($env:environment)"
 
-            # $envPath = "$(System.DefaultWorkingDirectory)/.env"
-            # $envContent = @"
-            # DOMAIN_ADMIN="$(BASE_URL_ELECTRON_ADMIN)"
-            # DOMAIN_SELLER="$(BASE_URL_ELECTRON_SELLERS)"
-            # TARGET="windows"
-            # TARGET_ENVIRONMENT="$($env:environment)"
-            # "@
-
             $envPath = "$(System.DefaultWorkingDirectory)/.env"
             $envContent = @"
-            DOMAIN_ADMIN="Administradores|mdiAccountChild|invictus-admin-api-qa.ux.technology/"
-            DOMAIN_SELLER="Vendedores|mdiAccountChild|https://invictus-sellers-api-qa.ux.technology/"
+            DOMAIN_ADMIN="$(BASE_URL_ELECTRON_ADMIN)"
+            DOMAIN_SELLER="$(BASE_URL_ELECTRON_SELLERS)"
             TARGET="windows"
             TARGET_ENVIRONMENT="$($env:environment)"
             "@
@@ -584,14 +564,10 @@ jobs:
             New-Item -ItemType Directory -Path $APP_DIR -Force | Out-Null
             $allFound = $true 
 
-            Write-Host "***********"
-            Get-ChildItem -Path $BASE_PATH | Select-Object Mode, LastWriteTime, Length, Name | Format-Table
-            Write-Host "***********"
-
             $filesToCopy = @(
               "InvictusUX Setup $($env:version).exe",
-              "InvictusUX Setup $($env:version).exe.blockmap"
-              # "latest.yml"
+              "InvictusUX Setup $($env:version).exe.blockmap",
+              "latest.yml"
             )
 
             foreach ($file in $filesToCopy) {

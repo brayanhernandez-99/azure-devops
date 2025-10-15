@@ -16,21 +16,21 @@ parameters:
   - name: apps
     type: object
     default:
-      # - "app-administration-vue2"
-      # - "app-sellers-vue2"
-      # - "awards"
-      # - "biometrics"
-      # - "commissions"
-      # - "conciliation"
-      # - "dashboard"
-      # - "dynamic-storage"
-      # - "external-wager"
-      # - "hierarchies"
-      # - "invictus"
+      - "app-administration-vue2"
+      - "app-sellers-vue2"
+      - "awards"
+      - "biometrics"
+      - "commissions"
+      - "conciliation"
+      - "dashboard"
+      - "dynamic-storage"
+      - "external-wager"
+      - "hierarchies"
+      - "invictus"
       - "login"
-      # - "lotteries"
-      # - "money-control"
-      # - "users"
+      - "lotteries"
+      - "money-control"
+      - "users"
 
 resources:
   repositories:
