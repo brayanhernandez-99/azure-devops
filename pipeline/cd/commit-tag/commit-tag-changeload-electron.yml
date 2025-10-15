@@ -1,6 +1,6 @@
 jobs:
   - job: "commit_tag_version_electron"
-    displayName: "⚡ Commit and Tag Electron"
+    displayName: "⚡Commit and Tag Electron"
     pool:
       name: Azure Pipelines
       vmImage: "ubuntu-22.04"
