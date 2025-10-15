@@ -230,7 +230,6 @@ jobs:
 
       - script: |
           echo -e "\n📦 Build Electron..."
-          #npm_config_legacy_peer_deps=true npm run build
           pnpm run build
         displayName: "📦 Build electron"
         condition: succeeded()
@@ -241,6 +240,10 @@ jobs:
           APP_DIR="$BASE_PATH/app"
           mkdir -p $APP_DIR
           all_found=true
+
+          echo "***********"
+          ls -l $BASE_PATH
+          echo "***********"
 
           FILES_TO_COPY=(
             "InvictusUX-$(msVersion).AppImage"
@@ -427,13 +430,12 @@ jobs:
             Write-Host "Verificando identidad de AWS..."
             aws sts get-caller-identity
 
+            Write-Host "`n📄 Generando archivo .npmrc"
             $npmrcPath = Join-Path "$(System.DefaultWorkingDirectory)" ".npmrc"
             @"
             //$repoDomain/$repoPath/:_authToken=$token
             registry=$repoUrl
             "@ | Set-Content -Encoding UTF8 -Path $npmrcPath
-
-            Write-Host "`n✅ Archivo .npmrc creado correctamente"
             Get-Item $npmrcPath | Select-Object Mode, LastWriteTime, Length, Name | Format-Table
         condition: succeeded()
         env:
@@ -535,11 +537,31 @@ jobs:
         inputs:
           targetType: "inline"
           script: |
-            Write-Host "📦 Instalando dependencias"
-            npm install
+            Write-Host "`n📄 Generando archivo .pnpmrc en: $(System.DefaultWorkingDirectory)/.pnpmrc"
+            $filePath = "$(System.DefaultWorkingDirectory)/.env"
+            $fileContent = @"
+            node-linker=hoisted
+            ignore-scripts=false
+            allow-build-script=true
+            strict-peer-dependencies=false
+            "@
+            Set-Content -Path $filePath -Value $fileContent -Encoding UTF8
+            Get-ChildItem -Path "$(System.DefaultWorkingDirectory)/.pnpmrc" | Select-Object Mode, LastWriteTime, Length, Name | Format-Table
+            Get-Content -Path $filePath
 
-            Write-Host "`n📦 Dependencias instaladas:"
-            npm list --depth=0
+            Write-Host "`n⚙️ Instalando dependencias node..."
+            npm install -g pnpm
+            pnpm install
+            pnpm ignored-builds
+
+            $output = pnpm ls --depth=0
+            if (-not $output) {
+              Write-Host "##vso[task.logissue type=error]❌ No se instalaron dependencias, esperar que se actualicen las dependencias a nivel global"
+              exit 99
+            } else {
+              Write-Host "`n✅ Dependencias Instaladas:"
+              Write-Host $output
+            }
         condition: succeeded()
 
       - task: PowerShell@2
@@ -547,8 +569,8 @@ jobs:
         inputs:
           targetType: " inline"
           script: |
-            Write-Host "📦 Ejecutando build..."
-            npm run build
+            Write-Host "`n📦 Build Electron..."
+            pnpm run build
         condition: succeeded()
 
       - task: PowerShell@2
@@ -562,9 +584,9 @@ jobs:
             New-Item -ItemType Directory -Path $APP_DIR -Force | Out-Null
             $allFound = $true 
 
-            # Write-Host "***********"
-            # Get-ChildItem -Path $BASE_PATH | Select-Object Mode, LastWriteTime, Length, Name | Format-Table
-            # Write-Host "***********"
+            Write-Host "***********"
+            Get-ChildItem -Path $BASE_PATH | Select-Object Mode, LastWriteTime, Length, Name | Format-Table
+            Write-Host "***********"
 
             $filesToCopy = @(
               "InvictusUX Setup $($env:version).exe",
