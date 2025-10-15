@@ -28,7 +28,16 @@ jobs:
             refs/heads/hotfix/*)  electronBranch="feature/security-vulnerability-refactor"; environment="dev"; ;;
             refs/heads/develop)   electronBranch="feature/security-vulnerability-refactor"; environment="dev"; ;;
             refs/heads/staging)   electronBranch="feature/security-vulnerability-refactor"; environment="qa"; ;;
-            refs/heads/master)    electronBranch="master"; environment="production"; ;;
+            refs/heads/master)
+              case "$region" in
+                "antioquia") electronBranch="feature/security-vulnerability-refactor"; environment="matrixtech"; ;;
+                "cap")       electronBranch="feature/security-vulnerability-refactor"; environment="cap"; ;;
+                "tolima")    electronBranch="feature/security-vulnerability-refactor"; environment="seapto"; ;;
+                "huila")     electronBranch="feature/security-vulnerability-refactor"; environment="suchance"; ;;
+                "cauca")     electronBranch="feature/security-vulnerability-refactor"; environment="acertemos"; ;;
+                "boyaca")    electronBranch="feature/security-vulnerability-refactor"; environment="jer"; ;;
+                "santander") electronBranch="feature/security-vulnerability-refactor"; environment="laperla"; ;;
+              esac ;;
           esac
 
           if [[ "$electronBranch" == "unknown" ]] || [[ "$environment" = "unknown" ]]; then
@@ -46,6 +55,8 @@ jobs:
           echo "ℹ️ Electron Branch Checkout: $electronBranch"
         displayName: "📌 Set Electron Branch"
         condition: succeeded()
+        env:
+          region: ${{ parameters.region }}
 
       - script: |
           echo -e "\n🔀 Cambiando a la rama: electron@$(electronBranch)"
@@ -300,12 +311,39 @@ jobs:
             $electronBranch = "unknown"
             $environment = "unknown"
 
+            switch -Wildcard ($currentBranch) {
+              "refs/heads/feature/*" { $environment = "dev"; break }
+              "refs/heads/develop"   { $environment = "dev"; break }
+              "refs/heads/staging"   { $environment = "qa"; break }
+              "refs/heads/master" {
+                switch (${{ parameters.region }}) {
+                  "antioquia" { $environment = "matrixtech"; break }
+                  "cap"       { $environment = "cap"; break }
+                  "tolima"    { $environment = "seapto"; break }
+                  "huila"     { $environment = "suchance"; break }
+                  "cauca"     { $environment = "acertemos"; break }
+                  "boyaca"    { $environment = "jer"; break }
+                  "santander" { $environment = "laperla"; break }
+                }
+              }
+            }
+
             switch -Wildcard ($CURRENT_BRANCH) {
-              "refs/heads/feature/*" { $electronBranch = "feature/security-vulnerability-refactor"; $environment = "dev" }
-              "refs/heads/hotfix/*"  { $electronBranch = "feature/security-vulnerability-refactor"; $environment = "dev" }
-              "refs/heads/develop"   { $electronBranch = "feature/security-vulnerability-refactor"; $environment = "dev" }
-              "refs/heads/staging"   { $electronBranch = "feature/security-vulnerability-refactor"; $environment = "qa" }
-              "refs/heads/master"    { $electronBranch = "master"; $environment = "production" }
+              "refs/heads/feature/*" { $electronBranch = "feature/security-vulnerability-refactor"; $environment = "dev"; break }
+              "refs/heads/hotfix/*"  { $electronBranch = "feature/security-vulnerability-refactor"; $environment = "dev"; break }
+              "refs/heads/develop"   { $electronBranch = "feature/security-vulnerability-refactor"; $environment = "dev"; break }
+              "refs/heads/staging"   { $electronBranch = "feature/security-vulnerability-refactor"; $environment = "qa"; break }
+              "refs/heads/master" {
+                switch ($region) {
+                  "antioquia" { $electronBranch = "feature/security-vulnerability-refactor"; $environment = "matrixtech"; break }
+                  "cap"       { $electronBranch = "feature/security-vulnerability-refactor"; $environment = "cap"; break }
+                  "tolima"    { $electronBranch = "feature/security-vulnerability-refactor"; $environment = "seapto"; break }
+                  "huila"     { $electronBranch = "feature/security-vulnerability-refactor"; $environment = "suchance"; break }
+                  "cauca"     { $electronBranch = "feature/security-vulnerability-refactor"; $environment = "acertemos"; break }
+                  "boyaca"    { $electronBranch = "feature/security-vulnerability-refactor"; $environment = "jer"; break }
+                  "santander" { $electronBranch = "feature/security-vulnerability-refactor"; $environment = "laperla"; break }
+                }
+              }
             }
 
             if ($electronBranch -eq "unknown" -or $environment -eq "unknown") {
@@ -322,6 +360,8 @@ jobs:
             Write-Host "ℹ️ Electron Environment: $environment"
             Write-Host "ℹ️ Electron Branch Checkout: $electronBranch"
         condition: succeeded()
+        env:
+          region: ${{ parameters.region }}
 
       - task: PowerShell@2
         displayName: "🔄 Checkout electron@$(electronBranch)"
