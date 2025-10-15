@@ -538,7 +538,7 @@ jobs:
           targetType: "inline"
           script: |
             Write-Host "`n📄 Generando archivo .pnpmrc en: $(System.DefaultWorkingDirectory)\.pnpmrc"
-            $filePath = "$(System.DefaultWorkingDirectory)\.env"
+            $filePath = "$(System.DefaultWorkingDirectory)\.pnpmrc"
             $fileContent = @"
             node-linker=hoisted
             ignore-scripts=false
