@@ -19,7 +19,7 @@ variables:
       - group: variables-electron-antioquia
 
   - ${{ if and(eq(parameters.region, 'cap'), eq(variables['Build.SourceBranchName'], 'master')) }}:
-      - group: trasversal-aws-cap
+      - group: trasversal-aws-antioquia-cap
       - group: variables-electron-cap
 
   - ${{ if and(eq(parameters.region, 'tolima'), eq(variables['Build.SourceBranchName'], 'master')) }}:
