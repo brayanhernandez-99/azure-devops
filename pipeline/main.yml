@@ -18,8 +18,10 @@ parameters:
   - name: apps
     type: object
     default:
-      microservice-astro: "3.5.4"
-      microservice-collected: "3.5.1"
+      microservice-siga: "3.2.8"
+      microservice-lotteries-games: "4.13.4"
+      microservice-remittances: "2.2.3"
+      microservice-transaction: "4.5.3"
 
 resources:
   repositories:
