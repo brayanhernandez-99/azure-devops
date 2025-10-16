@@ -46,7 +46,7 @@ jobs:
           echo -e "\n📂 Archivos a cargar: $BASE_PATH"
           ls -l "$BASE_PATH"
 
-          aws s3 cp "$BASE_PATH" "s3://electron-app-$(ACCOUNT_ID_INVIC)/linux/" --recursive --acl public-read
+          aws s3 cp "$BASE_PATH" "s3://electron-app-$(ACCOUNT_ID_INVIC)/linux/" --recursive
 
           echo -e "\n✅ Archivos subidos exitosamente."
           echo "🔗 APP: InvictusUX-$(msVersion).AppImage"
@@ -67,7 +67,7 @@ jobs:
           echo -e "\n📂 Archivos a cargar: $BASE_PATH"
           ls -l "$BASE_PATH"
 
-          aws s3 cp "$BASE_PATH" "s3://electron-app-$(ACCOUNT_ID_INVIC)/windows/" --recursive --acl public-read
+          aws s3 cp "$BASE_PATH" "s3://electron-app-$(ACCOUNT_ID_INVIC)/windows/" --recursive
 
           echo -e "\n✅ Archivos subidos exitosamente."
           echo "🔗 APP: InvictusUX Setup $(msVersion).exe"
