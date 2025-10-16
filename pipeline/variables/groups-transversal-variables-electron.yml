@@ -3,17 +3,17 @@ variables:
   - group: trasversal-azure-devops
   - group: trasversal-versions-invictus
 
-  # Develop - Feature - Hotfix
+  # Develop - Feature - Hotfix branch
   - ${{ if or(eq(variables['Build.SourceBranchName'], 'develop'), startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')) }}:
       - group: trasversal-aws-develop
       - group: variables-electron-develop
 
-  # Staging
+  # Staging branch
   - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
       - group: trasversal-aws-staging
       - group: variables-electron-staging
 
-  # Master or tags → por red
+  # Master branch → por red
   - ${{ if and(eq(parameters.region, 'antioquia'), eq(variables['Build.SourceBranchName'], 'master')) }}:
       - group: trasversal-aws-antioquia
       - group: variables-electron-antioquia

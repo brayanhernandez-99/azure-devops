@@ -1,24 +1,12 @@
 stages:
-  - stage: semantic_version_micro_fronted
-    displayName: "🏷️ Semantic Version MicroFrontend"
-    jobs:
-      - template: ../ci/semantic-version-integration.yml
-        parameters:
-          apps: ${{ parameters.apps }}
-          release: aws-s3
-
-  #####################################################################
-
   - ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
       - ${{ each region in parameters.red }}:
-          - stage: build_micro_frontend_${{ region }}
-            displayName: "📦 Build MicroFrontend ${{ region }}"
-            dependsOn: semantic_version_micro_fronted
+          - stage: build_repository_configuration_${{ region }}
+            displayName: "📦 Repository Configuration ${{ region }}"
             jobs:
-              - template: ../ci/build/build-micro-fronted.yml
+              - template: ../ci/build/build-repository-configuration.yml
                 parameters:
                   region: ${{ region }}
-                  apps: ${{ parameters.apps }}
 
       - stage: semantic_version_electron
         displayName: "🏷️ Semantic Version Electron"

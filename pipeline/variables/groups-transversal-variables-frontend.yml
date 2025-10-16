@@ -5,7 +5,7 @@ variables:
   - group: trasversal-microfrontend-vue2
   - group: trasversal-microfrontend
 
-  # Develop - Feature - Hotfix
+  # Develop - Feature - Hotfix branch
   - ${{ if or(eq(variables['Build.SourceBranchName'], 'develop'), startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')) }}:
       - group: trasversal-aws-develop
       - group: variables-microfrontend-vue2-develop-old
@@ -13,7 +13,7 @@ variables:
     #   - group: variables-microfrontend-vue2-develop
     #   - group: variables-microfrontend-develop
 
-  # Staging
+  # Staging branch
   - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
       - group: trasversal-aws-staging
       - group: variables-microfrontend-vue2-staging-old
@@ -21,7 +21,7 @@ variables:
     #   - group: variables-microfrontend-vue2-staging
     #   - group: variables-microfrontend-staging
 
-  # Master or tags → por red
+  # Master branch → por red
   - ${{ if and(eq(parameters.region, 'antioquia'), eq(variables['Build.SourceBranchName'], 'master')) }}:
       - group: trasversal-aws-antioquia
       - group: variables-microfrontend-vue2-staging-old
