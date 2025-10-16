@@ -1,6 +1,6 @@
 jobs:
   - job: build_repository_configuration_${{ parameters.region }}
-    displayName: "📦 build"
+    displayName: "📦 build repository configuration"
     pool:
       name: "Azure Pipelines"
       VmImage: ubuntu-22.04
