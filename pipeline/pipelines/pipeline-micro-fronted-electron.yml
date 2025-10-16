@@ -36,14 +36,14 @@ stages:
         jobs:
           - template: ../ci/semantic-version-integration.yml
             parameters:
-              release: exe
+              release: electron
 
       - ${{ each region in parameters.red }}:
           - stage: build_electron_${{ region }}
             displayName: "📦 Build Electron ${{ region }}"
             dependsOn: semantic_version_electron
             jobs:
-              - template: ../ci/build/build-electron.yml
+              - template: ../ci/build/build-electron-frontend.yml
                 parameters:
                   region: ${{ region }}
 
@@ -74,13 +74,13 @@ stages:
         jobs:
           - template: ../ci/semantic-version-integration.yml
             parameters:
-              release: exe
+              release: electron
 
       - stage: build_electron
         displayName: "📦 Build Electron"
         dependsOn: semantic_version_electron
         jobs:
-          - template: ../ci/build/build-electron.yml
+          - template: ../ci/build/build-electron-frontend.yml
 
       - ${{ if in(variables['Build.SourceBranchName'], 'develop', 'staging') }}:
           - stage: deploy_electron
