@@ -39,6 +39,7 @@ jobs:
         condition: succeeded()
 
       - script: |
+          set -e
           echo -e "\n📦 Cargando al Bucket S3..."
 
           BASE_PATH="$(Pipeline.Workspace)/electron-artifacts/electron/linux"
@@ -59,6 +60,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVIC)
 
       - script: |
+          set -e
           echo -e "\n📦 Cargando al Bucket S3..."
 
           BASE_PATH="$(Pipeline.Workspace)/electron-artifacts/electron/windows"
