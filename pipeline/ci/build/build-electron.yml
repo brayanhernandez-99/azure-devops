@@ -317,7 +317,7 @@ jobs:
               "refs/heads/develop"   { $electronBranch = "feature/security-vulnerability-refactor"; $environment = "dev"; break }
               "refs/heads/staging"   { $electronBranch = "feature/security-vulnerability-refactor"; $environment = "qa"; break }
               "refs/heads/master" {
-                switch ($region) {
+                switch ($env:region) {
                   "antioquia" { $electronBranch = "feature/security-vulnerability-refactor"; $environment = "matrixtech"; break }
                   "cap"       { $electronBranch = "feature/security-vulnerability-refactor"; $environment = "cap"; break }
                   "tolima"    { $electronBranch = "feature/security-vulnerability-refactor"; $environment = "seapto"; break }
