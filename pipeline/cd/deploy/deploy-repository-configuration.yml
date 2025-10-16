@@ -1,0 +1,50 @@
+jobs:
+  - job: deploy_repository_configuration_${{ parameters.region }}
+    displayName: "🚀 deploy"
+    pool:
+      name: "Azure Pipelines"
+      VmImage: ubuntu-22.04
+
+    variables:
+      - template: ../../variables/groups-transversal-variables-rpc.yml
+        parameters:
+          region: ${{ parameters.region }}
+
+    steps:
+      - checkout: self
+        fetchDepth: 0
+        persistCredentials: true
+
+      - script: |
+          echo "Upload configuration to S3"
+          aws s3 cp . s3://configuration-$(ACCOUNT_ID_INVIC) --recursive --exclude "pipeline/*"
+        displayName: "📤 Upload Configuration to S3"
+        condition: and(succeeded(),
+          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
+          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
+        env:
+          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVIC)
+          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVIC)
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+
+      - script: |
+          echo "🔎 Verificando cambios en carpeta reports/..."
+          if git diff --name-only HEAD~1 HEAD | grep -q "^reports/"; then 
+            echo "✅ Se detectaron cambios en reports/ y no es develop, enviando mensaje a SQS"; 
+            json_complete='{"event":"migration","streamNotifier":"Notifier","model":{"method":"insert","reports":[{"name":"modelos_invictus","type_card":"model"},{"name":"reportes_invictus","type_card":"question"},{"name":"archivos_cem","type_card":"question"}]}}'; 
+            aws sqs send-message \
+              --queue-url https://sqs.us-east-1.amazonaws.com/$(ACCOUNT_ID_INVIC)/Sellers \
+              --message-body "$json_complete" \
+              --delay-seconds 0
+          else 
+            echo "ℹ️ No se enviará mensaje a SQS: no hubo cambios en reports/"
+          fi
+        displayName: "🔍 Verify Changes in reports/"
+        condition: and(succeeded(),
+          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
+          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')),
+          ne(variables['Build.SourceBranch'], 'refs/heads/develop'))
+        env:
+          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVIC)
+          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVIC)
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)

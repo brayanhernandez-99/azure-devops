@@ -8,74 +8,27 @@ stages:
                 parameters:
                   region: ${{ region }}
 
-      - stage: semantic_version_electron
-        displayName: "🏷️ Semantic Version Electron"
-        # dependsOn:
-        #   - build_micro_frontend_antioquia
-        #   - build_micro_frontend_cap
-        #   - build_micro_frontend_tolima
-        #   - build_micro_frontend_huila
-        #   - build_micro_frontend_cauca
-        #   - build_micro_frontend_boyaca
-        #   - build_micro_frontend_santander
-        dependsOn:
-          - build_micro_frontend_antioquia
-          - build_micro_frontend_cap
-        jobs:
-          - template: ../ci/semantic-version-integration.yml
-            parameters:
-              release: exe
-
-      - ${{ each region in parameters.red }}:
-          - stage: build_electron_${{ region }}
-            displayName: "📦 Build Electron ${{ region }}"
-            dependsOn: semantic_version_electron
-            jobs:
-              - template: ../ci/build/build-electron.yml
-                parameters:
-                  region: ${{ region }}
-
-          - stage: deploy_electron_${{ region }}
-            displayName: "🚀 Deploy Electron ${{ region }}"
-            dependsOn: build_electron_${{ region }}
+          - stage: deploy_repository_configuration_${{ region }}
+            displayName: "🚀 Repository Configuration ${{ region }}"
+            dependsOn: build_repository_configuration_${{ region }}
             jobs:
               - template: ../cd/deployment.yml
                 parameters:
-                  release: exe
+                  release: rpc
                   region: ${{ region }}
-                  apps: ${{ parameters.apps }}
 
   #####################################################################
 
   - ${{ if ne(variables['Build.SourceBranchName'], 'master') }}:
-      - stage: build_micro_frontend
-        displayName: "📦 Build MicroFrontend"
-        dependsOn: semantic_version_micro_fronted
+      - stage: build_repository_configuration
+        displayName: "📦 Repository Configuration"
         jobs:
-          - template: ../ci/build/build-micro-fronted.yml
+          - template: ../ci/build/build-repository-configuration.yml
+
+      - stage: deploy_repository_configuration
+        displayName: "🚀 Repository Configuration"
+        dependsOn: build_repository_configuration
+        jobs:
+          - template: ../cd/deployment.yml
             parameters:
-              apps: ${{ parameters.apps }}
-
-      - stage: semantic_version_electron
-        displayName: "🏷️ Semantic Version Electron"
-        dependsOn: build_micro_frontend
-        jobs:
-          - template: ../ci/semantic-version-integration.yml
-            parameters:
-              release: exe
-
-      - stage: build_electron
-        displayName: "📦 Build Electron"
-        dependsOn: semantic_version_electron
-        jobs:
-          - template: ../ci/build/build-electron.yml
-
-      - ${{ if in(variables['Build.SourceBranchName'], 'develop', 'staging', 'master') }}:
-          - stage: deploy_electron
-            displayName: "🚀 Deploy Electron"
-            dependsOn: build_electron
-            jobs:
-              - template: ../cd/deployment.yml
-                parameters:
-                  release: exe
-                  apps: ${{ parameters.apps }}
+              release: rpc

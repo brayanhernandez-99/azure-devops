@@ -39,7 +39,7 @@ resources:
       type: git
 
     - repository: sonarqube
-      name: Invictus/security-sonarqube
+      name: Invictus/security-sonarqube-invictus
       type: git
 
     - repository: electron
