@@ -311,23 +311,6 @@ jobs:
             $electronBranch = "unknown"
             $environment = "unknown"
 
-            switch -Wildcard ($currentBranch) {
-              "refs/heads/feature/*" { $environment = "dev"; break }
-              "refs/heads/develop"   { $environment = "dev"; break }
-              "refs/heads/staging"   { $environment = "qa"; break }
-              "refs/heads/master" {
-                switch (${{ parameters.region }}) {
-                  "antioquia" { $environment = "matrixtech"; break }
-                  "cap"       { $environment = "cap"; break }
-                  "tolima"    { $environment = "seapto"; break }
-                  "huila"     { $environment = "suchance"; break }
-                  "cauca"     { $environment = "acertemos"; break }
-                  "boyaca"    { $environment = "jer"; break }
-                  "santander" { $environment = "laperla"; break }
-                }
-              }
-            }
-
             switch -Wildcard ($CURRENT_BRANCH) {
               "refs/heads/feature/*" { $electronBranch = "feature/security-vulnerability-refactor"; $environment = "dev"; break }
               "refs/heads/hotfix/*"  { $electronBranch = "feature/security-vulnerability-refactor"; $environment = "dev"; break }
@@ -347,7 +330,7 @@ jobs:
             }
 
             if ($electronBranch -eq "unknown" -or $environment -eq "unknown") {
-              Write-Host "`n⚠️  ElectronBranch o Environment no reconocidos"
+              Write-Host "`n⚠️ ElectronBranch o Environment no reconocidos"
               Write-Host "⚠️ Electron Branch: [$electronBranch]"
               Write-Host "⚠️ Environment: [$environment]"
               exit 99

@@ -309,6 +309,6 @@ jobs:
           ArtifactName: "dists"
           publishLocation: "Container"
         displayName: "📤 Publish Dist Files"
-        # condition: and(succeeded(),
-        #   not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
-        #   not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
+        condition: and(succeeded(),
+          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
+          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
