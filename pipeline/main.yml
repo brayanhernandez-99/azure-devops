@@ -50,27 +50,27 @@ stages:
   #
   # MicroFronted pipeline
   #
-  - ${{ if and(eq(parameters.release, 'aws-s3'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), in(variables['Build.SourceBranchName'], 'develop', 'staging', 'master'))) }}:
-      - template: pipelines/pipeline-micro-fronted.yml
+  - ${{ if and(eq(parameters.release, 'electron'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), in(variables['Build.SourceBranchName'], 'develop', 'staging', 'master'))) }}:
+      - template: pipelines/pipeline-micro-fronted-electron.yml
         parameters:
           red: ${{ parameters.red }}
           apps: ${{ parameters.apps }}
           release: ${{ parameters.release }}
-
-  # #
-  # # Electron pipeline
-  # #
-  # - ${{ if and(eq(parameters.release, 'exe'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), in(variables['Build.SourceBranchName'], 'develop', 'staging', 'master'))) }}:
-  #     - template: pipeline/pipeline-electron.yml
-  #       parameters:
-  #         red: ${{ parameters.red }}
-  #         release: ${{ parameters.release }}
 
   #
   # Repository Configuration pipeline
   #
   - ${{ if and(eq(parameters.release, 'rpc'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), in(variables['Build.SourceBranchName'], 'develop', 'staging', 'master'))) }}:
       - template: pipelines/pipeline-repository-configuration.yml
+        parameters:
+          red: ${{ parameters.red }}
+          release: ${{ parameters.release }}
+
+  #
+  # Electron pipeline
+  #
+  - ${{ if and(eq(parameters.release, 'exe'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), in(variables['Build.SourceBranchName'], 'develop', 'staging', 'master'))) }}:
+      - template: pipelines/pipeline-electron.yml
         parameters:
           red: ${{ parameters.red }}
           release: ${{ parameters.release }}
