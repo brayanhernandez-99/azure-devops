@@ -53,7 +53,7 @@ stages:
             jobs:
               - template: ../cd/deployment.yml
                 parameters:
-                  release: exe
+                  release: electron
                   region: ${{ region }}
                   apps: ${{ parameters.apps }}
 
@@ -89,5 +89,5 @@ stages:
             jobs:
               - template: ../cd/deployment.yml
                 parameters:
-                  release: exe
+                  release: electron
                   apps: ${{ parameters.apps }}

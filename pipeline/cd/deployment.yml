@@ -27,8 +27,8 @@ jobs:
 
   #####################################################################
 
-  - ${{ if eq(parameters.release, 'exe') }}:
-      - template: ./deploy/deploy-frontend-electron.yml
+  - ${{ if eq(parameters.release, 'electron') }}:
+      - template: ./deploy/deploy-electron-frontend.yml
         parameters:
           region: ${{ parameters.region }}
 
