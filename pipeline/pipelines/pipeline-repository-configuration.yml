@@ -9,7 +9,7 @@ stages:
                   region: ${{ region }}
 
           - stage: deploy_repository_configuration_${{ region }}
-            displayName: "🚀 Repository Configuration ${{ region }}"
+            displayName: "🚀 Deploy Repository Configuration ${{ region }}"
             dependsOn: build_repository_configuration_${{ region }}
             jobs:
               - template: ../cd/deployment.yml
