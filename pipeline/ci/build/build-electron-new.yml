@@ -295,7 +295,7 @@ jobs:
       vmImage: "windows-latest"
 
     variables:
-      - template: ../../variables/groups-transversal-variables-electron.yml
+      - template: ../../variables/groups-transversal-variables-electron-new.yml
         parameters:
           region: ${{ parameters.region }}
 
