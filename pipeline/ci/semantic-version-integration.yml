@@ -6,8 +6,15 @@ jobs:
 
   #####################################################################
 
-  - ${{ if eq(parameters.release, 'electron') }}:
-      - template: ./general/semantic-version-electron-frontend.yml
+  - ${{ if eq(parameters.release, 'aws-s3-new') }}:
+      - template: ./general/semantic-version-frontend-new.yml
+        parameters:
+          apps: ${{ parameters.apps }}
+
+  #####################################################################
+
+  - ${{ if eq(parameters.release, 'electron-new') }}:
+      - template: ./general/semantic-version-electron-new.yml
 
   #####################################################################
 

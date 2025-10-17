@@ -17,7 +17,6 @@ stages:
             jobs:
               - template: ../ci/build/build-micro-fronted.yml
                 parameters:
-                  build: old
                   region: ${{ region }}
                   apps: ${{ parameters.apps }}
 
@@ -40,7 +39,6 @@ stages:
         jobs:
           - template: ../ci/build/build-micro-fronted.yml
             parameters:
-              build: old
               apps: ${{ parameters.apps }}
 
       - ${{ if in(variables['Build.SourceBranchName'], 'develop', 'staging') }}:
