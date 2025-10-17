@@ -20,13 +20,13 @@ variables:
   # Master branch → por red
   - ${{ if and(eq(parameters.region, 'antioquia'), eq(variables['Build.SourceBranchName'], 'master')) }}:
       - group: trasversal-aws-antioquia
-      - group: variables-microfrontend-vue2-staging-old
-      - group: variables-microfrontend-staging-old
+      - group: variables-microfrontend-vue2-antioquia
+      - group: variables-microfrontend-antioquia
 
   - ${{ if and(eq(parameters.region, 'cap'), eq(variables['Build.SourceBranchName'], 'master')) }}:
       - group: trasversal-aws-antioquia-cap
-      - group: variables-microfrontend-vue2-staging-old
-      - group: variables-microfrontend-staging-old
+      - group: variables-microfrontend-vue2-antioquia-cap
+      - group: variables-microfrontend-antioquia-cap
 
   - ${{ if and(eq(parameters.region, 'tolima'), eq(variables['Build.SourceBranchName'], 'master')) }}:
       - group: trasversal-aws-tolima
@@ -42,3 +42,5 @@ variables:
 
   - ${{ if and(eq(parameters.region, 'santander'), eq(variables['Build.SourceBranchName'], 'master')) }}:
       - group: trasversal-aws-santander
+      - group: variables-microfrontend-vue2-santander
+      - group: variables-microfrontend-santander
