@@ -35,6 +35,19 @@ jobs:
         displayName: "📚 Read Version"
         condition: succeeded()
 
+      - task: DownloadPipelineArtifact@2
+        inputs:
+          artifact: dists
+          path: $(Pipeline.Workspace)/downloaded-dists
+        displayName: "📥 Download Dists"
+        condition: succeeded()
+
+
+
+
+
+
+
       - script: |
           set -e
           echo -e "\n📦 Cargando al Bucket S3..."
