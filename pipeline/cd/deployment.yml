@@ -21,7 +21,7 @@ jobs:
 
   - ${{ if eq(parameters.release, 'aws-s3') }}:
       - template: ./deploy/deploy-frontend.yml
-      - template: ./commit-tag/commit-tag-changeload-frontend.yml
+      - template: ./commit/commit-version-frontend.yml
         parameters:
           apps: ${{ parameters.apps }}
 
@@ -33,11 +33,11 @@ jobs:
           region: ${{ parameters.region }}
 
       - ${{ if eq(parameters.region, 'antioquia') }}:
-          - template: ./commit-tag/commit-tag-changeload-frontend.yml
+          - template: ./commit/commit-version-frontend.yml
             parameters:
               apps: ${{ parameters.apps }}
 
-          - template: ./commit-tag/commit-tag-changeload-electron.yml
+          - template: ./commit/commit-version-electron-frontend.yml
 
   #####################################################################
 

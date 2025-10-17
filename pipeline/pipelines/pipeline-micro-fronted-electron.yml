@@ -4,8 +4,8 @@ stages:
     jobs:
       - template: ../ci/semantic-version-integration.yml
         parameters:
-          apps: ${{ parameters.apps }}
           release: aws-s3
+          apps: ${{ parameters.apps }}
 
   #####################################################################
 

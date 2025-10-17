@@ -94,7 +94,7 @@ jobs:
         condition: succeeded()
 
       - script: |
-          DISTS_PATH="$(Pipeline.Workspace)/downloaded-dists/${{ parameters.region }}"
+          DISTS_PATH="$(Pipeline.Workspace)/downloaded-dists/$region"
           DISTS_COUNT=$(ls "$DISTS_PATH" | wc -l)
 
           if [[ "$DISTS_COUNT" == "15" ]]; then
@@ -111,6 +111,8 @@ jobs:
           fi
         displayName: "🔎 Validate and Copy Dists"
         condition: succeeded()
+        env:
+          region: ${{ parameters.region }}
 
       - task: Bash@3
         name: AuthCodeArtifact
@@ -393,7 +395,7 @@ jobs:
         inputs:
           targetType: "inline"
           script: |
-            $DISTS_PATH = "$(Pipeline.Workspace)\downloaded-dists\dists\${{ parameters.region }}"
+            $DISTS_PATH = "$(Pipeline.Workspace)\downloaded-dists\dists\$($env:region)"
             $DISTS_COUNT = (Get-ChildItem -Path $DISTS_PATH).Count
 
             if ($DISTS_COUNT -eq 15) {
@@ -410,6 +412,8 @@ jobs:
               exit 99
             }
         condition: succeeded()
+        env:
+          region: ${{ parameters.region }}
 
       - task: PowerShell@2
         displayName: "🔐 Setup CodeArtifact & npm config"
