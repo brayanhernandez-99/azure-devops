@@ -4,7 +4,7 @@ stages:
     jobs:
       - template: ../ci/semantic-version-integration.yml
         parameters:
-          release: aws-s3
+          release: aws-s3-new
           apps: ${{ parameters.apps }}
 
   #####################################################################
@@ -15,7 +15,7 @@ stages:
             displayName: "📦 Build MicroFrontend ${{ region }}"
             dependsOn: semantic_version_micro_fronted
             jobs:
-              - template: ../ci/build/build-micro-fronted-new.yml
+              - template: ../ci/build/deploy-frontend-new.yml.yml
                 parameters:
                   region: ${{ region }}
                   apps: ${{ parameters.apps }}
@@ -43,7 +43,7 @@ stages:
             displayName: "📦 Build Electron ${{ region }}"
             dependsOn: semantic_version_electron
             jobs:
-              - template: ../ci/build/build-electron-frontend.yml
+              - template: ../ci/build/build-electron-new.yml
                 parameters:
                   region: ${{ region }}
 
@@ -64,7 +64,7 @@ stages:
         displayName: "📦 Build MicroFrontend"
         dependsOn: semantic_version_micro_fronted
         jobs:
-          - template: ../ci/build/build-micro-fronted.yml
+          - template: ../ci/build/deploy-frontend-new.yml.yml
             parameters:
               apps: ${{ parameters.apps }}
 
@@ -80,7 +80,7 @@ stages:
         displayName: "📦 Build Electron"
         dependsOn: semantic_version_electron
         jobs:
-          - template: ../ci/build/build-electron-frontend.yml
+          - template: ../ci/build/build-electron-frontend-new.yml
 
       - ${{ if in(variables['Build.SourceBranchName'], 'develop', 'staging') }}:
           - stage: deploy_electron
