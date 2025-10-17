@@ -15,7 +15,7 @@ stages:
             displayName: "📦 Build MicroFrontend ${{ region }}"
             dependsOn: semantic_version_micro_fronted
             jobs:
-              - template: ../ci/build/deploy-frontend-new.yml.yml
+              - template: ../ci/build/build-frontend-new.yml
                 parameters:
                   region: ${{ region }}
                   apps: ${{ parameters.apps }}
@@ -64,7 +64,7 @@ stages:
         displayName: "📦 Build MicroFrontend"
         dependsOn: semantic_version_micro_fronted
         jobs:
-          - template: ../ci/build/deploy-frontend-new.yml.yml
+          - template: ../ci/build/build-frontend-new.yml
             parameters:
               apps: ${{ parameters.apps }}
 
@@ -80,7 +80,7 @@ stages:
         displayName: "📦 Build Electron"
         dependsOn: semantic_version_electron
         jobs:
-          - template: ../ci/build/build-electron-frontend-new.yml
+          - template: ../ci/build/build-electron-new.yml
 
       - ${{ if in(variables['Build.SourceBranchName'], 'develop', 'staging') }}:
           - stage: deploy_electron
