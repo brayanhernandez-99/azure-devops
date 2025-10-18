@@ -18,10 +18,11 @@ parameters:
   - name: apps
     type: object
     default:
-      microservice-siga: "3.2.8"
-      microservice-lotteries-games: "4.13.4"
-      microservice-remittances: "2.2.3"
-      microservice-transaction: "4.5.3"
+      microservice-lotteries-games: "4.13.5"
+      microservice-papelery: "3.3.5"
+      microservice-hierarchies: "3.5.1"
+      microservice-payment-voucher: "3.1.7"
+      microservice-security: "3.3.6"
 
 resources:
   repositories:
