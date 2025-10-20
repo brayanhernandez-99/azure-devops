@@ -4,6 +4,7 @@ variables:
   - group: trasversal-versions-invictus
   - group: trasversal-microfrontend-vue2
   - group: trasversal-microfrontend
+  - group: trasversal-cloudfront
 
   # Develop - Feature - Hotfix branch
   - ${{ if or(eq(variables['Build.SourceBranchName'], 'develop'), startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')) }}:
