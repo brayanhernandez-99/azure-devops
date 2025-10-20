@@ -10,29 +10,37 @@ jobs:
         parameters:
           region: ${{ parameters.region }}
 
+    strategy:
+      matrix:
+        ${{ each ms in parameters.apps }}:
+          ${{ ms }}:
+            msName: ${{ ms }}
+
     steps:
-      - checkout: self
-        fetchDepth: 0
-        persistCredentials: true
-
-      - task: DownloadBuildArtifacts@0
-        inputs:
-          artifactName: "versions"
-          downloadPath: "$(Pipeline.Workspace)/versions-downloaded"
-        displayName: "📥 Download Version"
-        condition: succeeded()
-
       - script: |
-          VERSION_FILE="$(Pipeline.Workspace)/versions-downloaded/versions/electron/version.json"
+          VERSION_FILE="$(Pipeline.Workspace)/versions-downloaded/versions/$(msName)/version.json"
           if [[ -f "$VERSION_FILE" ]]; then
             VERSION=$(jq -r '.version' $VERSION_FILE)
-            echo -e "\n🚀 Versión detectada para $(Build.Repository.Name): $VERSION"
+            echo -e "\n🚀 Versión detectada para $(msName): $VERSION"
             echo "##vso[task.setvariable variable=msVersion]$VERSION"
           else
-            echo -e "\n##vso[task.logissue type=error]❌ No se encontro archivo de versión para $(Build.Repository.Name)"
+            echo "##vso[task.logissue type=error]❌ No se encontró archivo de versión para: $(msName)"
             exit 99
           fi
         displayName: "📚 Read Version"
+        condition: succeeded()
+
+      - script: |
+          if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
+            fileselect=app-legacy
+            echo -e "\nℹ️ Ruta de archivo del micro frontend: $fileselect"
+            echo "##vso[task.setvariable variable=file]$fileselect"
+          else
+            fileselect=apps
+            echo -e "\nℹ️ Ruta de archivo del micro frontend: $fileselect"
+            echo "##vso[task.setvariable variable=file]$fileselect"
+          fi
+        displayName: "📂 Select Directory"
         condition: succeeded()
 
       - task: DownloadPipelineArtifact@2
@@ -42,8 +50,26 @@ jobs:
         displayName: "📥 Download Dists"
         condition: succeeded()
 
+      - script: |
+          set -e
+          echo -e "\n📦 Cargando al Bucket S3..."
 
+          BASE_PATH="$(Pipeline.Workspace)/downloaded-dists/dists/$(region)/$(msName)"
+          echo -e "\n📂 Archivos a cargar: $BASE_PATH"
+          ls -l "$BASE_PATH"
 
+          if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
+            msName=$(msName)
+            msName=${msName%-vue2}
+          else 
+            msName=$(msName)
+          fi
+
+          aws s3 cp $BASE_PATH s3://mf-$msName-$(ACCOUNT_ID_INVIC)/$(msVersion)/ --recursive
+        displayName: "📤 Upload Bucket S3"
+        condition: succeeded()
+        env:
+          region: ${{ parameters.region }}
 
 
 
@@ -52,7 +78,8 @@ jobs:
           set -e
           echo -e "\n📦 Cargando al Bucket S3..."
 
-          BASE_PATH="$(Pipeline.Workspace)/electron-artifacts/electron/linux"
+          BASE_PATH="$(Pipeline.Workspace)/downloaded-dists/dists//$(msName)"
+
           echo -e "\n📂 Archivos a cargar: $BASE_PATH"
           ls -l "$BASE_PATH"
 
@@ -65,6 +92,8 @@ jobs:
         displayName: "🐧 Upload Bucket S3 Linux"
         condition: succeeded()
         env:
+          region: ${{ parameters.region }}
+
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVIC)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVIC)
