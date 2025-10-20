@@ -18,11 +18,7 @@ parameters:
   - name: apps
     type: object
     default:
-      microservice-lotteries-games: "4.13.5"
-      microservice-papelery: "3.3.5"
-      microservice-hierarchies: "3.5.1"
-      microservice-payment-voucher: "3.1.7"
-      microservice-security: "3.3.6"
+      microservice-lotteries-games: "4.13.6"
 
 resources:
   repositories:
