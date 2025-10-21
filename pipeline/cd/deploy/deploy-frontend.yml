@@ -75,8 +75,6 @@ jobs:
           aws s3 cp $BASE_PATH s3://mf-$msName-$(ACCOUNT_ID_INVIC)/$(msVersion)/ --recursive
         displayName: "📤 Upload Bucket S3"
         condition: succeeded()
-        env:
-          region: ${{ parameters.region }}
 
       - script: |
           CLOUDFRONT_VAR_NAME=$(echo "$(msName)" | tr '[:lower:]' '[:upper:]' | tr '-' '_')
