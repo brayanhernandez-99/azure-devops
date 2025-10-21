@@ -17,6 +17,13 @@ jobs:
             msName: ${{ ms }}
 
     steps:
+      - task: DownloadBuildArtifacts@0
+        inputs:
+          artifactName: "versions"
+          downloadPath: "$(Pipeline.Workspace)/versions-downloaded"
+        displayName: "📥 Download Version"
+        condition: succeeded()
+
       - script: |
           VERSION_FILE="$(Pipeline.Workspace)/versions-downloaded/versions/$(msName)/version.json"
           if [[ -f "$VERSION_FILE" ]]; then
