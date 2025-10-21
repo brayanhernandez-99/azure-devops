@@ -128,7 +128,7 @@ jobs:
       #     diff=$(git --no-pager diff "origin/$targetBranch..origin/$sourceBranch")
 
       #     if echo "$diff" | grep -qE '^\+.*console\.log'; then
-      #       echo -e "\n❌ Se encontro 'console.log' en los cambios"
+      #       echo -e "\n##vso[task.logissue type=error]⚠️ Se encontro 'console.log' en los cambios"
       #       exit 99
       #     else
       #       echo -e "\n✅ No se encontraron sentencias 'console.log' en los cambios"

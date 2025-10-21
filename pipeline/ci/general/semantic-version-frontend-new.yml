@@ -45,7 +45,7 @@ jobs:
             if [[ -z "$RELEVANT_CHANGES" ]]; then
               echo -e "\nℹ️ Solo hay cambios en archivos ignorados (pipeline/). Continuando..."
             else
-              echo -e "\n##vso[task.logissue type=error]❌ Cambios relevantes detectados en master y no están integrados. Debes actualizar tu rama."
+              echo -e "\n##vso[task.logissue type=error]⚠️ Cambios relevantes detectados en master y no están integrados. Debes actualizar tu rama."
               exit 99
             fi
           fi
@@ -128,7 +128,7 @@ jobs:
       #     diff=$(git --no-pager diff "origin/$targetBranch..origin/$sourceBranch")
 
       #     if echo "$diff" | grep -qE '^\+.*console\.log'; then
-      #       echo -e "\n❌ Se encontro 'console.log' en los cambios"
+      #       echo -e "\n##vso[task.logissue type=error]⚠️ Se encontro 'console.log' en los cambios"
       #       exit 99
       #     else
       #       echo -e "\n✅ No se encontraron sentencias 'console.log' en los cambios"

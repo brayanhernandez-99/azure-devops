@@ -41,9 +41,9 @@ jobs:
           esac
 
           if [[ "$electronBranch" == "unknown" ]] || [[ "$environment" = "unknown" ]]; then
-            echo -e "\n⚠️ ElectronBranch o Environment no reconocidos"
-            echo "⚠️ Electron Branch: [$electronBranch]"
-            echo "⚠️ Environment: [$environment]"
+            echo -e "\n##vso[task.logissue type=error]⚠️ ElectronBranch o Environment no reconocidos"
+            echo -e "##vso[task.logissue type=error]⚠️ Electron Branch: [$electronBranch]"
+            echo -e "##vso[task.logissue type=error]⚠️ Environment: [$environment]"
             exit 99
           fi
 
@@ -80,7 +80,7 @@ jobs:
             echo -e "\n🚀 Versión detectada para $(Build.Repository.Name): $VERSION"
             echo "##vso[task.setvariable variable=msVersion]$VERSION"
           else
-            echo -e "\n##vso[task.logissue type=error]❌ No se encontro archivo de versión para $(Build.Repository.Name)"
+            echo -e "\n##vso[task.logissue type=error]⚠️ No se encontro archivo de versión para $(Build.Repository.Name)"
             exit 99
           fi
         displayName: "📚 Read Version"
@@ -105,7 +105,7 @@ jobs:
             echo -e "\n📁 Dists apps"
             ls -l $(System.DefaultWorkingDirectory)/apps
           else
-            echo -e "\n⚠️ Error no tiene exactamente todos los dists en: $DISTS_PATH"
+            echo -e "\n##vso[task.logissue type=error]⚠️ Error no tiene exactamente todos los dists en: $DISTS_PATH"
             ls -l $(System.DefaultWorkingDirectory)/apps
             exit 99
           fi
@@ -196,7 +196,7 @@ jobs:
             echo -e "\n✅ Versión en package.json actualizada correctamente."
             cat "$PACKAGE_PATH"
           else
-            echo -e "\n❌ No se encontró el archivo package.json en la ruta [$PACKAGE_PATH]"
+            echo -e "\n##vso[task.logissue type=error]⚠️ No se encontró el archivo package.json en la ruta [$PACKAGE_PATH]"
             exit 99
           fi
         displayName: "📝 Update version in package.json"
@@ -224,7 +224,7 @@ jobs:
 
           OUTPUT=$(pnpm ls --depth=0 || true)
           if [[ -z "$OUTPUT" ]]; then
-            echo "##vso[task.logissue type=error]❌ No se instalaron dependencias, esperar que se actualicen las dependencias a nivel global"
+            echo -e "\n##vso[task.logissue type=error]⚠️ No se instalaron dependencias, esperar que se actualicen las dependencias a nivel global"
             exit 99
           else
             echo -e "\n✅ Dependencias Instaladas:"
@@ -265,7 +265,7 @@ jobs:
           done
 
           if [[ "$all_found" == false ]]; then
-            echo -e "\n❌ Error: archivos requeridos no encontrados."
+            echo -e "\n##vso[task.logissue type=error]⚠️ Error: archivos requeridos no encontrados."
             exit 99
           else
             mkdir -p "$(Build.ArtifactStagingDirectory)/electron-artifacts/linux"
@@ -332,9 +332,9 @@ jobs:
             }
 
             if ($electronBranch -eq "unknown" -or $environment -eq "unknown") {
-              Write-Host "`n⚠️ ElectronBranch o Environment no reconocidos"
-              Write-Host "⚠️ Electron Branch: [$electronBranch]"
-              Write-Host "⚠️ Environment: [$environment]"
+              Write-Output "`n##vso[task.logissue type=error]⚠️ ElectronBranch o Environment no reconocidos"
+              Write-Output "##vso[task.logissue type=error]⚠️ Electron Branch: [$electronBranch]"
+              Write-Output "##vso[task.logissue type=error]⚠️ Environment: [$environment]"
               exit 99
             }
 
@@ -378,7 +378,7 @@ jobs:
               Write-Host "`n🚀 Versión detectada para .exe: $version"
               Write-Host "##vso[task.setvariable variable=version]$version"
             } else {
-              Write-Host "`n❌ No se encontro archivo de versión para .exe"
+              Write-Output "`n##vso[task.logissue type=error]⚠️ No se encontro archivo de versión para .exe"
               exit 99
             }
         condition: succeeded()
@@ -407,7 +407,7 @@ jobs:
               Write-Host "`n📁 Dists apps"
               Get-ChildItem -Path "$(System.DefaultWorkingDirectory)\apps" | Select-Object Mode, LastWriteTime, Length, Name | Format-Table
             } else {
-              Write-Host "`n⚠️ Error no tiene exactamente todos los dists en: $DISTS_PATH"
+              Write-Output "`n##vso[task.logissue type=error]⚠️ Error no tiene exactamente todos los dists en: $DISTS_PATH"
               Get-ChildItem -Path "$(System.DefaultWorkingDirectory)\apps" | Select-Object Mode, LastWriteTime, Length, Name | Format-Table
               exit 99
             }
@@ -430,7 +430,7 @@ jobs:
               --output text
 
             if (-not $token) {
-              Write-Error "`n❌ No se pudo obtener el token de AWS CodeArtifact"
+              Write-Output "`n##vso[task.logissue type=error]⚠️ No se pudo obtener el token de AWS CodeArtifact"
               exit 99
             }
 
@@ -513,7 +513,7 @@ jobs:
               Write-Host "`n✅ Version en package.json actualizada correctamente."
               Get-Content $packagePath | ForEach-Object { Write-Host $_ }
             } else {
-              Write-Host "`n❌ No se encontro el archivo package.json en la ruta [$packagePath]"
+              Write-Output "`n##vso[task.logissue type=error]⚠️ No se encontro el archivo package.json en la ruta [$packagePath]"
               exit 99
             }
         condition: succeeded()
@@ -534,7 +534,7 @@ jobs:
                     Write-Host "`n✅ package.json no contiene BOM"
                 }
             } else {
-                Write-Warning "`n❌ package.json no se encontró en $filePath"
+                Write-Output "`n##vso[task.logissue type=error]⚠️ Error: package.json no se encontró en $filePath"
                 exit 99
             }
         condition: succeeded()
@@ -563,7 +563,7 @@ jobs:
 
             $output = pnpm ls --depth=0
             if (-not $output) {
-              Write-Host "##vso[task.logissue type=error]❌ No se instalaron dependencias, esperar que se actualicen las dependencias a nivel global"
+              Write-Output "`n##vso[task.logissue type=error]⚠️ No se instalaron dependencias, esperar que se actualicen las dependencias a nivel global"
               exit 99
             } else {
               Write-Host "`n✅ Dependencias Instaladas:"
@@ -611,7 +611,7 @@ jobs:
             }
 
             if (-not $allFound) {
-              Write-Error "`n❌ Error: archivos requeridos no encontrados."
+              Write-Output "`n##vso[task.logissue type=error]⚠️ Error: archivos requeridos no encontrados."
               exit 99
             } else {
               New-Item -ItemType Directory -Path "$(Build.ArtifactStagingDirectory)\electron-artifacts" | Out-Null
