@@ -23,10 +23,11 @@ jobs:
       - template: ./deploy/deploy-frontend.yml
         parameters:
           apps: ${{ parameters.apps }}
-
-      - template: ./commit/commit-version-frontend.yml
-        parameters:
-          apps: ${{ parameters.apps }}
+          
+      - ${{ if eq(parameters.region, 'antioquia') }}:
+          - template: ./commit/commit-version-frontend.yml
+            parameters:
+              apps: ${{ parameters.apps }}
 
   #####################################################################
 

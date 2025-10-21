@@ -16,7 +16,11 @@ jobs:
         persistCredentials: true
 
       - script: |
-          echo "Upload configuration to S3"
+          set -e
+          echo -e "\n📦 Cargando al Bucket S3..."
+          echo -e "\n📂 Archivos a cargar:"
+          ls -l
+
           aws s3 cp . s3://configuration-$(ACCOUNT_ID_INVIC) --recursive --exclude "pipeline/*"
         displayName: "📤 Upload Configuration to S3"
         condition: and(succeeded(),
