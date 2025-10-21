@@ -75,6 +75,10 @@ jobs:
           aws s3 cp $BASE_PATH s3://mf-$msName-$(ACCOUNT_ID_INVIC)/$(msVersion)/ --recursive
         displayName: "📤 Upload Bucket S3"
         condition: succeeded()
+        env:
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVIC)
+          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVIC)
 
       - script: |
           CLOUDFRONT_VAR_NAME=$(echo "$(msName)" | tr '[:lower:]' '[:upper:]' | tr '-' '_')
@@ -104,9 +108,9 @@ jobs:
           cat $(CLOUDFRONT_ID).json
         displayName: "📡 Get CloudFront Distribution"
         env:
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVIC)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVIC)
-          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
 
       - script: |
           echo -e "\nℹ️ Insertando nueva versión en CloudFront Distribution: $(CLOUDFRONT_ID)..."
@@ -130,9 +134,9 @@ jobs:
           aws cloudfront update-distribution --id $(CLOUDFRONT_ID) --region $AWS_DEFAULT_REGION --if-match "$ETAG" --distribution-config file://new-$(CLOUDFRONT_ID).json
         displayName: "🔄 Update CloudFront Distribution"
         env:
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVIC)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVIC)
-          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
 
       - script: |
           echo -e "\n⏳ Esperando que CloudFront Distribution $(CLOUDFRONT_ID) se propague..."
@@ -148,9 +152,9 @@ jobs:
           done
         displayName: "⏳ Waiting for CloudFront propagation"
         env:
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVIC)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVIC)
-          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
 
       - script: |
           echo -e "\n⏳ Esperando que CloudFront Distribution $(CLOUDFRONT_ID) invalide..."
@@ -172,5 +176,6 @@ jobs:
           done
         displayName: "⏳ Waiting for invalidation Cache"
         env:
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVIC)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVIC)
