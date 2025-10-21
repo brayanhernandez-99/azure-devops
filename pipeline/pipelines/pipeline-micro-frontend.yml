@@ -15,7 +15,7 @@ stages:
             displayName: "📦 Build MicroFrontend ${{ region }}"
             dependsOn: semantic_version_micro_fronted
             jobs:
-              - template: ../ci/build/deploy-frontend.yml
+              - template: ../ci/build/build-frontend.yml
                 parameters:
                   region: ${{ region }}
                   apps: ${{ parameters.apps }}
@@ -37,7 +37,7 @@ stages:
         displayName: "📦 Build MicroFrontend"
         dependsOn: semantic_version_micro_fronted
         jobs:
-          - template: ../ci/build/deploy-frontend.yml
+          - template: ../ci/build/build-frontend.yml
             parameters:
               apps: ${{ parameters.apps }}
 
