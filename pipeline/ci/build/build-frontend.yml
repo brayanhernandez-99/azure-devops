@@ -93,22 +93,28 @@ jobs:
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
 
       - script: |
-          echo -e "\n📁 Archivos .env.local para app-administration-vue2"
-          printenv | grep "^VUE2_" | sed "s/^VUE2_//" > $(System.DefaultWorkingDirectory)/app-legacy/app-administration-vue2/.env.local
-          printenv | grep "^ADMIN_" | sed "s/^ADMIN_//" >> $(System.DefaultWorkingDirectory)/app-legacy/app-administration-vue2/.env.local
-          ls -l app-legacy/app-administration-vue2/.env.local
-          cat app-legacy/app-administration-vue2/.env.local
-
-          echo -e "\n📁 Archivos .env.local para app-sellers-vue2"
-          printenv | grep "^VUE2_" | sed "s/^VUE2_//" > $(System.DefaultWorkingDirectory)/app-legacy/app-sellers-vue2/.env.local
-          printenv | grep "^SELLERS_" | sed "s/^SELLERS_//" >> $(System.DefaultWorkingDirectory)/app-legacy/app-sellers-vue2/.env.local
-          ls -l app-legacy/app-sellers-vue2/.env.local
-          cat app-legacy/app-sellers-vue2/.env.local
-
-          echo -e "\n📁 Archivos .env para $(msName)"
-          printenv | grep -i "^$(msName)_" |sed -E "s/^($(msName))_//I" > $(System.DefaultWorkingDirectory)/apps/$(msName)/.env
-          ls -l apps/$(msName)/.env
-          cat apps/$(msName)/.env
+          case "$(msName)" in
+            "app-administration-vue2")
+              echo -e "\n📁 Archivos .env.local para app-administration-vue2"
+              printenv | grep "^VUE2_" | sed "s/^VUE2_//" > $(System.DefaultWorkingDirectory)/app-legacy/app-administration-vue2/.env.local
+              printenv | grep "^ADMIN_" | sed "s/^ADMIN_//" >> $(System.DefaultWorkingDirectory)/app-legacy/app-administration-vue2/.env.local
+              ls -l app-legacy/app-administration-vue2/.env.local
+              cat app-legacy/app-administration-vue2/.env.local
+              ;;
+            "app-sellers-vue2")
+              echo -e "\n📁 Archivos .env.local para app-sellers-vue2"
+              printenv | grep "^VUE2_" | sed "s/^VUE2_//" > $(System.DefaultWorkingDirectory)/app-legacy/app-sellers-vue2/.env.local
+              printenv | grep "^SELLERS_" | sed "s/^SELLERS_//" >> $(System.DefaultWorkingDirectory)/app-legacy/app-sellers-vue2/.env.local
+              ls -l app-legacy/app-sellers-vue2/.env.local
+              cat app-legacy/app-sellers-vue2/.env.local
+              ;;
+            *)
+              echo -e "\n📁 Archivos .env para $(msName)"
+              printenv | grep -i "^$(msName)_" |sed -E "s/^($(msName))_//I" > $(System.DefaultWorkingDirectory)/apps/$(msName)/.env
+              ls -l apps/$(msName)/.env
+              cat apps/$(msName)/.env
+              ;;
+          esac
 
           echo -e "\n📁 Archivos .env para el path raiz"
           printenv | grep "^ROOT_" | sed "s/^ROOT_//" > $(System.DefaultWorkingDirectory)/.env
