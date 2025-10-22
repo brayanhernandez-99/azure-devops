@@ -101,6 +101,7 @@ jobs:
         condition: succeeded()
 
       - script: |
+          set -e
           echo -e "\nℹ️ Obteniendo CloudFront Distribution para: $(CLOUDFRONT_ID)..."
           aws cloudfront get-distribution-config --id $(CLOUDFRONT_ID) --region $(AWS_DEFAULT_REGION) > $(CLOUDFRONT_ID).json
 
@@ -114,6 +115,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVIC)
 
       - script: |
+          set -e
           echo -e "\nℹ️ Insertando nueva versión en CloudFront Distribution: $(CLOUDFRONT_ID)..."
           echo -e "\nVersion a actualizar: $(msVersion)"
 
@@ -125,6 +127,7 @@ jobs:
         condition: succeeded()
 
       - script: |
+          set -e
           ETAG=$(jq -r '.ETag' $(CLOUDFRONT_ID).json)
           echo -e "\nℹ️ Actualizando CloudFront Distribution: $(CLOUDFRONT_ID)..."
           echo "ℹ️ CloudFront ETag: $ETAG"
@@ -142,6 +145,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVIC)
 
       - script: |
+          set -e
           echo -e "\n⏳ Esperando que CloudFront Distribution $(CLOUDFRONT_ID) se propague..."
           while true; do
             STATUS=$(aws cloudfront get-distribution --id $(CLOUDFRONT_ID) --region $AWS_DEFAULT_REGION | jq -r '.Distribution.Status')
@@ -160,6 +164,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVIC)
 
       - script: |
+          set -e
           echo -e "\n⏳ Esperando que CloudFront Distribution $(CLOUDFRONT_ID) invalide..."
           RESULT=$(aws cloudfront create-invalidation --distribution-id $(CLOUDFRONT_ID) --paths '/*')
           INVALIDATION=$(echo "$RESULT" | jq -r '.Invalidation.Id')
