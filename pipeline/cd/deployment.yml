@@ -22,7 +22,7 @@ jobs:
   - ${{ if eq(parameters.release, 'aws-s3') }}:
       - template: ./deploy/deploy-frontend.yml
         parameters:
-          region: ${{ region }}
+          region: ${{ parameters.region }}
           apps: ${{ parameters.apps }}
           
       - ${{ if eq(parameters.region, 'antioquia') }}:
