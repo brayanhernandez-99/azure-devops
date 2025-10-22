@@ -1,6 +1,6 @@
 jobs:
   - job: deploy_micro_frontend
-    displayName: "🚀 deploy microfrontend"
+    displayName: "🚀 deploy"
     pool:
       name: "Azure Pipelines"
       VmImage: ubuntu-22.04
