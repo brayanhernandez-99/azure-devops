@@ -5,32 +5,32 @@ parameters:
   - name: red
     type: object
     default:
-      # - antioquia
+      - antioquia
       - cap
       # - tolima
       # - huila
       # - cauca
       # - boyaca
-      # - santander
+      - santander
 
   - name: apps
     type: object
     default:
       - "app-administration-vue2"
-      # - "app-sellers-vue2"
-      # - "awards"
-      # - "biometrics"
-      # - "commissions"
-      # - "conciliation"
-      # - "dashboard"
-      # - "dynamic-storage"
-      # - "external-wager"
-      # - "hierarchies"
-      # - "invictus"
-      # - "login"
-      # - "lotteries"
-      # - "money-control"
-      # - "users"
+      - "app-sellers-vue2"
+      - "awards"
+      - "biometrics"
+      - "commissions"
+      - "conciliation"
+      - "dashboard"
+      - "dynamic-storage"
+      - "external-wager"
+      - "hierarchies"
+      - "invictus"
+      - "login"
+      - "lotteries"
+      - "money-control"
+      - "users"
 
 resources:
   repositories:
