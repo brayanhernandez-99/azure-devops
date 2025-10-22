@@ -125,15 +125,15 @@ jobs:
         condition: succeeded()
 
       - script: |
-          echo -e "\nℹ️ Actualizando CloudFront Distribution: $(CLOUDFRONT_ID)..."
           ETAG=$(jq -r '.ETag' $(CLOUDFRONT_ID).json)
-          echo -e "\nCloudFront ETag: \n$ETAG"
+          echo -e "\nℹ️ Actualizando CloudFront Distribution: $(CLOUDFRONT_ID)..."
+          echo "ℹ️ CloudFront ETag: $ETAG"
 
-          jq '.DistributionConfig' "NEW_$(CLOUDFRONT_ID).json" > "NEW_$(CLOUDFRONT_ID).json"
-          echo -e "\n📂 Archivo: NEW_$(CLOUDFRONT_ID).json"
-          cat NEW_$(CLOUDFRONT_ID).json
+          jq '.DistributionConfig' "NEW_$(CLOUDFRONT_ID).json" > "UPDATE_$(CLOUDFRONT_ID).json"
+          echo -e "\n📂 Archivo: UPDATE_$(CLOUDFRONT_ID).json"
+          cat UPDATE_$(CLOUDFRONT_ID).json
 
-          aws cloudfront update-distribution --id $(CLOUDFRONT_ID) --region $AWS_DEFAULT_REGION --if-match "$ETAG" --distribution-config file://NEW_$(CLOUDFRONT_ID).json
+          aws cloudfront update-distribution --id $(CLOUDFRONT_ID) --region $AWS_DEFAULT_REGION --if-match "$ETAG" --distribution-config file://UPDATE_$(CLOUDFRONT_ID).json
         displayName: "🔄 Update CloudFront Distribution"
         condition: succeeded()
         env:
