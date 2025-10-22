@@ -60,8 +60,7 @@ jobs:
       - script: |
           set -e
           echo -e "\n📦 Cargando al Bucket S3..."
-
-          BASE_PATH="$(Pipeline.Workspace)/downloaded-dists/dists/$region/$(msName)"
+          BASE_PATH="$(Pipeline.Workspace)/downloaded-dists/$region/$(msName)"
           echo -e "\n📂 Archivos a cargar: $BASE_PATH"
           ls -l "$BASE_PATH"
 
