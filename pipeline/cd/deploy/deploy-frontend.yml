@@ -117,10 +117,10 @@ jobs:
           echo -e "\nℹ️ Insertando nueva versión en CloudFront Distribution: $(CLOUDFRONT_ID)..."
           echo -e "\nVersion a actualizar: $(msVersion)"
 
-          jq --arg v "/$(msVersion)" '.DistributionConfig.Origins.Items[0].OriginPath = $v' "$(CLOUDFRONT_ID).json" > "new-$(CLOUDFRONT_ID).json"
+          jq --arg version "/$(msVersion)" '.DistributionConfig.Origins.Items[0].OriginPath = $version' "$(CLOUDFRONT_ID).json" > "new_$(CLOUDFRONT_ID).json"
 
-          echo -e "\n📂 Archivo: new-$(CLOUDFRONT_ID).json"
-          cat new-$(CLOUDFRONT_ID).json
+          echo -e "\n📂 Archivo: new_$(CLOUDFRONT_ID).json"
+          cat new_$(CLOUDFRONT_ID).json
         displayName: "🔖 Insert New Version"
         condition: succeeded()
 
@@ -129,11 +129,11 @@ jobs:
           ETAG=$(jq -r '.ETag' $(CLOUDFRONT_ID).json)
           echo -e "\nCloudFront ETag: \n$ETAG"
 
-          jq '.DistributionConfig' "new-$(CLOUDFRONT_ID).json" > "new-$(CLOUDFRONT_ID).json"
-          echo -e "\n📂 Archivo: new-$(CLOUDFRONT_ID).json"
-          cat new-$(CLOUDFRONT_ID).json
+          jq '.DistributionConfig' "new_$(CLOUDFRONT_ID).json" > "new_$(CLOUDFRONT_ID).json"
+          echo -e "\n📂 Archivo: new_$(CLOUDFRONT_ID).json"
+          cat new_$(CLOUDFRONT_ID).json
 
-          aws cloudfront update-distribution --id $(CLOUDFRONT_ID) --region $AWS_DEFAULT_REGION --if-match "$ETAG" --distribution-config file://new-$(CLOUDFRONT_ID).json
+          aws cloudfront update-distribution --id $(CLOUDFRONT_ID) --region $AWS_DEFAULT_REGION --if-match "$ETAG" --distribution-config file://new_$(CLOUDFRONT_ID).json
         displayName: "🔄 Update CloudFront Distribution"
         condition: succeeded()
         env:
