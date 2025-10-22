@@ -61,7 +61,7 @@ jobs:
           set -e
           echo -e "\n📦 Cargando al Bucket S3..."
 
-          BASE_PATH="$(Pipeline.Workspace)/downloaded-dists/dists/$region/$(msName)"
+          BASE_PATH="$(Pipeline.Workspace)/downloaded-dists/dists/$(region)/$(msName)"
           echo -e "\n📂 Archivos a cargar: $BASE_PATH"
           ls -l "$BASE_PATH"
 
@@ -76,7 +76,6 @@ jobs:
         displayName: "📤 Upload Bucket S3"
         condition: succeeded()
         env:
-          region: ${{ parameters.region }}
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVIC)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVIC)
@@ -108,6 +107,7 @@ jobs:
           echo -e "\n📂 Archivo: $(CLOUDFRONT_ID).json"
           cat $(CLOUDFRONT_ID).json
         displayName: "📡 Get CloudFront Distribution"
+        condition: succeeded()
         env:
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVIC)
@@ -122,6 +122,7 @@ jobs:
           echo -e "\n📂 Archivo: new-$(CLOUDFRONT_ID).json"
           cat new-$(CLOUDFRONT_ID).json
         displayName: "🔖 Insert New Version"
+        condition: succeeded()
 
       - script: |
           echo -e "\nℹ️ Actualizando CloudFront Distribution: $(CLOUDFRONT_ID)..."
@@ -134,6 +135,7 @@ jobs:
 
           aws cloudfront update-distribution --id $(CLOUDFRONT_ID) --region $AWS_DEFAULT_REGION --if-match "$ETAG" --distribution-config file://new-$(CLOUDFRONT_ID).json
         displayName: "🔄 Update CloudFront Distribution"
+        condition: succeeded()
         env:
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVIC)
@@ -152,6 +154,7 @@ jobs:
             sleep 10
           done
         displayName: "⏳ Waiting for CloudFront propagation"
+        condition: succeeded()
         env:
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVIC)
@@ -176,6 +179,7 @@ jobs:
             sleep 10
           done
         displayName: "⏳ Waiting for invalidation Cache"
+        condition: succeeded()
         env:
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVIC)

@@ -19,10 +19,10 @@ jobs:
             | jq -r '.value[] | select(.name == "$(Build.Repository.Name)").id')
           echo "id del repositorio $(Build.Repository.Name) = $REPO_ID"
           echo "##vso[task.setvariable variable=repoID]$REPO_ID"
-        env:
-          AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
         displayName: "📌 Set Repository ID"
         condition: succeeded()
+        env:
+          AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
 
       - script: |
           echo "id del repositorio $(Build.Repository.Name) = $(repoID)"
@@ -48,10 +48,10 @@ jobs:
           mkdir -p $(Build.ArtifactStagingDirectory)/idpr
           touch $(Build.ArtifactStagingDirectory)/idpr/idpr.json
           echo "{\"idpr\": \"$PR_ID\" }" > $(Build.ArtifactStagingDirectory)/idpr/idpr.json
-        env:
-          AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
         displayName: "📌 Set Pull Request ID"
         condition: and(succeeded(), not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')))
+        env:
+          AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
 
       - script: |
           echo "Pull Request ID recuperado: $(ultimoPR)"
@@ -62,10 +62,10 @@ jobs:
           SAFE_COMMITS=$(echo "$COMMITS" | tr '\n' '|')
           echo $SAFE_COMMITS
           echo "##vso[task.setvariable variable=filteredCommits]$SAFE_COMMITS"
-        env:
-          AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
         displayName: "📌 Details of Pull Request Commits"
         condition: and(succeeded(), not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')))
+        env:
+          AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
 
       - script: |
           CURRENT_BRANCH=$(echo $(Build.SourceBranch))
