@@ -9,16 +9,50 @@ parameters:
     default:
       - antioquia
       - cap
-      - tolima
-      - huila
-      - cauca
-      - boyaca
+      # - tolima
+      # - huila
+      # - cauca
+      # - boyaca
       - santander
 
   - name: apps
     type: object
     default:
+      microservice-astro: "3.5.4"
+      microservice-awards: "3.5.0"
+      bff-administration: "3.1.9"
+      bff-integration: "0.0.11"
+      bff-sellers: "3.0.8"
+      microservice-biometrics: "1.1.2"
+      microservice-collected: "3.5.1"
+      microservice-conciliation: "1.4.2"
+      microservice-dynamic-storage: "1.6.1"
+      microservice-external-wager: "2.4.6"
+      microservice-generic-services: "2.4.2"
+      microservice-hierarchies: "3.5.1"
+      microservice-legacy: "3.1.1"
+      microservice-lotteries: "2.4.2"
       microservice-lotteries-games: "4.13.6"
+      microservice-millonario: "3.4.3"
+      microservice-money-control: "1.2.1"
+      notifier: "1.0.18"
+      microservice-online-games: "3.4.2"
+      microservice-papelery: "3.3.5"
+      microservice-payment-voucher: "3.1.7"
+      microservice-payments: "3.4.0"
+      microservice-products: "3.5.0"
+      microservice-promotional: "1.1.1"
+      microservice-raffle: "3.5.0"
+      microservice-recharges: "3.4.4"
+      microservice-remittances: "2.2.3"
+      microservice-reports: "1.0.4"
+      microservice-security: "3.3.6"
+      microservice-sellers: "3.5.4"
+      microservice-shopping-cart: "2.2.0"
+      microservice-siga: "3.2.8"
+      microservice-transaction: "4.5.3"
+      microservice-transaction-notifier: "1.0.2"
+      microservice-wiretransfer: "3.1.1"
 
 resources:
   repositories:
