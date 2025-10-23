@@ -1,0 +1,46 @@
+stages:
+  - stage: semantic_version_repository_configuration
+    displayName: "🏷️ Semantic Version Repository Configuration"
+    jobs:
+      - template: ../ci/semantic-version-integration.yml
+        parameters:
+          release: rpc
+
+  #####################################################################
+
+  - ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
+      - ${{ each region in parameters.red }}:
+          - stage: build_repository_configuration_${{ region }}
+            displayName: "📦 Repository Configuration ${{ region }}"
+            dependsOn: semantic_version_repository_configuration
+            jobs:
+              - template: ../ci/build/build-repository-configuration.yml
+                parameters:
+                  region: ${{ region }}
+
+          - stage: deploy_repository_configuration_${{ region }}
+            displayName: "🚀 Deploy Repository Configuration ${{ region }}"
+            dependsOn: build_repository_configuration_${{ region }}
+            jobs:
+              - template: ../cd/deployment.yml
+                parameters:
+                  release: rpc
+                  region: ${{ region }}
+
+  #####################################################################
+
+  - ${{ if ne(variables['Build.SourceBranchName'], 'master') }}:
+      - stage: build_repository_configuration
+        displayName: "📦 Repository Configuration"
+        dependsOn: semantic_version_repository_configuration
+        jobs:
+          - template: ../ci/build/build-repository-configuration.yml
+
+      - ${{ if in(variables['Build.SourceBranchName'], 'develop', 'staging') }}:
+          - stage: deploy_repository_configuration
+            displayName: "🚀 Deploy Repository Configuration"
+            dependsOn: build_repository_configuration
+            jobs:
+              - template: ../cd/deployment.yml
+                parameters:
+                  release: rpc

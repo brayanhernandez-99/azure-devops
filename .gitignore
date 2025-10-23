@@ -1,0 +1,41 @@
+# Ignorar archivos temporales globales
+*.log
+*.tmp
+*.bak
+*.swp
+.DS_Store
+Thumbs.db
+
+# Ignorar entornos virtuales o dependencias
+node_modules/
+.env
+.venv/
+env/
+venv/
+
+# Ignorar configuraciones locales
+.vscode/
+.idea/
+*.suo
+*.user
+
+# Ignorar salidas de build
+dist/
+out/
+bin/
+obj/
+coverage/
+TestResults/
+*.trx
+*.coverage
+
+# Ignorar carpetas y archivos temporales generados por pipelines
+**/_pipeline_temp/
+**/.azure-pipelines/
+
+# Ignorar secretos
+*.key
+*.pem
+*.crt
+*.pfx
+*.secret

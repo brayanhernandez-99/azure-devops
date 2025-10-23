@@ -1,0 +1,302 @@
+jobs:
+  - job: build_micro_frontend_${{ parameters.region }}
+    displayName: "📦 build"
+    pool:
+      name: "Azure Pipelines"
+      VmImage: ubuntu-22.04
+
+    variables:
+      - template: ../../variables/groups-transversal-variables-frontend.yml
+        parameters:
+          region: ${{ parameters.region }}
+
+    strategy:
+      matrix:
+        ${{ each ms in parameters.apps }}:
+          ${{ ms }}:
+            msName: ${{ ms }}
+
+    steps:
+      - checkout: self
+        fetchDepth: 0
+        persistCredentials: true
+
+      - task: DownloadBuildArtifacts@0
+        inputs:
+          artifactName: "versions"
+          downloadPath: "$(Pipeline.Workspace)/versions-downloaded"
+        displayName: "📥 Download Version"
+        condition: succeeded()
+
+      - script: |
+          VERSION_FILE="$(Pipeline.Workspace)/versions-downloaded/versions/$(msName)/version.json"
+          if [[ -f "$VERSION_FILE" ]]; then
+            VERSION=$(jq -r '.version' $VERSION_FILE)
+            echo -e "\n🚀 Versión detectada para $(msName): $VERSION"
+            echo "##vso[task.setvariable variable=msVersion]$VERSION"
+          else
+            echo -e "\n##vso[task.logissue type=error]⚠️ No se encontró archivo de versión para: $(msName)" 
+            exit 99
+          fi
+        displayName: "📚 Read Version"
+        condition: succeeded()
+
+      - script: |
+          if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
+            fileselect=app-legacy
+            echo -e "\nℹ️ Ruta de archivo del micro frontend: $fileselect"
+            echo "##vso[task.setvariable variable=file]$fileselect"
+          else
+            fileselect=apps
+            echo -e "\nℹ️ Ruta de archivo del micro frontend: $fileselect"
+            echo "##vso[task.setvariable variable=file]$fileselect"
+          fi
+        displayName: "📂 Select Directory"
+        condition: succeeded()
+
+      - task: Bash@3
+        name: AuthCodeArtifact
+        inputs:
+          targetType: "inline"
+          script: |
+            echo "🔐 Obteniendo token de AWS CodeArtifact..."
+            token=$(aws codeartifact get-authorization-token \
+              --domain matrixtech-npm-repository \
+              --domain-owner "$ACCOUNT_ID_DEPLOY" \
+              --region "$AWS_DEFAULT_REGION" \
+              --query authorizationToken \
+              --output text)
+
+            REPO_DOMAIN="matrixtech-npm-repository-$ACCOUNT_ID_DEPLOY.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com"
+            REPO_PATH="npm/matrixtech-npm-repository"
+            REPO_URL="https://$REPO_DOMAIN/$REPO_PATH"
+
+            echo "Configurando npm..."
+            npm config set "//$REPO_DOMAIN/$REPO_PATH/:_authToken" "$token"
+            npm config set registry "$REPO_URL"
+
+            echo "Verificando identidad de AWS..."
+            aws sts get-caller-identity
+
+            npmrcPath="$(file)/$(msName)/.npmrc"
+            echo -e "\n📄 Generando archivo .npmrc en: $npmrcPath"
+            cat <<EOF > "$npmrcPath"
+            //$REPO_DOMAIN/$REPO_PATH/:_authToken=$token
+            registry=$REPO_URL
+            EOF
+            ls -l $npmrcPath
+        displayName: "🔐 Setup CodeArtifact & npm config"
+        condition: succeeded()
+        env:
+          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
+          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+
+      - script: |
+          case "$(msName)" in
+            "app-administration-vue2")
+              echo -e "\n📁 Archivos .env.local para app-administration-vue2"
+              printenv | grep "^VUE2_" | sed "s/^VUE2_//" > $(System.DefaultWorkingDirectory)/app-legacy/app-administration-vue2/.env.local
+              printenv | grep "^ADMIN_" | sed "s/^ADMIN_//" >> $(System.DefaultWorkingDirectory)/app-legacy/app-administration-vue2/.env.local
+              ls -l app-legacy/app-administration-vue2/.env.local
+              cat app-legacy/app-administration-vue2/.env.local
+              ;;
+            "app-sellers-vue2")
+              echo -e "\n📁 Archivos .env.local para app-sellers-vue2"
+              printenv | grep "^VUE2_" | sed "s/^VUE2_//" > $(System.DefaultWorkingDirectory)/app-legacy/app-sellers-vue2/.env.local
+              printenv | grep "^SELLERS_" | sed "s/^SELLERS_//" >> $(System.DefaultWorkingDirectory)/app-legacy/app-sellers-vue2/.env.local
+              ls -l app-legacy/app-sellers-vue2/.env.local
+              cat app-legacy/app-sellers-vue2/.env.local
+              ;;
+            *)
+              echo -e "\n📁 Archivos .env para $(msName)"
+              printenv | grep -i "^$(msName)_" |sed -E "s/^($(msName))_//I" > $(System.DefaultWorkingDirectory)/apps/$(msName)/.env
+              ls -l apps/$(msName)/.env
+              cat apps/$(msName)/.env
+              ;;
+          esac
+
+          echo -e "\n📁 Archivos .env para el path raiz"
+          printenv | grep "^ROOT_" | sed "s/^ROOT_//" > $(System.DefaultWorkingDirectory)/.env
+          ls -l .env
+          cat .env
+        displayName: "⚙️ Generate .env"
+        condition: succeeded()
+
+      - script: |
+          cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
+          echo "🔧 Actualizando versión en $(file)/$(msName)/package.json: $(msVersion)"
+          jq --arg version "$(msVersion)" '.version = $version' package.json > tmp.json && mv tmp.json package.json
+
+          echo -e "\n📁 File package.json:"      
+          cat $(System.DefaultWorkingDirectory)/$(file)/$(msName)/package.json
+        displayName: "📝 Update version in package.json"
+        condition: succeeded()
+
+      - script: |
+          echo "Comentando app-legacy/*"
+          sed -i '/app-legacy\//s/  -/  # -/' pnpm-workspace.yaml
+          cat pnpm-workspace.yaml
+        displayName: "💬 Comment app-legacy/*"
+        condition: and(succeeded(),
+          ne(variables['msName'], 'app-administration-vue2'),
+          ne(variables['msName'], 'app-sellers-vue2'))
+
+      - task: NodeTool@0
+        displayName: "🔧 Install Nodejs $(nodeVersion)"
+        inputs:
+          versionSource: "spec"
+          versionSpec: "$(nodeVersion)"
+        condition: succeeded()
+
+      - script: |
+          echo -e "\n📄 Generando archivo .pnpmrc en: $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc"
+          cat <<EOF > "$(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc"
+          node-linker=hoisted
+          ignore-scripts=false
+          allow-build-script=true
+          strict-peer-dependencies=false
+          EOF
+          ls -l $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc
+          cat $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc
+
+          cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
+          echo -e "\n⚙️ Instalando dependencias node..."
+          npm install -g pnpm
+          pnpm install
+          pnpm ignored-builds
+
+          OUTPUT=$(pnpm ls --depth=0 || true)
+          if [[ -z "$OUTPUT" ]]; then
+            echo -e "\n##vso[task.logissue type=error]⚠️ No se instalaron dependencias, esperar que se actualicen las dependencias a nivel global"
+            exit 99
+          else
+            echo -e "\n✅ Dependencias Instaladas:"
+            echo "$OUTPUT"
+          fi
+        displayName: "⚙️ Install Dependencies"
+        condition: succeeded()
+
+      - script: |
+          echo -e "\n📦 Build MicroFrontend..."
+
+          if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
+            cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
+            pnpm run build
+          else
+            pnpm run build --filter=...$(msName)
+          fi
+
+          DIST_PATH="$(System.DefaultWorkingDirectory)/$(file)/$(msName)/dist"
+
+          if [[ ! -d "$DIST_PATH" ]] || [[ -z "$(ls -A "$DIST_PATH" 2>/dev/null)" ]]; then
+            echo -e "\n##vso[task.logissue type=error]⚠️ Error: No se generó el build o la carpeta dist está vacía." 
+            exit 99
+          else
+            mkdir -p "$(Build.ArtifactStagingDirectory)/dists/$region"
+            cp -R $DIST_PATH $(Build.ArtifactStagingDirectory)/dists/$region/$(msName)
+
+            echo "✅ Build generado correctamente en $DIST_PATH"
+            ls -l "$DIST_PATH"
+          fi
+        displayName: "📦 Build $(msName)"
+        condition: succeeded()
+        env:
+          region: ${{ parameters.region }}
+
+      - script: |
+          echo "Descomentando app-legacy/*"
+          sed -i '/# *- *"app-legacy\//s/  # -/  -/' pnpm-workspace.yaml
+          cat pnpm-workspace.yaml
+        displayName: "💬 Uncomment app-legacy/*"
+        condition: and(succeeded(),
+          ne(variables['msName'], 'app-administration-vue2'),
+          ne(variables['msName'], 'app-sellers-vue2'))
+
+      # - task: JavaToolInstaller@0
+      #   displayName: "🔧 Install JDK 17"
+      #   inputs:
+      #     versionSpec: "17"
+      #     jdkArchitectureOption: "x64"
+      #     jdkSourceOption: "PreInstalled"
+      #   condition: and(succeeded(),
+      #     ne(variables['msName'], 'app-administration-vue2'),
+      #     ne(variables['msName'], 'app-sellers-vue2'),
+      #     ne(variables['Build.SourceBranchName'], 'master'))
+
+      # - task: SonarQubePrepare@7
+      #   displayName: "⚙️ Prepare SonarQube Analysis"
+      #   inputs:
+      #     SonarQube: "SonarQubeConection"
+      #     scannerMode: "CLI"
+      #     configMode: "manual"
+      #     cliProjectKey: "pruebas-microfronted-$(msName)"
+      #     cliProjectName: "pruebas-microfronted-$(msName)"
+      #     cliSources: "$(System.DefaultWorkingDirectory)/$(file)/$(msName)"
+      #     extraProperties: |
+      #       sonar.javascript.lcov.reportPaths=$(System.DefaultWorkingDirectory)/$(file)/$(msName)/coverage/lcov.info
+      #       sonar.exclusions=**/test/**,**/coverage/**,**/.nyc_output/**,**/reports/**,sured-plugin/**,**/reports_bck/**,**/node_modules/**,**/dist/**
+      #   condition: and(succeeded(),
+      #     ne(variables['msName'], 'app-administration-vue2'),
+      #     ne(variables['msName'], 'app-sellers-vue2'),
+      #     ne(variables['Build.SourceBranchName'], 'master'))
+
+      # - script: |
+      #     response=$(echo $SONARQUBE_SCANNER_PARAMS | sed -E 's#"sonar\.branch\.name":"[^"]+",##g')
+      #     json=$(echo "$response" | sed 's/"sonar.token":\*\*\*/"sonar.token":"***"/')
+      #     echo "$json" | jq
+      #     echo "##vso[task.setvariable variable=SONARQUBE_SCANNER_PARAMS]$response"
+      #   displayName: "⚙️ Set Variable — SONARQUBE_SCANNER_PARAMS"
+      #   condition: and(succeeded(),
+      #     ne(variables['msName'], 'app-administration-vue2'),
+      #     ne(variables['msName'], 'app-sellers-vue2'),
+      #     ne(variables['Build.SourceBranchName'], 'master'))
+
+      # - script: |
+      #     pnpm test --filter=...$(msName)
+      #   displayName: "🧪 Run Tests for Microservice: $(msName)"
+      #   continueOnError: true
+      #   condition: and(succeeded(),
+      #     ne(variables['msName'], 'app-administration-vue2'),
+      #     ne(variables['msName'], 'app-sellers-vue2'),
+      #     ne(variables['Build.SourceBranchName'], 'master'))
+
+      # - script: |
+      #     pnpm coverage --filter=...$(msName)
+      #     ls -l $(System.DefaultWorkingDirectory)/$(file)/$(msName)/coverage
+      #   displayName: "🔎 Coverage Analysis: $(msName)"
+      #   continueOnError: true
+      #   condition: and(succeeded(),
+      #     ne(variables['msName'], 'app-administration-vue2'),
+      #     ne(variables['msName'], 'app-sellers-vue2'),
+      #     ne(variables['Build.SourceBranchName'], 'master'))
+
+      # - task: SonarQubeAnalyze@7
+      #   displayName: "📡 Run Sonar Analysis"
+      #   condition: and(succeeded(),
+      #     ne(variables['msName'], 'app-administration-vue2'),
+      #     ne(variables['msName'], 'app-sellers-vue2'),
+      #     ne(variables['Build.SourceBranchName'], 'master'))
+
+      # - task: SonarQubePublish@7
+      #   displayName: "📤 Publish Static Code Analysis Results"
+      #   inputs:
+      #     pollingTimeoutSec: 400
+      #   condition: and(succeeded(),
+      #     ne(variables['msName'], 'app-administration-vue2'),
+      #     ne(variables['msName'], 'app-sellers-vue2'),
+      #     ne(variables['Build.SourceBranchName'], 'master'))
+
+      # - template: sonarqube/job-sonarqube.yml@sonarqube
+      #   parameters:
+      #     msName: $(msName)
+
+      - task: PublishBuildArtifacts@1
+        inputs:
+          PathtoPublish: "$(Build.ArtifactStagingDirectory)/dists"
+          ArtifactName: "dists"
+          publishLocation: "Container"
+        displayName: "📤 Publish Dist Files"
+        condition: and(succeeded(),
+          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
+          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
