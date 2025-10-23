@@ -30,7 +30,7 @@ parameters:
       - "external-wager"
       - "hierarchies"
       - "invictus"
-      - "login"
+      #- "login"
       - "lotteries"
       - "millonario"
       - "money-control"
