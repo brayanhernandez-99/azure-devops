@@ -15,16 +15,16 @@ variables:
       - group: trasversal-aws-master-cap
 
   - ${{ if and(eq(parameters.region, 'tolima'), eq(variables['Build.SourceBranchName'], 'master')) }}:
-      - group: trasversal-aws-master-tolima
+      - group: trasversal-aws-tolima
 
   - ${{ if and(eq(parameters.region, 'huila'), eq(variables['Build.SourceBranchName'], 'master')) }}:
-      - group: trasversal-aws-master-huila
+      - group: trasversal-aws-huila
 
   - ${{ if and(eq(parameters.region, 'cauca'), eq(variables['Build.SourceBranchName'], 'master')) }}:
-      - group: trasversal-aws-master-cauca
+      - group: trasversal-aws-cauca
 
   - ${{ if and(eq(parameters.region, 'boyaca'), eq(variables['Build.SourceBranchName'], 'master')) }}:
-      - group: trasversal-aws-master-boyaca
+      - group: trasversal-aws-boyaca
 
   - ${{ if and(eq(parameters.region, 'santander'), eq(variables['Build.SourceBranchName'], 'master')) }}:
       - group: trasversal-aws-santander
