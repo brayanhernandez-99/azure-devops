@@ -287,9 +287,9 @@ jobs:
           ne(variables['msName'], 'app-sellers-vue2'),
           ne(variables['Build.SourceBranchName'], 'master'))
 
-      - template: sonarqube/job-sonarqube.yml@sonarqube
-        parameters:
-          msName: $(msName)
+      # - template: sonarqube/job-sonarqube.yml@sonarqube
+      #   parameters:
+      #     msName: $(msName)
 
       - task: PublishBuildArtifacts@1
         inputs:
