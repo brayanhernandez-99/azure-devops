@@ -7,10 +7,10 @@ parameters:
     default:
       - antioquia
       - cap
-      # - tolima
-      # - huila
-      # - cauca
-      # - boyaca
+      - tolima
+      - huila
+      - cauca
+      - boyaca
       - santander
 
   - name: apps
@@ -34,7 +34,7 @@ parameters:
       - "lotteries"
       - "millonario"
       - "money-control"
-      - "notifications"
+      #- "notifications"
       - "papelery"
       - "promotional"
       - "raffles"
