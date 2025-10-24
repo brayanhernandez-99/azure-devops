@@ -18,7 +18,14 @@ parameters:
   - name: apps
     type: object
     default:
-      microservice-lotteries-games: "4.13.6"
+      bff-administration: "3.1.10"
+      bff-sellers: "3.0.9"
+      microservice-sellers: "3.5.5"
+      microservice-hierarchies: "3.5.3"
+      microservice-papelery: "3.3.6"
+      microservice-dynamic-storage: "1.6.2"
+      microservice-security: "3.3.7"
+      microservice-transaction: "4.5.4"
 
 resources:
   repositories:
