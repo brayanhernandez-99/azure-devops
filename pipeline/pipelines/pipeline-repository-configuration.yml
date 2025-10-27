@@ -4,7 +4,7 @@ stages:
     jobs:
       - template: ../ci/semantic-version-integration.yml
         parameters:
-          release: rpc
+          release: ${{ parameters.release }}
 
   #####################################################################
 
@@ -24,8 +24,8 @@ stages:
             jobs:
               - template: ../cd/deployment.yml
                 parameters:
-                  release: rpc
                   region: ${{ region }}
+                  release: ${{ parameters.release }}
 
   #####################################################################
 
@@ -43,4 +43,4 @@ stages:
             jobs:
               - template: ../cd/deployment.yml
                 parameters:
-                  release: rpc
+                  release: ${{ parameters.release }}

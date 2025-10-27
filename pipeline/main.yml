@@ -11,7 +11,7 @@ parameters:
       # - huila
       # - cauca
       # - boyaca
-      - santander
+      # - santander
 
   - name: apps
     type: object
@@ -69,8 +69,8 @@ stages:
   #
   # MicroFronted Electron pipeline
   #
-  - ${{ if and(eq(parameters.release, 'electron'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), in(variables['Build.SourceBranchName'], 'develop', 'staging', 'master'))) }}:
-      - template: ./pipelines/pipeline-micro-frontend-electron.yml
+  - ${{ if and(eq(parameters.release, 'exe'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), in(variables['Build.SourceBranchName'], 'develop', 'staging', 'master'))) }}:
+      - template: ./pipelines/pipeline-electron.yml
         parameters:
           red: ${{ parameters.red }}
           apps: ${{ parameters.apps }}
@@ -84,3 +84,14 @@ stages:
         parameters:
           red: ${{ parameters.red }}
           release: ${{ parameters.release }}
+
+  #
+  # MicroFronted Electron pipeline
+  #
+  - ${{ if and(eq(parameters.release, 'electron'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), in(variables['Build.SourceBranchName'], 'develop', 'staging', 'master'))) }}:
+      - template: ./pipelines/pipeline-micro-frontend-electron.yml
+        parameters:
+          red: ${{ parameters.red }}
+          apps: ${{ parameters.apps }}
+          release: ${{ parameters.release }}
+

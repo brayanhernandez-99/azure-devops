@@ -1,0 +1,64 @@
+stages:
+  - stage: semantic_version_electron
+    displayName: "🏷️ Semantic Version Electron"
+    jobs:
+      - template: ../ci/semantic-version-integration.yml
+        parameters:
+          release: ${{ parameters.release }}
+
+  #####################################################################
+
+  - ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
+      - ${{ each region in parameters.red }}:
+          - stage: build_electron_${{ region }}
+            displayName: "📦 Build Electron ${{ region }}"
+            dependsOn: semantic_version_electron
+            jobs:
+              - template: ../ci/build/build-electron.yml
+                parameters:
+                  region: ${{ region }}
+
+          - stage: deploy_electron_${{ region }}
+            displayName: "🚀 Deploy Electron ${{ region }}"
+            dependsOn: build_electron_${{ region }}
+            jobs:
+              - template: ../cd/deployment.yml
+                parameters:
+                  release: electron
+                  region: ${{ region }}
+                  apps: ${{ parameters.apps }}
+
+  #####################################################################
+
+  - ${{ if ne(variables['Build.SourceBranchName'], 'master') }}:
+      - stage: build_micro_frontend
+        displayName: "📦 Build MicroFrontend"
+        dependsOn: semantic_version_micro_fronted
+        jobs:
+          - template: ../ci/build/build-frontend-new.yml
+            parameters:
+              apps: ${{ parameters.apps }}
+
+      - stage: semantic_version_electron
+        displayName: "🏷️ Semantic Version Electron"
+        dependsOn: build_micro_frontend
+        jobs:
+          - template: ../ci/semantic-version-integration.yml
+            parameters:
+              release: electron
+
+      - stage: build_electron
+        displayName: "📦 Build Electron"
+        dependsOn: semantic_version_electron
+        jobs:
+          - template: ../ci/build/build-electron-new.yml
+
+      - ${{ if in(variables['Build.SourceBranchName'], 'develop', 'staging') }}:
+          - stage: deploy_electron
+            displayName: "🚀 Deploy Electron"
+            dependsOn: build_electron
+            jobs:
+              - template: ../cd/deployment.yml
+                parameters:
+                  release: electron
+                  apps: ${{ parameters.apps }}
