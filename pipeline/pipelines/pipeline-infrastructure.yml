@@ -14,7 +14,7 @@ stages:
             displayName: "🧩 Plan Infrastructure ${{ region }}"
             dependsOn: semantic_version_infrastructure
             jobs:
-              - template: ../build/plan-infrastructure.yml
+              - template: ../ci/build/plan-infrastructure.yml
                 parameters:
                   region: ${{ region }}
 
@@ -34,7 +34,7 @@ stages:
         displayName: "🧩 Plan Infrastructure"
         dependsOn: semantic_version_infrastructure
         jobs:
-          - template: ../build/plan-infrastructure.yml
+          - template: ../ci/build/plan-infrastructure.yml
 
       - stage: apply_infrastructure
         displayName: "🚀 Apply Infrastructure"
