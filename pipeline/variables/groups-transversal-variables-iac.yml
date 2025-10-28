@@ -3,7 +3,7 @@ variables:
   - group: trasversal-infrastructure-invictus
 
   # Feature branches
-  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/feature/develop') }}:
+  - ${{ eq(variables['Build.SourceBranchName'], 'develop')) }}:
     - group: trasversal-aws-develop
     - group: variables-infrastructure-develop
     - group: cloudfront-develop
@@ -11,7 +11,7 @@ variables:
     - group: secrets-infrastructure-develop
     - group: autoscaling-infrastructure-develop
 
-  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/feature/staging') }}:
+  - ${{ eq(variables['Build.SourceBranchName'], 'staging')) }}:
     - group: trasversal-aws-staging
     - group: variables-infrastructure-staging
     - group: cloudfront-staging
