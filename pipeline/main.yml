@@ -7,39 +7,11 @@ parameters:
     default:
       - antioquia
       - cap
-      # - tolima
-      # - huila
-      # - cauca
-      # - boyaca
-      # - santander
-
-  - name: apps
-    type: object
-    default:
-      - "app-administration-vue2"
-      - "app-sellers-vue2"
-      - "astro"
-      - "awards"
-      - "biometrics"
-      - "cashier"
-      - "chance"
-      - "commissions"
-      - "conciliation"
-      - "dashboard"
-      - "dynamic-storage"
-      - "external-wager"
-      - "hierarchies"
-      - "invictus"
-      - "login"
-      - "lotteries"
-      - "millonario"
-      - "money-control"
-      #- "notifications"
-      - "papelery"
-      - "promotional"
-      - "raffles"
-      - "recharges"
-      - "users"
+      - tolima
+      - huila
+      - cauca
+      - boyaca
+      - santander
 
 resources:
   repositories:
@@ -47,51 +19,12 @@ resources:
       name: $(System.TeamProject)/$(Build.Repository.Name)
       type: git
 
-    - repository: sonarqube
-      name: Invictus/security-sonarqube-invictus
-      type: git
-
-    - repository: electron
-      name: Invictus/electron-app-invictus-test
-      type: git
-
 stages:
   #
-  # MicroFronted Electron pipeline
+  # Infrastructure pipeline
   #
-  - ${{ if and(eq(parameters.release, 'aws-s3'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), in(variables['Build.SourceBranchName'], 'develop', 'staging', 'master'))) }}:
-      - template: ./pipelines/pipeline-micro-frontend.yml
-        parameters:
-          red: ${{ parameters.red }}
-          apps: ${{ parameters.apps }}
-          release: ${{ parameters.release }}
-
-  #
-  # MicroFronted Electron pipeline
-  #
-  - ${{ if and(eq(parameters.release, 'exe'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), in(variables['Build.SourceBranchName'], 'develop', 'staging', 'master'))) }}:
-      - template: ./pipelines/pipeline-electron.yml
-        parameters:
-          red: ${{ parameters.red }}
-          apps: ${{ parameters.apps }}
-          release: ${{ parameters.release }}
-
-  #
-  # Repository Configuration pipeline
-  #
-  - ${{ if and(eq(parameters.release, 'rpc'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), in(variables['Build.SourceBranchName'], 'develop', 'staging', 'master'))) }}:
-      - template: ./pipelines/pipeline-repository-configuration.yml
+  - ${{ if and(eq(parameters.release, 'iac'), in(variables['Build.SourceBranchName'], 'develop', 'staging', 'master')) }}:
+      - template: ./pipelines/pipeline-infrastructure.yml
         parameters:
           red: ${{ parameters.red }}
           release: ${{ parameters.release }}
-
-  #
-  # MicroFronted Electron pipeline
-  #
-  - ${{ if and(eq(parameters.release, 'electron'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), in(variables['Build.SourceBranchName'], 'develop', 'staging', 'master'))) }}:
-      - template: ./pipelines/pipeline-micro-frontend-electron.yml
-        parameters:
-          red: ${{ parameters.red }}
-          apps: ${{ parameters.apps }}
-          release: ${{ parameters.release }}
-

@@ -1,0 +1,34 @@
+stages:
+  - ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
+      - ${{ each region in parameters.red }}:
+          - stage: plan_infrastructure_${{ region }}
+            displayName: "🧩 Plan Infrastructure ${{ region }}"
+            jobs:
+              - template: ../ci/plan-infrastructure.yml
+                parameters:
+                  region: ${{ region }}
+
+          - stage: apply_infrastructure_${{ region }}
+            displayName: "🚀 Apply Infrastructure ${{ region }}"
+            dependsOn: plan_infrastructure_${{ region }}
+            jobs:
+              - template: ../cd/deployment.yml
+                parameters:
+                  region: ${{ region }}
+                  release: ${{ parameters.release }}
+
+  #####################################################################
+
+  - ${{ if ne(variables['Build.SourceBranchName'], 'master') }}:
+      - stage: plan_infrastructure
+        displayName: "🧩 Plan Infrastructure"
+        jobs:
+          - template: ../ci/plan-infrastructure.yml
+
+      - stage: apply_infrastructure
+        displayName: "🚀 Apply Infrastructure"
+        dependsOn: plan_infrastructure
+        jobs:
+          - template: ../cd/deployment.yml
+            parameters:
+              release: ${{ parameters.release }}

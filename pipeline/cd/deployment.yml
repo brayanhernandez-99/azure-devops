@@ -19,32 +19,5 @@ jobs:
 
   #####################################################################
 
-  - ${{ if eq(parameters.release, 'aws-s3') }}:
-      - template: ./deploy/deploy-frontend.yml
-        parameters:
-          apps: ${{ parameters.apps }}
-          region: ${{ parameters.region }}
-          
-      - ${{ if eq(parameters.region, 'antioquia') }}:
-          - template: ./commit/commit-version-frontend.yml
-            parameters:
-              apps: ${{ parameters.apps }}
-
-  #####################################################################
-
-  - ${{ if eq(parameters.release, 'electron') }}:
-      - template: ./deploy/deploy-electron-new.yml
-        parameters:
-          region: ${{ parameters.region }}
-
-      - ${{ if eq(parameters.region, 'antioquia') }}:
-          - template: ./commit/commit-version-frontend-new.yml
-            parameters:
-              apps: ${{ parameters.apps }}
-
-          - template: ./commit/commit-version-electron-new.yml
-
-  #####################################################################
-
-  - ${{ if eq(parameters.release, 'rpc') }}:
-      - template: ./deploy/deploy-repository-configuration.yml
+  - ${{ if eq(parameters.release, 'iac') }}:
+      - template: ./deploy/apply-infrastructure.yml

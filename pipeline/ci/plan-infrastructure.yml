@@ -1,0 +1,88 @@
+jobs:
+  - job: plan_infrastructure_${{ parameters.region }}
+    displayName: "🧩 plan"
+    pool:
+      name: "Azure Pipelines"
+      VmImage: ubuntu-22.04
+
+    variables:
+      - template: ../../variables/groups-transversal-variables-iac.yml
+        parameters:
+          region: ${{ parameters.region }}
+
+    steps:
+      - script: |
+          echo -e "\n📋 Variables disponibles:"
+          printenv | sort | grep -i "aws_" || true
+
+          echo -e "\n📋 Parametros disponibles:"
+          printenv | sort | grep -i "parameter_" || true
+        displayName: "📋 Environment variables"
+
+      - script: |
+          echo "📥 Descargando Terragrunt $(terragruntVersion)..."
+          aws s3 cp "s3://infrastructure-as-code-invictus/terragrunt/terragrunt-$(terragruntVersion)" "terragrunt"
+
+          if [ ! -s terragrunt ]; then
+            echo "##vso[task.logissue type=error]⚠️ Error: No se pudo descargar terragrunt $(terragruntVersion)"
+            exit 99
+          fi
+
+          chmod +x terragrunt
+          sudo mv terragrunt /usr/local/bin/terragrunt
+
+          echo -e "\n🚀 Terragrunt instalado correctamente:"
+          terragrunt --version
+        displayName: "🛠️ Instalando Terragrunt $(terragruntVersion)"
+        env:
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
+          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
+
+      - script: |
+          echo "📥 Descargando Terraform..."
+          aws s3 cp "s3://infrastructure-as-code-invictus/terraform/terraform-$(terraformVersion)" "terraform"
+
+          if [ ! -s terraform ]; then
+            echo "##vso[task.logissue type=error]⚠️ Error: No se pudo descargar terraform $(terraformVersion)"
+            exit 99
+          fi
+
+          chmod +x terraform
+          sudo mv terraform /usr/local/bin/terraform
+
+          echo -e "\n🚀 Terraform instalado correctamente:"
+          terraform --version
+        displayName: "🛠️ Instalando Terraform $(terraformVersion)"
+        env:
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
+          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
+
+      - task: replacetokens@5
+        inputs:
+          targetFiles: |
+            $(Build.SourcesDirectory)/iac-terragrunt/invictus/**/terragrunt.hcl
+            $(Build.SourcesDirectory)/iac-terragrunt/invictus/root.hcl
+            $(Build.SourcesDirectory)/iac-terragrunt/invictus/backend.tf
+            $(Build.SourcesDirectory)/iac-terragrunt/invictus/provider.tf
+          encoding: "auto"
+          writeBOM: true
+          actionOnMissing: "warn" # 'fail', 'warn' o 'ignore'
+          keepToken: false
+          tokenPrefix: "#{"
+          tokenSuffix: "}#"
+        displayName: "⚙️ Replace Tokens"
+
+      - script: |
+          set -e
+
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/dynamic-storage/aws-service-ssm-parameter
+          # terragrunt plan --all --non-interactive -no-color
+
+        displayName: "🧩 Plan Infrastructure"
+        workingDirectory: $(Build.SourcesDirectory)/iac-terragrunt/invictus/
+        env:
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
+          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
