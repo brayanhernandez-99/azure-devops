@@ -1,6 +1,6 @@
 jobs:
   - job: plan_infrastructure_${{ parameters.region }}
-    displayName: "🧩 plan"
+    displayName: "🧩 terragrunt plan"
     pool:
       name: "Azure Pipelines"
       VmImage: ubuntu-22.04

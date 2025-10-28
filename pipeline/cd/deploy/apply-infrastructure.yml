@@ -1,6 +1,6 @@
 jobs:
   - job: apply_infrastructure_${{ parameters.region }}
-    displayName: "🚀 apply"
+    displayName: "🚀 terragrunt apply"
     pool:
       name: "Azure Pipelines"
       VmImage: ubuntu-22.04
