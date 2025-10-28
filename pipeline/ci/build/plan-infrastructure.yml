@@ -18,6 +18,7 @@ jobs:
           echo -e "\n📋 Parametros disponibles:"
           printenv | sort | grep -i "parameter_" || true
         displayName: "📋 Environment variables"
+        condition: succeeded()
 
       - script: |
           echo "📥 Descargando Terragrunt $(terragruntVersion)..."
@@ -34,6 +35,7 @@ jobs:
           echo -e "\n🚀 Terragrunt instalado correctamente:"
           terragrunt --version
         displayName: "🛠️ Instalando Terragrunt $(terragruntVersion)"
+        condition: succeeded()
         env:
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
@@ -54,6 +56,7 @@ jobs:
           echo -e "\n🚀 Terraform instalado correctamente:"
           terraform --version
         displayName: "🛠️ Instalando Terraform $(terraformVersion)"
+        condition: succeeded()
         env:
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
@@ -73,6 +76,7 @@ jobs:
           tokenPrefix: "#{"
           tokenSuffix: "}#"
         displayName: "⚙️ Replace Tokens"
+        condition: succeeded()
 
       - script: |
           set -e
@@ -81,7 +85,7 @@ jobs:
           # terragrunt plan --all --non-interactive -no-color
 
         displayName: "🧩 Plan Infrastructure"
-        workingDirectory: $(Build.SourcesDirectory)/iac-terragrunt/invictus/
+        condition: succeeded()
         env:
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)

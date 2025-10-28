@@ -1,0 +1,3 @@
+jobs:
+  - ${{ if eq(parameters.release, 'iac') }}:
+      - template: ./general/semantic-version-infrastructure.yml

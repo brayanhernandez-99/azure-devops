@@ -1,0 +1,24 @@
+jobs:
+  - job: "semantic_version_infrastructure"
+    displayName: "🏷️ version infrastructure"
+    pool:
+      name: "Azure Pipelines"
+      VmImage: ubuntu-22.04
+
+    steps:
+      # - checkout: self
+      #   fetchDepth: 0
+      #   persistCredentials: true
+
+      # - script: |
+      #     if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
+      #       fileselect=app-legacy
+      #       echo -e "\nℹ️ Ruta de archivo del mf: $fileselect"
+      #       echo "##vso[task.setvariable variable=file]$fileselect"
+      #     else
+      #       fileselect=apps
+      #       echo -e "\nℹ️ Ruta de archivo del mf: $fileselect"
+      #       echo "##vso[task.setvariable variable=file]$fileselect"
+      #     fi
+      #   displayName: "📂 Select Directory"
+      #   condition: succeeded()

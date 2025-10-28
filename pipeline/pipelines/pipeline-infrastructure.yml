@@ -1,8 +1,18 @@
 stages:
+  - stage: semantic_version_infrastructure
+    displayName: "🏷️ Semantic Version Infrastructure"
+    jobs:
+      - template: ../ci/semantic-version-integration.yml
+        parameters:
+          release: ${{ parameters.release }}
+
+  #####################################################################
+
   - ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
       - ${{ each region in parameters.red }}:
           - stage: plan_infrastructure_${{ region }}
             displayName: "🧩 Plan Infrastructure ${{ region }}"
+            dependsOn: semantic_version_infrastructure
             jobs:
               - template: ../ci/plan-infrastructure.yml
                 parameters:
@@ -22,6 +32,7 @@ stages:
   - ${{ if ne(variables['Build.SourceBranchName'], 'master') }}:
       - stage: plan_infrastructure
         displayName: "🧩 Plan Infrastructure"
+        dependsOn: semantic_version_infrastructure
         jobs:
           - template: ../ci/plan-infrastructure.yml
 
