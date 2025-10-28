@@ -6,7 +6,7 @@ jobs:
       VmImage: ubuntu-22.04
 
     steps:
-      # - script: |
-      #     echo "Cambios"
-      #   displayName: "🔎 Read changes infrastructure"
-      #   condition: succeeded()
+      - script: |
+          echo "Cambios"
+        displayName: "🔎 Read changes infrastructure"
+        condition: succeeded()
