@@ -24,11 +24,21 @@ jobs:
         parameters:
           apps: ${{ parameters.apps }}
           region: ${{ parameters.region }}
-          
+
       - ${{ if eq(parameters.region, 'antioquia') }}:
           - template: ./commit/commit-version-frontend.yml
             parameters:
               apps: ${{ parameters.apps }}
+
+  #####################################################################
+
+  - ${{ if eq(parameters.release, 'exe') }}:
+      - template: ./deploy/deploy-electron.yml
+        parameters:
+          region: ${{ parameters.region }}
+
+      - ${{ if eq(parameters.region, 'antioquia') }}:
+          - template: ./commit/commit-version-electron.yml
 
   #####################################################################
 

@@ -9,63 +9,11 @@ jobs:
       VmImage: ubuntu-22.04
 
     variables:
-      - template: ../../variables/groups-transversal-variables-electron-new.yml
+      - template: ../../variables/groups-transversal-variables-electron.yml
         parameters:
           region: ${{ parameters.region }}
 
     steps:
-      - checkout: electron
-        fetchDepth: 0
-        persistCredentials: true
-
-      - script: |
-          CURRENT_BRANCH="$(Build.SourceBranch)"
-          electronBranch="unknown"
-          environment="unknown"
-
-          case "$CURRENT_BRANCH" in
-            refs/heads/feature/*) electronBranch="feature/security-vulnerability-refactor"; environment="dev"; ;;
-            refs/heads/hotfix/*)  electronBranch="feature/security-vulnerability-refactor"; environment="dev"; ;;
-            refs/heads/develop)   electronBranch="feature/security-vulnerability-refactor"; environment="dev"; ;;
-            refs/heads/staging)   electronBranch="feature/security-vulnerability-refactor"; environment="qa"; ;;
-            refs/heads/master)
-              case "$region" in
-                "antioquia") electronBranch="feature/security-vulnerability-refactor"; environment="matrixtech"; ;;
-                "cap")       electronBranch="feature/security-vulnerability-refactor"; environment="cap"; ;;
-                "tolima")    electronBranch="feature/security-vulnerability-refactor"; environment="seapto"; ;;
-                "huila")     electronBranch="feature/security-vulnerability-refactor"; environment="suchance"; ;;
-                "cauca")     electronBranch="feature/security-vulnerability-refactor"; environment="acertemos"; ;;
-                "boyaca")    electronBranch="feature/security-vulnerability-refactor"; environment="jer"; ;;
-                "santander") electronBranch="feature/security-vulnerability-refactor"; environment="laperla"; ;;
-              esac ;;
-          esac
-
-          if [[ "$electronBranch" == "unknown" ]] || [[ "$environment" = "unknown" ]]; then
-            echo -e "\n##vso[task.logissue type=error]⚠️ ElectronBranch o Environment no reconocidos"
-            echo -e "##vso[task.logissue type=error]⚠️ Electron Branch: [$electronBranch]"
-            echo -e "##vso[task.logissue type=error]⚠️ Environment: [$environment]"
-            exit 99
-          fi
-
-          echo "##vso[task.setvariable variable=electronBranch]$electronBranch"
-          echo "##vso[task.setvariable variable=environment]$environment"
-          echo ""
-          echo "ℹ️ Branch Actual: $CURRENT_BRANCH"
-          echo "ℹ️ Electron Environment: $environment"
-          echo "ℹ️ Electron Branch Checkout: $electronBranch"
-        displayName: "📌 Set Electron Branch"
-        condition: succeeded()
-        env:
-          region: ${{ parameters.region }}
-
-      - script: |
-          echo -e "\n🔀 Cambiando a la rama: electron@$(electronBranch)"
-          git fetch origin $(electronBranch)
-          git checkout $(electronBranch)
-          git pull origin $(electronBranch)
-        displayName: "🔄 Checkout electron@$(electronBranch)"
-        condition: succeeded()
-
       - task: DownloadBuildArtifacts@0
         inputs:
           artifactName: "versions"
@@ -85,34 +33,6 @@ jobs:
           fi
         displayName: "📚 Read Version"
         condition: succeeded()
-
-      - task: DownloadPipelineArtifact@2
-        inputs:
-          artifact: dists
-          path: $(Pipeline.Workspace)/downloaded-dists
-        displayName: "📥 Download Dists"
-        condition: succeeded()
-
-      - script: |
-          DISTS_PATH="$(Pipeline.Workspace)/downloaded-dists/$region"
-          DISTS_COUNT=$(ls "$DISTS_PATH" | wc -l)
-
-          if [[ "$DISTS_COUNT" == "15" ]]; then
-            cp -R $DISTS_PATH $(System.DefaultWorkingDirectory)/apps
-
-            echo -e "\n📁 Dists copiados en: $(System.DefaultWorkingDirectory)/apps"
-            ls -l $(System.DefaultWorkingDirectory)
-            echo -e "\n📁 Dists apps"
-            ls -l $(System.DefaultWorkingDirectory)/apps
-          else
-            echo -e "\n##vso[task.logissue type=error]⚠️ Error no tiene exactamente todos los dists en: $DISTS_PATH"
-            ls -l $(System.DefaultWorkingDirectory)/apps
-            exit 99
-          fi
-        displayName: "🔎 Validate and Copy Dists"
-        condition: succeeded()
-        env:
-          region: ${{ parameters.region }}
 
       - task: Bash@3
         name: AuthCodeArtifact
@@ -299,70 +219,11 @@ jobs:
       vmImage: "windows-latest"
 
     variables:
-      - template: ../../variables/groups-transversal-variables-electron-new.yml
+      - template: ../../variables/groups-transversal-variables-electron.yml
         parameters:
           region: ${{ parameters.region }}
 
     steps:
-      - checkout: electron
-        fetchDepth: 0
-        persistCredentials: true
-
-      - task: PowerShell@2
-        displayName: "📌 Set Electron Branch"
-        inputs:
-          targetType: "inline"
-          script: |
-            $CURRENT_BRANCH = "$(Build.SourceBranch)"
-            $electronBranch = "unknown"
-            $environment = "unknown"
-
-            switch -Wildcard ($CURRENT_BRANCH) {
-              "refs/heads/feature/*" { $electronBranch = "feature/security-vulnerability-refactor"; $environment = "dev"; break }
-              "refs/heads/hotfix/*"  { $electronBranch = "feature/security-vulnerability-refactor"; $environment = "dev"; break }
-              "refs/heads/develop"   { $electronBranch = "feature/security-vulnerability-refactor"; $environment = "dev"; break }
-              "refs/heads/staging"   { $electronBranch = "feature/security-vulnerability-refactor"; $environment = "qa"; break }
-              "refs/heads/master" {
-                switch ($env:region) {
-                  "antioquia" { $electronBranch = "feature/security-vulnerability-refactor"; $environment = "matrixtech"; break }
-                  "cap"       { $electronBranch = "feature/security-vulnerability-refactor"; $environment = "cap"; break }
-                  "tolima"    { $electronBranch = "feature/security-vulnerability-refactor"; $environment = "seapto"; break }
-                  "huila"     { $electronBranch = "feature/security-vulnerability-refactor"; $environment = "suchance"; break }
-                  "cauca"     { $electronBranch = "feature/security-vulnerability-refactor"; $environment = "acertemos"; break }
-                  "boyaca"    { $electronBranch = "feature/security-vulnerability-refactor"; $environment = "jer"; break }
-                  "santander" { $electronBranch = "feature/security-vulnerability-refactor"; $environment = "laperla"; break }
-                }
-              }
-            }
-
-            if ($electronBranch -eq "unknown" -or $environment -eq "unknown") {
-              Write-Output "`n##vso[task.logissue type=error]⚠️ ElectronBranch o Environment no reconocidos"
-              Write-Output "##vso[task.logissue type=error]⚠️ Electron Branch: [$electronBranch]"
-              Write-Output "##vso[task.logissue type=error]⚠️ Environment: [$environment]"
-              exit 99
-            }
-
-            Write-Host "##vso[task.setvariable variable=electronBranch]$electronBranch"
-            Write-Host "##vso[task.setvariable variable=environment]$environment"
-            Write-Host ""
-            Write-Host "ℹ️ Branch Actual: $CURRENT_BRANCH"
-            Write-Host "ℹ️ Electron Environment: $environment"
-            Write-Host "ℹ️ Electron Branch Checkout: $electronBranch"
-        condition: succeeded()
-        env:
-          region: ${{ parameters.region }}
-
-      - task: PowerShell@2
-        displayName: "🔄 Checkout electron@$(electronBranch)"
-        inputs:
-          targetType: "inline"
-          script: |
-            Write-Host "`n🔀 Cambiando a la rama: electron@$($env:electronBranch)"
-            git fetch origin $($env:electronBranch)
-            git checkout $($env:electronBranch)
-            git pull origin $($env:electronBranch)
-        condition: succeeded()
-
       - task: DownloadBuildArtifacts@0
         displayName: "📥 Download Version"
         inputs:
@@ -386,38 +247,6 @@ jobs:
               exit 99
             }
         condition: succeeded()
-
-      - task: DownloadBuildArtifacts@0
-        displayName: "📥 Download Dists"
-        inputs:
-          artifactName: "dists"
-          downloadPath: "$(Pipeline.Workspace)/downloaded-dists"
-        condition: succeeded()
-
-      - task: PowerShell@2
-        displayName: "🔎 Validate and Copy Dists"
-        inputs:
-          targetType: "inline"
-          script: |
-            $DISTS_PATH = "$(Pipeline.Workspace)\downloaded-dists\dists\$($env:region)"
-            $DISTS_COUNT = (Get-ChildItem -Path $DISTS_PATH).Count
-
-            if ($DISTS_COUNT -eq 15) {
-              New-Item -Path $(System.DefaultWorkingDirectory)\apps -ItemType Directory | Out-Null
-              Copy-Item -Path "$DISTS_PATH\*" -Destination "$(System.DefaultWorkingDirectory)\apps" -Recurse -Force
-
-              Write-Host "`n📁 Dists copiados en: $(System.DefaultWorkingDirectory)\apps"
-              Get-ChildItem -Path "$(System.DefaultWorkingDirectory)" | Select-Object Mode, LastWriteTime, Length, Name | Format-Table
-              Write-Host "`n📁 Dists apps"
-              Get-ChildItem -Path "$(System.DefaultWorkingDirectory)\apps" | Select-Object Mode, LastWriteTime, Length, Name | Format-Table
-            } else {
-              Write-Output "`n##vso[task.logissue type=error]⚠️ Error no tiene exactamente todos los dists en: $DISTS_PATH"
-              Get-ChildItem -Path "$(System.DefaultWorkingDirectory)\apps" | Select-Object Mode, LastWriteTime, Length, Name | Format-Table
-              exit 99
-            }
-        condition: succeeded()
-        env:
-          region: ${{ parameters.region }}
 
       - task: PowerShell@2
         displayName: "🔐 Setup CodeArtifact & npm config"

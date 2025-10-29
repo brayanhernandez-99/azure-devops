@@ -24,9 +24,8 @@ stages:
             jobs:
               - template: ../cd/deployment.yml
                 parameters:
-                  release: electron
                   region: ${{ region }}
-                  apps: ${{ parameters.apps }}
+                  release: ${{ parameters.release }}
 
   #####################################################################
 
