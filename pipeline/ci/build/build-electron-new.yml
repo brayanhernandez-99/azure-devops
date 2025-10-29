@@ -205,10 +205,14 @@ jobs:
       - script: |
           echo -e "\n📄 Generando archivo .pnpmrc en: $(System.DefaultWorkingDirectory)/.pnpmrc"
           cat <<EOF > "$(System.DefaultWorkingDirectory)/.pnpmrc"
-          node-linker=hoisted
-          ignore-scripts=false
-          allow-build-script=true
-          strict-peer-dependencies=false
+          node-linker=hoisted 
+          ignore-scripts=false 
+          allow-build-script=true 
+          strict-peer-dependencies=false 
+          prefer-offline=true 
+          verify-store-integrity=true 
+          auto-install-peers=true 
+          recursive-install=true 
           EOF
           ls -l $(System.DefaultWorkingDirectory)/.pnpmrc
           cat $(System.DefaultWorkingDirectory)/.pnpmrc
@@ -547,10 +551,14 @@ jobs:
             Write-Host "`n📄 Generando archivo .pnpmrc en: $(System.DefaultWorkingDirectory)\.pnpmrc"
             $filePath = "$(System.DefaultWorkingDirectory)\.pnpmrc"
             $fileContent = @"
-            node-linker=hoisted
-            ignore-scripts=false
-            allow-build-script=true
-            strict-peer-dependencies=false
+            node-linker=hoisted 
+            ignore-scripts=false 
+            allow-build-script=true 
+            strict-peer-dependencies=false 
+            prefer-offline=true 
+            verify-store-integrity=true 
+            auto-install-peers=true 
+            recursive-install=true 
             "@
             Set-Content -Path $filePath -Value $fileContent -Encoding UTF8
             Get-ChildItem -Path "$(System.DefaultWorkingDirectory)\.pnpmrc" | Select-Object Mode, LastWriteTime, Length, Name | Format-Table

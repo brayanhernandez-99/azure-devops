@@ -152,10 +152,14 @@ jobs:
       - script: |
           echo -e "\n📄 Generando archivo .pnpmrc en: $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc"
           cat <<EOF > "$(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc"
-          node-linker=hoisted
-          ignore-scripts=false
-          allow-build-script=true
-          strict-peer-dependencies=false
+          node-linker=hoisted 
+          ignore-scripts=false 
+          allow-build-script=true 
+          strict-peer-dependencies=false 
+          prefer-offline=true 
+          verify-store-integrity=true 
+          auto-install-peers=true 
+          recursive-install=true 
           EOF
           ls -l $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc
           cat $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc
