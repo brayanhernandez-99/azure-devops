@@ -186,6 +186,10 @@ jobs:
           mkdir -p $APP_DIR
           all_found=true
 
+          echo "###########""
+          ls -lt "$(Build.SourcesDirectory)/release/$(environment)/$(msVersion)"
+          echo "###########""
+
           FILES_TO_COPY=(
             "InvictusUX-$(msVersion).AppImage"
             "latest-linux.yml"
@@ -459,6 +463,10 @@ jobs:
             $APP_DIR="$BASE_PATH\app"
             New-Item -ItemType Directory -Path $APP_DIR -Force | Out-Null
             $allFound = $true 
+
+            Write-Host "###########"
+            Get-ChildItem -Path "$(Build.SourcesDirectory)\release\$($env:environment)\$($env:msVersion)" -Force | Sort-Object LastWriteTime -Descending
+            Write-Host "###########"
 
             $filesToCopy = @(
               "InvictusUX Setup $($env:version).exe",
