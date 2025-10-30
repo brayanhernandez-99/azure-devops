@@ -1,4 +1,4 @@
-Mejobs:
+jobs:
   - job: deploy_electron
     displayName: "🚀 deploy electron"
     pool:
