@@ -107,7 +107,7 @@ jobs:
 
           echo -e "\n✅ Archivos subidos exitosamente."
           echo "🔗 APP: InvictusUX Setup $(msVersion).exe"
-          Write-Host "🔗 URL: https://e-remote.s3.us-east-1.amazonaws.com/invictus-electron/windows/$($env:environment)/InvictusUX+Setup+$($env:version).exe"
+          echo "🔗 URL: https://e-remote.s3.us-east-1.amazonaws.com/invictus-electron/windows/$($env:environment)/InvictusUX+Setup+$($env:version).exe"
 
         displayName: "🖥️ Upload Bucket S3 Windows"
         condition: succeeded()
