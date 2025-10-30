@@ -79,7 +79,7 @@ jobs:
             aws sts get-caller-identity
 
             npmrcPath="$(file)/$(msName)/.npmrc"
-            echo -e "\n📄 Generando archivo .npmrc en: $npmrcPath"
+            echo -e "\n📁 Generando archivo .npmrc en: $npmrcPath"
             cat <<EOF > "$npmrcPath"
             //$REPO_DOMAIN/$REPO_PATH/:_authToken=$token
             registry=$REPO_URL
@@ -150,7 +150,7 @@ jobs:
         condition: succeeded()
 
       - script: |
-          echo -e "\n📄 Generando archivo .pnpmrc en: $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc"
+          echo -e "\n📁 Generando archivo .pnpmrc en: $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc"
           cat <<EOF > "$(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc"
           node-linker=hoisted 
           ignore-scripts=false 
