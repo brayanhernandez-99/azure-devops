@@ -25,7 +25,7 @@ jobs:
           apps: ${{ parameters.apps }}
           region: ${{ parameters.region }}
 
-      - ${{ if eq(parameters.region, 'antioquia') }}:
+      - ${{ if or(eq(parameters.region, 'antioquia'), eq(variables['Build.SourceBranchName'], 'develop'), eq(variables['Build.SourceBranchName'], 'staging')) }}:
           - template: ./commit/commit-version-frontend.yml
             parameters:
               apps: ${{ parameters.apps }}
@@ -37,7 +37,7 @@ jobs:
         parameters:
           region: ${{ parameters.region }}
 
-      - ${{ if eq(parameters.region, 'antioquia') }}:
+      - ${{ if or(eq(parameters.region, 'antioquia'), eq(variables['Build.SourceBranchName'], 'develop'), eq(variables['Build.SourceBranchName'], 'staging')) }}:
           - template: ./commit/commit-version-electron.yml
 
   #####################################################################
@@ -47,7 +47,7 @@ jobs:
         parameters:
           region: ${{ parameters.region }}
 
-      - ${{ if eq(parameters.region, 'antioquia') }}:
+      - ${{ if or(eq(parameters.region, 'antioquia'), eq(variables['Build.SourceBranchName'], 'develop'), eq(variables['Build.SourceBranchName'], 'staging')) }}:
           - template: ./commit/commit-version-frontend-new.yml
             parameters:
               apps: ${{ parameters.apps }}
