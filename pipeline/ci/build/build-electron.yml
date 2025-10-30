@@ -186,9 +186,9 @@ jobs:
           mkdir -p $APP_DIR
           all_found=true
 
-          echo "###########""
+          echo "###########"
           ls -lt "$(Build.SourcesDirectory)/release/$(environment)/$(msVersion)"
-          echo "###########""
+          echo "###########"
 
           FILES_TO_COPY=(
             "InvictusUX-$(msVersion).AppImage"
