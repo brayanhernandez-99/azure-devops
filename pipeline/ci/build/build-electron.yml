@@ -105,6 +105,8 @@ jobs:
 
           echo "##vso[task.setvariable variable=environment]$environment"
           echo -e "\n✅ Archivo .env creado correctamente"
+          echo -e "\n📁 File: .env"
+          ls -l .env
           cat .env
         displayName: "⚙️ Generate .env"
         condition: succeeded()
@@ -311,9 +313,6 @@ jobs:
         inputs:
           targetType: "inline"
           script: |
-            $ErrorActionPreference = "Stop"
-            Write-Host "`n📁 Generando .env"
-
             $currentBranch="$(Build.SourceBranch)"
             $environment = "unknown"
 
@@ -341,9 +340,11 @@ jobs:
             TARGET="windows"
             TARGET_ENVIRONMENT="$environment"
             "@ | Set-Content -Encoding UTF8 .env
-              
+          
               Write-Host "##vso[task.setvariable variable=environment]$environment"
               Write-Host "`n✅ Archivo .env creado correctamente"
+              Write-Host "`n📁 File: .env"
+              Get-Item .env | Select-Object Mode, LastWriteTime, Length, Name | Format-Table
               Get-Content .env
             } else {
               Write-Host "`n❌ No se encontro una rama valida, branch [$environment]."
