@@ -186,9 +186,9 @@ jobs:
           mkdir -p $APP_DIR
           all_found=true
 
-          echo "###########"
+          echo -e "\n📂 Directorio: $BASE_PATH"
           ls -lt $BASE_PATH
-          echo "###########"
+          echo ""
 
           FILES_TO_COPY=(
             "InvictusUX-$(msVersion).AppImage"
@@ -464,9 +464,9 @@ jobs:
             New-Item -ItemType Directory -Path $APP_DIR -Force | Out-Null
             $allFound = $true 
 
-            Write-Host "###########"
+            Write-Host "`n📂 Directorio: $BASE_PATH"
             Get-ChildItem -Path $BASE_PATH -Force | Sort-Object LastWriteTime -Descending
-            Write-Host "###########"
+            Write-Host ""
 
             $filesToCopy = @(
               "InvictusUX Setup $($env:version).exe",
