@@ -30,7 +30,7 @@ jobs:
           if [[ -f "$VERSION_FILE" ]]; then
             VERSION=$(jq -r '.version' $VERSION_FILE)
             echo -e "\n🚀 Versión detectada para $(Build.Repository.Name): $VERSION"
-            echo "##vso[task.setvariable variable=msVersion]$VERSION"
+            echo "##vso[task.setvariable variable=version]$VERSION"
           else
             echo -e "\n##vso[task.logissue type=error]⚠️ No se encontro archivo de versión para $(Build.Repository.Name)"
             exit 99
@@ -84,8 +84,8 @@ jobs:
           aws s3 cp "$BASE_PATH" "s3://e-remote/invictus-electron/linux/$(environment)" --recursive --acl public-read
 
           echo -e "\n✅ Archivos subidos exitosamente."
-          echo "🔗 APP: InvictusUX-$(msVersion).AppImage"
-          echo "🔗 URL: https://e-remote.s3.us-east-1.amazonaws.com/invictus-electron/linux/$(environment)/InvictusUX-$(msVersion).AppImage"
+          echo "🔗 APP: InvictusUX-$(version).AppImage"
+          echo "🔗 URL: https://e-remote.s3.us-east-1.amazonaws.com/invictus-electron/linux/$(environment)/InvictusUX-$(version).AppImage"
 
         displayName: "🐧 Upload Bucket S3 Linux"
         condition: succeeded()
@@ -103,11 +103,11 @@ jobs:
           ls -l "$BASE_PATH"
           echo ""
 
-          aws s3 cp "$BASE_PATH" "s3://e-remote/invictus-electron/windows/$($env:environment)" --recursive --acl public-read
+          aws s3 cp "$BASE_PATH" "s3://e-remote/invictus-electron/windows/$(environment)" --recursive --acl public-read
 
           echo -e "\n✅ Archivos subidos exitosamente."
-          echo "🔗 APP: InvictusUX Setup $(msVersion).exe"
-          echo "🔗 URL: https://e-remote.s3.us-east-1.amazonaws.com/invictus-electron/windows/$($env:environment)/InvictusUX+Setup+$($env:version).exe"
+          echo "🔗 APP: InvictusUX Setup $(version).exe"
+          echo "🔗 URL: https://e-remote.s3.us-east-1.amazonaws.com/invictus-electron/windows/$(environment)/InvictusUX+Setup+$(version).exe"
 
         displayName: "🖥️ Upload Bucket S3 Windows"
         condition: succeeded()
