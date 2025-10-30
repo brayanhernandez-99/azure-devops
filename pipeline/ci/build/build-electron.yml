@@ -80,7 +80,7 @@ jobs:
             refs/heads/develop)   environment="dev"; ;;
             refs/heads/staging)   environment="qa"; ;;
             refs/heads/master) 
-              case "$red" in
+              case "$region" in
                 "antioquia") environment="matrixtech"; ;;
                 "cap")       environment="cap"; ;;
                 "tolima")    environment="seapto"; ;;
@@ -110,7 +110,7 @@ jobs:
         displayName: "⚙️ Generate .env"
         condition: succeeded()
         env:
-          red: ${{ parameters.red }}
+          region: ${{ parameters.region }}
 
       - task: UsePythonVersion@0
         displayName: "🔧 Use Python $(pythonVersion)"
@@ -324,7 +324,7 @@ jobs:
               "refs/heads/develop"   { $environment = "dev"; break }
               "refs/heads/staging"   { $environment = "qa"; break }
               "refs/heads/master" {
-                switch ($env:red) {
+                switch ($env:region) {
                   "antioquia" { $environment = "matrixtech"; break }
                   "cap"       { $environment = "cap"; break }
                   "tolima"    { $environment = "seapto"; break }
@@ -354,7 +354,7 @@ jobs:
             }
         condition: succeeded()
         env:
-          red: ${{ parameters.red }}
+          region: ${{ parameters.region }}
 
       - task: UsePythonVersion@0
         displayName: "🔧 Use Python $(pythonVersion)"
