@@ -79,7 +79,7 @@ jobs:
             aws sts get-caller-identity
 
             npmrcPath="$(file)/$(msName)/.npmrc"
-            echo -e "\n📄 Generando archivo .npmrc en: $npmrcPath"
+            echo -e "\n📁 Generando archivo .npmrc en: $npmrcPath"
             cat <<EOF > "$npmrcPath"
             //$REPO_DOMAIN/$REPO_PATH/:_authToken=$token
             registry=$REPO_URL
@@ -88,9 +88,9 @@ jobs:
         displayName: "🔐 Setup CodeArtifact & npm config"
         condition: succeeded()
         env:
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
-          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
 
       - script: |
           case "$(msName)" in
@@ -150,12 +150,16 @@ jobs:
         condition: succeeded()
 
       - script: |
-          echo -e "\n📄 Generando archivo .pnpmrc en: $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc"
+          echo -e "\n📁 Generando archivo .pnpmrc en: $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc"
           cat <<EOF > "$(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc"
-          node-linker=hoisted
-          ignore-scripts=false
-          allow-build-script=true
-          strict-peer-dependencies=false
+          node-linker=hoisted 
+          ignore-scripts=false 
+          allow-build-script=true 
+          strict-peer-dependencies=false 
+          prefer-offline=true 
+          verify-store-integrity=true 
+          auto-install-peers=true 
+          recursive-install=true 
           EOF
           ls -l $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc
           cat $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc

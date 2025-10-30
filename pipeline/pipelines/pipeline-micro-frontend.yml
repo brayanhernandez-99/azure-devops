@@ -4,8 +4,8 @@ stages:
     jobs:
       - template: ../ci/semantic-version-integration.yml
         parameters:
-          release: aws-s3
           apps: ${{ parameters.apps }}
+          release: ${{ parameters.release }}
 
   #####################################################################
 
@@ -26,9 +26,9 @@ stages:
             jobs:
               - template: ../cd/deployment.yml
                 parameters:
-                  release: aws-s3
                   region: ${{ region }}
                   apps: ${{ parameters.apps }}
+                  release: ${{ parameters.release }}
 
   #####################################################################
 
@@ -48,5 +48,5 @@ stages:
             jobs:
               - template: ../cd/deployment.yml
                 parameters:
-                  release: aws-s3
                   apps: ${{ parameters.apps }}
+                  release: ${{ parameters.release }}
