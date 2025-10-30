@@ -30,7 +30,7 @@ jobs:
           if [[ -f "$VERSION_FILE" ]]; then
             VERSION=$(jq -r '.version' $VERSION_FILE)
             echo -e "\n🚀 Versión detectada para $(Build.Repository.Name): $VERSION"
-            echo "##vso[task.setvariable variable=msVersion]$VERSION"
+            echo "##vso[task.setvariable variable=version]$VERSION"
           else
             echo -e "\n##vso[task.logissue type=error]⚠️ No se encontro archivo de versión para $(Build.Repository.Name)"
             exit 99
@@ -49,8 +49,8 @@ jobs:
           aws s3 cp "$BASE_PATH" "s3://electron-app-$(ACCOUNT_ID_INVIC)/linux/" --recursive
 
           echo -e "\n✅ Archivos subidos exitosamente."
-          echo "🔗 APP: InvictusUX-$(msVersion).AppImage"
-          echo "🔗 URL: https://electron-app-$(ACCOUNT_ID_INVIC).s3.us-east-1.amazonaws.com/InvictusUX-$(msVersion).AppImage"
+          echo "🔗 APP: InvictusUX-$(version).AppImage"
+          echo "🔗 URL: https://electron-app-$(ACCOUNT_ID_INVIC).s3.us-east-1.amazonaws.com/InvictusUX-$(version).AppImage"
 
         displayName: "🐧 Upload Bucket S3 Linux"
         condition: succeeded()
@@ -70,8 +70,8 @@ jobs:
           aws s3 cp "$BASE_PATH" "s3://electron-app-$(ACCOUNT_ID_INVIC)/windows/" --recursive
 
           echo -e "\n✅ Archivos subidos exitosamente."
-          echo "🔗 APP: InvictusUX Setup $(msVersion).exe"
-          echo "🔗 URL: https://electron-app-$(ACCOUNT_ID_INVIC).s3.us-east-1.amazonaws.com/InvictusUX+Setup+$(msVersion).exe"
+          echo "🔗 APP: InvictusUX Setup $(version).exe"
+          echo "🔗 URL: https://electron-app-$(ACCOUNT_ID_INVIC).s3.us-east-1.amazonaws.com/InvictusUX+Setup+$(version).exe"
 
         displayName: "🖥️ Upload Bucket S3 Windows"
         condition: succeeded()
