@@ -47,11 +47,11 @@ jobs:
           ls -l "$BASE_PATH"
           echo ""
 
-          aws s3 cp "$BASE_PATH" "s3://electron-app-$(ACCOUNT_ID_INVIC)/linux/" --recursive --acl public-read 
+          aws s3 cp "$BASE_PATH" "s3://e-remote/invictus-electron/linux/$(environment)" --recursive --acl public-read
 
           echo -e "\n✅ Archivos subidos exitosamente."
           echo "🔗 APP: InvictusUX-$(msVersion).AppImage"
-          echo "🔗 URL: https://electron-app-$(ACCOUNT_ID_INVIC).s3.us-east-1.amazonaws.com/InvictusUX-$(msVersion).AppImage"
+          echo "🔗 URL: https://e-remote.s3.us-east-1.amazonaws.com/invictus-electron/linux/$(environment)/InvictusUX-$(msVersion).AppImage"
 
         displayName: "🐧 Upload Bucket S3 Linux"
         env:
@@ -68,11 +68,11 @@ jobs:
           ls -l "$BASE_PATH"
           echo ""
 
-          aws s3 cp "$BASE_PATH" "s3://electron-app-$(ACCOUNT_ID_INVIC)/windows/" --recursive --acl public-read
+          aws s3 cp "$BASE_PATH" "s3://e-remote/invictus-electron/windows/$($env:environment)" --recursive --acl public-read
 
           echo -e "\n✅ Archivos subidos exitosamente."
           echo "🔗 APP: InvictusUX Setup $(msVersion).exe"
-          echo "🔗 URL: https://electron-app-$(ACCOUNT_ID_INVIC).s3.us-east-1.amazonaws.com/InvictusUX+Setup+$(msVersion).exe"
+          Write-Host "🔗 URL: https://e-remote.s3.us-east-1.amazonaws.com/invictus-electron/windows/$($env:environment)/InvictusUX+Setup+$($env:version).exe"
 
         displayName: "🖥️ Upload Bucket S3 Windows"
         env:
