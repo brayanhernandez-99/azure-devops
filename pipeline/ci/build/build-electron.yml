@@ -187,7 +187,7 @@ jobs:
           all_found=true
 
           echo "###########"
-          ls -lt "$(Build.SourcesDirectory)/release/$(environment)/$(msVersion)/*"
+          ls -lt $BASE_PATH
           echo "###########"
 
           FILES_TO_COPY=(
@@ -465,7 +465,7 @@ jobs:
             $allFound = $true 
 
             Write-Host "###########"
-            Get-ChildItem -Path "$(Build.SourcesDirectory)\release\$($env:environment)\$($env:msVersion)\*" -Force | Sort-Object LastWriteTime -Descending
+            Get-ChildItem -Path $BASE_PATH -Force | Sort-Object LastWriteTime -Descending
             Write-Host "###########"
 
             $filesToCopy = @(
