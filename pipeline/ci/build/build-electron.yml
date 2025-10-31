@@ -62,6 +62,11 @@ jobs:
             cat <<EOF > ".npmrc"
             //$REPO_DOMAIN/$REPO_PATH/:_authToken=$token
             registry=$REPO_URL
+            node-linker=hoisted
+            shamefully-hoist=true
+            ignore-scripts=false
+            allow-build-script=true
+            strict-peer-dependencies=false
             EOF
             ls -l .npmrc
         displayName: "🔐 Setup CodeArtifact & npm config"
@@ -161,6 +166,8 @@ jobs:
           echo -e "\n⚙️ Instalando dependencias node..."
           npm install -g pnpm
           pnpm install
+          pnpm exec electron-builder install-app-deps
+          pnpm ls @resvg/resvg-js
           pnpm ignored-builds
 
           OUTPUT=$(pnpm ls --depth=0 || true)
@@ -304,6 +311,11 @@ jobs:
             @"
             //$repoDomain/$repoPath/:_authToken=$token
             registry=$repoUrl
+            node-linker=hoisted
+            shamefully-hoist=true
+            ignore-scripts=false
+            allow-build-script=true
+            strict-peer-dependencies=false
             "@ | Set-Content -Encoding UTF8 -Path $npmrcPath
             Get-Item $npmrcPath | Select-Object Mode, LastWriteTime, Length, Name | Format-Table
         condition: succeeded()
@@ -434,6 +446,8 @@ jobs:
             Write-Host "`n⚙️ Instalando dependencias node..."
             npm install -g pnpm
             pnpm install
+            pnpm exec electron-builder install-app-deps
+            pnpm ls @resvg/resvg-js
             pnpm ignored-builds
 
             $output = pnpm ls --depth=0
