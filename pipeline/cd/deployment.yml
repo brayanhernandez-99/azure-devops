@@ -1,6 +1,8 @@
 jobs:
   - deployment: WaitForApproval
     displayName: "🛡️ waiting approval"
+    ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/') }}:
+      environment: "Deploy develop"
     ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}:
       environment: "Deploy develop"
     ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
