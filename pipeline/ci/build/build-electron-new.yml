@@ -206,6 +206,7 @@ jobs:
           echo -e "\n📁 Generando archivo .pnpmrc en: $(System.DefaultWorkingDirectory)/.pnpmrc"
           cat <<EOF > "$(System.DefaultWorkingDirectory)/.pnpmrc"
           node-linker=hoisted
+          shamefully-hoist=true
           ignore-scripts=false
           allow-build-script=true
           strict-peer-dependencies=false
@@ -548,6 +549,7 @@ jobs:
             $filePath = "$(System.DefaultWorkingDirectory)\.pnpmrc"
             $fileContent = @"
             node-linker=hoisted
+            shamefully-hoist=true
             ignore-scripts=false
             allow-build-script=true
             strict-peer-dependencies=false
