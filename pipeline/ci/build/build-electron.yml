@@ -155,7 +155,6 @@ jobs:
 
           cat $(System.DefaultWorkingDirectory)/.pnpmrc >> $(System.DefaultWorkingDirectory)/.npmrc
           echo -e "\n✅ Contenido de .pnpmrc anexado a .npmrc correctamente:"
-          cat $(System.DefaultWorkingDirectory)/.npmrc
 
           echo -e "\n⚙️ Instalando dependencias ubuntu..."
           sudo apt-get update
@@ -436,7 +435,6 @@ jobs:
 
             Get-Content $filePath | Add-Content -Path $(System.DefaultWorkingDirectory)\.npmrc -Encoding UTF8
             Write-Host "`n✅ Contenido de .pnpmrc anexado a .npmrc correctamente:"
-            Get-Content -Path $(System.DefaultWorkingDirectory)\.npmrc
 
             Write-Host "`n⚙️ Instalando dependencias node..."
             npm install -g pnpm
