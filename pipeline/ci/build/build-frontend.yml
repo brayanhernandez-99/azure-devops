@@ -153,6 +153,7 @@ jobs:
           echo -e "\n📁 Generando archivo .pnpmrc en: $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc"
           cat <<EOF > "$(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc"
           node-linker=hoisted
+          shamefully-hoist=true
           ignore-scripts=false
           allow-build-script=true
           strict-peer-dependencies=false

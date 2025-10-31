@@ -26,7 +26,7 @@ jobs:
           if [[ -f "$VERSION_FILE" ]]; then
             VERSION=$(jq -r '.version' $VERSION_FILE)
             echo -e "\n🚀 Versión detectada para $(Build.Repository.Name): $VERSION"
-            echo "##vso[task.setvariable variable=msVersion]$VERSION"
+            echo "##vso[task.setvariable variable=version]$VERSION"
           else
             echo -e "\n##vso[task.logissue type=error]⚠️ No se encontro archivo de versión para $(Build.Repository.Name)"
             exit 99
@@ -61,7 +61,6 @@ jobs:
             echo -e "\n📁 Generando archivo .npmrc"
             cat <<EOF > ".npmrc"
             //$REPO_DOMAIN/$REPO_PATH/:_authToken=$token
-            registry=$REPO_URL
             EOF
             ls -l .npmrc
         displayName: "🔐 Setup CodeArtifact & npm config"
@@ -127,11 +126,11 @@ jobs:
         condition: succeeded()
 
       - script: |
-          echo -e "\n📦 Modificando versión en package.json: $(msVersion)"
+          echo -e "\n📦 Modificando versión en package.json: $(version)"
           PACKAGE_PATH="$(Build.SourcesDirectory)/package.json"
 
           if [[ -f "$PACKAGE_PATH" ]]; then
-            jq --arg ver "$(msVersion)" '.version = $ver' "$PACKAGE_PATH" > "$PACKAGE_PATH.tmp" && mv "$PACKAGE_PATH.tmp" "$PACKAGE_PATH"
+            jq --arg ver "$(version)" '.version = $ver' "$PACKAGE_PATH" > "$PACKAGE_PATH.tmp" && mv "$PACKAGE_PATH.tmp" "$PACKAGE_PATH"
 
             echo -e "\n✅ Versión en package.json actualizada correctamente."
             cat "$PACKAGE_PATH"
@@ -146,6 +145,7 @@ jobs:
           echo -e "\n📁 Generando archivo .pnpmrc en: $(System.DefaultWorkingDirectory)/.pnpmrc"
           cat <<EOF > "$(System.DefaultWorkingDirectory)/.pnpmrc"
           node-linker=hoisted
+          shamefully-hoist=true
           ignore-scripts=false
           allow-build-script=true
           strict-peer-dependencies=false
@@ -160,6 +160,7 @@ jobs:
           echo -e "\n⚙️ Instalando dependencias node..."
           npm install -g pnpm
           pnpm install
+          pnpm exec electron-builder install-app-deps
           pnpm ignored-builds
 
           OUTPUT=$(pnpm ls --depth=0 || true)
@@ -181,7 +182,7 @@ jobs:
 
       - script: |
           echo -e "\n📝 Validando build electron..."
-          BASE_PATH="$(Build.SourcesDirectory)/release/$(environment)/$(msVersion)"
+          BASE_PATH="$(Build.SourcesDirectory)/release/$(environment)/$(version)"
           APP_DIR="$BASE_PATH/app"
           mkdir -p $APP_DIR
           all_found=true
@@ -191,7 +192,7 @@ jobs:
           echo ""
 
           FILES_TO_COPY=(
-            "InvictusUX-$(msVersion).AppImage"
+            "InvictusUX-$(version).AppImage"
             "latest-linux.yml"
           )
 
@@ -302,7 +303,6 @@ jobs:
             $npmrcPath = Join-Path "$(System.DefaultWorkingDirectory)" ".npmrc"
             @"
             //$repoDomain/$repoPath/:_authToken=$token
-            registry=$repoUrl
             "@ | Set-Content -Encoding UTF8 -Path $npmrcPath
             Get-Item $npmrcPath | Select-Object Mode, LastWriteTime, Length, Name | Format-Table
         condition: succeeded()
@@ -421,6 +421,7 @@ jobs:
             $filePath = "$(System.DefaultWorkingDirectory)\.pnpmrc"
             $fileContent = @"
             node-linker=hoisted
+            shamefully-hoist=true
             ignore-scripts=false
             allow-build-script=true
             strict-peer-dependencies=false
@@ -432,6 +433,7 @@ jobs:
             Write-Host "`n⚙️ Instalando dependencias node..."
             npm install -g pnpm
             pnpm install
+            pnpm exec electron-builder install-app-deps
             pnpm ignored-builds
 
             $output = pnpm ls --depth=0

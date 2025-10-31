@@ -9,6 +9,10 @@ jobs:
       - template: ../../variables/groups-transversal-variables-electron.yml
 
     steps:
+      - checkout: self
+        fetchDepth: 0
+        persistCredentials: true
+
       - script: |
           REPO_ID=$(curl -s -u ":$AZURE_DEVOPS_CLI_PAT" \
             "https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories?api-version=5.0" \

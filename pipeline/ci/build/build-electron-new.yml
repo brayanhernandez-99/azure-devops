@@ -78,7 +78,7 @@ jobs:
           if [[ -f "$VERSION_FILE" ]]; then
             VERSION=$(jq -r '.version' $VERSION_FILE)
             echo -e "\n🚀 Versión detectada para $(Build.Repository.Name): $VERSION"
-            echo "##vso[task.setvariable variable=msVersion]$VERSION"
+            echo "##vso[task.setvariable variable=version]$VERSION"
           else
             echo -e "\n##vso[task.logissue type=error]⚠️ No se encontro archivo de versión para $(Build.Repository.Name)"
             exit 99
@@ -187,11 +187,11 @@ jobs:
         condition: succeeded()
 
       - script: |
-          echo -e "\n📦 Modificando versión en package.json: $(msVersion)"
+          echo -e "\n📦 Modificando versión en package.json: $(version)"
           PACKAGE_PATH="$(Build.SourcesDirectory)/package.json"
 
           if [[ -f "$PACKAGE_PATH" ]]; then
-            jq --arg ver "$(msVersion)" '.version = $ver' "$PACKAGE_PATH" > "$PACKAGE_PATH.tmp" && mv "$PACKAGE_PATH.tmp" "$PACKAGE_PATH"
+            jq --arg ver "$(version)" '.version = $ver' "$PACKAGE_PATH" > "$PACKAGE_PATH.tmp" && mv "$PACKAGE_PATH.tmp" "$PACKAGE_PATH"
 
             echo -e "\n✅ Versión en package.json actualizada correctamente."
             cat "$PACKAGE_PATH"
@@ -206,6 +206,7 @@ jobs:
           echo -e "\n📁 Generando archivo .pnpmrc en: $(System.DefaultWorkingDirectory)/.pnpmrc"
           cat <<EOF > "$(System.DefaultWorkingDirectory)/.pnpmrc"
           node-linker=hoisted
+          shamefully-hoist=true
           ignore-scripts=false
           allow-build-script=true
           strict-peer-dependencies=false
@@ -241,7 +242,7 @@ jobs:
 
       - script: |
           echo -e "\n📝 Validando build electron..."
-          BASE_PATH="$(Build.SourcesDirectory)/release/$(environment)/$(msVersion)"
+          BASE_PATH="$(Build.SourcesDirectory)/release/$(environment)/$(version)"
           APP_DIR="$BASE_PATH/app"
           mkdir -p $APP_DIR
           all_found=true
@@ -251,7 +252,7 @@ jobs:
           echo ""
 
           FILES_TO_COPY=(
-            "InvictusUX-$(msVersion).AppImage"
+            "InvictusUX-$(version).AppImage"
             "latest-linux.yml"
           )
 
@@ -552,6 +553,7 @@ jobs:
             $filePath = "$(System.DefaultWorkingDirectory)\.pnpmrc"
             $fileContent = @"
             node-linker=hoisted
+            shamefully-hoist=true
             ignore-scripts=false
             allow-build-script=true
             strict-peer-dependencies=false
