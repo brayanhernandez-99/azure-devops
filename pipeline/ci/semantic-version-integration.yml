@@ -6,6 +6,11 @@ jobs:
 
   #####################################################################
 
+  - ${{ if eq(parameters.release, 'apk') }}:
+      - template: ./general/semantic-version-flutter.yml
+
+  #####################################################################
+
   - ${{ if eq(parameters.release, 'exe') }}:
       - template: ./general/semantic-version-electron.yml
 

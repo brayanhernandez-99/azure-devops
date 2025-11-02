@@ -23,6 +23,11 @@ jobs:
 
       - script: |
           VERSION_FILE="$(Pipeline.Workspace)/versions-downloaded/versions/electron/version.json"
+
+          echo -e "\n📁 Archivo version.json:"
+          ls -la "$VERSION_FILE"
+          cat "$VERSION_FILE"
+
           if [[ -f "$VERSION_FILE" ]]; then
             VERSION=$(jq -r '.version' $VERSION_FILE)
             echo -e "\n🚀 Versión detectada para $(Build.Repository.Name): $VERSION"
@@ -261,6 +266,11 @@ jobs:
           targetType: "inline"
           script: |
             $versionFile = "$(Pipeline.Workspace)\versions-downloaded\versions\electron\version.json"
+
+            Write-Host "`n📁 Archivo version.json:"
+            Get-ChildItem -Path $versionFile | Select-Object Mode, LastWriteTime, Length, Name | Format-Table
+            Get-Content -Path $versionFile
+
             if (Test-Path $versionFile) {
               $json = Get-Content $versionFile | ConvertFrom-Json
               $version = $json.version
@@ -430,7 +440,7 @@ jobs:
             strict-peer-dependencies=false
             "@
             Set-Content -Path $filePath -Value $fileContent -Encoding UTF8
-            Get-ChildItem -Path "$(System.DefaultWorkingDirectory)\.pnpmrc" | Select-Object Mode, LastWriteTime, Length, Name | Format-Table
+            Get-ChildItem -Path $filePath | Select-Object Mode, LastWriteTime, Length, Name | Format-Table
             Get-Content -Path $filePath
 
             Get-Content $filePath | Add-Content -Path $(System.DefaultWorkingDirectory)\.npmrc -Encoding UTF8

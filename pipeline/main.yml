@@ -57,7 +57,7 @@ resources:
 
 stages:
   #
-  # MicroFronted 
+  # MicroFronted
   #
   - ${{ if and(eq(parameters.release, 'aws-s3'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), in(variables['Build.SourceBranchName'], 'develop', 'staging', 'master'))) }}:
       - template: ./pipelines/pipeline-micro-frontend.yml
@@ -67,13 +67,21 @@ stages:
           release: ${{ parameters.release }}
 
   #
+  # Flutter
+  #
+  - ${{ if and(eq(parameters.release, 'apk'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), in(variables['Build.SourceBranchName'], 'develop', 'staging', 'master'))) }}:
+      - template: ./pipelines/pipeline-flutter.yml
+        parameters:
+          red: ${{ parameters.red }}
+          release: ${{ parameters.release }}
+
+  #
   # Electron
   #
   - ${{ if and(eq(parameters.release, 'exe'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), in(variables['Build.SourceBranchName'], 'develop', 'staging', 'master'))) }}:
       - template: ./pipelines/pipeline-electron.yml
         parameters:
           red: ${{ parameters.red }}
-          apps: ${{ parameters.apps }}
           release: ${{ parameters.release }}
 
   #
@@ -94,4 +102,3 @@ stages:
           red: ${{ parameters.red }}
           apps: ${{ parameters.apps }}
           release: ${{ parameters.release }}
-
