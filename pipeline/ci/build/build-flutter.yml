@@ -162,7 +162,6 @@ jobs:
           if [[ -d "assets" ]] && [[ "$(ls -A assets)" ]]; then
             echo -e "\n📁 Assets encontrados:"
             ls -la assets
-            cat assets
           else
             echo -e "\n##vso[task.logissue type=error]⚠️ Error: No se encontraron assets"
             exit 99
