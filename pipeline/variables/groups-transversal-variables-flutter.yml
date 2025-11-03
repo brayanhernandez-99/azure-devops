@@ -1,6 +1,5 @@
 variables:
     - group: trasversal-aws-deployment
-    - group: trasversal-azure-devops
     - group: trasversal-versions-invictus
     - group: trasversal-flutter-keystore
 
