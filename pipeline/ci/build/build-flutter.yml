@@ -3,9 +3,12 @@ jobs:
     displayName: "📦 build flutter"
     pool:
       name: "Azure Pipelines"
-      VmImage: ubuntu-22.04
+      vmImage: "macos-latest"
 
     variables:
+      - name: ANDROID_HOME
+        value: /Users/runner/Library/Android/sdk
+
       - template: ../../variables/groups-transversal-variables-flutter.yml
         parameters:
           region: ${{ parameters.region }}
@@ -37,9 +40,12 @@ jobs:
         condition: succeeded()
 
       - script: |
-          echo -e "\n📁 Archivo version.json:"
-          ls -la $(Pipeline.Workspace)/downloaded-versions/versions/pubspec/version.json
           VERSION_FILE="$(Pipeline.Workspace)/downloaded-versions/versions/pubspec/version.json"
+
+          echo -e "\n📁 Archivo version.json:"
+          ls -la "$VERSION_FILE"
+          cat "$VERSION_FILE"
+
           if [[ -f "$VERSION_FILE" ]]; then
             VERSION=$(jq -r '.version' $VERSION_FILE)
             echo -e "\n🚀 Versión detectada para pubspec: +$VERSION"
@@ -73,111 +79,110 @@ jobs:
           esac
 
           if [ "$environment" = "unknown" ] || [ "$appId" = "unknown" ]; then
-            echo "⚠️ Environment [$environment] no reconocido"
-            echo "⚠️ Group Id [$appId] no reconocido"
+            echo -e "\n##vso[task.logissue type=error]⚠️ App Id o Environment no reconocidos"
+            echo -e "\n##vso[task.logissue type=error]⚠️ App Id: [$appId]"
+            echo -e "\n##vso[task.logissue type=error]⚠️ Environment: [$environment]"
             exit 99
           fi
 
-          echo "##vso[task.setvariable variable=environment]$environment"
           echo "##vso[task.setvariable variable=appId]$appId"
+          echo "##vso[task.setvariable variable=environment]$environment"
 
-          echo "Branch: $CURRENT_BRANCH"
-          echo "Environment: $environment"
+          echo -e "\nℹ️ Varibles de entorno:"
           echo "App Id: $appId"
-        displayName: "📚 Configure Environment & Region"
+          echo "Environment: $environment"
+        displayName: "⚙️ Generate Environment & Region"
         condition: succeeded()
         env:
           region: ${{ parameters.region }}
 
       - script: |
-          echo -e "\nℹ️ Version a actualizar: $(msVersion)"
-          sed -i '' "s/^version: .*/version: $(msVersion)+$(msVersionPubspec)/" pubspec.yaml
-          
+          echo -e "\nℹ️ Actualizando version:"
+          echo "Version: $(version)"
+          echo "Version Pubspec: $(versionPubspec)"
+
+          sed -i '' "s/^version: .*/version: $(version)+$(versionPubspec)/" pubspec.yaml
+
           echo -e "\n📁 Archivo pubspec.yaml:"
+          ls -la pubspec.yaml
           cat pubspec.yaml
-        displayName: "🔧 Change Version pubspec"
+        displayName: "⚙️ Change Version pubspec"
+        condition: succeeded()
+
+      - script: |
+          echo -e "\nℹ️ Actualizando version:"
+          echo "App Id: com.ux.mobile.$(appId)"
+
+          NEW_APP_ID="com.ux.mobile.$(appId)"
+          sed -i '' "s|applicationId *= *\"[^\"]*\"|applicationId = \"$NEW_APP_ID\"|" android/app/build.gradle
+
+          echo -e "\n📁 Archivo build.gradle:"
+          ls -la android/app/build.gradle
+          cat android/app/build.gradle
+        displayName: "⚙️ Change Version build.gradle"
         condition: succeeded()
 
       - script: |
           CURRENT_BRANCH="$(Build.SourceBranch)"
-          echo -e "\nℹ️ Version a actualizar:"
+          echo -e "\nℹ️ Actualizando version:"
           echo "Version: $(version)"
-          echo "Branch: $CURRENT_BRANCH"
-          echo "App Id: $red"
 
-          jq --arg version "$(msVersion)" \
+          jq --arg version "$(version)" \
             --arg environment "$(environment)" \
             --arg url "$(BASE_URL_FLUTTER)" \
             '.VERSION = $version | .ENVIRONMENT = $environment | .BASE_URL = $url' env.json > tmp.json && mv tmp.json env.json
 
           echo -e "\n📁 Archivo env.json:"
+          ls -la env.json
           cat env.json
-        displayName: "🔧 Change version, environment, url file env.json"
-        env:
-          red: ${{ parameters.red }}
+        displayName: "⚙️ Generate env.json"
+        condition: succeeded()
+
+      - task: FlutterInstall@0
+        inputs:
+          mode: "auto"
+          channel: "stable"
+          version: "custom"
+          customVersion: $(flutterVersion)
+        displayName: "🔧 Install Flutter $(flutterVersion)"
+        condition: succeeded()
 
       - script: |
-          echo "Branch: $(Build.SourceBranch)"
-          echo "Red: $red"
+          echo "🔍 Verificando entorno Flutter y Android SDK..."
+          echo -e "\n📦 ANDROID_HOME: $ANDROID_HOME" && ls -la "$ANDROID_HOME"
+          echo -e "\n🌀 Flutter versión:" && flutter --version
+          echo -e "\n📥 Ejecutando flutter pub get..."
+          flutter pub get
+        displayName: "🌀 Flutter: Get Dependencies"
+        condition: succeeded()
 
-          NEW_APP_ID="com.ux.mobile.$(appId)"
-          echo "New app ID: $NEW_APP_ID"
-          sed -i '' "s|applicationId *= *\"[^\"]*\"|applicationId = \"$NEW_APP_ID\"|" android/app/build.gradle
+      - script: |
+          echo -e "\nℹ️ Verificando carpeta assets..."
 
-          echo -e "\n Archivo Build.gradle"
-          cat android/app/build.gradle
-        displayName: "🔧 Change file build.gradle"
-        env:
-          red: ${{ parameters.red }}
+          if [[ -d "assets" ]] && [[ "$(ls -A assets)" ]]; then
+            echo -e "\n📁 Assets encontrados:"
+            ls -la assets
+            cat assets
+          else
+            echo -e "\n##vso[task.logissue type=error]⚠️ Error: No se encontraron assets"
+            exit 99
+          fi
+        displayName: "🔍 Validate Assets"
+        condition: succeeded()
 
+      - script: |
+          echo -e "\nℹ️ Descargando Keystore..."
+          mkdir -p android/app/keystore
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      - task: Bash@3
-        name: AuthCodeArtifact
-        inputs:
-          targetType: "inline"
-          script: |
-            echo -e "\n🔐 Obteniendo token de AWS CodeArtifact..."
-            token=$(aws codeartifact get-authorization-token \
-              --domain matrixtech-npm-repository \
-              --domain-owner "$ACCOUNT_ID_DEPLOY" \
-              --region "$AWS_DEFAULT_REGION" \
-              --query authorizationToken \
-              --output text)
-
-            REPO_DOMAIN="matrixtech-npm-repository-$ACCOUNT_ID_DEPLOY.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com"
-            REPO_PATH="npm/matrixtech-npm-repository"
-            REPO_URL="https://$REPO_DOMAIN/$REPO_PATH"
-
-            echo "Configurando npm..."
-            npm config set "//$REPO_DOMAIN/$REPO_PATH/:_authToken" "$token"
-            npm config set registry "$REPO_URL"
-
-            echo "Verificando identidad de AWS..."
-            aws sts get-caller-identity
-
-            echo -e "\n📁 Generando archivo .npmrc"
-            cat <<EOF > ".npmrc"
-            //$REPO_DOMAIN/$REPO_PATH/:_authToken=$token
-            EOF
-            ls -l .npmrc
-        displayName: "🔐 Setup CodeArtifact & npm config"
+          aws s3 cp s3://repository-native/app-seller/android/keystore/$(KEY_ALIAS).jks android/app/keystore/
+          if [[ -d "android/app/keystore" ]] && [[ "$(ls -A android/app/keystore/$(KEY_ALIAS).jks)" ]]; then    
+            echo -e "\n📁 Keystore descargado:"
+            ls -la android/app/keystore/*
+          else
+            echo -e "\n##vso[task.logissue type=error]⚠️ Error: No se descargo el Keystore"
+            exit 99
+          fi
+        displayName: "📥 Download Keystore"
         condition: succeeded()
         env:
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
@@ -185,164 +190,89 @@ jobs:
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
 
       - script: |
-          CURRENT_BRANCH="$(Build.SourceBranch)"
-          environment="unknown"
+          escape_value() {
+          local raw="$1"
+          printf '%s' "$raw" | sed \
+            -e 's/\\/\\\\/g' \
+            -e 's/"/\\"/g' \
+            -e "s/'/\\'/g" \
+            -e 's/=/\\=/g' \
+            -e 's/:/\\:/g' \
+            -e 's/ /\\ /g' \
+            -e 's/!/\!/g' \
+            -e 's/#/\\#/g' \
+            -e 's/\$/\\$/g' \
+            -e 's/-/\\-/g'
+          }
+          ESCAPED_STORE_PASSWORD=$(escape_value "$STORE_PASSWORD")
+          ESCAPED_KEY_PASSWORD=$(escape_value "$KEY_PASSWORD")
 
-          case "$CURRENT_BRANCH" in
-            refs/heads/feature/*) environment="dev"; ;;
-            refs/heads/develop)   environment="dev"; ;;
-            refs/heads/staging)   environment="qa"; ;;
-            refs/heads/master) 
-              case "$region" in
-                "antioquia") environment="matrixtech"; ;;
-                "cap")       environment="cap"; ;;
-                "tolima")    environment="seapto"; ;;
-                "huila")     environment="suchance"; ;;
-                "cauca")     environment="acertemos"; ;;
-                "boyaca")    environment="jer"; ;;
-                "santander") environment="laperla"; ;;
-              esac ;;
-          esac
+          touch android/key.properties
+          echo "keyAlias=$KEY_ALIAS" >> android/key.properties
+          echo "keyPassword=$ESCAPED_KEY_PASSWORD" >> android/key.properties
+          echo "storePassword=$ESCAPED_STORE_PASSWORD" >> android/key.properties
+          echo "storeFile=keystore/$KEY_ALIAS.jks" >> android/key.properties
 
-          if [[ "$environment" = "unknown" ]]; then
-            echo -e "\n##vso[task.logissue type=error]⚠️ Environment [$environment] no reconocido"
-            exit 99
-          fi
-
-          cat <<EOF > .env
-          DOMAIN_ADMIN="${BASE_URL_ELECTRON_ADMIN}"
-          DOMAIN_SELLER="${BASE_URL_ELECTRON_SELLERS}"
-          TARGET="linux"
-          TARGET_ENVIRONMENT="$environment"
-          EOF
-
-          echo "##vso[task.setvariable variable=environment]$environment"
-          echo -e "\n📁 File: .env"
-          ls -l .env
-          cat .env
-        displayName: "⚙️ Generate .env"
+          echo -e "\n📁 File key.properties creado:"
+          ls -la android/key.properties
+          cat android/key.properties | sed -E 's/^(keyPassword|storePassword)=.*/\1=*** /'
+        displayName: "🔐 Assign Keystore"
         condition: succeeded()
         env:
-          region: ${{ parameters.region }}
+          KEY_ALIAS: $(KEY_ALIAS)
+          KEY_PASSWORD: $(KEY_PASSWORD)
+          STORE_PASSWORD: $(STORE_PASSWORD)
 
-      - task: UsePythonVersion@0
-        displayName: "🔧 Use Python $(pythonVersion)"
-        inputs:
-          versionSpec: "$(pythonVersion)"
-          addToPath: true
-        condition: succeeded()
+      - script: |
+          echo -e "\n☕ JAVA_HOME: $JAVA_HOME" && java -version
+          echo -e "\n🌀 Flutter versión:" && flutter --version
 
-      - task: NodeTool@0
-        displayName: "🔧 Install Nodejs $(nodeVersion)"
-        inputs:
-          versionSource: "spec"
-          versionSpec: "$(nodeVersion)"
+          echo -e "\n🌀Ejecutando Build Flutter: flutter --no-color build apk --no-tree-shake-icons --profile"
+          flutter --no-color build apk --no-tree-shake-icons --profile
+        displayName: "📦 Flutter Build APK"
         condition: succeeded()
 
       - script: |
-          echo -e "\n📦 Modificando versión en package.json: $(version)"
-          PACKAGE_PATH="$(Build.SourcesDirectory)/package.json"
+          echo -e "\nℹ️ Verificando Build Apk..."
 
-          if [[ -f "$PACKAGE_PATH" ]]; then
-            jq --arg ver "$(version)" '.version = $ver' "$PACKAGE_PATH" > "$PACKAGE_PATH.tmp" && mv "$PACKAGE_PATH.tmp" "$PACKAGE_PATH"
+          if [[ -d "build/app/outputs/flutter-apk" ]] && [[ "$(ls -A build/app/outputs/flutter-apk)" ]]; then
+            echo -e "\n✅ Apk encontrado:"
+            ls -la build/app/outputs/flutter-apk
 
-            echo -e "\n✅ Versión en package.json actualizada correctamente."
-            cat "$PACKAGE_PATH"
+            SHA1_APK=$(shasum -a 1 build/app/outputs/flutter-apk/app-profile.apk | awk '{print $1}')
+            SHA1_FLUTTER=$(cut -d ' ' -f1 build/app/outputs/flutter-apk/app-profile.apk.sha1)
+            echo -e "\n🔐 SHA-1 Apk: $SHA1_APK"
+            echo "🔐 SHA-1 Flutter: $SHA1_FLUTTER"
+            echo "🔐 SHA-1 Certificado:"
+            $ANDROID_HOME/build-tools/34.0.0/apksigner verify --print-certs build/app/outputs/flutter-apk/app-profile.apk | grep -A 5 "Signer #"
           else
-            echo -e "\n##vso[task.logissue type=error]⚠️ No se encontró el archivo package.json en la ruta [$PACKAGE_PATH]"
+            echo -e "\n##vso[task.logissue type=error]⚠️ Error: Apk no encontrado"
             exit 99
           fi
-        displayName: "📝 Update version in package.json"
+        displayName: "🔍 Validate APK"
         condition: succeeded()
 
       - script: |
-          echo -e "\n📁 Generando archivo .pnpmrc en: $(System.DefaultWorkingDirectory)/.pnpmrc"
-          cat <<EOF > "$(System.DefaultWorkingDirectory)/.pnpmrc"
-          node-linker=hoisted
-          shamefully-hoist=true
-          ignore-scripts=false
-          allow-build-script=true
-          strict-peer-dependencies=false
-          EOF
-          ls -l $(System.DefaultWorkingDirectory)/.pnpmrc
-          cat $(System.DefaultWorkingDirectory)/.pnpmrc
+          echo -e "\nℹ️ Renombrando APK..."
 
-          cat $(System.DefaultWorkingDirectory)/.pnpmrc >> $(System.DefaultWorkingDirectory)/.npmrc
-          echo -e "\n✅ Contenido de .pnpmrc anexado a .npmrc correctamente."
+          mv build/app/outputs/flutter-apk/app-profile.apk build/app/outputs/flutter-apk/invictus-$(environment)-v$(version).apk
+          mv build/app/outputs/flutter-apk/app-profile.apk.sha1 build/app/outputs/flutter-apk/invictus-$(environment)-v$(version).apk.sha1
 
-          echo -e "\n⚙️ Instalando dependencias ubuntu..."
-          sudo apt-get update
-          sudo apt-get install -y libcups2-dev
+          mkdir -p "$(Build.ArtifactStagingDirectory)/flutter-artifacts"
+          cp -R build/app/outputs/flutter-apk/* $(Build.ArtifactStagingDirectory)/flutter-artifacts/"
 
-          echo -e "\n⚙️ Instalando dependencias node..."
-          npm install -g pnpm
-          pnpm install
-          pnpm exec electron-builder install-app-deps
-          pnpm ignoregion-builds
+          APK_NAME="invictus-$(environment)-v$(version).apk"
+          echo "##vso[task.setvariable variable=apk-name;isOutput=true]$APK_NAME"
 
-          OUTPUT=$(pnpm ls --depth=0 || true)
-          if [[ -z "$OUTPUT" ]]; then
-            echo -e "\n##vso[task.logissue type=error]⚠️ No se instalaron dependencias, esperar que se actualicen las dependencias a nivel global"
-            exit 99
-          else
-            echo -e "\n✅ Dependencias Instaladas:"
-            echo "$OUTPUT"
-          fi
-        displayName: "⚙️ Install dependencies"
-        condition: succeeded()
-
-      - script: |
-          echo -e "\n📦 Build Electron..."
-          pnpm run build
-        displayName: "📦 Build electron"
-        condition: succeeded()
-
-      - script: |
-          echo -e "\n📝 Validando build electron..."
-          BASE_PATH="$(Build.SourcesDirectory)/release/$(environment)/$(version)"
-          APP_DIR="$BASE_PATH/app"
-          mkdir -p $APP_DIR
-          all_found=true
-
-          echo -e "\n📂 Directorio: $BASE_PATH"
-          ls -lt $BASE_PATH
-          echo ""
-
-          FILES_TO_COPY=(
-            "InvictusUX-$(version).AppImage"
-            "latest-linux.yml"
-          )
-
-          for file in "${FILES_TO_COPY[@]}"; do
-            source_path="$BASE_PATH/$file"
-            destination_path="$APP_DIR/$file"
-
-            if [[ -f "$source_path" ]]; then
-              cp -f "$source_path" "$destination_path"
-              echo "📂 Copiado: $file -> $destination_path"
-            else
-              echo "⚠️ Archivo no encontrado: $file"
-              all_found=false
-            fi
-          done
-
-          if [[ "$all_found" == false ]]; then
-            echo -e "\n##vso[task.logissue type=error]⚠️ Error: archivos requeridos no encontrados."
-            exit 99
-          else
-            mkdir -p "$(Build.ArtifactStagingDirectory)/electron-artifacts/linux"
-            cp -R $APP_DIR/* "$(Build.ArtifactStagingDirectory)/electron-artifacts/linux/"
-
-            echo -e "\n📂 Directorio: $APP_DIR"
-            ls -l $APP_DIR
-          fi
-        displayName: "🔍 Validate Build"
+          echo -e "\n📁 APK generados:"
+          ls -l build/app/outputs/flutter-apk
+        displayName: "📝 Change name file APK"
         condition: succeeded()
 
       - task: PublishBuildArtifacts@1
         inputs:
-          PathtoPublish: "$(Build.ArtifactStagingDirectory)/electron-artifacts"
-          ArtifactName: "electron"
+          PathtoPublish: "$(Build.ArtifactStagingDirectory)/flutter-artifacts"
+          ArtifactName: "flutter"
           publishLocation: "Container"
-        displayName: "📤 Publish artifact electron"
+        displayName: "📤 Publish Artifact Flutter"
         condition: succeeded()

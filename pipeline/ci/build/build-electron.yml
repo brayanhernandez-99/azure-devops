@@ -523,5 +523,5 @@ jobs:
           PathtoPublish: "$(Build.ArtifactStagingDirectory)/electron-artifacts"
           ArtifactName: "electron"
           publishLocation: "Container"
-        displayName: "📤 Publish artifact electron"
+        displayName: "📤 Publish Artifact Electron"
         condition: succeeded()
