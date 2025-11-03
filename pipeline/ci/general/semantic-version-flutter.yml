@@ -256,8 +256,8 @@ jobs:
               echo "🚀 Próxima versión : $NEXT_VERSION"
             fi
 
-            mkdir -p $(Build.ArtifactStagingDirectory)/electron
-            touch $(Build.ArtifactStagingDirectory)/electron/version.json
+            mkdir -p $(Build.ArtifactStagingDirectory)/flutter
+            touch $(Build.ArtifactStagingDirectory)/flutter/version.json
             echo "{ \"release\": \"exe\", \"version\": \"$NEXT_VERSION\" }" > $(Build.ArtifactStagingDirectory)/flutter/version.json
 
             echo "##vso[task.setvariable variable=cleanNEXT_VERSION]$NEXT_VERSION"
@@ -267,7 +267,7 @@ jobs:
 
       - script: |
           CURRENT_BRANCH=$(echo $(Build.SourceBranch))
-          echo $CURRENT_BRANCH
+          echo -e "\nℹ️ Branch Actual: $CURRENT_BRANCH"
 
           if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|master|staging|feature/.+)$ ]]; then
 
@@ -319,9 +319,9 @@ jobs:
               echo "🚀 Próxima versión : +$NEW_BUILD_NUMBER"
             fi
 
-            mkdir -p $(Build.ArtifactStagingDirectory)/version-pubspec-apk
-            touch $(Build.ArtifactStagingDirectory)/version-pubspec-apk/version.json
-            echo "{ \"ms\": \"pubspec-apk\", \"version\": \"$NEW_BUILD_NUMBER\" }" > $(Build.ArtifactStagingDirectory)/pubspec/version.json
+            mkdir -p $(Build.ArtifactStagingDirectory)/pubspec
+            touch $(Build.ArtifactStagingDirectory)/pubspec/version.json
+            echo "{ \"ms\": \"pubspec\", \"version\": \"$NEW_BUILD_NUMBER\" }" > $(Build.ArtifactStagingDirectory)/pubspec/version.json
 
             echo "##vso[task.setvariable variable=NEXT_VERSION_PUB]$NEW_BUILD_NUMBER"
           fi
@@ -334,15 +334,21 @@ jobs:
 
           git config user.name "pipeline"
           git config user.email "pipelineUX@ux.technology"
-
-          echo "🔧 Actualizando versión en $(Build.Repository.Name)/package.json a $(cleanNEXT_VERSION)"
-          jq --arg version "$(cleanNEXT_VERSION)" '.version = $version' package.json > tmp.json && mv tmp.json package.json
-
           git checkout version/$clean_branch
-          git pull origin version/$clean_branch
-          git add package.json
-          git commit -m "chore($(Build.Repository.Name)): bump version to $(cleanNEXT_VERSION)"
+
+          echo "🔧 Actualizando versión $(cleanNEXT_VERSION) en el pubspec.yaml"
+          sed -i "s/^version: .*/version: $(cleanNEXT_VERSION)+$(NEXT_VERSION_PUB)/" pubspec.yaml
+
+          cat pubspec.yaml
+          jq --arg version "$(cleanNEXT_VERSION)" '.VERSION = $version' env.json > tmp.json && mv tmp.json env.json
+
+          echo ""
+          cat env.json
+
+          git add env.json pubspec.yaml
+          git commit -m "chore Flutter: bump version to $(cleanNEXT_VERSION)"
           git push origin version/$clean_branch
+
         displayName: "⚡ Commit Version & Push — $(Build.Repository.Name)"
         condition: and(succeeded(),
           ne(variables['Build.SourceBranchName'], 'master'),
