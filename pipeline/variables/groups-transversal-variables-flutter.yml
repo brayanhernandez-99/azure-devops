@@ -1,0 +1,44 @@
+variables:
+    - group: trasversal-aws-deployment
+    - group: trasversal-azure-devops
+    - group: trasversal-versions-invictus
+    - group: trasversal-flutter-keystore
+
+    # Develop - Feature - Hotfix branch
+    - ${{ if or(eq(variables['Build.SourceBranchName'], 'develop'), startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')) }}:
+        - group: trasversal-aws-developer
+        - group: variables-flutter-develop
+
+    # Staging branch
+    - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
+        - group: trasversal-aws-qa
+        - group: variables-flutter-staging
+
+    # Master branch → por red
+    - ${{ if and(eq(parameters.region, 'antioquia'), eq(variables['Build.SourceBranchName'], 'master')) }}:
+        - group: trasversal-aws-master-antioquia
+        - group: variables-flutter-antioquia
+
+    - ${{ if and(eq(parameters.region, 'cap'), eq(variables['Build.SourceBranchName'], 'master')) }}:
+        - group: trasversal-aws-master-cap
+        - group: variables-flutter-cap
+
+    - ${{ if and(eq(parameters.region, 'tolima'), eq(variables['Build.SourceBranchName'], 'master')) }}:
+        - group: trasversal-aws-master-tolima
+        - group: variables-flutter-tolima
+
+    - ${{ if and(eq(parameters.region, 'huila'), eq(variables['Build.SourceBranchName'], 'master')) }}:
+        - group: trasversal-aws-master-huila
+        - group: variables-flutter-huila
+
+    - ${{ if and(eq(parameters.region, 'cauca'), eq(variables['Build.SourceBranchName'], 'master')) }}:
+        - group: trasversal-aws-master-cauca
+        - group: variables-flutter-cauca
+
+    - ${{ if and(eq(parameters.region, 'boyaca'), eq(variables['Build.SourceBranchName'], 'master')) }}:
+        - group: trasversal-aws-master-boyaca
+        - group: variables-flutter-boyaca
+
+    - ${{ if and(eq(parameters.region, 'santander'), eq(variables['Build.SourceBranchName'], 'master')) }}:
+        - group: trasversal-aws-master-santander
+        - group: variables-flutter-santander
