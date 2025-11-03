@@ -57,7 +57,7 @@ jobs:
       - script: |
           echo -e "\nℹ️ Pull Request ID recuperado: $(ultimoPR)"
           echo "id del repositorio $(Build.Repository.Name) = $(repoID)"
-          
+
           COMMITS=$(curl -s -u ":$AZURE_DEVOPS_CLI_PAT" \
             "https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories/$(repoID)/pullRequests/$(ultimoPR)/commits?api-version=7.0" \
             | jq -r '.value[].comment' | grep -E 'feat:|fix:|!')
@@ -193,9 +193,9 @@ jobs:
               echo "🚀 Próxima versión : $NEXT_VERSION"
             fi
 
-            mkdir -p $(Build.ArtifactStagingDirectory)/electron
-            touch $(Build.ArtifactStagingDirectory)/electron/version.json
-            echo "{ \"release\": \"exe\", \"version\": \"$NEXT_VERSION\" }" > $(Build.ArtifactStagingDirectory)/electron/version.json
+            mkdir -p $(Build.ArtifactStagingDirectory)/flutter
+            touch $(Build.ArtifactStagingDirectory)/flutter/version.json
+            echo "{ \"release\": \"exe\", \"version\": \"$NEXT_VERSION\" }" > $(Build.ArtifactStagingDirectory)/flutter/version.json
 
             echo "##vso[task.setvariable variable=cleanNEXT_VERSION]$NEXT_VERSION"
           fi
@@ -203,19 +203,87 @@ jobs:
         condition: succeeded()
 
       - script: |
+          CURRENT_BRANCH=$(echo $(Build.SourceBranch))
+          echo -e "\nℹ️ Branch Actual: $CURRENT_BRANCH"
+
+          if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|master|staging|feature/.+)$ ]]; then
+
+            if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
+              clean_branch=develop
+              echo $clean_branch
+            fi
+
+            if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|staging|master)$ ]]; then
+              raw_branch=$(Build.SourceBranch)
+              clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
+            fi
+
+            if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|staging|feature/.+)$ ]]; then
+              git checkout version/$clean_branch
+              VERSION_ACTUAL=$(grep '^version:' pubspec.yaml | cut -d ' ' -f2)
+              echo "versión base actual: $VERSION_ACTUAL"
+
+              git checkout version/master
+              VERSION_ACTUAL_MASTER=$(grep '^version:' pubspec.yaml | cut -d ' ' -f2)
+              echo "Versión base master: $VERSION_ACTUAL_MASTER"
+
+              git checkout version/$clean_branch
+              BUILD_NUMBER_VERSION_ACTUAL="${VERSION_ACTUAL#*+}"
+              BUILD_NUMBER_VERSION_MASTER="${VERSION_ACTUAL_MASTER#*+}"
+
+              echo -e "\n🔍 Versiones Detectadas"
+              echo "📌 Actual: $BUILD_NUMBER_VERSION_ACTUAL"
+              echo "📌 Master: $BUILD_NUMBER_VERSION_MASTER"
+
+              if [[ $BUILD_NUMBER_VERSION_ACTUAL == $BUILD_NUMBER_VERSION_MASTER ]]; then 
+                NEW_BUILD_NUMBER=$((BUILD_NUMBER_VERSION_ACTUAL + 1))
+              elif [[ $BUILD_NUMBER_VERSION_ACTUAL > $BUILD_NUMBER_VERSION_MASTER ]]; then 
+                NEW_BUILD_NUMBER=$BUILD_NUMBER_VERSION_ACTUAL
+              elif [[ $BUILD_NUMBER_VERSION_ACTUAL < $BUILD_NUMBER_VERSION_MASTER ]]; then 
+                NEW_BUILD_NUMBER=$((BUILD_NUMBER_VERSION_MASTER + 1))
+              fi
+              echo "🚀 Nuevo Build: +$NEW_BUILD_NUMBER"
+            fi
+
+            if [[ "$CURRENT_BRANCH" == refs/heads/master ]]; then
+              git checkout version/$clean_branch
+              VERSION_ACTUAL_MASTER=$(grep '^version:' pubspec.yaml | cut -d ' ' -f2)
+              BUILD_NUMBER_VERSION_MASTER="${VERSION_ACTUAL_MASTER#*+}"
+              NEW_BUILD_NUMBER=$((BUILD_NUMBER_VERSION_MASTER + 1))
+
+              echo -e "\n🔍 Versiones Detectadas"
+              echo "📌 Anterior versión : +$BUILD_NUMBER_VERSION_MASTER"
+              echo "🚀 Próxima versión : +$NEW_BUILD_NUMBER"
+            fi
+
+            mkdir -p $(Build.ArtifactStagingDirectory)/pubspec
+            touch $(Build.ArtifactStagingDirectory)/pubspec/version.json
+            echo "{ \"ms\": \"pubspec\", \"version\": \"$NEW_BUILD_NUMBER\" }" > $(Build.ArtifactStagingDirectory)/pubspec/version.json
+
+            echo "##vso[task.setvariable variable=NEXT_VERSION_PUB]$NEW_BUILD_NUMBER"
+          fi
+        displayName: "🔍 Detect next version pubspec"
+        condition: succeeded()
+
+      - script: |
           raw_branch=$(Build.SourceBranch)
           clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
 
-          echo "🔧 Actualizando versión en $(Build.Repository.Name)/package.json a $(cleanNEXT_VERSION)"
-          jq --arg version "$(cleanNEXT_VERSION)" '.version = $version' package.json > tmp.json && mv tmp.json package.json
-
           git config user.name "pipeline"
           git config user.email "pipelineUX@ux.technology"
-
           git checkout version/$clean_branch
-          git pull origin version/$clean_branch
-          git add package.json
-          git commit -m "chore($(Build.Repository.Name)): bump version to $(cleanNEXT_VERSION)"
+
+          echo "🔧 Actualizando versión $(cleanNEXT_VERSION) en el pubspec.yaml"
+          sed -i "s/^version: .*/version: $(cleanNEXT_VERSION)+$(NEXT_VERSION_PUB)/" pubspec.yaml
+
+          cat pubspec.yaml
+          jq --arg version "$(cleanNEXT_VERSION)" '.VERSION = $version' env.json > tmp.json && mv tmp.json env.json
+
+          echo ""
+          cat env.json
+
+          git add env.json pubspec.yaml
+          git commit -m "chore Flutter: bump version to $(cleanNEXT_VERSION)"
           git push origin version/$clean_branch
         displayName: "⚡ Commit Version & Push: $(Build.Repository.Name)"
         condition: succeeded()
