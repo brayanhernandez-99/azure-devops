@@ -49,6 +49,28 @@ jobs:
           startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
 
       - script: |
+          sourceBranch="${BUILD_SOURCEBRANCH/refs\/heads\//}"
+          targetBranch="master"
+
+          echo -e "\n🔎 Verificando que no se hayan agregado nuevas sentencias console.log..."
+          echo "Branch actual: $sourceBranch"
+          echo "Branch destino: $targetBranch"
+
+          git fetch origin "$targetBranch"
+          diff=$(git --no-pager diff "origin/$targetBranch..origin/$sourceBranch")
+
+          if echo "$diff" | grep -qE '^\+.*console\.log'; then
+            echo -e "\n##vso[task.logissue type=error]⚠️ Se encontro 'console.log' en los cambios"
+            exit 99
+          else
+            echo -e "\n✅ No se encontraron sentencias 'console.log' en los cambios"
+          fi
+        displayName: "🔍 Validate for 'console.log' in changes"
+        condition: and(succeeded(), or(
+          startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'),
+          startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
+
+      - script: |
           REPO_NAME="$(Build.Repository.Name)"          
           RESPONSE=$(curl -s -u ":$AZURE_DEVOPS_CLI_PAT" \
             "https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories?api-version=5.0")
@@ -109,26 +131,6 @@ jobs:
         condition: and(succeeded(),
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
-
-      - script: |
-          sourceBranch="${BUILD_SOURCEBRANCH/refs\/heads\//}"
-          targetBranch="master"
-
-          echo -e "\n🔎 Verificando que no se hayan agregado nuevas sentencias console.log..."
-          echo "Branch actual: $sourceBranch"
-          echo "Branch destino: $targetBranch"
-
-          git fetch origin "$targetBranch"
-          diff=$(git --no-pager diff "origin/$targetBranch..origin/$sourceBranch")
-
-          if echo "$diff" | grep -qE '^\+.*console\.log'; then
-            echo -e "\n##vso[task.logissue type=error]⚠️ Se encontro 'console.log' en los cambios"
-            exit 99
-          else
-            echo -e "\n✅ No se encontraron sentencias 'console.log' en los cambios"
-          fi
-        displayName: "🔍 Check for 'console.log' in changes"
-        condition: and(succeeded(), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
 
       - script: |
           CURRENT_BRANCH=$(echo $(Build.SourceBranch))
@@ -326,7 +328,7 @@ jobs:
         displayName: "🔍 Detect next version pubspec"
         condition: succeeded()
 
-      - script: |        
+      - script: |
           raw_branch=$(Build.SourceBranch)
           clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
 
