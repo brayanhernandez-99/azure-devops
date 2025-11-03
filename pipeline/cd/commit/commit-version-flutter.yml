@@ -73,10 +73,15 @@ jobs:
           CURRENT_BRANCH=$(echo $(Build.SourceBranch))
           echo -e "\nℹ️ $CURRENT_BRANCH"
 
-          if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|master|staging|feature/.+)$ ]]; then
+          if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|master|staging|feature/.+|hotfix/.+)$ ]]; then
 
             if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
               clean_branch=develop
+              echo $clean_branch
+            fi
+
+            if [[ "$CURRENT_BRANCH" == refs/heads/hotfix/* ]]; then
+              clean_branch=master
               echo $clean_branch
             fi
 
@@ -89,6 +94,13 @@ jobs:
               BASE=$(git merge-base HEAD origin/master)
               COMMITS=$(git log --pretty=format:"%s" $BASE..HEAD | grep -vi "Auto-generated pipeline config")
               echo "📝 Commits de la rama feature"
+              echo $COMMITS
+            fi
+
+            if [[ "$CURRENT_BRANCH" == refs/heads/hotfix/* ]]; then
+              BASE=$(git merge-base HEAD origin/master)
+              COMMITS=$(git log --pretty=format:"%s" $BASE..HEAD | grep -vi "Auto-generated pipeline config")
+              echo "📝 Commits de la rama hotfix"
               echo $COMMITS
             fi
 
@@ -150,14 +162,14 @@ jobs:
 
             if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|staging|feature/.+)$ ]]; then
               git checkout version/$clean_branch
-              VERSION_ACTUAL=$(jq -r .version  package.json)
+              VERSION_ACTUAL=$(jq -r .VERSION  env.json)
               BASE_VERSION_BRANCH=$(echo "$VERSION_ACTUAL" | sed -E "s/-${clean_branch}\.[0-9]+//")
               echo "versión base actual: $BASE_VERSION_BRANCH"
 
               CURRENT_PRERELEASE=$(echo "$VERSION_ACTUAL" | sed -n "s/.*-${clean_branch}\.\([0-9]\+\)/\1/p")
 
               git checkout version/master
-              VERSION_ACTUAL_MASTER=$(jq -r .version package.json)
+              VERSION_ACTUAL_MASTER=$(jq -r .VERSION env.json)
               echo "versión base master: $VERSION_ACTUAL_MASTER"
 
               git checkout version/$clean_branch
@@ -184,7 +196,7 @@ jobs:
 
             if [[ "$CURRENT_BRANCH" == refs/heads/master ]]; then
               git checkout version/$clean_branch
-              VERSION_ACTUAL_MASTER=$(jq -r .version package.json)
+              VERSION_ACTUAL_MASTER=$(jq -r .VERSION env.json)
               NEXT_BASE_VERSION=$(bump_version "$VERSION_ACTUAL_MASTER" "$RELEASE_TYPE")
               NEXT_VERSION="$NEXT_BASE_VERSION"
 
