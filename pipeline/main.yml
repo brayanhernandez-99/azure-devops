@@ -67,17 +67,16 @@ stages:
           release: ${{ parameters.release }}
 
   #
-<<<<<<< HEAD
   # Backend 
   #
   - ${{ if and(eq(parameters.release, 'aws-ecs'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), in(variables['Build.SourceBranchName'], 'develop', 'staging', 'master'))) }}:
       - template: ./pipelines/pipeline-backend.yml
-=======
+
+      
   # Flutter
   #
   - ${{ if and(eq(parameters.release, 'apk'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), in(variables['Build.SourceBranchName'], 'develop', 'staging', 'master'))) }}:
       - template: ./pipelines/pipeline-flutter.yml
->>>>>>> e8ce822b14b71c440e15030083868e605d0e4429
         parameters:
           red: ${{ parameters.red }}
           release: ${{ parameters.release }}
