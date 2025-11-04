@@ -14,8 +14,15 @@ jobs:
       - task: DownloadBuildArtifacts@0
         inputs:
           artifactName: "flutter"
-          downloadPath: "$(Pipeline.Workspace)/flutter-artifacts"
-        displayName: "📥 Download Flutter Artifacts"
+          downloadPath: "$(Pipeline.Workspace)/flutter-artifact"
+        displayName: "📥 Download Flutter Artifact"
+        condition: succeeded()
+
+      - task: DownloadBuildArtifacts@0
+        inputs:
+          artifactName: "versions"
+          downloadPath: "$(Pipeline.Workspace)/versions-downloaded"
+        displayName: "📥 Download Version"
         condition: succeeded()
 
       - script: |
@@ -74,13 +81,11 @@ jobs:
           echo -e "\n📦 Cargando al Bucket S3..."
           echo "APK: $(apkName)"
           echo "Environment: $environment"
-
-          mkdir -p build/app/outputs/flutter-apk/$(environment)
-          cp build/app/outputs/flutter-apk/$(apkName) build/app/outputs/flutter-apk/$(environment)
+          BASE_PATH="$(Pipeline.Workspace)/flutter-artifact/flutter"
 
           echo -e "\n📁 Archivos a cargar:"
-          ls -l build/app/outputs/flutter-apk/$(environment)
-          
+          ls -la $BASE_PATH/*
+
           #aws s3 cp build/app/outputs/flutter-apk/$(environment) s3://repository-native/app-seller/android/$(environment) --recursive --acl public-read
           aws s3 cp build/app/outputs/flutter-apk/$(environment) s3://repository-native/app-seller/android/dev-test --recursive --acl public-read
 
