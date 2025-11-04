@@ -5,7 +5,9 @@ jobs:
       name: "Azure Pipelines"
       vmImage: "ubuntu-22.04"
     variables:
-      versionNode: $[coalesce(variables.nodeVersion, '18.20.7')]
+      - template: ../../variables/groups-transversal-variables-backend.yml
+        parameters:
+          region: ${{ parameters.region }}
 
     steps:
       - task: DownloadBuildArtifacts@0
@@ -28,10 +30,10 @@ jobs:
         displayName: "📖 Read Microservice Versions"
 
       - task: NodeTool@0
-        displayName: "🔧 Install Nodejs $(versionNode)"
+        displayName: "🔧 Install Nodejs $(nodeVersion)"
         inputs:
           versionSource: "spec"
-          versionSpec: "$(versionNode)"
+          versionSpec: "$(nodeVersion)"
 
       - task: JavaToolInstaller@0
         displayName: "🔧 Install JDK 17"

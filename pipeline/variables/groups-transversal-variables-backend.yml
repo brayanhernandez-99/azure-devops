@@ -2,35 +2,21 @@ variables:
   - group: trasversal-aws-deployment
   - group: trasversal-azure-devops
   - group: trasversal-versions-invictus
-  - group: trasversal-microfrontend-vue2-old
-  - group: trasversal-microfrontend-old
 
   # Develop - Feature - Hotfix branch
   - ${{ if or(eq(variables['Build.SourceBranchName'], 'develop'), startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')) }}:
       - group: trasversal-aws-develop
-      - group: variables-cloudfront-develop
-      - group: variables-microfrontend-vue2-develop-old
-      - group: variables-microfrontend-develop-old
 
   # Staging branch
   - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
       - group: trasversal-aws-staging
-      - group: variables-cloudfront-staging
-      - group: variables-microfrontend-vue2-staging-old
-      - group: variables-microfrontend-staging-old
 
   # Master branch → por red
   - ${{ if and(eq(parameters.region, 'antioquia'), eq(variables['Build.SourceBranchName'], 'master')) }}:
       - group: trasversal-aws-antioquia
-      - group: variables-cloudfront-antioquia
-      - group: variables-microfrontend-vue2-antioquia-old
-      - group: variables-microfrontend-antioquia-old
 
   - ${{ if and(eq(parameters.region, 'cap'), eq(variables['Build.SourceBranchName'], 'master')) }}:
       - group: trasversal-aws-antioquia-cap
-      - group: variables-cloudfront-antioquia-cap
-      - group: variables-microfrontend-vue2-antioquia-cap-old
-      - group: variables-microfrontend-antioquia-cap-old
 
   - ${{ if and(eq(parameters.region, 'tolima'), eq(variables['Build.SourceBranchName'], 'master')) }}:
       - group: trasversal-aws-tolima
@@ -46,6 +32,3 @@ variables:
 
   - ${{ if and(eq(parameters.region, 'santander'), eq(variables['Build.SourceBranchName'], 'master')) }}:
       - group: trasversal-aws-santander
-      - group: variables-cloudfront-santander
-      - group: variables-microfrontend-vue2-santander-old
-      - group: variables-microfrontend-santander-old
