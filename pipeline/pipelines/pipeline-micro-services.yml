@@ -23,7 +23,7 @@ stages:
         jobs:
           - template: ../ci/build/build-micro-services.yml
             parameters:
-              region: ${{ region }}
+              region: ${{ parameters.release }}
 
       - ${{ each region in parameters.red }}:
           - stage: deploy_micro_services_${{ region }}
