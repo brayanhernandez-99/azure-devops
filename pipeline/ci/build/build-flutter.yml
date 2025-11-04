@@ -97,32 +97,6 @@ jobs:
           region: ${{ parameters.region }}
 
       - script: |
-          echo -e "\nℹ️ Actualizando version:"
-          echo "Version: $(version)"
-          echo "Version Pubspec: $(versionPubspec)"
-
-          sed -i '' "s/^version: .*/version: $(version)+$(versionPubspec)/" pubspec.yaml
-
-          echo -e "\n📁 Archivo pubspec.yaml:"
-          ls -la pubspec.yaml
-          cat pubspec.yaml
-        displayName: "⚙️ Change Version pubspec"
-        condition: succeeded()
-
-      - script: |
-          echo -e "\nℹ️ Actualizando version:"
-          echo "App Id: com.ux.mobile.$(appId)"
-
-          NEW_APP_ID="com.ux.mobile.$(appId)"
-          sed -i '' "s|applicationId *= *\"[^\"]*\"|applicationId = \"$NEW_APP_ID\"|" android/app/build.gradle
-
-          echo -e "\n📁 Archivo build.gradle:"
-          ls -la android/app/build.gradle
-          cat android/app/build.gradle
-        displayName: "⚙️ Change Version build.gradle"
-        condition: succeeded()
-
-      - script: |
           CURRENT_BRANCH="$(Build.SourceBranch)"
           echo -e "\nℹ️ Actualizando version:"
           echo "Version: $(version)"
@@ -136,6 +110,32 @@ jobs:
           ls -la env.json
           cat env.json
         displayName: "⚙️ Generate env.json"
+        condition: succeeded()
+
+      - script: |
+          echo -e "\nℹ️ Actualizando version:"
+          echo "Version: $(version)"
+          echo "Version Pubspec: $(versionPubspec)"
+
+          sed -i '' "s/^version: .*/version: $(version)+$(versionPubspec)/" pubspec.yaml
+
+          echo -e "\n📁 Archivo pubspec.yaml:"
+          ls -la pubspec.yaml
+          cat pubspec.yaml
+        displayName: "🔁 Change Version pubspec"
+        condition: succeeded()
+
+      - script: |
+          echo -e "\nℹ️ Actualizando version:"
+          echo "App Id: com.ux.mobile.$(appId)"
+
+          NEW_APP_ID="com.ux.mobile.$(appId)"
+          sed -i '' "s|applicationId *= *\"[^\"]*\"|applicationId = \"$NEW_APP_ID\"|" android/app/build.gradle
+
+          echo -e "\n📁 Archivo build.gradle:"
+          ls -la android/app/build.gradle
+          cat android/app/build.gradle
+        displayName: "🔁 Change Version build.gradle"
         condition: succeeded()
 
       - task: FlutterInstall@0
