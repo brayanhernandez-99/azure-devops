@@ -1,0 +1,59 @@
+stages:
+  - stage: semantic_version_micro_services
+    displayName: "🏷️ Semantic Version Microservices"
+    jobs:
+      - template: ../ci/semantic-version-integration.yml
+        parameters:
+          release: ${{ parameters.release }}
+
+  - ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/', 'refs/heads/feature/'), eq(variables['Build.SourceBranchName'], 'develop'))) }}:
+      - stage: test_micro_services
+        displayName: "📦 Test Microservices"
+        dependsOn: semantic_version_micro_services
+        jobs:
+          - template: ../ci/test/test-backend.yml
+
+  #####################################################################
+
+  - ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
+      - ${{ each region in parameters.red }}:
+          - stage: build_micro_services_${{ region }}
+            displayName: "📦 Build Microservices ${{ region }}"
+            dependsOn: semantic_version_micro_services
+            jobs:
+              - template: ../ci/build/build-frontend.yml
+                parameters:
+                  region: ${{ region }}
+
+          - stage: deploy_micro_services_${{ region }}
+            displayName: "🚀 Deploy Microservices ${{ region }}"
+            dependsOn: build_micro_services_${{ region }}
+            jobs:
+              - template: ../cd/deployment.yml
+                parameters:
+                  region: ${{ region }}
+                  release: ${{ parameters.release }}
+
+  #####################################################################
+
+  - ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}:
+      - stage: build_micro_services
+        displayName: "📦 Build Microservices"
+        dependsOn: test_micro_services
+        jobs:
+          - template: ../ci/build/build-frontend.yml
+
+  - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
+      - stage: build_micro_services
+        displayName: "📦 Build Microservices"
+        dependsOn:  semantic_version_micro_services
+        jobs:
+          - template: ../ci/build/build-frontend.yml
+
+  - stage: deploy_micro_services
+    displayName: "🚀 Deploy Microservices"
+    dependsOn: build_micro_services
+    jobs:
+      - template: ../cd/deployment.yml
+        parameters:
+          release: ${{ parameters.release }}
