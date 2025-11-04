@@ -72,24 +72,22 @@ jobs:
 
       - script: |
           echo -e "\n📦 Cargando al Bucket S3..."
-          echo "APK: $(apk-name)"
+          echo "APK: $(apkName)"
           echo "Environment: $environment"
 
           mkdir -p build/app/outputs/flutter-apk/$(environment)
-          cp build/app/outputs/flutter-apk/$(apk-name) build/app/outputs/flutter-apk/$(environment)
+          cp build/app/outputs/flutter-apk/$(apkName) build/app/outputs/flutter-apk/$(environment)
 
           echo -e "\n📁 Archivos a cargar:"
           ls -l build/app/outputs/flutter-apk/$(environment)
-          
           
           #aws s3 cp build/app/outputs/flutter-apk/$(environment) s3://repository-native/app-seller/android/$(environment) --recursive --acl public-read
           aws s3 cp build/app/outputs/flutter-apk/$(environment) s3://repository-native/app-seller/android/dev-test --recursive --acl public-read
 
           echo -e "\n✅ Archivos subidos exitosamente."
-          echo "🔗 APK: $(apk-name)"
-          #echo "🔗 URL: https://repository-native.s3.us-east-1.amazonaws.com/app-seller/android/$(environment)/$(apk-name)"
-          
-          echo "🔗 URL: https://repository-native.s3.us-east-1.amazonaws.com/app-seller/android/dev-test/$(apk-name)"
+          echo "🔗 APK: $(apkName)"
+          #echo "🔗 URL: https://repository-native.s3.us-east-1.amazonaws.com/app-seller/android/$(environment)/$(apkName)"
+          echo "🔗 URL: https://repository-native.s3.us-east-1.amazonaws.com/app-seller/android/dev-test/$(apkName)"
 
         displayName: "📤 Upload Bucket S3"
         condition: succeeded()
