@@ -290,7 +290,7 @@ jobs:
 
             mkdir -p $(Build.ArtifactStagingDirectory)/electron
             touch $(Build.ArtifactStagingDirectory)/electron/version.json
-            echo "{ \"release\": \"exe\", \"version\": \"$NEXT_VERSION\" }" > $(Build.ArtifactStagingDirectory)/electron/version.json
+            echo "{ \"release\": \"electron\", \"version\": \"$NEXT_VERSION\" }" > $(Build.ArtifactStagingDirectory)/electron/version.json
 
             echo "##vso[task.setvariable variable=cleanNEXT_VERSION]$NEXT_VERSION"
           fi

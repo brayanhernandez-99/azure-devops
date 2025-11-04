@@ -89,8 +89,8 @@ jobs:
           echo -e "\n📁 Archivos a cargar:"
           ls -la $BASE_PATH/*
 
-          #aws s3 cp $BASE_PATH s3://repository-native/app-seller/android/$(environment) --recursive --acl public-read
-          aws s3 cp $BASE_PATH s3://repository-native/app-seller/android/dev-test --recursive --acl public-read
+          #aws s3 cp $BASE_PATH/$APK_NAME s3://repository-native/app-seller/android/$(environment) --recursive --acl public-read
+          aws s3 cp $BASE_PATH/$APK_NAME s3://repository-native/app-seller/android/dev-test --recursive --acl public-read
 
           echo -e "\n✅ Archivos subidos exitosamente."
           echo "🔗 APK: $APK_NAME"
