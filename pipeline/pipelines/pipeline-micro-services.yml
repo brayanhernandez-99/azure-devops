@@ -21,7 +21,7 @@ stages:
             displayName: "📦 Build Microservices ${{ region }}"
             dependsOn: semantic_version_micro_services
             jobs:
-              - template: ../ci/build/build-frontend.yml
+              - template: ../ci/build/build-micro-services.yml
                 parameters:
                   region: ${{ region }}
 
