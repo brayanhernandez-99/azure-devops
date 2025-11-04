@@ -254,23 +254,23 @@ jobs:
       - script: |
           echo -e "\nℹ️ Renombrando APK..."
 
-          mv build/app/outputs/flutter-apk/app-profile.apk build/app/outputs/flutter-apk/invictus-$(environment)-v$(version).apk
-          mv build/app/outputs/flutter-apk/app-profile.apk.sha1 build/app/outputs/flutter-apk/invictus-$(environment)-v$(version).apk.sha1
+          mv build/app/outputs/flutter-apk/app-profile.apk build/app/outputs/flutter-apk/invictus-$(environment)-$(version).apk
+          mv build/app/outputs/flutter-apk/app-profile.apk.sha1 build/app/outputs/flutter-apk/invictus-$(environment)-$(version).apk.sha1
 
-          mkdir -p "$(Build.ArtifactStagingDirectory)/flutter-artifacts"
-          cp -R build/app/outputs/flutter-apk/* $(Build.ArtifactStagingDirectory)/flutter-artifacts/"
+          mkdir -p "$(Build.ArtifactStagingDirectory)/flutter-artifact"
+          cp -R build/app/outputs/flutter-apk/* $(Build.ArtifactStagingDirectory)/flutter-artifact/
 
-          APK_NAME="invictus-$(environment)-v$(version).apk"
-          echo "##vso[task.setvariable variable=apk-name;isOutput=true]$APK_NAME"
+          APK_NAME="invictus-$(environment)-$(version).apk"
+          echo "##vso[task.setvariable variable=apkName;isOutput=true]$APK_NAME"
 
           echo -e "\n📁 APK generados:"
           ls -l build/app/outputs/flutter-apk
-        displayName: "📝 Change name file APK"
+        displayName: "📝 Change Name File APK"
         condition: succeeded()
 
       - task: PublishBuildArtifacts@1
         inputs:
-          PathtoPublish: "$(Build.ArtifactStagingDirectory)/flutter-artifacts"
+          PathtoPublish: "$(Build.ArtifactStagingDirectory)/flutter-artifact"
           ArtifactName: "flutter"
           publishLocation: "Container"
         displayName: "📤 Publish Artifact Flutter"
