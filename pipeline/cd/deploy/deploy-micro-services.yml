@@ -149,7 +149,7 @@ jobs:
                     CLUSTER=msnotifier-cluster
                     SERVICES=msnotifier-fg-service
                 fi
-                if [[ "$(cleanMsName)" == "raffle" && ! ( "$red" == "cap" || "$red" == "antioquia" ) ]]; then
+                if [[ "$(cleanMsName)" == "raffle" && ! ( "$red" == "cap" || "$red" == "antioquia" || "$BRANCH_NAME" == "develop" || "$BRANCH_NAME" == "staging" ) ]]; then
                     SERVICES=raffles
                 fi
                 echo "🛡️ Cluster: $CLUSTER"
