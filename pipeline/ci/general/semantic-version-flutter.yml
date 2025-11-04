@@ -352,10 +352,11 @@ jobs:
           echo "🔧 Actualizando versión $(cleanNEXT_VERSION) en el pubspec.yaml"
           sed -i "s/^version: .*/version: $(cleanNEXT_VERSION)+$(NEXT_VERSION_PUB)/" pubspec.yaml
 
+          echo -e "\n📁 File pubspec.yaml:"
           cat pubspec.yaml
           jq --arg version "$(cleanNEXT_VERSION)" '.VERSION = $version' env.json > tmp.json && mv tmp.json env.json
 
-          echo ""
+          echo -e "\n📁 File env.json:"
           cat env.json
 
           git add env.json pubspec.yaml
