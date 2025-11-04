@@ -1,16 +1,6 @@
 jobs:
   - job: "commit_tag_version"
-    ${{ if in(parameters.release, 'aws-ecs') }}:
-      dependsOn:
-        - "DeployECS"
-      condition: in(dependencies.DeployECS.result, 'Succeeded', 'SucceededWithIssues')
-
-    ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
-      displayName: "⚡ Commit and Tag Version Develop"
-    ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
-      displayName: "⚡ Commit and Tag Version Staging"
-    ${{ if and(or(in(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), eq(parameters.red, 'antioquia')) }}:
-      displayName: "⚡ Commit and Tag Version Master"
+    displayName: "⚡ Commit and Tag Version Master"
     pool:
       name: Azure Pipelines
       vmImage: "ubuntu-22.04"
