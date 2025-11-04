@@ -3,6 +3,11 @@ jobs:
     pool:
       name: Azure Pipelines
       vmImage: "ubuntu-22.04"
+    variables:
+      - template: ../../variables/groups-transversal-variables-backend.yml
+        parameters:
+          region: ${{ parameters.region }}
+
     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
       environment: "Deploy develop"
       displayName: "🚀 AWS ECS Develop"

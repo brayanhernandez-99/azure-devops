@@ -5,18 +5,18 @@ variables:
 
   # Develop - Feature - Hotfix branch
   - ${{ if or(eq(variables['Build.SourceBranchName'], 'develop'), startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')) }}:
-      - group: trasversal-aws-develop
+      - group: trasversal-aws-developer
 
   # Staging branch
   - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
-      - group: trasversal-aws-staging
+      - group: trasversal-aws-qa
 
   # Master branch → por red
   - ${{ if and(eq(parameters.region, 'antioquia'), eq(variables['Build.SourceBranchName'], 'master')) }}:
-      - group: trasversal-aws-antioquia
+      - group: trasversal-aws-master-antioquia
 
   - ${{ if and(eq(parameters.region, 'cap'), eq(variables['Build.SourceBranchName'], 'master')) }}:
-      - group: trasversal-aws-antioquia-cap
+      - group: trasversal-aws-master-cap
 
   - ${{ if and(eq(parameters.region, 'tolima'), eq(variables['Build.SourceBranchName'], 'master')) }}:
       - group: trasversal-aws-tolima
