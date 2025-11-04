@@ -1,6 +1,6 @@
 jobs:
   - job: "commit_version_flutter"
-    displayName: "⚡Commit Version Flutter"
+    displayName: "⚡commit version flutter"
     pool:
       name: Azure Pipelines
       vmImage: "ubuntu-22.04"

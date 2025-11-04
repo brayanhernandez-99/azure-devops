@@ -1,6 +1,6 @@
 jobs:
   - job: "commit_version_frontend"
-    displayName: "⚡Commit Version Frontend"
+    displayName: "⚡commit version frontend"
     pool:
       name: Azure Pipelines
       vmImage: "ubuntu-22.04"

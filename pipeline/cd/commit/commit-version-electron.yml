@@ -1,6 +1,6 @@
 jobs:
   - job: "commit_version_electron"
-    displayName: "⚡Commit Version Electron"
+    displayName: "⚡commit version electron"
     pool:
       name: Azure Pipelines
       vmImage: "ubuntu-22.04"
