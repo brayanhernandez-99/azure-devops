@@ -1,6 +1,7 @@
 jobs:
   - deployment: WaitForApproval
     displayName: "🛡️ waiting approval"
+    condition: ne(parameters.release, 'aws-ecs')
     ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}:
       environment: "Deploy develop"
     ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
