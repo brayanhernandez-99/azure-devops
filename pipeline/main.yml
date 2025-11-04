@@ -67,6 +67,15 @@ stages:
           release: ${{ parameters.release }}
 
   #
+  # Backend 
+  #
+  - ${{ if and(eq(parameters.release, 'aws-ecs'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), in(variables['Build.SourceBranchName'], 'develop', 'staging', 'master'))) }}:
+      - template: ./pipelines/pipeline-backend.yml
+        parameters:
+          red: ${{ parameters.red }}
+          release: ${{ parameters.release }}
+
+  #
   # Electron
   #
   - ${{ if and(eq(parameters.release, 'exe'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), in(variables['Build.SourceBranchName'], 'develop', 'staging', 'master'))) }}:
