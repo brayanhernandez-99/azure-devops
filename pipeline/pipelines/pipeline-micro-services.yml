@@ -6,7 +6,7 @@ stages:
         parameters:
           release: ${{ parameters.release }}
 
-  - ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/', 'refs/heads/feature/'), eq(variables['Build.SourceBranchName'], 'develop'))) }}:
+  - ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), eq(variables['Build.SourceBranch'], 'refs/heads/develop')) }}:
       - stage: test_micro_services
         displayName: "📦 Test Microservices"
         dependsOn: semantic_version_micro_services
