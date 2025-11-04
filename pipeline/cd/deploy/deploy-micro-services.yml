@@ -15,8 +15,8 @@ jobs:
       environment: "Deploy staging"
       displayName: "🚀 AWS ECS Staging"
     ${{ if or(eq(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')) }}:
-      environment: "Deploy master ${{ parameters.red }}"
-      displayName: "🚀 AWS ECS Master ${{ parameters.red }}"
+      environment: "Deploy master ${{ parameters.region }}"
+      displayName: "🚀 AWS ECS Master ${{ parameters.region }}"
     strategy:
       runOnce:
         deploy:
