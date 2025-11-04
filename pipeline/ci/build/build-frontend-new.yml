@@ -30,6 +30,11 @@ jobs:
 
       - script: |
           VERSION_FILE="$(Pipeline.Workspace)/versions-downloaded/versions/$(msName)/version.json"
+
+          echo -e "\n📁 Archivo version.json:"
+          ls -la "$VERSION_FILE"
+          cat "$VERSION_FILE"
+
           if [[ -f "$VERSION_FILE" ]]; then
             VERSION=$(jq -r '.version' $VERSION_FILE)
             echo -e "\n🚀 Versión detectada para $(msName): $VERSION"
@@ -152,14 +157,11 @@ jobs:
       - script: |
           echo -e "\n📁 Generando archivo .pnpmrc en: $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc"
           cat <<EOF > "$(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc"
-          node-linker=hoisted 
-          ignore-scripts=false 
-          allow-build-script=true 
-          strict-peer-dependencies=false 
-          prefer-offline=true 
-          verify-store-integrity=true 
-          auto-install-peers=true 
-          recursive-install=true 
+          node-linker=hoisted
+          shamefully-hoist=true
+          ignore-scripts=false
+          allow-build-script=true
+          strict-peer-dependencies=false
           EOF
           ls -l $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc
           cat $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc

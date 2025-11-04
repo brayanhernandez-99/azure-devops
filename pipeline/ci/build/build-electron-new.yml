@@ -75,10 +75,15 @@ jobs:
 
       - script: |
           VERSION_FILE="$(Pipeline.Workspace)/versions-downloaded/versions/electron/version.json"
+
+          echo -e "\n📁 Archivo version.json:"
+          ls -la $VERSION_FILE
+          cat $VERSION_FILE
+
           if [[ -f "$VERSION_FILE" ]]; then
             VERSION=$(jq -r '.version' $VERSION_FILE)
             echo -e "\n🚀 Versión detectada para $(Build.Repository.Name): $VERSION"
-            echo "##vso[task.setvariable variable=msVersion]$VERSION"
+            echo "##vso[task.setvariable variable=version]$VERSION"
           else
             echo -e "\n##vso[task.logissue type=error]⚠️ No se encontro archivo de versión para $(Build.Repository.Name)"
             exit 99
@@ -187,11 +192,11 @@ jobs:
         condition: succeeded()
 
       - script: |
-          echo -e "\n📦 Modificando versión en package.json: $(msVersion)"
+          echo -e "\n📦 Modificando versión en package.json: $(version)"
           PACKAGE_PATH="$(Build.SourcesDirectory)/package.json"
 
           if [[ -f "$PACKAGE_PATH" ]]; then
-            jq --arg ver "$(msVersion)" '.version = $ver' "$PACKAGE_PATH" > "$PACKAGE_PATH.tmp" && mv "$PACKAGE_PATH.tmp" "$PACKAGE_PATH"
+            jq --arg ver "$(version)" '.version = $ver' "$PACKAGE_PATH" > "$PACKAGE_PATH.tmp" && mv "$PACKAGE_PATH.tmp" "$PACKAGE_PATH"
 
             echo -e "\n✅ Versión en package.json actualizada correctamente."
             cat "$PACKAGE_PATH"
@@ -206,6 +211,7 @@ jobs:
           echo -e "\n📁 Generando archivo .pnpmrc en: $(System.DefaultWorkingDirectory)/.pnpmrc"
           cat <<EOF > "$(System.DefaultWorkingDirectory)/.pnpmrc"
           node-linker=hoisted
+          shamefully-hoist=true
           ignore-scripts=false
           allow-build-script=true
           strict-peer-dependencies=false
@@ -241,13 +247,17 @@ jobs:
 
       - script: |
           echo -e "\n📝 Validando build electron..."
-          BASE_PATH="$(Build.SourcesDirectory)/release/$(environment)/$(msVersion)"
+          BASE_PATH="$(Build.SourcesDirectory)/release/$(environment)/$(version)"
           APP_DIR="$BASE_PATH/app"
           mkdir -p $APP_DIR
           all_found=true
+          
+          echo -e "\n📂 Directorio: $BASE_PATH"
+          ls -lt $BASE_PATH
+          echo ""
 
           FILES_TO_COPY=(
-            "InvictusUX-$(msVersion).AppImage"
+            "InvictusUX-$(version).AppImage"
             "latest-linux.yml"
           )
 
@@ -282,7 +292,7 @@ jobs:
           PathtoPublish: "$(Build.ArtifactStagingDirectory)/electron-artifacts"
           ArtifactName: "electron"
           publishLocation: "Container"
-        displayName: "📤 Publish artifact electron"
+        displayName: "📤 Publish Artifact Electron"
         condition: succeeded()
 
   #
@@ -372,6 +382,11 @@ jobs:
           targetType: "inline"
           script: |
             $versionFile = "$(Pipeline.Workspace)\versions-downloaded\versions\electron\version.json"
+
+            Write-Host "`n📁 Archivo version.json:"
+            Get-ChildItem -Path $versionFile | Select-Object Mode, LastWriteTime, Length, Name | Format-Table
+            Get-Content -Path $versionFile
+
             if (Test-Path $versionFile) {
               $json = Get-Content $versionFile | ConvertFrom-Json
               $version = $json.version
@@ -548,12 +563,13 @@ jobs:
             $filePath = "$(System.DefaultWorkingDirectory)\.pnpmrc"
             $fileContent = @"
             node-linker=hoisted
+            shamefully-hoist=true
             ignore-scripts=false
             allow-build-script=true
             strict-peer-dependencies=false
             "@
             Set-Content -Path $filePath -Value $fileContent -Encoding UTF8
-            Get-ChildItem -Path "$(System.DefaultWorkingDirectory)\.pnpmrc" | Select-Object Mode, LastWriteTime, Length, Name | Format-Table
+            Get-ChildItem -Path $filePath | Select-Object Mode, LastWriteTime, Length, Name | Format-Table
             Get-Content -Path $filePath
 
             Write-Host "`n⚙️ Instalando dependencias node..."
@@ -590,6 +606,10 @@ jobs:
             $APP_DIR="$BASE_PATH\app"
             New-Item -ItemType Directory -Path $APP_DIR -Force | Out-Null
             $allFound = $true 
+
+            Write-Host "`n📂 Directorio: $BASE_PATH"
+            Get-ChildItem -Path $BASE_PATH -Force | Sort-Object LastWriteTime -Descending
+            Write-Host ""
 
             $filesToCopy = @(
               "InvictusUX Setup $($env:version).exe",

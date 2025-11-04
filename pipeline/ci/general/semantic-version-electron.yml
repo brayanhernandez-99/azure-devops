@@ -49,6 +49,28 @@ jobs:
           startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
 
       - script: |
+          sourceBranch="${BUILD_SOURCEBRANCH/refs\/heads\//}"
+          targetBranch="master"
+
+          echo -e "\n🔎 Verificando que no se hayan agregado nuevas sentencias console.log..."
+          echo "Branch actual: $sourceBranch"
+          echo "Branch destino: $targetBranch"
+
+          git fetch origin "$targetBranch"
+          diff=$(git --no-pager diff "origin/$targetBranch..origin/$sourceBranch")
+
+          if echo "$diff" | grep -qE '^\+.*console\.log'; then
+            echo -e "\n##vso[task.logissue type=error]⚠️ Se encontro 'console.log' en los cambios"
+            exit 99
+          else
+            echo -e "\n✅ No se encontraron sentencias 'console.log' en los cambios"
+          fi
+        displayName: "🔍 Validate for 'console.log' in changes"
+        condition: and(succeeded(), or(
+          startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'),
+          startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
+
+      - script: |
           REPO_NAME="$(Build.Repository.Name)"          
           RESPONSE=$(curl -s -u ":$AZURE_DEVOPS_CLI_PAT" \
             "https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories?api-version=5.0")
@@ -81,7 +103,7 @@ jobs:
           echo "$response" | jq '.value[0]'
           PR_ID=$(echo "$response" | jq -r '.value[0].pullRequestId')
 
-          echo "id del pr $PR_ID"
+          echo -e "\nℹ️ id del pr $PR_ID"
           echo "##vso[task.setvariable variable=ultimoPR]$PR_ID"
 
           mkdir -p $(Build.ArtifactStagingDirectory)/idpr
@@ -97,6 +119,7 @@ jobs:
       - script: |
           echo -e "\nℹ️ Pull Request ID recuperado: $(ultimoPR)"
           echo "id del repositorio $(Build.Repository.Name) = $(repoID)"
+          
           COMMITS=$(curl -s -u ":$AZURE_DEVOPS_CLI_PAT" \
             "https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories/$(repoID)/pullRequests/$(ultimoPR)/commits?api-version=7.0" \
             | jq -r '.value[].comment' | grep -E 'feat:|fix:|!')
@@ -109,26 +132,6 @@ jobs:
         condition: and(succeeded(),
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
-
-      - script: |
-          sourceBranch="${BUILD_SOURCEBRANCH/refs\/heads\//}"
-          targetBranch="master"
-
-          echo -e "\n🔎 Verificando que no se hayan agregado nuevas sentencias console.log..."
-          echo "Branch actual: $sourceBranch"
-          echo "Branch destino: $targetBranch"
-
-          git fetch origin "$targetBranch"
-          diff=$(git --no-pager diff "origin/$targetBranch..origin/$sourceBranch")
-
-          if echo "$diff" | grep -qE '^\+.*console\.log'; then
-            echo -e "\n##vso[task.logissue type=error]⚠️ Se encontro 'console.log' en los cambios"
-            exit 99
-          else
-            echo -e "\n✅ No se encontraron sentencias 'console.log' en los cambios"
-          fi
-        displayName: "🔍 Check for 'console.log' in changes"
-        condition: and(succeeded(), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
 
       - script: |
           CURRENT_BRANCH=$(echo $(Build.SourceBranch))
@@ -256,7 +259,7 @@ jobs:
 
             mkdir -p $(Build.ArtifactStagingDirectory)/electron
             touch $(Build.ArtifactStagingDirectory)/electron/version.json
-            echo "{ \"release\": \"exe\", \"version\": \"$NEXT_VERSION\" }" > $(Build.ArtifactStagingDirectory)/electron/version.json
+            echo "{ \"release\": \"electron\", \"version\": \"$NEXT_VERSION\" }" > $(Build.ArtifactStagingDirectory)/electron/version.json
 
             echo "##vso[task.setvariable variable=cleanNEXT_VERSION]$NEXT_VERSION"
           fi
@@ -278,6 +281,7 @@ jobs:
           git add package.json
           git commit -m "chore($(Build.Repository.Name)): bump version to $(cleanNEXT_VERSION)"
           git push origin version/$clean_branch
+          
         displayName: "⚡ Commit Version & Push — $(Build.Repository.Name)"
         condition: and(succeeded(),
           ne(variables['Build.SourceBranchName'], 'master'),
