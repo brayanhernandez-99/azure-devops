@@ -35,13 +35,10 @@ jobs:
   - ${{ if eq(parameters.release, 'aws-ecs') }}:
       - template: ./deploy/deploy-micro-services.yml
         parameters:
-          apps: ${{ parameters.apps }}
           region: ${{ parameters.region }}
 
-      - ${{ if or(eq(parameters.region, 'antioquia')) }}:
+      - ${{ if eq(parameters.region, 'antioquia') }}:
           - template: ./commit/commit-version-micro-services.yml
-            parameters:
-              apps: ${{ parameters.apps }}
   
   #####################################################################
 
