@@ -115,6 +115,8 @@ jobs:
                 export AWS_SECRET_ACCESS_KEY
                 export AWS_REGION
 
+                BRANCH_NAME=$(echo "$(Build.SourceBranchName)")
+
                 REPO_NAME="$(Build.Repository.Name)"
 
                 if [[ "$REPO_NAME" == bff-*-invictus ]]; then
@@ -123,6 +125,11 @@ jobs:
                     echo "$CLEAN_NAME"
                     name_bff="bff-$CLEAN_NAME-invictus"
                     echo "$name_bff"
+                fi
+                
+                if [[ "$(cleanMsName)" == "notifier" && ( "$BRANCH_NAME" == "develop" || "$BRANCH_NAME" == "staging" ) ]]; then
+                    CLUSTER=msnotifier-cluster
+                    SERVICES=msnotifier-fg-service
                 fi
 
                 if [[ "$REPO_NAME" == "$name_bff" && ( "$red" == "cap" || "$red" == "antioquia" ) ]]; then
@@ -165,7 +172,7 @@ jobs:
                 AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVIC)
                 AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVIC)
                 AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
-                red: ${{ parameters.red }}
+                red: ${{ parameters.region }}
 
             - script: |
                 echo "Obteniendo family de task definition..."
