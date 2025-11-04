@@ -46,14 +46,15 @@ stages:
   - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
       - stage: build_micro_services
         displayName: "📦 Build Microservices"
-        dependsOn:  semantic_version_micro_services
+        dependsOn: semantic_version_micro_services
         jobs:
           - template: ../ci/build/build-frontend.yml
 
-  - stage: deploy_micro_services
-    displayName: "🚀 Deploy Microservices"
-    dependsOn: build_micro_services
-    jobs:
-      - template: ../cd/deployment.yml
-        parameters:
-          release: ${{ parameters.release }}
+  - ${{ if in(variables['Build.SourceBranchName'], 'develop', 'staging') }}:
+      - stage: deploy_micro_services
+        displayName: "🚀 Deploy Microservices"
+        dependsOn: build_micro_services
+        jobs:
+          - template: ../cd/deployment.yml
+            parameters:
+              release: ${{ parameters.release }}
