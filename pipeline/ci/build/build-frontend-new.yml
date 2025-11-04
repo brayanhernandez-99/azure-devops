@@ -30,6 +30,11 @@ jobs:
 
       - script: |
           VERSION_FILE="$(Pipeline.Workspace)/versions-downloaded/versions/$(msName)/version.json"
+
+          echo -e "\n📁 Archivo version.json:"
+          ls -la "$VERSION_FILE"
+          cat "$VERSION_FILE"
+
           if [[ -f "$VERSION_FILE" ]]; then
             VERSION=$(jq -r '.version' $VERSION_FILE)
             echo -e "\n🚀 Versión detectada para $(msName): $VERSION"

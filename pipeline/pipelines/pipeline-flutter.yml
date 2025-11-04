@@ -1,0 +1,46 @@
+stages:
+  - stage: semantic_version_flutter
+    displayName: "🏷️ Semantic Version Flutter"
+    jobs:
+      - template: ../ci/semantic-version-integration.yml
+        parameters:
+          release: ${{ parameters.release }}
+
+  #####################################################################
+
+  - ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
+      - ${{ each region in parameters.red }}:
+          - stage: build_flutter_${{ region }}
+            displayName: "📦 Build Flutter ${{ region }}"
+            dependsOn: semantic_version_flutter
+            jobs:
+              - template: ../ci/build/build-flutter.yml
+                parameters:
+                  region: ${{ region }}
+
+          - stage: deploy_flutter_${{ region }}
+            displayName: "🚀 Deploy Flutter ${{ region }}"
+            dependsOn: build_flutter_${{ region }}
+            jobs:
+              - template: ../cd/deployment.yml
+                parameters:
+                  region: ${{ region }}
+                  release: ${{ parameters.release }}
+
+  #####################################################################
+
+  - ${{ if ne(variables['Build.SourceBranchName'], 'master') }}:
+      - stage: build_flutter
+        displayName: "📦 Build Flutter"
+        dependsOn: semantic_version_flutter
+        jobs:
+          - template: ../ci/build/build-flutter.yml
+
+      - ${{ if in(variables['Build.SourceBranchName'], 'develop', 'staging') }}:
+          - stage: deploy_flutter
+            displayName: "🚀 Deploy Flutter"
+            dependsOn: build_flutter
+            jobs:
+              - template: ../cd/deployment.yml
+                parameters:
+                  release: ${{ parameters.release }}
