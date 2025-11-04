@@ -252,6 +252,7 @@ jobs:
         condition: succeeded()
 
       - script: |
+          set -e
           echo -e "\nℹ️ Renombrando APK..."
 
           mv build/app/outputs/flutter-apk/app-profile.apk build/app/outputs/flutter-apk/invictus-$(environment)-$(version).apk
@@ -259,9 +260,6 @@ jobs:
 
           mkdir -p "$(Build.ArtifactStagingDirectory)/flutter-artifact"
           cp -R build/app/outputs/flutter-apk/* $(Build.ArtifactStagingDirectory)/flutter-artifact/
-
-          APK_NAME="invictus-$(environment)-$(version).apk"
-          echo "##vso[task.setvariable variable=apkName;isOutput=true]$APK_NAME"
 
           echo -e "\n📁 APK generados:"
           ls -l build/app/outputs/flutter-apk
