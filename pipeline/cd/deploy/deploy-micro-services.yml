@@ -126,10 +126,15 @@ jobs:
                     name_bff="bff-$CLEAN_NAME-invictus"
                     echo "$name_bff"
                 fi
-                
+
                 if [[ "$(cleanMsName)" == "notifier" && ( "$BRANCH_NAME" == "develop" || "$BRANCH_NAME" == "staging" ) ]]; then
                     CLUSTER=msnotifier-cluster
                     SERVICES=msnotifier-fg-service
+                fi
+
+                if [[ "$(cleanMsName)" == "raffle" && ( "$BRANCH_NAME" == "develop" || "$BRANCH_NAME" == "staging" ) ]]; then
+                    CLUSTER=raffles-ms-cluster
+                    SERVICES=raffles-ms-fg-service
                 fi
 
                 if [[ "$REPO_NAME" == "$name_bff" && ( "$red" == "cap" || "$red" == "antioquia" ) ]]; then
