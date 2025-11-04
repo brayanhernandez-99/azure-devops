@@ -18,12 +18,10 @@ stages:
   - ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
 
       - stage: build_micro_services_${{ region }}
-        displayName: "📦 Build Microservices ${{ region }}"
+        displayName: "📦 Build Microservices Master"
         dependsOn: semantic_version_micro_services
         jobs:
           - template: ../ci/build/build-micro-services.yml
-            parameters:
-              region: ${{ parameters.release }}
 
       - ${{ each region in parameters.red }}:
           - stage: deploy_micro_services_${{ region }}
