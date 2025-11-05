@@ -100,17 +100,17 @@ jobs:
 
           echo -e "\n⚙️ Instalando dependencias node..."
           npm install -g pnpm
-          # pnpm install
-          # pnpm ignored-builds
+          pnpm install
+          pnpm ignored-builds
 
-          # OUTPUT=$(pnpm ls --depth=0 || true)
-          # if [[ -z "$OUTPUT" ]]; then
-          #   echo -e "\n##vso[task.logissue type=error]⚠️ No se instalaron dependencias, esperar que se actualicen las dependencias a nivel global"
-          #   exit 99
-          # else
-          #   echo -e "\n✅ Dependencias Instaladas:"
-          #   echo "$OUTPUT"
-          # fi
+          OUTPUT=$(pnpm ls --depth=0 || true)
+          if [[ -z "$OUTPUT" ]]; then
+            echo -e "\n##vso[task.logissue type=error]⚠️ No se instalaron dependencias, esperar que se actualicen las dependencias a nivel global"
+            exit 99
+          else
+            echo -e "\n✅ Dependencias Instaladas:"
+            echo "$OUTPUT"
+          fi
         displayName: "⚙️ Install Dependencies"
         condition: succeeded()
 
