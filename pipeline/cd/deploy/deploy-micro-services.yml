@@ -126,47 +126,103 @@ jobs:
                 echo "📦 Repo: $REPO_NAME"
                 echo "🌿 Branch: $BRANCH_NAME"
                 echo "🏠 Red: $RED"
+                echo 
 
                 if [[ "$REPO_NAME" == bff-*-invictus ]]; then
-                    CLEAN_NAME="${REPO_NAME#bff-}"        # quita prefijo bff-
-                    CLEAN_NAME="${CLEAN_NAME%-invictus}"  # quita sufijo -invictus
-                    echo "$CLEAN_NAME"
-                    name_bff="bff-$CLEAN_NAME-invictus"
-                    echo "$name_bff"
+                    CLEAN_NAME="${REPO_NAME#bff-}"
+                    CLEAN_NAME="${CLEAN_NAME%-invictus}"
+                    TYPE="bff"
+                else
+                    $CLEAN_NAME=$(cleanMsName)
+                    TYPE="ms"
                 fi
 
-                if [[ "$(cleanMsName)" == "notifier" && ( "$BRANCH_NAME" == "develop" || "$BRANCH_NAME" == "staging" ) ]]; then
-                    CLUSTER=msnotifier-cluster
-                    SERVICES=msnotifier-fg-service
+                case "$CLEAN_NAME" in
+                  microservice-notifier) CLEAN_NAME="notifier" ;;
+                  microservice-raffle) CLEAN_NAME="raffle" ;;
+                esac
+
+                echo "🔧 Clean name: $CLEAN_NAME"
+
+                declare -A CLUSTERS=(
+                  [notifier]="msnotifier-cluster"
+                  [raffle]="raffles-ms-cluster"
+                )
+
+                declare -A SERVICES=(
+                  [notifier]="msnotifier-fg-service"
+                  [raffle]="raffles-ms-fg-service"
+                )
+
+                if [[ "$TYPE" == "bff" ]]; then
+                    CLUSTER="${CLEAN_NAME}-cluster"
+                    SERVICE="${CLEAN_NAME}-fg-service"
+                elif [[ -n "${CLUSTERS[$CLEAN_NAME]:-}" ]]; then
+                    CLUSTER="${CLUSTERS[$CLEAN_NAME]}"
+                    SERVICE="${SERVICES[$CLEAN_NAME]}"
+                else
+                    CLUSTER="${CLEAN_NAME}-cluster"
+                    SERVICE="${CLEAN_NAME}-fg-service"
                 fi
 
-                if [[ "$(cleanMsName)" == "raffle" && ( "$BRANCH_NAME" == "develop" || "$BRANCH_NAME" == "staging" ) ]]; then
-                    CLUSTER=raffles-ms-cluster
-                    SERVICES=raffles-ms-fg-service
+                # 🔄 Casos especiales por red
+                if [[ "$RED" == "cap" || "$RED" == "antioquia" ]]; then
+                    case "$CLEAN_NAME" in
+                      raffle|notifier)
+                        CLUSTER="${CLUSTERS[$CLEAN_NAME]}"
+                        SERVICE="${SERVICES[$CLEAN_NAME]}"
+                        ;;
+                    esac
+                elif [[ "$CLEAN_NAME" == "raffle" && "$RED" != "cap" && "$RED" != "antioquia" && "$BRANCH_NAME" != "develop" && "$BRANCH_NAME" != "staging" ]]; then
+                    SERVICE="raffles"
                 fi
 
-                 if [[ "$REPO_NAME" == "$name_bff" && ( "$BRANCH_NAME" == "develop" || "$BRANCH_NAME" == "staging" ) ]]; then
-                    CLUSTER=$(clean_name_ecr)-cluster
-                    SERVICES=$(clean_name_ecr)-fg-service
-                fi
-
-                if [[ "$REPO_NAME" == "$name_bff" && ( "$red" == "cap" || "$red" == "antioquia" ) ]]; then
-                    CLUSTER=$(clean_name_ecr)-cluster
-                    SERVICES=$(clean_name_ecr)-fg-service
-                fi
-                if [[ "$(cleanMsName)" == "raffle" && ( "$red" == "cap" || "$red" == "antioquia" ) ]]; then
-                    CLUSTER=raffles-ms-cluster
-                    SERVICES=raffles-ms-fg-service
-                fi
-                if [[ "$(cleanMsName)" == "notifier" && ( "$red" == "cap" || "$red" == "antioquia" ) ]]; then
-                    CLUSTER=msnotifier-cluster
-                    SERVICES=msnotifier-fg-service
-                fi
-                if [[ "$(cleanMsName)" == "raffle" && ! ( "$red" == "cap" || "$red" == "antioquia" || "$BRANCH_NAME" == "develop" || "$BRANCH_NAME" == "staging" ) ]]; then
-                    SERVICES=raffles
-                fi
                 echo "🛡️ Cluster: $CLUSTER"
-                echo "📦 Services: $SERVICES"
+                echo "🚀 Service: $SERVICE"
+
+
+
+
+                # if [[ "$REPO_NAME" == bff-*-invictus ]]; then
+                #     CLEAN_NAME="${REPO_NAME#bff-}"        # quita prefijo bff-
+                #     CLEAN_NAME="${CLEAN_NAME%-invictus}"  # quita sufijo -invictus
+                #     echo "$CLEAN_NAME"
+                #     name_bff="bff-$CLEAN_NAME-invictus"
+                #     echo "$name_bff"
+                # fi
+
+                # if [[ "$(cleanMsName)" == "notifier" && ( "$BRANCH_NAME" == "develop" || "$BRANCH_NAME" == "staging" ) ]]; then
+                #     CLUSTER=msnotifier-cluster
+                #     SERVICES=msnotifier-fg-service
+                # fi
+
+                # if [[ "$(cleanMsName)" == "raffle" && ( "$BRANCH_NAME" == "develop" || "$BRANCH_NAME" == "staging" ) ]]; then
+                #     CLUSTER=raffles-ms-cluster
+                #     SERVICES=raffles-ms-fg-service
+                # fi
+
+                #  if [[ "$REPO_NAME" == "$name_bff" && ( "$BRANCH_NAME" == "develop" || "$BRANCH_NAME" == "staging" ) ]]; then
+                #     CLUSTER=$(clean_name_ecr)-cluster
+                #     SERVICES=$(clean_name_ecr)-fg-service
+                # fi
+
+                # if [[ "$REPO_NAME" == "$name_bff" && ( "$red" == "cap" || "$red" == "antioquia" ) ]]; then
+                #     CLUSTER=$(clean_name_ecr)-cluster
+                #     SERVICES=$(clean_name_ecr)-fg-service
+                # fi
+                # if [[ "$(cleanMsName)" == "raffle" && ( "$red" == "cap" || "$red" == "antioquia" ) ]]; then
+                #     CLUSTER=raffles-ms-cluster
+                #     SERVICES=raffles-ms-fg-service
+                # fi
+                # if [[ "$(cleanMsName)" == "notifier" && ( "$red" == "cap" || "$red" == "antioquia" ) ]]; then
+                #     CLUSTER=msnotifier-cluster
+                #     SERVICES=msnotifier-fg-service
+                # fi
+                # if [[ "$(cleanMsName)" == "raffle" && ! ( "$red" == "cap" || "$red" == "antioquia" || "$BRANCH_NAME" == "develop" || "$BRANCH_NAME" == "staging" ) ]]; then
+                #     SERVICES=raffles
+                # fi
+                # echo "🛡️ Cluster: $CLUSTER"
+                # echo "📦 Services: $SERVICES"
 
 
                 echo "Obteniendo task definition..."
