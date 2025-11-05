@@ -131,6 +131,8 @@ jobs:
                 if [[ "$REPO_NAME" == bff-*-invictus ]]; then
                     CLEAN_NAME="${REPO_NAME#bff-}"
                     CLEAN_NAME="${CLEAN_NAME%-invictus}"
+                    NAME_BFF="bff-$CLEAN_NAME-invictus"
+                    echo "$NAME_BFF"
                     TYPE="bff"
                 else
                     $CLEAN_NAME=$(cleanMsName)
@@ -155,8 +157,8 @@ jobs:
                 )
 
                 if [[ "$TYPE" == "bff" ]]; then
-                    CLUSTER="${CLEAN_NAME}-cluster"
-                    SERVICE="${CLEAN_NAME}-fg-service"
+                    CLUSTER="${NAME_BFF}-cluster"
+                    SERVICE="${NAME_BFF}-fg-service"
                 elif [[ -n "${CLUSTERS[$CLEAN_NAME]:-}" ]]; then
                     CLUSTER="${CLUSTERS[$CLEAN_NAME]}"
                     SERVICE="${SERVICES[$CLEAN_NAME]}"
