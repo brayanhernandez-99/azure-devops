@@ -31,7 +31,7 @@ jobs:
             - task: DownloadBuildArtifacts@0
               inputs:
                 artifactName: "versions"
-                downloadPath: "$(Pipeline.Workspace)/versions-downloaded"
+                downloadPath: "$(Pipeline.Workspace)/version-downloaded"
               displayName: "📥 Download Version"
               condition: succeeded()
 
