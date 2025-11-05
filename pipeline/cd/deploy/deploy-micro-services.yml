@@ -131,7 +131,7 @@ jobs:
                 if [[ "$REPO_NAME" == bff-*-invictus ]]; then
                     CLEAN_NAME="${REPO_NAME#bff-}"
                     CLEAN_NAME="${CLEAN_NAME%-invictus}"
-                    NAME_BFF="bff-$CLEAN_NAME-invictus"
+                    NAME_BFF="bff-$CLEAN_NAME"
                     echo "$NAME_BFF"
                     TYPE="bff"
                 else
