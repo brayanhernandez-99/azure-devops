@@ -85,7 +85,6 @@ jobs:
             registry=$REPO_URL
             EOF
             ls -la $npmrcPath
-
         displayName: "🔐 Setup CodeArtifact & npm config"
         env:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)

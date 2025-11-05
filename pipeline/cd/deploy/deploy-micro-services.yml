@@ -151,20 +151,20 @@ jobs:
                   [raffle]="raffles-ms-cluster"
                 )
 
-                declare -A SERVICES=(
+                declare -A SERVICE=(
                   [notifier]="msnotifier-fg-service"
                   [raffle]="raffles-ms-fg-service"
                 )
 
                 if [[ "$TYPE" == "bff" ]]; then
                     CLUSTER="${NAME_BFF}-cluster"
-                    SERVICE="${NAME_BFF}-fg-service"
+                    SERVICES="${NAME_BFF}-fg-service"
                 elif [[ -n "${CLUSTERS[$CLEAN_NAME]:-}" ]]; then
                     CLUSTER="${CLUSTERS[$CLEAN_NAME]}"
-                    SERVICE="${SERVICES[$CLEAN_NAME]}"
+                    SERVICES="${SERVICE[$CLEAN_NAME]}"
                 else
                     CLUSTER="${CLEAN_NAME}-cluster"
-                    SERVICE="${CLEAN_NAME}-fg-service"
+                    SERVICES="${CLEAN_NAME}-fg-service"
                 fi
 
                 # 🔄 Casos especiales por red
@@ -172,7 +172,7 @@ jobs:
                     case "$CLEAN_NAME" in
                       raffle|notifier)
                         CLUSTER="${CLUSTERS[$CLEAN_NAME]}"
-                        SERVICE="${SERVICES[$CLEAN_NAME]}"
+                        SERVICES="${SERVICE[$CLEAN_NAME]}"
                         ;;
                     esac
                 elif [[ "$CLEAN_NAME" == "raffle" && "$RED" != "cap" && "$RED" != "antioquia" && "$BRANCH_NAME" != "develop" && "$BRANCH_NAME" != "staging" ]]; then
@@ -180,7 +180,7 @@ jobs:
                 fi
 
                 echo "🛡️ Cluster: $CLUSTER"
-                echo "🚀 Service: $SERVICE"
+                echo "🚀 Service: $SERVICES"
 
 
 
