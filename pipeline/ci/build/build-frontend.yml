@@ -138,6 +138,13 @@ jobs:
         displayName: "📝 Update version in package.json"
         condition: succeeded()
 
+      - task: NodeTool@0
+        displayName: "🔧 Install Nodejs $(nodeVersion)"
+        inputs:
+          versionSource: "spec"
+          versionSpec: "$(nodeVersion)"
+        condition: succeeded()
+
       - script: |
           echo "Comentando app-legacy/*"
           sed -i '/app-legacy\//s/  -/  # -/' pnpm-workspace.yaml
@@ -146,13 +153,6 @@ jobs:
         condition: and(succeeded(),
           ne(variables['msName'], 'app-administration-vue2'),
           ne(variables['msName'], 'app-sellers-vue2'))
-
-      - task: NodeTool@0
-        displayName: "🔧 Install Nodejs $(nodeVersion)"
-        inputs:
-          versionSource: "spec"
-          versionSpec: "$(nodeVersion)"
-        condition: succeeded()
 
       - script: |
           echo -e "\n📁 Generando archivo .pnpmrc en: $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc"
@@ -223,17 +223,18 @@ jobs:
           ne(variables['msName'], 'app-sellers-vue2'))
 
       # - task: JavaToolInstaller@0
+      #   displayName: "🔧 Install JDK 17"
       #   inputs:
       #     versionSpec: "17"
       #     jdkArchitectureOption: "x64"
       #     jdkSourceOption: "PreInstalled"
-      #   displayName: "🔧 Install JDK 17"
       #   condition: and(succeeded(),
       #     ne(variables['msName'], 'app-administration-vue2'),
       #     ne(variables['msName'], 'app-sellers-vue2'),
       #     ne(variables['Build.SourceBranchName'], 'master'))
 
       # - task: SonarQubePrepare@7
+      #   displayName: "⚙️ Prepare SonarQube Analysis"
       #   inputs:
       #     SonarQube: "SonarQubeConection"
       #     scannerMode: "CLI"
@@ -244,7 +245,6 @@ jobs:
       #     extraProperties: |
       #       sonar.javascript.lcov.reportPaths=$(System.DefaultWorkingDirectory)/$(file)/$(msName)/coverage/lcov.info
       #       sonar.exclusions=**/test/**,**/coverage/**,**/.nyc_output/**,**/reports/**,sured-plugin/**,**/reports_bck/**,**/node_modules/**,**/dist/**
-      #   displayName: "⚙️ Prepare SonarQube Analysis"
       #   condition: and(succeeded(),
       #     ne(variables['msName'], 'app-administration-vue2'),
       #     ne(variables['msName'], 'app-sellers-vue2'),

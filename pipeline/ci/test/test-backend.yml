@@ -1,6 +1,6 @@
 jobs:
-  - job: "test_nodejs"
-    displayName: "🔧 Test Node.js Project"
+  - job: "test_micro_services"
+    displayName: "🛡️ test Node.js Project"
     pool:
       name: "Azure Pipelines"
       vmImage: "ubuntu-22.04"
@@ -18,17 +18,21 @@ jobs:
         condition: succeeded()
 
       - script: |
-          ls -R $(Pipeline.Workspace)/version-downloaded/versions
-          VERSION_FILE="$(Pipeline.Workspace)/version-downloaded/versions/version.json"
+          VERSION_FILE="$(Pipeline.Workspace)/versions-downloaded/versions/microservice/version.json"
+
+          echo -e "\n📁 Archivo version.json:"
+          ls -la "$VERSION_FILE"
+          cat "$VERSION_FILE"
+
           if [[ -f "$VERSION_FILE" ]]; then
-            VERSION=$(jq -r '.version' $VERSION_FILE)            
+            VERSION=$(jq -r '.version' $VERSION_FILE)
             echo -e "\n🚀 Versión detectada para $(Build.Repository.Name): $VERSION"
-            echo "##vso[task.setvariable variable=msVersion]$VERSION"
+            echo "##vso[task.setvariable variable=version]$VERSION"
           else
-            echo "##vso[task.logissue type=error]❌ No se encontro archivo de versión para $(Build.Repository.Name)"
+            echo -e "\n##vso[task.logissue type=error]⚠️ No se encontró archivo de versión para: $(Build.Repository.Name)" 
             exit 99
           fi
-        displayName: "📖 Read Microservice Versions"
+        displayName: "📚 Read Version"
         condition: succeeded()
 
       - task: Bash@3
@@ -55,32 +59,33 @@ jobs:
             echo "Verificando identidad de AWS..."
             aws sts get-caller-identity
 
-            echo "Generando archivo .npmrc"
-            cat <<EOF > ".npmrc"
+            npmrcPath="$(file)/$(msName)/.npmrc"
+            echo -e "\n📁 Generando archivo .npmrc en: $npmrcPath"
+            cat <<EOF > "$npmrcPath"
             //$REPO_DOMAIN/$REPO_PATH/:_authToken=$token
             registry=$REPO_URL
             EOF
-            ls -la .npmrc
+            ls -l $npmrcPath
         displayName: "🔐 Setup CodeArtifact & npm config"
         condition: succeeded()
         env:
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
-          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
 
       - task: NodeTool@0
+        displayName: "🔧 Install Nodejs $(nodeVersion)"
         inputs:
           versionSource: "spec"
           versionSpec: "$(nodeVersion)"
-        displayName: "🔧 Install Nodejs $(nodeVersion)"
         condition: succeeded()
 
       - task: JavaToolInstaller@0
+        displayName: "🔧 Install JDK 17"
         inputs:
           versionSpec: "17"
           jdkArchitectureOption: "x64"
           jdkSourceOption: "PreInstalled"
-        displayName: "🔧 Install JDK 17"
         condition: succeeded()
 
       - script: |
@@ -115,6 +120,7 @@ jobs:
         condition: succeeded()
 
       - task: SonarQubePrepare@7
+        displayName: "⚙️ Prepare SonarQube Analysis"
         inputs:
           SonarQube: "SonarQubeConection"
           scannerMode: "CLI"
@@ -125,7 +131,6 @@ jobs:
           extraProperties: |
             sonar.javascript.lcov.reportPaths=$(System.DefaultWorkingDirectory)/coverage/lcov.info
             sonar.exclusions=**/*.java,**/test/**,**/android/**,**/ios/**,**/coverage/**,**/.nyc_output/**,**/reports/**,**/node_modules/**,**/migrations/**,**/config/**
-        displayName: "⚙️ Prepare SonarQube Analysis"
         condition: succeeded()
 
       - script: |
@@ -145,9 +150,12 @@ jobs:
         condition: and( eq(variables['Build.Reason'], 'PullRequest'), or(startsWith(variables['System.PullRequest.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['System.PullRequest.SourceBranch'], 'refs/heads/hotfix/')))
 
       - script: |
-          echo "🔧 Actualizando versión en package.json a $(msVersion)"
-          jq --arg version "$(msVersion)" '.version = $version' package.json > tmp.json && mv tmp.json package.json
-        displayName: "⚙️ Temporary version for build"
+          echo "🔧 Actualizando versión en package.json: $(version)"
+          jq --arg version "$(version)" '.version = $version' package.json > tmp.json && mv tmp.json package.json
+
+          echo -e "\n📁 File package.json:"      
+          cat $(System.DefaultWorkingDirectory)/package.json
+        displayName: "📝 Update version in package.json"
         condition: succeeded()
 
       - script: |
@@ -167,12 +175,12 @@ jobs:
         displayName: "📡 Run Sonar Analysis"
         condition: succeeded()
 
-      - template: sonarqube/job-sonarqube.yml@sonarqube
-        parameters:
-          projectKey: $(Build.Repository.Name)
-
       - task: SonarQubePublish@7
         inputs:
           pollingTimeoutSec: 400
         displayName: "📤 Publish Static Code Analysis Results"
         condition: succeeded()
+
+      - template: sonarqube/job-sonarqube.yml@sonarqube
+        parameters:
+          projectKey: $(Build.Repository.Name)
