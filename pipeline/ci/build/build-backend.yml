@@ -15,9 +15,12 @@ jobs:
 
     steps:
       - checkout: self
+        fetchDepth: 0
+        persistCredentials: true
 
       - checkout: git://DevOps-templates-UX/pipelines-templates@feature/electron
         fetchDepth: 1
+        persistCredentials: true
 
       - task: DownloadBuildArtifacts@0
         inputs:

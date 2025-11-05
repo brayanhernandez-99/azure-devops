@@ -10,7 +10,7 @@ jobs:
 
     steps:
       - checkout: electron
-        fetchDepth: 0
+        fetchDepth: 1
         persistCredentials: true
 
       - script: |
