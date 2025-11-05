@@ -94,9 +94,9 @@ jobs:
 
         displayName: "🔐 Setup CodeArtifact & npm config"
         env:
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
-          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
 
       - script: |
           echo "Logging in to ECR..."
@@ -104,9 +104,9 @@ jobs:
           docker login --username AWS --password-stdin $ACCOUNT_ID_DEPLOY.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
         displayName: "🔑 Login to AWS ECR"
         env:
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
-          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
 
       - script: |
           REPO_NAME="$(Build.Repository.Name)"
@@ -143,9 +143,9 @@ jobs:
         continueOnError: true
         inputs:
           command: "build"
-          repository: "$(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/pruebas-pipeline-$(clean_name_ecr)-$(branch_docker)"
-          Dockerfile: "$(Build.Repository.Name)/Dockerfile"
           tags: $(version)
+          Dockerfile: "$(Build.Repository.Name)/Dockerfile"
+          repository: "$(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/pruebas-pipeline-$(clean_name_ecr)-$(branch_docker)"
 
       - script: |
           echo "Verificando si existe el repositorio pruebas-pipeline-$(clean_name_ecr)-$(branch_docker)"
@@ -163,13 +163,13 @@ jobs:
           fi
         displayName: "🛡️ Ensure ECR Repository Exists"
         env:
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
-          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
 
       - task: Docker@2
         displayName: "🚀 Push Container Image $(Build.SourceBranch) $(Build.Repository.Name)"
         inputs:
           command: "Push"
-          repository: "$(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/pruebas-pipeline-$(clean_name_ecr)-$(branch_docker)"
           tags: $(version)
+          repository: "$(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/pruebas-pipeline-$(clean_name_ecr)-$(branch_docker)"
