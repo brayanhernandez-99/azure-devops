@@ -315,4 +315,4 @@ jobs:
           PathtoPublish: "$(Build.ArtifactStagingDirectory)"
           ArtifactName: "versions"
           publishLocation: "Container"
-        displayName: "📦 Publish Versioned Artifacts by Microservice"
+        displayName: "📥 Publish Versioned Artifacts by Microservice"

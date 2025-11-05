@@ -92,9 +92,9 @@ jobs:
         displayName: "🔐 Setup CodeArtifact & npm config"
         condition: succeeded()
         env:
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
-          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
 
       - script: |
           echo "Logging in to ECR..."
