@@ -1,5 +1,5 @@
 jobs:
-  - job: "test_micro_services"
+  - job: "sonar_micro_services"
     displayName: "🛡️ sonarqube microservice"
     pool:
       name: "Azure Pipelines"
