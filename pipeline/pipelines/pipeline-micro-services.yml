@@ -21,7 +21,7 @@ stages:
         displayName: "📦 Build Microservices Master"
         dependsOn: semantic_version_micro_services
         jobs:
-          - template: ../ci/build/build-micro-services.yml
+          - template: ../ci/build/build-backend.yml
 
       - ${{ each region in parameters.red }}:
           - stage: deploy_micro_services_${{ region }}
@@ -40,14 +40,14 @@ stages:
         displayName: "📦 Build Microservices"
         dependsOn: test_micro_services
         jobs:
-          - template: ../ci/build/build-micro-services.yml
+          - template: ../ci/build/build-backend.yml
 
   - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
       - stage: build_micro_services
         displayName: "📦 Build Microservices"
         dependsOn: semantic_version_micro_services
         jobs:
-          - template: ../ci/build/build-micro-services.yml
+          - template: ../ci/build/build-backend.yml
 
   - ${{ if in(variables['Build.SourceBranchName'], 'develop', 'staging') }}:
       - stage: deploy_micro_services
