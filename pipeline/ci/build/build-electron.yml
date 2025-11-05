@@ -66,6 +66,7 @@ jobs:
             echo -e "\n📁 Generando archivo .npmrc"
             cat <<EOF > ".npmrc"
             //$REPO_DOMAIN/$REPO_PATH/:_authToken=$token
+            registry=$REPO_URL
             EOF
             ls -l .npmrc
         displayName: "🔐 Setup CodeArtifact & npm config"
@@ -316,6 +317,7 @@ jobs:
             $npmrcPath = Join-Path "$(System.DefaultWorkingDirectory)" ".npmrc"
             @"
             //$repoDomain/$repoPath/:_authToken=$token
+            registry=$repoUrl
             "@ | Set-Content -Encoding UTF8 -Path $npmrcPath
             Get-Item $npmrcPath | Select-Object Mode, LastWriteTime, Length, Name | Format-Table
         condition: succeeded()

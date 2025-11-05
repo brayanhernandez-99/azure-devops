@@ -11,7 +11,7 @@ stages:
         displayName: "🛡️ Sonarqube Microservice"
         dependsOn: semantic_version_micro_services
         jobs:
-          - template: ../ci/test/test-backend.yml
+          - template: ../ci/sonar/sonar-backend.yml
 
   #####################################################################
 
