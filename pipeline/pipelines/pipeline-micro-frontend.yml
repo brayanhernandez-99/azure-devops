@@ -7,6 +7,14 @@ stages:
           apps: ${{ parameters.apps }}
           release: ${{ parameters.release }}
 
+  - stage: semantic_version_micro_fronted
+    displayName: "🏷️ Semantic Version MicroFrontend"
+    jobs:
+      - template: ../ci/semantic-version-integration.yml
+        parameters:
+          apps: ${{ parameters.apps }}
+          release: ${{ parameters.release }}
+
   #####################################################################
 
   - ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:

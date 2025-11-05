@@ -59,7 +59,7 @@ jobs:
         inputs:
           targetType: "inline"
           script: |
-            echo "🔐 Obteniendo token de AWS CodeArtifact..."
+            echo -e "\n🔐 Obteniendo token de AWS CodeArtifact..."
             token=$(aws codeartifact get-authorization-token \
               --domain matrixtech-npm-repository \
               --domain-owner "$ACCOUNT_ID_DEPLOY" \
@@ -78,14 +78,13 @@ jobs:
             echo "Verificando identidad de AWS..."
             aws sts get-caller-identity
 
-            npmrcPath="$(Build.Repository.Name)/.npmrc"
-            echo "Generando archivo .npmrcPath en: $npmrcPath"
-            cat <<EOF > "$npmrcPath"
+            echo -e "\n📁 Generando archivo .npmrc"
+            cat <<EOF > ".npmrc"
             //$REPO_DOMAIN/$REPO_PATH/:_authToken=$token
-            registry=$REPO_URL
             EOF
-            ls -la $npmrcPath
+            ls -l .npmrc
         displayName: "🔐 Setup CodeArtifact & npm config"
+        condition: succeeded()
         env:
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
