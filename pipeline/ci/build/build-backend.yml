@@ -93,6 +93,7 @@ jobs:
             EOF
             ls -l .npmrc
             pwd
+            ls -ltra $(pwd) 
         displayName: "🔐 Setup CodeArtifact & npm config"
         condition: succeeded()
         env:
