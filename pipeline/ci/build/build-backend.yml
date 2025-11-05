@@ -145,7 +145,7 @@ jobs:
           command: "build"
           repository: "$(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/pruebas-pipeline-$(clean_name_ecr)-$(branch_docker)"
           Dockerfile: "$(Build.Repository.Name)/Dockerfile"
-          tags: $(msVersion)
+          tags: $(version)
 
       - script: |
           echo "Verificando si existe el repositorio pruebas-pipeline-$(clean_name_ecr)-$(branch_docker)"
@@ -172,4 +172,4 @@ jobs:
         inputs:
           command: "Push"
           repository: "$(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/pruebas-pipeline-$(clean_name_ecr)-$(branch_docker)"
-          tags: $(msVersion)
+          tags: $(version)
