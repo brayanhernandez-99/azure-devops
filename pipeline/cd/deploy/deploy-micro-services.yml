@@ -138,8 +138,8 @@ jobs:
                 fi
 
                  if [[ "$REPO_NAME" == "$name_bff" && ( "$BRANCH_NAME" == "develop" || "$BRANCH_NAME" == "staging" ) ]]; then
-                    CLUSTER=raffles-ms-cluster
-                    SERVICES=raffles-ms-fg-service
+                    CLUSTER=$(clean_name_ecr)-cluster
+                    SERVICES=$(clean_name_ecr)-fg-service
                 fi
 
                 if [[ "$REPO_NAME" == "$name_bff" && ( "$red" == "cap" || "$red" == "antioquia" ) ]]; then
