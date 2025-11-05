@@ -18,8 +18,8 @@ parameters:
   - name: apps
     type: object
     default:
-      - microservice-astro: "3.5.7"
-      - microservice-security: "3.3.10"
+      microservice-astro: "3.5.7"
+      microservice-security: "3.3.10"
 
 resources:
   repositories:
