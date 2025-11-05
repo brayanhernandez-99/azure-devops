@@ -38,7 +38,7 @@ stages:
   - ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}:
       - stage: build_micro_services
         displayName: "📦 Build Microservice"
-        dependsOn: test_micro_services
+        dependsOn: sonar_micro_services
         jobs:
           - template: ../ci/build/build-backend.yml
 
