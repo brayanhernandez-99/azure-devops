@@ -297,10 +297,6 @@ jobs:
       #     ne(variables['Build.SourceBranchName'], 'master'))
 
       # - template: sonarqube/job-sonarqube.yml@sonarqube
-      #   condition: and(succeeded(),
-      #     ne(variables['msName'], 'app-administration-vue2'),
-      #     ne(variables['msName'], 'app-sellers-vue2'),
-      #     ne(variables['Build.SourceBranchName'], 'master'))
       #   parameters:
       #     projectKey: $(Build.Repository.Name)
 
