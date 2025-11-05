@@ -27,7 +27,7 @@ jobs:
         condition: succeeded()
 
       - script: |
-          VERSION_FILE="$(Pipeline.Workspace)/downloaded-versions/versions/version.json"
+          VERSION_FILE="$(Pipeline.Workspace)/version-downloaded/versions/version.json"
 
           echo -e "\n📁 Archivo version.json:"
           ls -la "$VERSION_FILE"
