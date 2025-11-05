@@ -75,6 +75,14 @@ jobs:
         displayName: "🔧 Install Nodejs $(nodeVersion)"
         condition: succeeded()
 
+      - task: JavaToolInstaller@0
+        inputs:
+          versionSpec: "17"
+          jdkArchitectureOption: "x64"
+          jdkSourceOption: "PreInstalled"
+        displayName: "🔧 Install JDK 17"
+        condition: succeeded()
+
       - script: |
           echo -e "\n📁 Generando archivo .pnpmrc en: $(System.DefaultWorkingDirectory)/.pnpmrc"
           cat <<EOF > "$(System.DefaultWorkingDirectory)/.pnpmrc"
@@ -92,9 +100,9 @@ jobs:
 
           echo -e "\n⚙️ Instalando dependencias node..."
           npm install -g pnpm
-          pnpm install
-          pnpm ignored-builds
-          
+          # pnpm install
+          # pnpm ignored-builds
+
           OUTPUT=$(pnpm ls --depth=0 || true)
           if [[ -z "$OUTPUT" ]]; then
             echo -e "\n##vso[task.logissue type=error]⚠️ No se instalaron dependencias, esperar que se actualicen las dependencias a nivel global"
@@ -104,14 +112,6 @@ jobs:
             echo "$OUTPUT"
           fi
         displayName: "⚙️ Install Dependencies"
-        condition: succeeded()
-
-      - task: JavaToolInstaller@0
-        inputs:
-          versionSpec: "17"
-          jdkArchitectureOption: "x64"
-          jdkSourceOption: "PreInstalled"
-        displayName: "🔧 Install JDK 17"
         condition: succeeded()
 
       - task: SonarQubePrepare@7
@@ -167,12 +167,12 @@ jobs:
         displayName: "📡 Run Sonar Analysis"
         condition: succeeded()
 
+      - template: sonarqube/job-sonarqube.yml@sonarqube
+        parameters:
+          projectKey: $(Build.Repository.Name)
+
       - task: SonarQubePublish@7
         inputs:
           pollingTimeoutSec: 400
         displayName: "📤 Publish Static Code Analysis Results"
         condition: succeeded()
-
-      - template: sonarqube/job-sonarqube.yml@sonarqube
-        parameters:
-          projectKey: $(Build.Repository.Name)
