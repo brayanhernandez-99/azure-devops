@@ -1,11 +1,6 @@
 jobs:
   - job: "build_docker_image"
-    ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
-      displayName: "🐳 build docker image develop"
-    ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
-      displayName: "🐳 build docker image staging"
-    ${{ if or(eq(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')) }}:
-      displayName: "🐳 build docker image master"
+    displayName: "🐳 build docker image"
     pool:
       name: "Azure Pipelines"
       VmImage: "ubuntu-22.04"
