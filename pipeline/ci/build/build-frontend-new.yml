@@ -135,7 +135,7 @@ jobs:
 
           echo -e "\n📁 File package.json:"      
           cat $(System.DefaultWorkingDirectory)/$(file)/$(msName)/package.json
-        displayName: "📝 Update version in package.json"
+        displayName: "📝 Update Version package.json"
         condition: succeeded()
 
       - script: |
