@@ -40,7 +40,7 @@ jobs:
 
       - ${{ if eq(parameters.region, 'antioquia') }}:
           - template: ./commit/commit-version-backend.yml
-            condition: succeeded()
+            dependsOn: DeployECS
 
   #####################################################################
 
