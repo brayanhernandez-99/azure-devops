@@ -1,8 +1,9 @@
 jobs:
   - job: "commit_tag_version"
     displayName: "⚡ Commit and Tag Version Master"
-    dependsOn: DeployECS
-    #condition: in(dependencies.DeployECS.result, 'Succeeded', 'SucceededWithIssues')
+    dependsOn:
+        - "DeployECS"
+    condition: in(dependencies.DeployECS.result, 'Succeeded', 'SucceededWithIssues')
     
     pool:
       name: Azure Pipelines
