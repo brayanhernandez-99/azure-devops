@@ -315,5 +315,5 @@ jobs:
           PathtoPublish: "$(Build.ArtifactStagingDirectory)"
           ArtifactName: "versions"
           publishLocation: "Container"
-        displayName: "📤 Publish artifact microservice"
+        displayName: "📤 Publish artifact Microservice"
         condition: succeeded()
