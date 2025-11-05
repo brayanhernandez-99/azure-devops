@@ -1,11 +1,11 @@
 jobs:
-  - job: "publish_image_docker"
+  - job: "build_docker_image"
     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
-      displayName: "🐳 Publish Docker Image Development Environment"
+      displayName: "🐳 build docker image develop"
     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
-      displayName: "🐳 Publish Docker Image Staging Environment"
+      displayName: "🐳 build docker image staging"
     ${{ if or(eq(variables['Build.SourceBranchName'], 'master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')) }}:
-      displayName: "🐳 Publish Docker Image Master Environment"
+      displayName: "🐳 build docker image master"
     pool:
       name: "Azure Pipelines"
       VmImage: "ubuntu-22.04"
