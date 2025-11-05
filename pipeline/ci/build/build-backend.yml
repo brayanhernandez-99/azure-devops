@@ -85,10 +85,11 @@ jobs:
             aws sts get-caller-identity
 
             echo -e "\n📁 Generando archivo .npmrc"
-            cat <<EOF > "$(System.DefaultWorkingDirectory)/.npmrc"
+            cat <<EOF > ".npmrc"
             //$REPO_DOMAIN/$REPO_PATH/:_authToken=$token
             EOF
-            ls -l $(System.DefaultWorkingDirectory)/.npmrc
+            ls -l .npmrc
+            pwd
         displayName: "🔐 Setup CodeArtifact & npm config"
         condition: succeeded()
         env:
