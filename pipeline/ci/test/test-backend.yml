@@ -134,7 +134,7 @@ jobs:
           echo "$json" | jq
           echo "##vso[task.setvariable variable=SONARQUBE_SCANNER_PARAMS]$response"
         displayName: "⚙️ Set Variable — SONARQUBE_SCANNER_PARAMS"
-        condition: ne(variables['Build.Reason'], 'PullRequest'+)
+        condition: ne(variables['Build.Reason'], 'PullRequest')
 
       - script: |
           response=$(echo $SONARQUBE_SCANNER_PARAMS | sed -E 's#"sonar\.pullrequest\.[^"]+":"[^"]+",##g') 
