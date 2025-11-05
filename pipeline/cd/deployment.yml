@@ -40,7 +40,7 @@ jobs:
 
       - ${{ if eq(parameters.region, 'antioquia') }}:
           - template: ./commit/commit-version-backend.yml
-  
+            
   #####################################################################
 
   - ${{ if eq(parameters.release, 'apk') }}:
@@ -60,7 +60,8 @@ jobs:
 
       - ${{ if eq(parameters.region, 'antioquia') }}:
           - template: ./commit/commit-version-electron.yml
-
+            condition: succeeded()
+            
   #####################################################################
 
   - ${{ if eq(parameters.release, 'electron') }}:
