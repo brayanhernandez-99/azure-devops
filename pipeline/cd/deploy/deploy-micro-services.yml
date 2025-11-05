@@ -118,6 +118,7 @@ jobs:
                 BRANCH_NAME=$(echo "$(Build.SourceBranchName)")
 
                 REPO_NAME="$(Build.Repository.Name)"
+                echo $REPO_NAME
 
                 if [[ "$REPO_NAME" == bff-*-invictus ]]; then
                     CLEAN_NAME="${REPO_NAME#bff-}"        # quita prefijo bff-
