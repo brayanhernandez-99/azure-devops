@@ -115,9 +115,17 @@ jobs:
                 export AWS_SECRET_ACCESS_KEY
                 export AWS_REGION
 
-                BRANCH_NAME=$(echo "$(Build.SourceBranchName)")
+                # BRANCH_NAME=$(echo "$(Build.SourceBranchName)")
 
-                REPO_NAME="$(Build.Repository.Name)"
+                # REPO_NAME="$(Build.Repository.Name)"
+
+                BRANCH_NAME="$BUILD_SOURCEBRANCHNAME"
+                REPO_NAME="$BUILD_REPOSITORY_NAME"
+                RED="${red:-}"
+
+                echo "📦 Repo: $REPO_NAME"
+                echo "🌿 Branch: $BRANCH_NAME"
+                echo "🏠 Red: $RED"
 
                 if [[ "$REPO_NAME" == bff-*-invictus ]]; then
                     CLEAN_NAME="${REPO_NAME#bff-}"        # quita prefijo bff-
