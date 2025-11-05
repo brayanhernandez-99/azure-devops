@@ -91,7 +91,6 @@ jobs:
             registry=$REPO_URL
             EOF
             ls -la $npmrcPath
-
         displayName: "🔐 Setup CodeArtifact & npm config"
         env:
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
@@ -118,7 +117,6 @@ jobs:
               CLEAN_NAME="${REPO_NAME%-invictus}"   # quita solo el sufijo -invictus
           fi
 
-
           if [[ "$CURRENT_BRANCH" == refs/heads/develop ]]; then
             raw_branch=$(Build.SourceBranch)
             clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
@@ -143,9 +141,9 @@ jobs:
         continueOnError: true
         inputs:
           command: "build"
-          tags: $(version)
           Dockerfile: "$(Build.Repository.Name)/Dockerfile"
           repository: "$(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/pruebas-pipeline-$(clean_name_ecr)-$(branch_docker)"
+          tags: $(version)
 
       - script: |
           echo "Verificando si existe el repositorio pruebas-pipeline-$(clean_name_ecr)-$(branch_docker)"
@@ -171,5 +169,5 @@ jobs:
         displayName: "🚀 Push Container Image $(Build.SourceBranch) $(Build.Repository.Name)"
         inputs:
           command: "Push"
-          tags: $(version)
           repository: "$(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/pruebas-pipeline-$(clean_name_ecr)-$(branch_docker)"
+          tags: $(version)
