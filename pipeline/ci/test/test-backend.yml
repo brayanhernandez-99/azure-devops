@@ -1,6 +1,6 @@
 jobs:
   - job: "test_micro_services"
-    displayName: "🛡️ test microservice"
+    displayName: "🛡️ sonarqube microservice"
     pool:
       name: "Azure Pipelines"
       vmImage: "ubuntu-22.04"
