@@ -22,12 +22,13 @@ jobs:
       - task: DownloadBuildArtifacts@0
         inputs:
           artifactName: "versions"
-          downloadPath: "$(Pipeline.Workspace)/version-downloaded"
+          downloadPath: "$(Pipeline.Workspace)/downloaded-versions"
         displayName: "📥 Download Version"
         condition: succeeded()
 
       - script: |
-          VERSION_FILE="$(Pipeline.Workspace)/downloaded-version/versions/version.json"
+          ls -R $(Pipeline.Workspace)/downloaded-versions/versions
+          VERSION_FILE="$(Pipeline.Workspace)/downloaded-versions/versions/version.json"
 
           echo -e "\n📁 Archivo version.json:"
           ls -la "$VERSION_FILE"
