@@ -101,7 +101,6 @@ jobs:
 
           - script: |
               REPO_NAME="$(Build.Repository.Name)"
-              echo $REPO_NAME
 
               if [[ "$REPO_NAME" == "microservice-notifier-invictus" ]]; then
                   CLEAN_NAME="notifier"

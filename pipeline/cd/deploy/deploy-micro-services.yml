@@ -118,7 +118,6 @@ jobs:
                 BRANCH_NAME=$(echo "$(Build.SourceBranchName)")
 
                 REPO_NAME="$(Build.Repository.Name)"
-                echo $REPO_NAME
 
                 if [[ "$REPO_NAME" == bff-*-invictus ]]; then
                     CLEAN_NAME="${REPO_NAME#bff-}"        # quita prefijo bff-
@@ -134,6 +133,11 @@ jobs:
                 fi
 
                 if [[ "$(cleanMsName)" == "raffle" && ( "$BRANCH_NAME" == "develop" || "$BRANCH_NAME" == "staging" ) ]]; then
+                    CLUSTER=raffles-ms-cluster
+                    SERVICES=raffles-ms-fg-service
+                fi
+
+                 if [[ "$REPO_NAME" == "$name_bff" && ( "$BRANCH_NAME" == "develop" || "$BRANCH_NAME" == "staging" ) ]]; then
                     CLUSTER=raffles-ms-cluster
                     SERVICES=raffles-ms-fg-service
                 fi
