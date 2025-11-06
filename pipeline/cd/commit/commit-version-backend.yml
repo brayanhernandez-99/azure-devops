@@ -1,10 +1,8 @@
 jobs:
-  - job: "commit_tag_version"
-    displayName: "⚡ Commit and Tag Version Master"
-    dependsOn:
-        - "DeployECS"
-    condition: in(dependencies.DeployECS.result, 'Succeeded', 'SucceededWithIssues')
-    
+  - job: "commit_version_backend"
+    displayName: "⚡commit version backend"
+    dependsOn: "deploy_micro_service"
+    condition: in(dependencies.deploy_micro_service.result, 'Succeeded', 'SucceededWithIssues')
     pool:
       name: Azure Pipelines
       vmImage: "ubuntu-22.04"
