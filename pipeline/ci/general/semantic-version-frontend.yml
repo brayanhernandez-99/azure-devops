@@ -7,6 +7,7 @@ jobs:
 
     variables:
       - template: ../../variables/groups-transversal-variables-frontend.yml
+      - apps: $[ dependencies.change_files_micro_fronted.outputs['changes_files_frontend.SetApps.apps'] ]
 
     # strategy:
     #   matrix:
@@ -20,10 +21,7 @@ jobs:
         persistCredentials: true
 
       - script: |
-          echo -e "\nParametro: ${{ parameters.apps }}"
-          
-          echo -e "\nApps desde el stage anterior:"
-          echo "$(dependencies.change_files_micro_fronted.outputs['changes_files_frontend.SetApps.apps'])"
+          echo -e "\nParametro: $APPS"
         displayName: "🔎 Apps "
 
       - script: |
@@ -145,7 +143,7 @@ jobs:
       - script: |
           echo -e "\nℹ️ Pull Request ID recuperado: $(ultimoPR)"
           echo "id del repositorio $(Build.Repository.Name) = $(repoID)"
-          
+
           COMMITS=$(curl -s -u ":$AZURE_DEVOPS_CLI_PAT" \
             "https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories/$(repoID)/pullRequests/$(ultimoPR)/commits?api-version=7.0" \
             | jq -r '.value[].comment' | grep -E 'feat:|fix:|!')
