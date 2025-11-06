@@ -63,7 +63,7 @@ stages:
       - template: ./pipelines/pipeline-micro-frontend.yml
         parameters:
           red: ${{ parameters.red }}
-          apps: ${{ parameters.apps }}
+          #apps: ${{ parameters.apps }}
           release: ${{ parameters.release }}
 
   #
