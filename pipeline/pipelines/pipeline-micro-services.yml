@@ -7,8 +7,8 @@ stages:
           release: ${{ parameters.release }}
 
   - ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), eq(variables['Build.SourceBranch'], 'refs/heads/develop')) }}:
-      - stage: sonar_micro_services
-        displayName: "🛡️ Sonarqube MicroService"
+      - stage: test_micro_services
+        displayName: "🛡️ Tests MicroService"
         dependsOn: semantic_version_micro_services
         jobs:
           - template: ../ci/tests/sonar-backend.yml
@@ -38,7 +38,7 @@ stages:
   - ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}:
       - stage: build_micro_services
         displayName: "📦 Build MicroService"
-        dependsOn: sonar_micro_services
+        dependsOn: test_micro_services
         jobs:
           - template: ../ci/build/build-backend.yml
 
