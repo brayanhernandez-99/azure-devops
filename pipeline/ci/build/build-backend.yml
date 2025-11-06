@@ -134,14 +134,14 @@ jobs:
           echo "##vso[task.setvariable variable=branch_docker]$clean_branch"
         displayName: "📛 Set ECR Repository Name"
 
-      - task: Docker@2
-        displayName: "📦 Build Container Image Development $(Build.Repository.Name)"
-        continueOnError: true
-        inputs:
-          command: "build"
-          Dockerfile: "$(Build.Repository.Name)/Dockerfile"
-          repository: "$(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/pruebas-pipeline-$(clean_name_ecr)-$(branch_docker)"
-          tags: $(version)
+      # - task: Docker@2
+      #   displayName: "📦 Build Container Image Development $(Build.Repository.Name)"
+      #   continueOnError: true
+      #   inputs:
+      #     command: "build"
+      #     Dockerfile: "$(Build.Repository.Name)/Dockerfile"
+      #     repository: "$(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/$(clean_name_ecr)-$(branch_docker)"
+      #     tags: $(version)
 
       # - script: |
       #     echo "Verificando si existe el repositorio $(clean_name_ecr)-$(branch_docker)"
@@ -163,9 +163,9 @@ jobs:
       #     AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
       #     AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
 
-      - task: Docker@2
-        displayName: "🚀 Push Container Image $(Build.SourceBranch) $(Build.Repository.Name)"
-        inputs:
-          command: "Push"
-          repository: "$(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/pruebas-pipeline-$(clean_name_ecr)-$(branch_docker)"
-          tags: $(version)
+      # - task: Docker@2
+      #   displayName: "🚀 Push Container Image $(Build.SourceBranch) $(Build.Repository.Name)"
+      #   inputs:
+      #     command: "Push"
+      #     repository: "$(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/$(clean_name_ecr)-$(branch_docker)"
+      #     tags: $(version)
