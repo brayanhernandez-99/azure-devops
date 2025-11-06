@@ -114,7 +114,7 @@ jobs:
           REPO_NAME="$(Build.Repository.Name)"
           CURRENT_BRANCH=$(echo $(Build.SourceBranch))
 
-          echo -e "\nℹ️ Variables:"
+          echo -e "\nℹ️ Informacion..."
           echo "Branch: $CURRENT_BRANCH"
           echo "Repositorio: $REPO_NAME"
 
@@ -137,9 +137,9 @@ jobs:
             clean_branch=prd
           fi
 
-          echo -e "\nℹ️ Nuevas Variables:"
-          echo "Branch: $clean_branch"
-          echo "Repositorio: $CLEAN_NAME"
+          echo -e "\nℹ️ Informacion..."
+          echo "Clean Branch: $clean_branch"
+          echo "Clean Repositorio: $CLEAN_NAME"
 
           echo "##vso[task.setvariable variable=clean_name_ecr]$CLEAN_NAME"
           echo "##vso[task.setvariable variable=branch_docker]$clean_branch"
