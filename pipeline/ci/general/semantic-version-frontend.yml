@@ -8,11 +8,11 @@ jobs:
     variables:
       - template: ../../variables/groups-transversal-variables-frontend.yml
 
-    strategy:
-      matrix:
-        ${{ each ms in parameters.apps }}:
-          ${{ ms }}:
-            msName: ${{ ms }}
+    # strategy:
+    #   matrix:
+    #     ${{ each ms in parameters.apps }}:
+    #       ${{ ms }}:
+    #         msName: ${{ ms }}
 
     steps:
       - checkout: self
