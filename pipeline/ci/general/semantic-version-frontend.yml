@@ -21,9 +21,8 @@ jobs:
         persistCredentials: true
 
       - script: |
-          echo -e "\nParametro: $apps"
-          echo -e "\nParametro: $(apps)"
-        displayName: "🔎 Apps "
+          echo "Apps: $(apps)"
+        displayName: "🔎 Mostrar apps"
 
       - script: |
           echo -e "\n📌 Verificando si feature está actualizada con master y si hay cambios relevantes..."
