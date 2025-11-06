@@ -13,7 +13,7 @@ jobs:
         fetchDepth: 1
         persistCredentials: true
 
-      - checkout: git://DevOps-templates-UX/pipelines-templates@feature/electron
+      - checkout: git://DevOps-templates-UX/pipelines-templates
         fetchDepth: 1
         persistCredentials: true
 
