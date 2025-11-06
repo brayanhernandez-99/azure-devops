@@ -107,7 +107,7 @@ jobs:
           cat app-legacy/app-sellers-vue2/.env.local
 
           echo -e "\n📁 Archivo .env: invictus"
-          printenv | grep -i "^INVICTUS_" |sed -E sed "s/^INVICTUS_//I" > $(System.DefaultWorkingDirectory)/apps/invictus/.env
+          printenv | grep -i "^INVICTUS_" |sed -E sed "s/^INVICTUS_//" > $(System.DefaultWorkingDirectory)/apps/invictus/.env
           ls -l apps/invictus/.env
           cat apps/invictus/.env
 
@@ -119,7 +119,7 @@ jobs:
         condition: succeeded()
 
       - script: |
-          echo -e "\n📁 Archivos .env para $(msName)"
+          echo -e "\n📁 Archivos .env: $(msName)"
           printenv | grep -i "^$(msName)_" |sed -E "s/^($(msName))_//I" > $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.env
           cat apps/invictus/.env >> $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.env
           ls -l apps/$(msName)/.env
