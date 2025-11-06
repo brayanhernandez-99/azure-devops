@@ -11,10 +11,6 @@ jobs:
           region: ${{ parameters.region }}
 
     steps:
-      - checkout: self
-        fetchDepth: 0
-        persistCredentials: true
-
       - script: |
           echo "ID Cuenta AWS: $(ACCOUNT_ID_INVIC)"
           tree
