@@ -5,18 +5,19 @@ jobs:
       name: "Azure Pipelines"
       vmImage: ubuntu-22.04
 
-    strategy:
-      matrix:
-        ${{ each ms in fromJSON(parameters.apps) }}:
-          ${{ ms }}:
-            msName: ${{ ms }}
+    # strategy:
+    #   matrix:
+    #     ${{ each ms in fromJSON(parameters.apps) }}:
+    #       ${{ ms }}:
+    #         msName: ${{ ms }}
 
     steps:
       - checkout: self
         fetchDepth: 0
 
       - script: |
-          echo "🔎 Procesando App: ${{ matrix.msName }}"
+          # echo "🔎 Procesando App: ${{ matrix.msName }}"
+          echo "🔎 Procesando App: ${{ parameters.apps }}"
           echo "Release: ${{ parameters.release }}"
         displayName: "Procesar App"
 
