@@ -18,7 +18,8 @@ jobs:
       - script: |
           echo "Apps desde el stage anterior:"
           echo '${{ parameters.apps }}'
-          
+          echo "$(dependencies.change_files_micro_frontend.outputs['SetApps.apps'])"
+
 # jobs:
 #   - job: "semantic_version_micro_fronted"
 #     displayName: "🏷️ version"
