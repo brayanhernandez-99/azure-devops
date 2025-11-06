@@ -21,7 +21,7 @@ jobs:
         persistCredentials: true
 
       - script: |
-          echo -e "\nParametro: $APPS"
+          echo -e "\nParametro: $apps"
         displayName: "🔎 Apps "
 
       - script: |
