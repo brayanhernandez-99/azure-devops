@@ -124,7 +124,7 @@ jobs:
           cat apps/invictus/.env >> $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.env
           ls -l apps/$(msName)/.env
           cat apps/$(msName)/.env
-        displayName: "⚙️ Generate .env $(msName)"
+        displayName: "⚙️ Generate $(msName) .env"
         condition: and(succeeded(),
           ne(variables['msName'], 'app-administration-vue2'),
           ne(variables['msName'], 'app-sellers-vue2'))
