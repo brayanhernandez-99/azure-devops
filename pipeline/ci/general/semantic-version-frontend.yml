@@ -22,6 +22,7 @@ jobs:
 
       - script: |
           echo -e "\nParametro: $apps"
+          echo -e "\nParametro: $(apps)"
         displayName: "🔎 Apps "
 
       - script: |
