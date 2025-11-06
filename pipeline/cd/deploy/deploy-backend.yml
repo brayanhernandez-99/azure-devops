@@ -184,66 +184,6 @@ jobs:
                 echo "🛡️ Cluster: $CLUSTER"
                 echo "📦 Services: $SERVICES"
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                # if [[ "$REPO_NAME" == bff-*-invictus ]]; then
-                #     CLEAN_NAME="${REPO_NAME#bff-}"        # quita prefijo bff-
-                #     CLEAN_NAME="${CLEAN_NAME%-invictus}"  # quita sufijo -invictus
-                #     echo "$CLEAN_NAME"
-                #     name_bff="bff-$CLEAN_NAME-invictus"
-                #     echo "$name_bff"
-                # fi
-
-                # if [[ "$(cleanMsName)" == "notifier" && ( "$BRANCH_NAME" == "develop" || "$BRANCH_NAME" == "staging" ) ]]; then
-                #     CLUSTER=msnotifier-cluster
-                #     SERVICES=msnotifier-fg-service
-                # fi
-
-                # if [[ "$(cleanMsName)" == "raffle" && ( "$BRANCH_NAME" == "develop" || "$BRANCH_NAME" == "staging" ) ]]; then
-                #     CLUSTER=raffles-ms-cluster
-                #     SERVICES=raffles-ms-fg-service
-                # fi
-
-                #  if [[ "$REPO_NAME" == "$name_bff" && ( "$BRANCH_NAME" == "develop" || "$BRANCH_NAME" == "staging" ) ]]; then
-                #     CLUSTER=$(clean_name_ecr)-cluster
-                #     SERVICES=$(clean_name_ecr)-fg-service
-                # fi
-
-                # if [[ "$REPO_NAME" == "$name_bff" && ( "$red" == "cap" || "$red" == "antioquia" ) ]]; then
-                #     CLUSTER=$(clean_name_ecr)-cluster
-                #     SERVICES=$(clean_name_ecr)-fg-service
-                # fi
-                # if [[ "$(cleanMsName)" == "raffle" && ( "$red" == "cap" || "$red" == "antioquia" ) ]]; then
-                #     CLUSTER=raffles-ms-cluster
-                #     SERVICES=raffles-ms-fg-service
-                # fi
-                # if [[ "$(cleanMsName)" == "notifier" && ( "$red" == "cap" || "$red" == "antioquia" ) ]]; then
-                #     CLUSTER=msnotifier-cluster
-                #     SERVICES=msnotifier-fg-service
-                # fi
-                # if [[ "$(cleanMsName)" == "raffle" && ! ( "$red" == "cap" || "$red" == "antioquia" || "$BRANCH_NAME" == "develop" || "$BRANCH_NAME" == "staging" ) ]]; then
-                #     SERVICES=raffles
-                # fi
-                # echo "🛡️ Cluster: $CLUSTER"
-                # echo "📦 Services: $SERVICES"
-
-
                 echo "Obteniendo task definition..."
                 arn=$(aws ecs describe-services \
                   --cluster $CLUSTER \
@@ -260,6 +200,8 @@ jobs:
                   echo "✅ TaskDef ARN: $arn"
                 fi
                 echo "##vso[task.setvariable variable=taskDefinitionArn]$arn"
+                echo "##vso[task.setvariable variable=cluster_name]$CLUSTER"
+                echo "##vso[task.setvariable variable=service_name]$SERVICES"
               displayName: "🔗 Get Task Definition ARN"
               env:
                 AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVIC)
@@ -271,6 +213,8 @@ jobs:
                 echo "Obteniendo family de task definition..."
                 ARN='$(taskDefinitionArn)'
                 echo $ARN
+                echo $(cluster_name)
+                echo $(service_name)
 
                 FAMILY=$(echo $ARN | cut -d'/' -f2 | cut -d':' -f1)
                 echo "##vso[task.setvariable variable=taskFamily]$FAMILY"
