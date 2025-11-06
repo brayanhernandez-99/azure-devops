@@ -16,7 +16,6 @@ jobs:
         fetchDepth: 0
 
       - script: |
-          # echo "🔎 Procesando App: ${{ matrix.msName }}"
           echo "🔎 Procesando App: ${{ parameters.apps }}"
           echo "Release: ${{ parameters.release }}"
         displayName: "Procesar App"
