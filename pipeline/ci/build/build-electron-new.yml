@@ -15,7 +15,7 @@ jobs:
 
     steps:
       - checkout: electron
-        fetchDepth: 0
+        fetchDepth: 1
         persistCredentials: true
 
       - script: |
@@ -204,7 +204,7 @@ jobs:
             echo -e "\n##vso[task.logissue type=error]⚠️ No se encontró el archivo package.json en la ruta [$PACKAGE_PATH]"
             exit 99
           fi
-        displayName: "📝 Update version in package.json"
+        displayName: "📝 Update Version package.json"
         condition: succeeded()
 
       - script: |
@@ -218,6 +218,9 @@ jobs:
           EOF
           ls -l $(System.DefaultWorkingDirectory)/.pnpmrc
           cat $(System.DefaultWorkingDirectory)/.pnpmrc
+
+          cat $(System.DefaultWorkingDirectory)/.pnpmrc >> $(System.DefaultWorkingDirectory)/.npmrc
+          echo -e "\n✅ Contenido de .pnpmrc anexado a .npmrc correctamente."
 
           echo -e "\n⚙️ Instalando dependencias ubuntu..."
           sudo apt-get update
@@ -236,13 +239,13 @@ jobs:
             echo -e "\n✅ Dependencias Instaladas:"
             echo "$OUTPUT"
           fi
-        displayName: "⚙️ Install dependencies"
+        displayName: "⚙️ Install Dependencies"
         condition: succeeded()
 
       - script: |
           echo -e "\n📦 Build Electron..."
           pnpm run build
-        displayName: "📦 Build electron"
+        displayName: "📦 Build Electron"
         condition: succeeded()
 
       - script: |
@@ -311,7 +314,7 @@ jobs:
 
     steps:
       - checkout: electron
-        fetchDepth: 0
+        fetchDepth: 1
         persistCredentials: true
 
       - task: PowerShell@2
@@ -377,7 +380,7 @@ jobs:
         condition: succeeded()
 
       - task: PowerShell@2
-        displayName: "📚 Read version"
+        displayName: "📚 Read Version"
         inputs:
           targetType: "inline"
           script: |
@@ -513,7 +516,7 @@ jobs:
         condition: succeeded()
 
       - task: PowerShell@2
-        displayName: "📝 Update version in package.json"
+        displayName: "📝 Update Version package.json"
         inputs:
           targetType: "inline"
           script: |
@@ -555,7 +558,7 @@ jobs:
         condition: succeeded()
 
       - task: PowerShell@2
-        displayName: "⚙️ Install dependencies"
+        displayName: "⚙️ Install Dependencies"
         inputs:
           targetType: "inline"
           script: |
@@ -571,6 +574,9 @@ jobs:
             Set-Content -Path $filePath -Value $fileContent -Encoding UTF8
             Get-ChildItem -Path $filePath | Select-Object Mode, LastWriteTime, Length, Name | Format-Table
             Get-Content -Path $filePath
+
+            Get-Content $filePath | Add-Content -Path $(System.DefaultWorkingDirectory)\.npmrc -Encoding UTF8
+            Write-Host "`n✅ Contenido de .pnpmrc anexado a .npmrc correctamente."
 
             Write-Host "`n⚙️ Instalando dependencias node..."
             npm install -g pnpm
@@ -588,7 +594,7 @@ jobs:
         condition: succeeded()
 
       - task: PowerShell@2
-        displayName: "📦 Build electron"
+        displayName: "📦 Build Electron"
         inputs:
           targetType: " inline"
           script: |
@@ -648,5 +654,5 @@ jobs:
           PathtoPublish: "$(Build.ArtifactStagingDirectory)/electron-artifacts"
           ArtifactName: "electron"
           publishLocation: "Container"
-        displayName: "📤 Publish artifact electron"
+        displayName: "📤 Publish Artifacts Electron"
         condition: succeeded()

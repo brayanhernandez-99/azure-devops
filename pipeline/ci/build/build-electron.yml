@@ -66,6 +66,7 @@ jobs:
             echo -e "\n📁 Generando archivo .npmrc"
             cat <<EOF > ".npmrc"
             //$REPO_DOMAIN/$REPO_PATH/:_authToken=$token
+            registry=$REPO_URL
             EOF
             ls -l .npmrc
         displayName: "🔐 Setup CodeArtifact & npm config"
@@ -143,7 +144,7 @@ jobs:
             echo -e "\n##vso[task.logissue type=error]⚠️ No se encontró el archivo package.json en la ruta [$PACKAGE_PATH]"
             exit 99
           fi
-        displayName: "📝 Update version in package.json"
+        displayName: "📝 Update Version package.json"
         condition: succeeded()
 
       - script: |
@@ -179,13 +180,13 @@ jobs:
             echo -e "\n✅ Dependencias Instaladas:"
             echo "$OUTPUT"
           fi
-        displayName: "⚙️ Install dependencies"
+        displayName: "⚙️ Install Dependencies"
         condition: succeeded()
 
       - script: |
           echo -e "\n📦 Build Electron..."
           pnpm run build
-        displayName: "📦 Build electron"
+        displayName: "📦 Build Electron"
         condition: succeeded()
 
       - script: |
@@ -261,7 +262,7 @@ jobs:
         condition: succeeded()
 
       - task: PowerShell@2
-        displayName: "📚 Read version"
+        displayName: "📚 Read Version"
         inputs:
           targetType: "inline"
           script: |
@@ -316,6 +317,7 @@ jobs:
             $npmrcPath = Join-Path "$(System.DefaultWorkingDirectory)" ".npmrc"
             @"
             //$repoDomain/$repoPath/:_authToken=$token
+            registry=$repoUrl
             "@ | Set-Content -Encoding UTF8 -Path $npmrcPath
             Get-Item $npmrcPath | Select-Object Mode, LastWriteTime, Length, Name | Format-Table
         condition: succeeded()
@@ -384,7 +386,7 @@ jobs:
         condition: succeeded()
 
       - task: PowerShell@2
-        displayName: "📝 Update version in package.json"
+        displayName: "📝 Update Version package.json"
         inputs:
           targetType: "inline"
           script: |
@@ -426,7 +428,7 @@ jobs:
         condition: succeeded()
 
       - task: PowerShell@2
-        displayName: "⚙️ Install dependencies"
+        displayName: "⚙️ Install Dependencies"
         inputs:
           targetType: "inline"
           script: |
@@ -463,7 +465,7 @@ jobs:
         condition: succeeded()
 
       - task: PowerShell@2
-        displayName: "📦 Build electron"
+        displayName: "📦 Build Electron"
         inputs:
           targetType: " inline"
           script: |
@@ -523,5 +525,5 @@ jobs:
           PathtoPublish: "$(Build.ArtifactStagingDirectory)/electron-artifacts"
           ArtifactName: "electron"
           publishLocation: "Container"
-        displayName: "📤 Publish Artifact Electron"
+        displayName: "📤 Publish Artifacts Electron"
         condition: succeeded()

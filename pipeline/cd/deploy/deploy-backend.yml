@@ -31,21 +31,27 @@ jobs:
             - task: DownloadBuildArtifacts@0
               inputs:
                 artifactName: "versions"
-                downloadPath: "$(Pipeline.Workspace)/downloaded-versions"
-              displayName: "📥 Download Version Artifact"
+                downloadPath: "$(Pipeline.Workspace)/version-downloaded"
+              displayName: "📥 Download Version"
+              condition: succeeded()
 
             - script: |
-                ls -R $(Pipeline.Workspace)/downloaded-versions/versions
-                VERSION_FILE="$(Pipeline.Workspace)/downloaded-versions/versions/version.json"
+                VERSION_FILE="$(Pipeline.Workspace)/version-downloaded/versions/microservice/version.json"
+
+                echo -e "\n📁 Archivo version.json:"
+                ls -la "$VERSION_FILE"
+                cat "$VERSION_FILE"
+
                 if [[ -f "$VERSION_FILE" ]]; then
                   VERSION=$(jq -r '.version' $VERSION_FILE)
                   echo -e "\n🚀 Versión detectada para $(Build.Repository.Name): $VERSION"
-                  echo "##vso[task.setvariable variable=msVersion]$VERSION"
+                  echo "##vso[task.setvariable variable=version]$VERSION"
                 else
-                  echo "##vso[task.logissue type=error]❌ No se encontró archivo de versión para $(Build.Repository.Name)"
+                  echo -e "\n##vso[task.logissue type=error]⚠️ No se encontro archivo de versión para $(Build.Repository.Name)"
                   exit 99
                 fi
-              displayName: "📖 Read Microservice Versions"
+              displayName: "📚 Read Version"
+              condition: succeeded()
 
             - script: |
                 echo "Logging in to ECR..."
@@ -91,7 +97,7 @@ jobs:
                   echo "$CLEAN_NAME"
 
                   REPO_NAME="pruebas-pipeline-$(clean_name_ecr)-$clean_branch"
-                  IMAGE_TAG="$(msVersion)"
+                  IMAGE_TAG="$(version)"
 
                   echo "🔍 Verificando si la imagen '$IMAGE_TAG' existe en '$REPO_NAME'..."
 
@@ -115,45 +121,127 @@ jobs:
                 export AWS_SECRET_ACCESS_KEY
                 export AWS_REGION
 
-                BRANCH_NAME=$(echo "$(Build.SourceBranchName)")
+                # BRANCH_NAME=$(echo "$(Build.SourceBranchName)")
 
-                REPO_NAME="$(Build.Repository.Name)"
+                # REPO_NAME="$(Build.Repository.Name)"
 
+                BRANCH_NAME="$BUILD_SOURCEBRANCHNAME"
+                REPO_NAME="$BUILD_REPOSITORY_NAME"
+                RED="${red:-}"
+
+                echo "📦 Repo: $REPO_NAME"
+                echo "🌿 Branch: $BRANCH_NAME"
+                echo "🏠 Red: $RED"
+
+                # 🧹 Limpieza base del nombre (para BFFs)
                 if [[ "$REPO_NAME" == bff-*-invictus ]]; then
-                    CLEAN_NAME="${REPO_NAME#bff-}"        # quita prefijo bff-
-                    CLEAN_NAME="${CLEAN_NAME%-invictus}"  # quita sufijo -invictus
-                    echo "$CLEAN_NAME"
-                    name_bff="bff-$CLEAN_NAME-invictus"
-                    echo "$name_bff"
+                    CLEAN_NAME="${REPO_NAME#bff-}"
+                    CLEAN_NAME="${CLEAN_NAME%-invictus}"
+                    name_bff="bff-${CLEAN_NAME}-invictus"
+                else
+                    CLEAN_NAME="${REPO_NAME%-invictus}"
                 fi
 
-                if [[ "$(cleanMsName)" == "notifier" && ( "$BRANCH_NAME" == "develop" || "$BRANCH_NAME" == "staging" ) ]]; then
-                    CLUSTER=msnotifier-cluster
-                    SERVICES=msnotifier-fg-service
+                echo "🧩 Clean name: $CLEAN_NAME"
+
+                # 🏗️ Definir valores por defecto (mantener los heredados de DevOps)
+                CLUSTER="${CLUSTER:-$cluster_name}"   # cluster heredado de variable YAML si existe
+                SERVICES="${SERVICES:-$service_name}" # service heredado
+
+                # ⚙️ Función auxiliar para asignar si aplica
+                set_cluster_service() {
+                  local new_cluster="$1"
+                  local new_service="$2"
+                  CLUSTER="$new_cluster"
+                  SERVICES="$new_service"
+                }
+
+                # 🧠 Lógica agrupada de condiciones
+
+                case "$(cleanMsName)" in
+                  notifier)
+                    if [[ "$BRANCH_NAME" == "develop" || "$BRANCH_NAME" == "staging" || "$RED" == "cap" || "$RED" == "antioquia" ]]; then
+                      set_cluster_service "msnotifier-cluster" "msnotifier-fg-service"
+                    fi
+                    ;;
+                  raffle)
+                    if [[ "$BRANCH_NAME" == "develop" || "$BRANCH_NAME" == "staging" || "$RED" == "cap" || "$RED" == "antioquia" ]]; then
+                      set_cluster_service "raffles-ms-cluster" "raffles-ms-fg-service"
+                    elif [[ "$RED" != "cap" && "$RED" != "antioquia" && "$BRANCH_NAME" != "develop" && "$BRANCH_NAME" != "staging" ]]; then
+                      SERVICES="raffles"
+                    fi
+                    ;;
+                esac
+
+                # 🧱 Casos específicos para BFFs
+                if [[ "$REPO_NAME" == "$name_bff" ]]; then
+                    if [[ "$BRANCH_NAME" == "develop" || "$BRANCH_NAME" == "staging" || "$RED" == "cap" || "$RED" == "antioquia" ]]; then
+                        set_cluster_service "bff-${CLEAN_NAME}-cluster" "bff-${CLEAN_NAME}-fg-service"
+                    fi
                 fi
 
-                if [[ "$(cleanMsName)" == "raffle" && ( "$BRANCH_NAME" == "develop" || "$BRANCH_NAME" == "staging" ) ]]; then
-                    CLUSTER=raffles-ms-cluster
-                    SERVICES=raffles-ms-fg-service
-                fi
-
-                if [[ "$REPO_NAME" == "$name_bff" && ( "$red" == "cap" || "$red" == "antioquia" ) ]]; then
-                    CLUSTER=$(clean_name_ecr)-cluster
-                    SERVICES=$(clean_name_ecr)-fg-service
-                fi
-                if [[ "$(cleanMsName)" == "raffle" && ( "$red" == "cap" || "$red" == "antioquia" ) ]]; then
-                    CLUSTER=raffles-ms-cluster
-                    SERVICES=raffles-ms-fg-service
-                fi
-                if [[ "$(cleanMsName)" == "notifier" && ( "$red" == "cap" || "$red" == "antioquia" ) ]]; then
-                    CLUSTER=msnotifier-cluster
-                    SERVICES=msnotifier-fg-service
-                fi
-                if [[ "$(cleanMsName)" == "raffle" && ! ( "$red" == "cap" || "$red" == "antioquia" || "$BRANCH_NAME" == "develop" || "$BRANCH_NAME" == "staging" ) ]]; then
-                    SERVICES=raffles
-                fi
+                # 🪄 Resultado final
                 echo "🛡️ Cluster: $CLUSTER"
                 echo "📦 Services: $SERVICES"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                # if [[ "$REPO_NAME" == bff-*-invictus ]]; then
+                #     CLEAN_NAME="${REPO_NAME#bff-}"        # quita prefijo bff-
+                #     CLEAN_NAME="${CLEAN_NAME%-invictus}"  # quita sufijo -invictus
+                #     echo "$CLEAN_NAME"
+                #     name_bff="bff-$CLEAN_NAME-invictus"
+                #     echo "$name_bff"
+                # fi
+
+                # if [[ "$(cleanMsName)" == "notifier" && ( "$BRANCH_NAME" == "develop" || "$BRANCH_NAME" == "staging" ) ]]; then
+                #     CLUSTER=msnotifier-cluster
+                #     SERVICES=msnotifier-fg-service
+                # fi
+
+                # if [[ "$(cleanMsName)" == "raffle" && ( "$BRANCH_NAME" == "develop" || "$BRANCH_NAME" == "staging" ) ]]; then
+                #     CLUSTER=raffles-ms-cluster
+                #     SERVICES=raffles-ms-fg-service
+                # fi
+
+                #  if [[ "$REPO_NAME" == "$name_bff" && ( "$BRANCH_NAME" == "develop" || "$BRANCH_NAME" == "staging" ) ]]; then
+                #     CLUSTER=$(clean_name_ecr)-cluster
+                #     SERVICES=$(clean_name_ecr)-fg-service
+                # fi
+
+                # if [[ "$REPO_NAME" == "$name_bff" && ( "$red" == "cap" || "$red" == "antioquia" ) ]]; then
+                #     CLUSTER=$(clean_name_ecr)-cluster
+                #     SERVICES=$(clean_name_ecr)-fg-service
+                # fi
+                # if [[ "$(cleanMsName)" == "raffle" && ( "$red" == "cap" || "$red" == "antioquia" ) ]]; then
+                #     CLUSTER=raffles-ms-cluster
+                #     SERVICES=raffles-ms-fg-service
+                # fi
+                # if [[ "$(cleanMsName)" == "notifier" && ( "$red" == "cap" || "$red" == "antioquia" ) ]]; then
+                #     CLUSTER=msnotifier-cluster
+                #     SERVICES=msnotifier-fg-service
+                # fi
+                # if [[ "$(cleanMsName)" == "raffle" && ! ( "$red" == "cap" || "$red" == "antioquia" || "$BRANCH_NAME" == "develop" || "$BRANCH_NAME" == "staging" ) ]]; then
+                #     SERVICES=raffles
+                # fi
+                # echo "🛡️ Cluster: $CLUSTER"
+                # echo "📦 Services: $SERVICES"
 
 
                 echo "Obteniendo task definition..."
@@ -206,7 +294,7 @@ jobs:
                 AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
 
             - script: |
-                newTag="$(msVersion)"
+                newTag="$(version)"
 
                 jq --arg newTag "$newTag" '
                   .containerDefinitions |= map(

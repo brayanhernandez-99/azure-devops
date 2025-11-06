@@ -1,0 +1,171 @@
+jobs:
+  - job: "build_micro_service"
+    displayName: "🐳 build docker image"
+    pool:
+      name: "Azure Pipelines"
+      VmImage: "ubuntu-22.04"
+
+    variables:
+      - template: ../../variables/groups-transversal-variables-backend.yml
+
+    steps:
+      - checkout: self
+        fetchDepth: 1
+        persistCredentials: true
+
+      - checkout: git://DevOps-templates-UX/pipelines-templates@feature/electron
+        fetchDepth: 1
+        persistCredentials: true
+
+      - task: DownloadBuildArtifacts@0
+        inputs:
+          artifactName: "versions"
+          downloadPath: "$(Pipeline.Workspace)/version-downloaded"
+        displayName: "📥 Download Version"
+        condition: succeeded()
+
+      - script: |
+          VERSION_FILE="$(Pipeline.Workspace)/version-downloaded/versions/microservice/version.json"
+
+          echo -e "\n📁 Archivo version.json:"
+          ls -la "$VERSION_FILE"
+          cat "$VERSION_FILE"
+
+          if [[ -f "$VERSION_FILE" ]]; then
+            VERSION=$(jq -r '.version' $VERSION_FILE)
+            echo -e "\n🚀 Versión detectada para $(Build.Repository.Name): $VERSION"
+            echo "##vso[task.setvariable variable=version]$VERSION"
+          else
+            echo -e "\n##vso[task.logissue type=error]⚠️ No se encontro archivo de versión para $(Build.Repository.Name)"
+            exit 99
+          fi
+        displayName: "📚 Read Version"
+        condition: succeeded()
+
+      - script: |
+          echo "build dev docker images"
+          DOCKERFILE_PATH=$(Build.Repository.Name)/Dockerfile
+          echo "Verificando existencia de: $DOCKERFILE_PATH"
+
+          if [ -f "$DOCKERFILE_PATH" ]; then
+            echo "✅ Ya existe el Dockerfile en $DOCKERFILE_PATH"
+            ls -la $(Build.Repository.Name)
+          else
+            echo "⚠️ No existe el Dockerfile. Copiando desde templates..."
+            cp pipelines-templates/pipeline/docker/Dockerfile $(Build.Repository.Name)/Dockerfile
+            echo "✅ Dockerfile copiado exitosamente."
+            ls -la $(Build.Repository.Name)
+          fi
+        displayName: "📝 Check or Copy Dockerfile"
+
+      - task: Bash@3
+        name: AuthCodeArtifact
+        inputs:
+          targetType: "inline"
+          script: |
+            echo -e "\n🔐 Obteniendo token de AWS CodeArtifact..."
+            token=$(aws codeartifact get-authorization-token \
+              --domain matrixtech-npm-repository \
+              --domain-owner "$ACCOUNT_ID_DEPLOY" \
+              --region "$AWS_DEFAULT_REGION" \
+              --query authorizationToken \
+              --output text)
+
+            REPO_DOMAIN="matrixtech-npm-repository-$ACCOUNT_ID_DEPLOY.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com"
+            REPO_PATH="npm/matrixtech-npm-repository"
+            REPO_URL="https://$REPO_DOMAIN/$REPO_PATH"
+
+            echo "Configurando npm..."
+            npm config set "//$REPO_DOMAIN/$REPO_PATH/:_authToken" "$token"
+            npm config set registry "$REPO_URL"
+
+            echo "Verificando identidad de AWS..."
+            aws sts get-caller-identity
+
+            echo -e "\n📁 Generando archivo .npmrc"
+            cat <<EOF > "$(Build.Repository.Name)/.npmrc"
+            //$REPO_DOMAIN/$REPO_PATH/:_authToken=$token
+            registry=$REPO_URL
+            EOF
+            ls -la $(Build.Repository.Name)/.npmrc
+        displayName: "🔐 Setup CodeArtifact & npm config"
+        condition: succeeded()
+        env:
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
+          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
+
+      - script: |
+          echo "Logging in to ECR..."
+          aws ecr get-login-password --region $AWS_DEFAULT_REGION | \
+          docker login --username AWS --password-stdin $ACCOUNT_ID_DEPLOY.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+        displayName: "🔑 Login to AWS ECR"
+        env:
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
+          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
+
+      - script: |
+          REPO_NAME="$(Build.Repository.Name)"
+          CURRENT_BRANCH=$(echo $(Build.SourceBranch))
+
+          if [[ "$REPO_NAME" == "microservice-notifier-invictus" ]]; then
+              CLEAN_NAME="notifier"
+          else
+              CLEAN_NAME="${REPO_NAME%-invictus}"   # quita solo el sufijo -invictus
+          fi
+
+          if [[ "$CURRENT_BRANCH" == refs/heads/develop ]]; then
+            raw_branch=$(Build.SourceBranch)
+            clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
+          fi
+
+          if [[ "$CURRENT_BRANCH" == refs/heads/staging ]]; then
+            clean_branch=qa
+          fi
+
+          if [[ "$CURRENT_BRANCH" == refs/heads/master ]]; then
+            clean_branch=prd
+          fi
+
+          echo "$CLEAN_NAME"
+          echo "$clean_branch"
+          echo "##vso[task.setvariable variable=clean_name_ecr]$CLEAN_NAME"
+          echo "##vso[task.setvariable variable=branch_docker]$clean_branch"
+        displayName: "📛 Set ECR Repository Name"
+
+      - task: Docker@2
+        displayName: "📦 Build Container Image Development $(Build.Repository.Name)"
+        continueOnError: true
+        inputs:
+          command: "build"
+          Dockerfile: "$(Build.Repository.Name)/Dockerfile"
+          repository: "$(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/pruebas-pipeline-$(clean_name_ecr)-$(branch_docker)"
+          tags: $(version)
+
+      - script: |
+          echo "Verificando si existe el repositorio pruebas-pipeline-$(clean_name_ecr)-$(branch_docker)"
+          aws ecr describe-repositories \
+            --repository-names pruebas-pipeline-$(clean_name_ecr)-$(branch_docker) \
+            --region $AWS_DEFAULT_REGION > /dev/null 2>&1
+
+          if [ $? -ne 0 ]; then
+            echo "Repositorio no existe. Creándolo..."
+            aws ecr create-repository \
+              --repository-name pruebas-pipeline-$(clean_name_ecr)-$(branch_docker) \
+              --region $AWS_DEFAULT_REGION
+          else
+            echo "Repositorio ya existe. Continuando..."
+          fi
+        displayName: "🛡️ Ensure ECR Repository Exists"
+        env:
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
+          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
+
+      - task: Docker@2
+        displayName: "🚀 Push Container Image $(Build.SourceBranch) $(Build.Repository.Name)"
+        inputs:
+          command: "Push"
+          repository: "$(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/pruebas-pipeline-$(clean_name_ecr)-$(branch_docker)"
+          tags: $(version)

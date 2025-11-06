@@ -17,10 +17,6 @@ jobs:
             msName: ${{ ms }}
 
     steps:
-      - checkout: self
-        fetchDepth: 0
-        persistCredentials: true
-
       - task: DownloadBuildArtifacts@0
         inputs:
           artifactName: "versions"
@@ -135,7 +131,14 @@ jobs:
 
           echo -e "\n📁 File package.json:"      
           cat $(System.DefaultWorkingDirectory)/$(file)/$(msName)/package.json
-        displayName: "📝 Update version in package.json"
+        displayName: "📝 Update Version package.json"
+        condition: succeeded()
+
+      - task: NodeTool@0
+        displayName: "🔧 Install Nodejs $(nodeVersion)"
+        inputs:
+          versionSource: "spec"
+          versionSpec: "$(nodeVersion)"
         condition: succeeded()
 
       - script: |
@@ -146,13 +149,6 @@ jobs:
         condition: and(succeeded(),
           ne(variables['msName'], 'app-administration-vue2'),
           ne(variables['msName'], 'app-sellers-vue2'))
-
-      - task: NodeTool@0
-        displayName: "🔧 Install Nodejs $(nodeVersion)"
-        inputs:
-          versionSource: "spec"
-          versionSpec: "$(nodeVersion)"
-        condition: succeeded()
 
       - script: |
           echo -e "\n📁 Generando archivo .pnpmrc en: $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc"
@@ -165,6 +161,9 @@ jobs:
           EOF
           ls -l $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc
           cat $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc
+
+          cat $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc >> $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.npmrc
+          echo -e "\n✅ Contenido de .pnpmrc anexado a .npmrc correctamente."
 
           cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
           echo -e "\n⚙️ Instalando dependencias node..."
@@ -236,8 +235,8 @@ jobs:
       #     SonarQube: "SonarQubeConection"
       #     scannerMode: "CLI"
       #     configMode: "manual"
-      #     cliProjectKey: "pruebas-microfronted-$(msName)"
-      #     cliProjectName: "pruebas-microfronted-$(msName)"
+      #     cliProjectKey: "$(Build.Repository.Name)"
+      #     cliProjectName: "$(Build.Repository.Name)"
       #     cliSources: "$(System.DefaultWorkingDirectory)/$(file)/$(msName)"
       #     extraProperties: |
       #       sonar.javascript.lcov.reportPaths=$(System.DefaultWorkingDirectory)/$(file)/$(msName)/coverage/lcov.info
@@ -285,9 +284,9 @@ jobs:
       #     ne(variables['Build.SourceBranchName'], 'master'))
 
       # - task: SonarQubePublish@7
-      #   displayName: "📤 Publish Static Code Analysis Results"
       #   inputs:
       #     pollingTimeoutSec: 400
+      #   displayName: "📤 Publish Static Code Analysis Results"
       #   condition: and(succeeded(),
       #     ne(variables['msName'], 'app-administration-vue2'),
       #     ne(variables['msName'], 'app-sellers-vue2'),
@@ -295,7 +294,7 @@ jobs:
 
       # - template: sonarqube/job-sonarqube.yml@sonarqube
       #   parameters:
-      #     msName: $(msName)
+      #     projectKey: $(Build.Repository.Name)
 
       - task: PublishBuildArtifacts@1
         inputs:

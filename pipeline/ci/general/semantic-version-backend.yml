@@ -1,6 +1,6 @@
 jobs:
-  - job: "semantic_version_micro_microservices"
-    displayName: "🔖 Semantic Versioning MicroServices"
+  - job: "semantic_version_micro_micro_service"
+    displayName: "🏷️ version microservice"
     pool:
       name: "Azure Pipelines"
       VmImage: ubuntu-22.04
@@ -49,22 +49,46 @@ jobs:
           startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
 
       - script: |
-          REPO_ID=$(curl -s -u ":$AZURE_DEVOPS_CLI_PAT" \
-            "https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories?api-version=5.0" \
-            | jq -r '.value[] | select(.name == "$(Build.Repository.Name)").id')
-          echo "id del repositorio $(Build.Repository.Name) = $REPO_ID"
+          sourceBranch="${BUILD_SOURCEBRANCH/refs\/heads\//}"
+          targetBranch="master"
+
+          echo -e "\n🔎 Verificando que no se hayan agregado nuevas sentencias console.log..."
+          echo "Branch actual: $sourceBranch"
+          echo "Branch destino: $targetBranch"
+
+          git fetch origin "$targetBranch"
+          diff=$(git --no-pager diff "origin/$targetBranch..origin/$sourceBranch")
+
+          if echo "$diff" | grep -qE '^\+.*console\.log'; then
+            echo -e "\n##vso[task.logissue type=error]⚠️ Se encontro 'console.log' en los cambios"
+            exit 99
+          else
+            echo -e "\n✅ No se encontraron sentencias 'console.log' en los cambios"
+          fi
+        displayName: "🔍 Validate for 'console.log' in changes"
+        condition: and(succeeded(), or(
+          startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'),
+          startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
+
+      - script: |
+          REPO_NAME="$(Build.Repository.Name)"          
+          RESPONSE=$(curl -s -u ":$AZURE_DEVOPS_CLI_PAT" \
+            "https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories?api-version=5.0")
+          REPO_ID=$(echo "$RESPONSE" | jq -r --arg repo "$REPO_NAME" '.value[] | select(.name == $repo).id')
+
           echo "##vso[task.setvariable variable=repoID]$REPO_ID"
+          echo "ℹ️ id del repositorio $REPO_NAME: $REPO_ID"
         env:
           AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
         displayName: "📌 Set Repository ID"
-        condition: and(
+        condition: and(succeeded(),
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
 
       - script: |
-          echo "id del repositorio $(Build.Repository.Name) = $(repoID)"
-
           CURRENT_BRANCH=$(echo $(Build.SourceBranch))
+          echo -e "\nℹ️ id repositorio $(Build.Repository.Name): $(repoID)"
+          echo "Branch Actual: $CURRENT_BRANCH"
 
           if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
             CURRENT_BRANCH_PR=refs/heads/feature
@@ -79,7 +103,7 @@ jobs:
           echo "$response" | jq '.value[0]'
           PR_ID=$(echo "$response" | jq -r '.value[0].pullRequestId')
 
-          echo "id del pr $PR_ID"
+          echo -e "\nℹ️ id del pr $PR_ID"
           echo "##vso[task.setvariable variable=ultimoPR]$PR_ID"
 
           mkdir -p $(Build.ArtifactStagingDirectory)/idpr
@@ -93,8 +117,9 @@ jobs:
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
 
       - script: |
-          echo "Pull Request ID recuperado: $(ultimoPR)"
-          echo "id del repositorio $(Build.Repository.Name) = $(repoID)" 
+          echo -e "\nℹ️ Pull Request ID recuperado: $(ultimoPR)"
+          echo "id del repositorio $(Build.Repository.Name) = $(repoID)"
+
           COMMITS=$(curl -s -u ":$AZURE_DEVOPS_CLI_PAT" \
             "https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories/$(repoID)/pullRequests/$(ultimoPR)/commits?api-version=7.0" \
             | jq -r '.value[].comment' | grep -E 'feat:|fix:|!')
@@ -103,35 +128,14 @@ jobs:
           echo "##vso[task.setvariable variable=filteredCommits]$SAFE_COMMITS"
         env:
           AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
-        displayName: "📝 Pull Request Commit Details"
+        displayName: "📌 Pull Request Commit Details"
         condition: and(succeeded(),
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
 
-      # - script: |
-      #     sourceBranch="${BUILD_SOURCEBRANCH/refs\/heads\//}"
-      #     targetBranch="master"
-
-      #     echo -e "\n🔎 Verificando que no se hayan agregado nuevas sentencias console.log..."
-      #     echo "Branch actual: $sourceBranch"
-      #     echo "Branch destino: $targetBranch"
-
-      #     git fetch origin "$targetBranch"
-      #     diff=$(git --no-pager diff "origin/$targetBranch..origin/$sourceBranch")
-
-      #     if echo "$diff" | grep -qE '^\+.*console\.log'; then
-      #       echo -e "\n##vso[task.logissue type=error]⚠️ Se encontro 'console.log' en los cambios"
-      #       exit 99
-      #     else
-      #       echo -e "\n✅ No se encontraron sentencias 'console.log' en los cambios"
-      #     fi
-      #   displayName: "🔍 Check for 'console.log' in changes"
-      #   condition: and(succeeded(), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
-
       - script: |
-          # cd $(System.DefaultWorkingDirectory)/apps/$(msName)
           CURRENT_BRANCH=$(echo $(Build.SourceBranch))
-          echo $CURRENT_BRANCH
+          echo -e "\nℹ️ Branch Actual: $CURRENT_BRANCH"
 
           if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|master|staging|feature/.+|hotfix/.+)$ ]]; then
 
@@ -276,40 +280,40 @@ jobs:
               echo "🚀 Próxima versión : $NEXT_VERSION"
             fi
 
-            mkdir -p $(Build.ArtifactStagingDirectory)
-            touch $(Build.ArtifactStagingDirectory)/version.json
-            echo "{ \"ms\": \"$(Build.Repository.Name)\", \"version\": \"$NEXT_VERSION\" }" > $(Build.ArtifactStagingDirectory)/version.json
+            mkdir -p $(Build.ArtifactStagingDirectory)/microservice
+            touch $(Build.ArtifactStagingDirectory)/microservice/version.json
+            echo "{ \"ms\": \"$(Build.Repository.Name)\", \"version\": \"$NEXT_VERSION\" }" > $(Build.ArtifactStagingDirectory)/microservice/version.json
 
             echo "##vso[task.setvariable variable=cleanNEXT_VERSION]$NEXT_VERSION"
           fi
         displayName: "🔍 Detect next version"
-        name: SemanticJob
-
-      - task: PublishBuildArtifacts@1
-        inputs:
-          PathtoPublish: "$(Build.ArtifactStagingDirectory)"
-          ArtifactName: "versions"
-          publishLocation: "Container"
-        displayName: "📦 Publish Versioned Artifacts by Microservice"
+        condition: succeeded()
 
       - script: |
           raw_branch=$(Build.SourceBranch)
           clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
 
-          # cd $(System.DefaultWorkingDirectory)/apps/$(msName)
-          echo "🔧 Actualizando versión en $(Build.Repository.Name)/package.json a $(cleanNEXT_VERSION)"
-          jq --arg version "$(cleanNEXT_VERSION)" '.version = $version' package.json > tmp.json && mv tmp.json package.json
-
           git config user.name "pipeline"
           git config user.email "pipelineUX@ux.technology"
+
+          echo "🔧 Actualizando versión en $(Build.Repository.Name)/package.json a $(cleanNEXT_VERSION)"
+          jq --arg version "$(cleanNEXT_VERSION)" '.version = $version' package.json > tmp.json && mv tmp.json package.json
 
           git checkout version/$clean_branch
           git pull origin version/$clean_branch
           git add package.json
           git commit -m "chore($(Build.Repository.Name)): bump version to $(cleanNEXT_VERSION)"
           git push origin version/$clean_branch
-        displayName: "⚡ Bump Version & Push — $(Build.Repository.Name)"
+        displayName: "⚡ Commit Version & Push — $(Build.Repository.Name)"
         condition: and(succeeded(),
           ne(variables['Build.SourceBranchName'], 'master'),
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
+
+      - task: PublishBuildArtifacts@1
+        inputs:
+          PathtoPublish: "$(Build.ArtifactStagingDirectory)"
+          ArtifactName: "versions"
+          publishLocation: "Container"
+        displayName: "📥 Publish Versioned Artifacts by Microservice"
+        condition: succeeded()

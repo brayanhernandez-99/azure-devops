@@ -1,31 +1,31 @@
 stages:
   - stage: semantic_version_micro_services
-    displayName: "🏷️ Semantic Version Microservices"
+    displayName: "🏷️ Semantic Version MicroService"
     jobs:
       - template: ../ci/semantic-version-integration.yml
         parameters:
           release: ${{ parameters.release }}
 
   - ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), eq(variables['Build.SourceBranch'], 'refs/heads/develop')) }}:
-      - stage: test_micro_services
-        displayName: "📦 Test Microservices"
+      - stage: sonar_micro_services
+        displayName: "🛡️ Sonarqube MicroService"
         dependsOn: semantic_version_micro_services
         jobs:
-          - template: ../ci/test/test-backend.yml
+          - template: ../ci/tests/sonar-backend.yml
 
   #####################################################################
 
   - ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
 
       - stage: build_micro_services_master
-        displayName: "📦 Build Microservices Master"
+        displayName: "📦 Build MicroService Master"
         dependsOn: semantic_version_micro_services
         jobs:
-          - template: ../ci/build/build-micro-services.yml
+          - template: ../ci/build/build-backend.yml
 
       - ${{ each region in parameters.red }}:
           - stage: deploy_micro_services_${{ region }}
-            displayName: "🚀 Deploy Microservices ${{ region }}"
+            displayName: "🚀 Deploy MicroService ${{ region }}"
             dependsOn: build_micro_services_master
             jobs:
               - template: ../cd/deployment.yml
@@ -37,21 +37,21 @@ stages:
 
   - ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}:
       - stage: build_micro_services
-        displayName: "📦 Build Microservices"
-        dependsOn: test_micro_services
+        displayName: "📦 Build MicroService"
+        dependsOn: sonar_micro_services
         jobs:
-          - template: ../ci/build/build-micro-services.yml
+          - template: ../ci/build/build-backend.yml
 
   - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
       - stage: build_micro_services
-        displayName: "📦 Build Microservices"
+        displayName: "📦 Build MicroService"
         dependsOn: semantic_version_micro_services
         jobs:
-          - template: ../ci/build/build-micro-services.yml
+          - template: ../ci/build/build-backend.yml
 
   - ${{ if in(variables['Build.SourceBranchName'], 'develop', 'staging') }}:
       - stage: deploy_micro_services
-        displayName: "🚀 Deploy Microservices"
+        displayName: "🚀 Deploy MicroService"
         dependsOn: build_micro_services
         jobs:
           - template: ../cd/deployment.yml
