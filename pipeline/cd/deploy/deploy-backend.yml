@@ -72,7 +72,7 @@ jobs:
                     CLEAN_NAME="${REPO_NAME%-invictus}"   # quita solo el sufijo -invictus
                 fi
 
-                echo "$CLEAN_NAME"
+                echo "🧩 Clean name: $CLEAN_NAME"
                 echo "##vso[task.setvariable variable=clean_name_ecr]$CLEAN_NAME"
               displayName: "📛 Set ECR Repository Name"
 
@@ -93,8 +93,6 @@ jobs:
                   if [[ "$CURRENT_BRANCH" == refs/heads/master ]]; then
                     clean_branch=prd
                   fi
-
-                  echo "$CLEAN_NAME"
 
                   REPO_NAME="pruebas-pipeline-$(clean_name_ecr)-$clean_branch"
                   IMAGE_TAG="$(version)"
@@ -121,10 +119,6 @@ jobs:
                 export AWS_SECRET_ACCESS_KEY
                 export AWS_REGION
 
-                # BRANCH_NAME=$(echo "$(Build.SourceBranchName)")
-
-                # REPO_NAME="$(Build.Repository.Name)"
-
                 BRANCH_NAME="$BUILD_SOURCEBRANCHNAME"
                 REPO_NAME="$BUILD_REPOSITORY_NAME"
                 RED="${red:-}"
@@ -144,7 +138,6 @@ jobs:
 
                 echo "🧩 Clean name: $CLEAN_NAME"
 
-                # 🏗️ Definir valores por defecto (mantener los heredados de DevOps)
                 CLUSTER="${CLUSTER:-$cluster_name}"   # cluster heredado de variable YAML si existe
                 SERVICES="${SERVICES:-$service_name}" # service heredado
 
@@ -155,8 +148,6 @@ jobs:
                   CLUSTER="$new_cluster"
                   SERVICES="$new_service"
                 }
-
-                # 🧠 Lógica agrupada de condiciones
 
                 case "$(cleanMsName)" in
                   notifier)
@@ -180,7 +171,6 @@ jobs:
                     fi
                 fi
 
-                # 🪄 Resultado final
                 echo "🛡️ Cluster: $CLUSTER"
                 echo "📦 Services: $SERVICES"
 
@@ -213,9 +203,6 @@ jobs:
                 echo "Obteniendo family de task definition..."
                 ARN='$(taskDefinitionArn)'
                 echo $ARN
-                echo $(cluster_name)
-                echo $(service_name)
-
                 FAMILY=$(echo $ARN | cut -d'/' -f2 | cut -d':' -f1)
                 echo "##vso[task.setvariable variable=taskFamily]$FAMILY"
               displayName: "📌 Extract Family from ARN"
@@ -300,39 +287,13 @@ jobs:
             #     export AWS_SECRET_ACCESS_KEY
             #     export AWS_REGION
 
-            #     echo $(taskDefinitionArnNew)
-            #     REPO_NAME="$(Build.Repository.Name)"
-
-            #     if [[ "$REPO_NAME" == bff-*-invictus ]]; then
-            #         CLEAN_NAME="${REPO_NAME#bff-}"        # quita prefijo bff-
-            #         CLEAN_NAME="${CLEAN_NAME%-invictus}"  # quita sufijo -invictus
-            #         echo "$CLEAN_NAME"
-            #         name_bff="bff-$CLEAN_NAME-invictus"
-            #         echo "$name_bff"
-            #     fi
-
-            #     if [[ "$REPO_NAME" == "$name_bff" && ( "$red" == "cap" || "$red" == "antioquia" ) ]]; then
-            #         CLUSTER=$(clean_name_ecr)-cluster
-            #         SERVICES=$(clean_name_ecr)-fg-service
-            #     fi
-            #     if [[ "$(cleanMsName)" == "raffle" && ( "$red" == "cap" || "$red" == "antioquia" ) ]]; then
-            #         CLUSTER=raffles-ms-cluster
-            #         SERVICES=raffles-ms-fg-service
-            #     fi
-            #     if [[ "$(cleanMsName)" == "notifier" && ( "$red" == "cap" || "$red" == "antioquia" ) ]]; then
-            #         CLUSTER=msnotifier-cluster
-            #         SERVICES=msnotifier-fg-service
-            #     fi
-            #     if [[ "$(cleanMsName)" == "raffle" && ! ( "$red" == "cap" || "$red" == "antioquia" ) ]]; then
-            #         SERVICES=raffles
-            #     fi
-
-            #     echo "🛡️ Cluster: $CLUSTER"
-            #     echo "📦 Services: $SERVICES"
+            #     echo "🔹 Task Definition ARN : $(taskDefinitionArnNew)"
+            #     echo "🔹 Cluster             : $(cluster_name)"
+            #     echo "🔹 Service             : $(service_name)"
 
             #     aws ecs update-service \
-            #       --cluster $CLUSTER \
-            #       --service $SERVICES \
+            #       --cluster $(cluster_name) \
+            #       --service $(service_name) \
             #       --task-definition $(taskDefinitionArnNew) \
             #       --region $AWS_DEFAULT_REGION
             #   displayName: "⚡ Deploy New Task Definition to Service"
@@ -340,4 +301,3 @@ jobs:
             #     AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVIC)
             #     AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVIC)
             #     AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
-            #     red: ${{ parameters.red }}
