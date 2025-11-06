@@ -20,6 +20,13 @@ jobs:
         persistCredentials: true
 
       - script: |
+          echo -e "\nParametro: ${{ parameters.apps }}"
+          
+          echo -e "\nApps desde el stage anterior:"
+          echo "$(dependencies.change_files_micro_fronted.outputs['changes_files_frontend.SetApps.apps'])"
+        displayName: "🔎 Apps "
+
+      - script: |
           echo -e "\n📌 Verificando si feature está actualizada con master y si hay cambios relevantes..."
           echo "Branch Actual: $(echo $(Build.SourceBranch))"          
           git fetch origin master
