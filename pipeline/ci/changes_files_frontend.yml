@@ -7,7 +7,7 @@ jobs:
 
     steps:
       - checkout: self
-        fetchDepth: 0
+        fetchDepth: 1
 
       - script: |
           # Lista inicial de apps
