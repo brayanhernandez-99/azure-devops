@@ -1,5 +1,5 @@
 jobs:
-  - job: deploy_electron
+  - job: deploy_micro_service
     displayName: "🚀 deploy docker image"
     pool:
       name: "Azure Pipelines"
