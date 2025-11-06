@@ -21,10 +21,10 @@ jobs:
           echo "$apps" | jq
 
           # Ejemplo: quitar "app-sellers-vue2"
-          apps=$(echo "$apps" | jq '[.[] | select(. != "app-sellers-vue2")]')
+          apps=$(echo "$apps" | jq -c '[.[] | select(. != "app-sellers-vue2")]')
 
           echo -e "\n📦 Apps despues de filtrar:"
-          echo "$apps" | jq
+          echo "$apps"
 
           # Exportamos como variable de salida del job
           echo "##vso[task.setvariable variable=apps;isOutput=true]$apps"
