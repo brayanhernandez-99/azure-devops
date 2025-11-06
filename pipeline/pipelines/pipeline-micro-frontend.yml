@@ -1,3 +1,7 @@
+parameters:
+  - name: release
+    type: string
+    
 stages:
   - stage: change_files_micro_fronted
     displayName: "🔍 Change Files MicroFrontend"
