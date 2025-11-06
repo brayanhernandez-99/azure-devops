@@ -1,66 +1,51 @@
-stages:
-  - stage: change_files_micro_fronted
-    displayName: "🔍 Change Files MicroFrontend"
-    jobs:
-      - template: ../ci/changes_files_frontend.yml
+- stage: semantic_version_micro_fronted
+  displayName: "🏷️ Semantic Version MicroFrontend"
+  jobs:
+    - template: ../ci/semantic-version-integration.yml
+      parameters:
+        apps: ${{ parameters.apps }}
+        release: ${{ parameters.release }}
 
-  - stage: semantic_version_micro_fronted
-    displayName: "🏷️ Semantic Version MicroFrontend"
-    dependsOn: change_files_micro_fronted
-    jobs:
-      - template: ../ci/semantic-version-integration.yml
-        parameters:
-          release: ${{ parameters.release }}
-          apps: $[ dependencies.change_files_micro_fronted.outputs['changes_files_frontend.SetApps.apps'] ]
+#####################################################################
 
-  # - stage: semantic_version_micro_fronted
-  #   displayName: "🏷️ Semantic Version MicroFrontend"
-  #   jobs:
-  #     - template: ../ci/semantic-version-integration.yml
-  #       parameters:
-  #         apps: ${{ parameters.apps }}
-  #         release: ${{ parameters.release }}
+- ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
+    - ${{ each region in parameters.red }}:
+        - stage: build_micro_frontend_${{ region }}
+          displayName: "📦 Build MicroFrontend ${{ region }}"
+          dependsOn: semantic_version_micro_fronted
+          jobs:
+            - template: ../ci/build/build-frontend.yml
+              parameters:
+                region: ${{ region }}
+                apps: ${{ parameters.apps }}
 
-  #####################################################################
+        - stage: deploy_micro_frontend_${{ region }}
+          displayName: "🚀 Deploy MicroFrontend ${{ region }}"
+          dependsOn: build_micro_frontend_${{ region }}
+          jobs:
+            - template: ../cd/deployment.yml
+              parameters:
+                region: ${{ region }}
+                apps: ${{ parameters.apps }}
+                release: ${{ parameters.release }}
 
-  # - ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
-  #     - ${{ each region in parameters.red }}:
-  #         - stage: build_micro_frontend_${{ region }}
-  #           displayName: "📦 Build MicroFrontend ${{ region }}"
-  #           dependsOn: semantic_version_micro_fronted
-  #           jobs:
-  #             - template: ../ci/build/build-frontend.yml
-  #               parameters:
-  #                 region: ${{ region }}
-  #                 apps: ${{ parameters.apps }}
+# #####################################################################
 
-  #         - stage: deploy_micro_frontend_${{ region }}
-  #           displayName: "🚀 Deploy MicroFrontend ${{ region }}"
-  #           dependsOn: build_micro_frontend_${{ region }}
-  #           jobs:
-  #             - template: ../cd/deployment.yml
-  #               parameters:
-  #                 region: ${{ region }}
-  #                 apps: ${{ parameters.apps }}
-  #                 release: ${{ parameters.release }}
+- ${{ if ne(variables['Build.SourceBranchName'], 'master') }}:
+    - stage: build_micro_frontend
+      displayName: "📦 Build MicroFrontend"
+      dependsOn: semantic_version_micro_fronted
+      jobs:
+        - template: ../ci/build/build-frontend.yml
+          parameters:
+            apps: ${{ parameters.apps }}
 
-  # #####################################################################
-
-  # - ${{ if ne(variables['Build.SourceBranchName'], 'master') }}:
-  #     - stage: build_micro_frontend
-  #       displayName: "📦 Build MicroFrontend"
-  #       dependsOn: semantic_version_micro_fronted
-  #       jobs:
-  #         - template: ../ci/build/build-frontend.yml
-  #           parameters:
-  #             apps: ${{ parameters.apps }}
-
-  #     - ${{ if in(variables['Build.SourceBranchName'], 'develop', 'staging') }}:
-  #         - stage: deploy_micro_frontend
-  #           displayName: "🚀 Deploy MicroFrontend"
-  #           dependsOn: build_micro_frontend
-  #           jobs:
-  #             - template: ../cd/deployment.yml
-  #               parameters:
-  #                 apps: ${{ parameters.apps }}
-  #                 release: ${{ parameters.release }}
+    - ${{ if in(variables['Build.SourceBranchName'], 'develop', 'staging') }}:
+        - stage: deploy_micro_frontend
+          displayName: "🚀 Deploy MicroFrontend"
+          dependsOn: build_micro_frontend
+          jobs:
+            - template: ../cd/deployment.yml
+              parameters:
+                apps: ${{ parameters.apps }}
+                release: ${{ parameters.release }}

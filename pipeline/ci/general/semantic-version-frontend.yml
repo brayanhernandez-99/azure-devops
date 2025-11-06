@@ -1,45 +1,23 @@
 jobs:
-  - job: semantic_version_micro_fronted
-    displayName: "🏷️ Version por App"
+  - job: "semantic_version_micro_fronted"
+    displayName: "🏷️ version"
     pool:
       name: "Azure Pipelines"
-      vmImage: ubuntu-22.04
+      VmImage: ubuntu-22.04
 
-    # strategy:
-    #   matrix:
-    #     ${{ each ms in fromJSON(parameters.apps) }}:
-    #       ${{ ms }}:
-    #         msName: ${{ ms }}
+    variables:
+      - template: ../../variables/groups-transversal-variables-frontend.yml
+
+    strategy:
+      matrix:
+        ${{ each ms in parameters.apps }}:
+          ${{ ms }}:
+            msName: ${{ ms }}
 
     steps:
       - checkout: self
         fetchDepth: 1
-
-      - script: |
-          echo "Apps desde el stage anterior:"
-          echo '${{ parameters.apps }}'
-          echo "$(dependencies.change_files_micro_frontend.outputs['SetApps.apps'])"
-
-# jobs:
-#   - job: "semantic_version_micro_fronted"
-#     displayName: "🏷️ version"
-#     pool:
-#       name: "Azure Pipelines"
-#       VmImage: ubuntu-22.04
-
-#     variables:
-#       - template: ../../variables/groups-transversal-variables-frontend.yml
-
-#     # strategy:
-#     #   matrix:
-#     #     ${{ each ms in parameters.apps }}:
-#     #       ${{ ms }}:
-#     #         msName: ${{ ms }}
-
-#     steps:
-#       - checkout: self
-#         fetchDepth: 0
-#         persistCredentials: true
+        persistCredentials: true
 
       - script: |
           echo -e "\n📌 Verificando si feature está actualizada con master y si hay cambios relevantes..."
