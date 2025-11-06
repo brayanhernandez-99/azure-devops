@@ -1,19 +1,24 @@
 stages:
-  - stage: semantic_version_micro_fronted
-    displayName: "🏷️ Semantic Version MicroFrontend"
+  - stage: change_files_micro_fronted
+    displayName: "🔍 Change Files MicroFrontend"
     jobs:
-      - template: ../ci/semantic-version-integration.yml
-        parameters:
-          apps: ${{ parameters.apps }}
-          release: ${{ parameters.release }}
+      - template: ../ci/changes_files_frontend.yml
 
   - stage: semantic_version_micro_fronted
     displayName: "🏷️ Semantic Version MicroFrontend"
     jobs:
       - template: ../ci/semantic-version-integration.yml
         parameters:
-          apps: ${{ parameters.apps }}
+          apps: $[ dependencies.change_files_micro_fronted.outputs['changes_files_frontend.SetApps.apps'] ]
           release: ${{ parameters.release }}
+
+  # - stage: semantic_version_micro_fronted
+  #   displayName: "🏷️ Semantic Version MicroFrontend"
+  #   jobs:
+  #     - template: ../ci/semantic-version-integration.yml
+  #       parameters:
+  #         apps: ${{ parameters.apps }}
+  #         release: ${{ parameters.release }}
 
   #####################################################################
 

@@ -41,6 +41,34 @@ parameters:
       - "recharges"
       - "users"
 
+# variables:
+#   apps: | 
+#     [
+#     "app-administration-vue2",
+#     "app-sellers-vue2",
+#     "astro",
+#     "awards",
+#     "biometrics",
+#     "cashier",
+#     "chance",
+#     "commissions",
+#     "conciliation",
+#     "dashboard",
+#     "dynamic-storage",
+#     "external-wager",
+#     "hierarchies",
+#     "invictus",
+#     "login",
+#     "lotteries",
+#     "millonario",
+#     "money-control",
+#     "papelery",
+#     "promotional",
+#     "raffles",
+#     "recharges",
+#     "users"
+#     ]
+
 resources:
   repositories:
     - repository: self

@@ -1,5 +1,5 @@
 jobs:
-  - job: "build_docker_image"
+  - job: "build_micro_service"
     displayName: "🐳 build docker image"
     pool:
       name: "Azure Pipelines"
