@@ -76,43 +76,43 @@ jobs:
                 echo "##vso[task.setvariable variable=clean_name_ecr]$CLEAN_NAME"
               displayName: "📛 Set ECR Repository Name"
 
-            - task: Bash@3
-              inputs:
-                targetType: "inline"
-                script: |
-                  CURRENT_BRANCH=$(echo $(Build.SourceBranch))
-                  if [[ "$CURRENT_BRANCH" == refs/heads/develop ]]; then
-                    raw_branch=$(Build.SourceBranch)
-                    clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
-                  fi
+            # - task: Bash@3
+            #   inputs:
+            #     targetType: "inline"
+            #     script: |
+            #       CURRENT_BRANCH=$(echo $(Build.SourceBranch))
+            #       if [[ "$CURRENT_BRANCH" == refs/heads/develop ]]; then
+            #         raw_branch=$(Build.SourceBranch)
+            #         clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
+            #       fi
 
-                  if [[ "$CURRENT_BRANCH" == refs/heads/staging ]]; then
-                    clean_branch=qa
-                  fi
+            #       if [[ "$CURRENT_BRANCH" == refs/heads/staging ]]; then
+            #         clean_branch=qa
+            #       fi
 
-                  if [[ "$CURRENT_BRANCH" == refs/heads/master ]]; then
-                    clean_branch=prd
-                  fi
+            #       if [[ "$CURRENT_BRANCH" == refs/heads/master ]]; then
+            #         clean_branch=prd
+            #       fi
 
-                  REPO_NAME="pruebas-pipeline-$(clean_name_ecr)-$clean_branch"
-                  IMAGE_TAG="$(version)"
+            #       REPO_NAME="$(clean_name_ecr)-$clean_branch"
+            #       IMAGE_TAG="$(version)"
 
-                  echo "🔍 Verificando si la imagen '$IMAGE_TAG' existe en '$REPO_NAME'..."
+            #       echo "🔍 Verificando si la imagen '$IMAGE_TAG' existe en '$REPO_NAME'..."
 
-                  if aws ecr describe-images \
-                      --repository-name "$REPO_NAME" \
-                      --image-ids imageTag=$IMAGE_TAG \
-                      --region "$AWS_DEFAULT_REGION" > /dev/null 2>&1; then
-                    echo "✅ Imagen encontrada en ECR."
-                  else
-                    echo "##vso[task.logissue type=error]❌ Imagen no encontrada: $REPO_NAME:$IMAGE_TAG"
-                    exit 99
-                  fi
-              displayName: "🔍 Verify if Image Exists in ECR"
-              env:
-                AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
-                AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
-                AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+            #       if aws ecr describe-images \
+            #           --repository-name "$REPO_NAME" \
+            #           --image-ids imageTag=$IMAGE_TAG \
+            #           --region "$AWS_DEFAULT_REGION" > /dev/null 2>&1; then
+            #         echo "✅ Imagen encontrada en ECR."
+            #       else
+            #         echo "##vso[task.logissue type=error]❌ Imagen no encontrada: $REPO_NAME:$IMAGE_TAG"
+            #         exit 99
+            #       fi
+            #   displayName: "🔍 Verify if Image Exists in ECR"
+            #   env:
+            #     AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
+            #     AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
+            #     AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
 
             - script: |
                 export AWS_ACCESS_KEY_ID

@@ -143,25 +143,25 @@ jobs:
           repository: "$(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/pruebas-pipeline-$(clean_name_ecr)-$(branch_docker)"
           tags: $(version)
 
-      - script: |
-          echo "Verificando si existe el repositorio pruebas-pipeline-$(clean_name_ecr)-$(branch_docker)"
-          aws ecr describe-repositories \
-            --repository-names pruebas-pipeline-$(clean_name_ecr)-$(branch_docker) \
-            --region $AWS_DEFAULT_REGION > /dev/null 2>&1
+      # - script: |
+      #     echo "Verificando si existe el repositorio $(clean_name_ecr)-$(branch_docker)"
+      #     aws ecr describe-repositories \
+      #       --repository-names $(clean_name_ecr)-$(branch_docker) \
+      #       --region $AWS_DEFAULT_REGION > /dev/null 2>&1
 
-          if [ $? -ne 0 ]; then
-            echo "Repositorio no existe. Creándolo..."
-            aws ecr create-repository \
-              --repository-name pruebas-pipeline-$(clean_name_ecr)-$(branch_docker) \
-              --region $AWS_DEFAULT_REGION
-          else
-            echo "Repositorio ya existe. Continuando..."
-          fi
-        displayName: "🛡️ Ensure ECR Repository Exists"
-        env:
-          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
-          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
-          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
+      #     if [ $? -ne 0 ]; then
+      #       echo "Repositorio no existe. Creándolo..."
+      #       aws ecr create-repository \
+      #         --repository-name $(clean_name_ecr)-$(branch_docker) \
+      #         --region $AWS_DEFAULT_REGION
+      #     else
+      #       echo "Repositorio ya existe. Continuando..."
+      #     fi
+      #   displayName: "🛡️ Ensure ECR Repository Exists"
+      #   env:
+      #     AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+      #     AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
+      #     AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
 
       - task: Docker@2
         displayName: "🚀 Push Container Image $(Build.SourceBranch) $(Build.Repository.Name)"
