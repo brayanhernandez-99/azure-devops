@@ -1,9 +1,3 @@
-parameters:
-  - name: release
-    type: string
-  - name: apps
-    type: string
-
 jobs:
   - job: semantic_version_micro_fronted
     displayName: "🏷️ Version por App"

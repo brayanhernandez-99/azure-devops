@@ -13,33 +13,33 @@ parameters:
       - boyaca
       - santander
 
-  - name: apps
-    type: object
-    default:
-      - "app-administration-vue2"
-      - "app-sellers-vue2"
-      - "astro"
-      - "awards"
-      - "biometrics"
-      - "cashier"
-      - "chance"
-      - "commissions"
-      - "conciliation"
-      - "dashboard"
-      - "dynamic-storage"
-      - "external-wager"
-      - "hierarchies"
-      - "invictus"
-      - "login"
-      - "lotteries"
-      - "millonario"
-      - "money-control"
-      #- "notifications"
-      - "papelery"
-      - "promotional"
-      - "raffles"
-      - "recharges"
-      - "users"
+  # - name: apps
+  #   type: object
+  #   default:
+  #     - "app-administration-vue2"
+  #     - "app-sellers-vue2"
+  #     - "astro"
+  #     - "awards"
+  #     - "biometrics"
+  #     - "cashier"
+  #     - "chance"
+  #     - "commissions"
+  #     - "conciliation"
+  #     - "dashboard"
+  #     - "dynamic-storage"
+  #     - "external-wager"
+  #     - "hierarchies"
+  #     - "invictus"
+  #     - "login"
+  #     - "lotteries"
+  #     - "millonario"
+  #     - "money-control"
+  #     #- "notifications"
+  #     - "papelery"
+  #     - "promotional"
+  #     - "raffles"
+  #     - "recharges"
+  #     - "users"
 
 resources:
   repositories:
