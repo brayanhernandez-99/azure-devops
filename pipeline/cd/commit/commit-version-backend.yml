@@ -151,7 +151,7 @@ jobs:
   - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/master') }}:
       - job: "create_publish_versioning"
         displayName: "📦 Create & Publish Version"
-        dependsOn: "commit_tag_version"
+        dependsOn: "deploy_micro_service"
         pool:
           vmImage: "ubuntu-22.04"
         steps:
