@@ -5,30 +5,30 @@ variables:
 
   # Develop - Feature - Hotfix branch
   - ${{ if or(eq(variables['Build.SourceBranchName'], 'develop'), startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')) }}:
-      - group: trasversal-aws-developer
+      - group: trasversal-aws-developer #cuentas viejas
 
   # Staging branch
   - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
-      - group: trasversal-aws-qa
+      - group: trasversal-aws-qa #cuentas viejas
 
   # Master branch → por red
   - ${{ if and(eq(parameters.region, 'antioquia'), eq(variables['Build.SourceBranchName'], 'master')) }}:
-      - group: trasversal-aws-master-antioquia
+      - group: trasversal-aws-master-antioquia #cuentas viejas
 
   - ${{ if and(eq(parameters.region, 'cap'), eq(variables['Build.SourceBranchName'], 'master')) }}:
-      - group: trasversal-aws-master-cap
+      - group: trasversal-aws-master-cap #cuentas viejas
 
   - ${{ if and(eq(parameters.region, 'tolima'), eq(variables['Build.SourceBranchName'], 'master')) }}:
-      - group: trasversal-aws-master-tolima
+      - group: trasversal-aws-tolima
 
   - ${{ if and(eq(parameters.region, 'huila'), eq(variables['Build.SourceBranchName'], 'master')) }}:
-      - group: trasversal-aws-master-huila
+      - group: trasversal-aws-huila
 
   - ${{ if and(eq(parameters.region, 'cauca'), eq(variables['Build.SourceBranchName'], 'master')) }}:
-      - group: trasversal-aws-master-cauca
+      - group: trasversal-aws-cauca
 
   - ${{ if and(eq(parameters.region, 'boyaca'), eq(variables['Build.SourceBranchName'], 'master')) }}:
-      - group: trasversal-aws-master-boyaca
+      - group: trasversal-aws-boyaca
 
   - ${{ if and(eq(parameters.region, 'santander'), eq(variables['Build.SourceBranchName'], 'master')) }}:
-      - group: trasversal-aws-master-santander
+      - group: trasversal-aws-santander
