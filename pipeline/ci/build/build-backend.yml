@@ -43,20 +43,23 @@ jobs:
         condition: succeeded()
 
       - script: |
-          echo "build dev docker images"
+          echo -e "\nℹ️ Build docker image..."
           DOCKERFILE_PATH=$(Build.Repository.Name)/Dockerfile
-          echo "Verificando existencia de: $DOCKERFILE_PATH"
+          echo -e "\nℹ️ Verificando existencia de: $DOCKERFILE_PATH"
 
-          if [ -f "$DOCKERFILE_PATH" ]; then
-            echo "✅ Ya existe el Dockerfile en $DOCKERFILE_PATH"
+          if [[ -f "$DOCKERFILE_PATH" ]]; then
+            echo -e "\n✅ Ya existe el Dockerfile en $DOCKERFILE_PATH"
+            echo -e "\n📁 Files:"
             ls -la $(Build.Repository.Name)
           else
-            echo "⚠️ No existe el Dockerfile. Copiando desde templates..."
+            echo -e "\n⚠️ No existe el Dockerfile. Copiando desde templates..."
             cp pipelines-templates/pipeline/docker/Dockerfile $(Build.Repository.Name)/Dockerfile
-            echo "✅ Dockerfile copiado exitosamente."
+            echo -e "\n✅ Dockerfile copiado exitosamente."
+            echo -e "\n📁 Files:"
             ls -la $(Build.Repository.Name)
           fi
-        displayName: "📝 Check or Copy Dockerfile"
+        displayName: "🔍 Validate Dockerfile"
+        condition: succeeded()
 
       - task: Bash@3
         name: AuthCodeArtifact
@@ -96,10 +99,12 @@ jobs:
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
 
       - script: |
-          echo "Logging in to ECR..."
+          set -e
+          echo -e "\n🔐 Logging in to ECR..."
           aws ecr get-login-password --region $AWS_DEFAULT_REGION | \
           docker login --username AWS --password-stdin $ACCOUNT_ID_DEPLOY.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
-        displayName: "🔑 Login to AWS ECR"
+        displayName: "🔐 Login to AWS ECR"
+        condition: succeeded()
         env:
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
@@ -108,6 +113,10 @@ jobs:
       - script: |
           REPO_NAME="$(Build.Repository.Name)"
           CURRENT_BRANCH=$(echo $(Build.SourceBranch))
+
+          echo -e "\nℹ️ Variables:"
+          echo "Branch: $CURRENT_BRANCH"
+          echo "Repositorio: $REPO_NAME"
 
           if [[ "$REPO_NAME" == "microservice-notifier-invictus" ]]; then
               CLEAN_NAME="notifier"
@@ -128,14 +137,18 @@ jobs:
             clean_branch=prd
           fi
 
-          echo "$CLEAN_NAME"
-          echo "$clean_branch"
+          echo -e "\nℹ️ Nuevas Variables:"
+          echo "Branch: $clean_branch"
+          echo "Repositorio: $CLEAN_NAME"
+
           echo "##vso[task.setvariable variable=clean_name_ecr]$CLEAN_NAME"
           echo "##vso[task.setvariable variable=branch_docker]$clean_branch"
         displayName: "📛 Set ECR Repository Name"
+        condition: succeeded()
 
       # - task: Docker@2
-      #   displayName: "📦 Build Container Image Development $(Build.Repository.Name)"
+      #   displayName: "📦 Build Docker Image: $(Build.Repository.Name)"
+      #   condition: succeeded()
       #   continueOnError: true
       #   inputs:
       #     command: "build"
@@ -144,27 +157,29 @@ jobs:
       #     tags: $(version)
 
       # - script: |
-      #     echo "Verificando si existe el repositorio $(clean_name_ecr)-$(branch_docker)"
+      #     echo -e "\nℹ️ Verificando si existe el repositorio $(clean_name_ecr)-$(branch_docker)..."
       #     aws ecr describe-repositories \
       #       --repository-names $(clean_name_ecr)-$(branch_docker) \
       #       --region $AWS_DEFAULT_REGION > /dev/null 2>&1
 
       #     if [ $? -ne 0 ]; then
-      #       echo "Repositorio no existe. Creándolo..."
+      #       echo "⚠️ Repositorio no existe. Creándolo..."
       #       aws ecr create-repository \
       #         --repository-name $(clean_name_ecr)-$(branch_docker) \
       #         --region $AWS_DEFAULT_REGION
       #     else
-      #       echo "Repositorio ya existe. Continuando..."
+      #       echo "✅ Repositorio ya existe. Continuando..."
       #     fi
       #   displayName: "🛡️ Ensure ECR Repository Exists"
+      #   condition: succeeded()
       #   env:
       #     AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
       #     AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
       #     AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
 
       # - task: Docker@2
-      #   displayName: "🚀 Push Container Image $(Build.SourceBranch) $(Build.Repository.Name)"
+      #   displayName: "🚀 Push Docker Image $(Build.SourceBranch) -> $(Build.Repository.Name)"
+      #   condition: succeeded()
       #   inputs:
       #     command: "Push"
       #     repository: "$(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/$(clean_name_ecr)-$(branch_docker)"
