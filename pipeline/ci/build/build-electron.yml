@@ -231,6 +231,28 @@ jobs:
         displayName: "🔍 Validate Build"
         condition: succeeded()
 
+      - script: |
+          set -e
+          echo -e "\n📦 Cargando al Bucket S3..."
+
+          BASE_PATH="$(Build.SourcesDirectory)/release/$(environment)/$(version)"
+          echo -e "\n📂 Archivos a cargar: $BASE_PATH"
+          ls -l "$BASE_PATH"
+          echo ""
+
+          aws s3 cp "$BASE_PATH" "s3://e-remote/invictus-electron/linux/dev-test/" --recursive --acl public-read
+
+          echo -e "\n✅ Archivos subidos exitosamente."
+          echo "🔗 APP: InvictusUX-$(version).AppImage"
+          echo "🔗 URL: https://e-remote.s3.us-east-1.amazonaws.com/invictus-electron/linux/dev-test//InvictusUX-$(version).AppImage"
+
+        displayName: "🐧 Upload Bucket S3 Linux"
+        condition: succeeded()
+        env:
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
+          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
+
       - task: PublishBuildArtifacts@1
         inputs:
           PathtoPublish: "$(Build.ArtifactStagingDirectory)/electron-artifacts"
@@ -519,6 +541,28 @@ jobs:
               Get-ChildItem "$APP_DIR" | Select-Object Mode, LastWriteTime, Length, Name | Format-Table
             }
         condition: succeeded()
+
+      - script: |
+          set -e
+          echo -e "\n📦 Cargando al Bucket S3..."
+
+          BASE_PATH="$(Build.SourcesDirectory)/release/$(environment)/$(version)"
+          echo -e "\n📂 Archivos a cargar: $BASE_PATH"
+          ls -l "$BASE_PATH"
+          echo ""
+
+          aws s3 cp "$BASE_PATH" "s3://e-remote/invictus-electron/windows/dev-test/" --recursive --acl public-read
+
+          echo -e "\n✅ Archivos subidos exitosamente."
+          echo "🔗 APP: InvictusUX Setup $(version).exe"
+          echo "🔗 URL: https://e-remote.s3.us-east-1.amazonaws.com/invictus-electron/windows/dev-test//InvictusUX+Setup+$(version).exe"
+
+        displayName: "🖥️ Upload Bucket S3 Windows"
+        condition: succeeded()
+        env:
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
+          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
 
       - task: PublishBuildArtifacts@1
         inputs:
