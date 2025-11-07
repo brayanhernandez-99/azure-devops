@@ -2,264 +2,242 @@ jobs:
   #
   # Electron Linux
   #
-  - job: build_electron_linux
-    displayName: "📦 build linux"
-    pool:
-      name: "Azure Pipelines"
-      VmImage: ubuntu-22.04
+  # - job: build_electron_linux
+  #   displayName: "📦 build linux"
+  #   pool:
+  #     name: "Azure Pipelines"
+  #     VmImage: ubuntu-22.04
 
-    variables:
-      - template: ../../variables/groups-transversal-variables-electron.yml
-        parameters:
-          region: ${{ parameters.region }}
+  #   variables:
+  #     - template: ../../variables/groups-transversal-variables-electron.yml
+  #       parameters:
+  #         region: ${{ parameters.region }}
 
-    steps:
-      - task: DownloadBuildArtifacts@0
-        inputs:
-          artifactName: "versions"
-          downloadPath: "$(Pipeline.Workspace)/versions-downloaded"
-        displayName: "📥 Download Version"
-        condition: succeeded()
+  #   steps:
+  #     - task: DownloadBuildArtifacts@0
+  #       inputs:
+  #         artifactName: "versions"
+  #         downloadPath: "$(Pipeline.Workspace)/versions-downloaded"
+  #       displayName: "📥 Download Version"
+  #       condition: succeeded()
 
-      - script: |
-          VERSION_FILE="$(Pipeline.Workspace)/versions-downloaded/versions/electron/version.json"
+  #     - script: |
+  #         VERSION_FILE="$(Pipeline.Workspace)/versions-downloaded/versions/electron/version.json"
 
-          echo -e "\n📁 Archivo version.json:"
-          ls -la "$VERSION_FILE"
-          cat "$VERSION_FILE"
+  #         echo -e "\n📁 Archivo version.json:"
+  #         ls -la "$VERSION_FILE"
+  #         cat "$VERSION_FILE"
 
-          if [[ -f "$VERSION_FILE" ]]; then
-            VERSION=$(jq -r '.version' $VERSION_FILE)
-            echo -e "\n🚀 Versión detectada para $(Build.Repository.Name): $VERSION"
-            echo "##vso[task.setvariable variable=version]$VERSION"
-          else
-            echo -e "\n##vso[task.logissue type=error]⚠️ No se encontro archivo de versión para $(Build.Repository.Name)"
-            exit 99
-          fi
-        displayName: "📚 Read Version"
-        condition: succeeded()
+  #         if [[ -f "$VERSION_FILE" ]]; then
+  #           VERSION=$(jq -r '.version' $VERSION_FILE)
+  #           echo -e "\n🚀 Versión detectada para $(Build.Repository.Name): $VERSION"
+  #           echo "##vso[task.setvariable variable=version]$VERSION"
+  #         else
+  #           echo -e "\n##vso[task.logissue type=error]⚠️ No se encontro archivo de versión para $(Build.Repository.Name)"
+  #           exit 99
+  #         fi
+  #       displayName: "📚 Read Version"
+  #       condition: succeeded()
 
-      - task: Bash@3
-        name: AuthCodeArtifact
-        inputs:
-          targetType: "inline"
-          script: |
-            echo -e "\n🔐 Obteniendo token de AWS CodeArtifact..."
-            token=$(aws codeartifact get-authorization-token \
-              --domain matrixtech-npm-repository \
-              --domain-owner "$ACCOUNT_ID_DEPLOY" \
-              --region "$AWS_DEFAULT_REGION" \
-              --query authorizationToken \
-              --output text)
+  #     - task: Bash@3
+  #       name: AuthCodeArtifact
+  #       inputs:
+  #         targetType: "inline"
+  #         script: |
+  #           echo -e "\n🔐 Obteniendo token de AWS CodeArtifact..."
+  #           token=$(aws codeartifact get-authorization-token \
+  #             --domain matrixtech-npm-repository \
+  #             --domain-owner "$ACCOUNT_ID_DEPLOY" \
+  #             --region "$AWS_DEFAULT_REGION" \
+  #             --query authorizationToken \
+  #             --output text)
 
-            REPO_DOMAIN="matrixtech-npm-repository-$ACCOUNT_ID_DEPLOY.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com"
-            REPO_PATH="npm/matrixtech-npm-repository"
-            REPO_URL="https://$REPO_DOMAIN/$REPO_PATH"
+  #           REPO_DOMAIN="matrixtech-npm-repository-$ACCOUNT_ID_DEPLOY.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com"
+  #           REPO_PATH="npm/matrixtech-npm-repository"
+  #           REPO_URL="https://$REPO_DOMAIN/$REPO_PATH"
 
-            echo "Configurando npm..."
-            npm config set "//$REPO_DOMAIN/$REPO_PATH/:_authToken" "$token"
-            npm config set registry "$REPO_URL"
+  #           echo "Configurando npm..."
+  #           npm config set "//$REPO_DOMAIN/$REPO_PATH/:_authToken" "$token"
+  #           npm config set registry "$REPO_URL"
 
-            echo "Verificando identidad de AWS..."
-            aws sts get-caller-identity
+  #           echo "Verificando identidad de AWS..."
+  #           aws sts get-caller-identity
 
-            echo -e "\n📁 Generando archivo .npmrc"
-            cat <<EOF > ".npmrc"
-            //$REPO_DOMAIN/$REPO_PATH/:_authToken=$token
-            registry=$REPO_URL
-            EOF
-            ls -l .npmrc
-        displayName: "🔐 Setup CodeArtifact & npm config"
-        condition: succeeded()
-        env:
-          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
-          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
-          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
+  #           echo -e "\n📁 Generando archivo .npmrc"
+  #           cat <<EOF > ".npmrc"
+  #           //$REPO_DOMAIN/$REPO_PATH/:_authToken=$token
+  #           registry=$REPO_URL
+  #           EOF
+  #           ls -l .npmrc
+  #       displayName: "🔐 Setup CodeArtifact & npm config"
+  #       condition: succeeded()
+  #       env:
+  #         AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+  #         AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
+  #         AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
 
-      - script: |
-          CURRENT_BRANCH="$(Build.SourceBranch)"
-          environment="unknown"
+  #     - script: |
+  #         CURRENT_BRANCH="$(Build.SourceBranch)"
+  #         environment="unknown"
 
-          case "$CURRENT_BRANCH" in
-            refs/heads/feature/*) environment="dev"; ;;
-            refs/heads/develop)   environment="dev"; ;;
-            refs/heads/staging)   environment="qa"; ;;
-            refs/heads/master) 
-              case "$region" in
-                "antioquia") environment="matrixtech"; ;;
-                "cap")       environment="cap"; ;;
-                "tolima")    environment="seapto"; ;;
-                "huila")     environment="suchance"; ;;
-                "cauca")     environment="acertemos"; ;;
-                "boyaca")    environment="jer"; ;;
-                "santander") environment="laperla"; ;;
-              esac ;;
-          esac
+  #         case "$CURRENT_BRANCH" in
+  #           refs/heads/feature/*) environment="dev"; ;;
+  #           refs/heads/develop)   environment="dev"; ;;
+  #           refs/heads/staging)   environment="qa"; ;;
+  #           refs/heads/master) 
+  #             case "$region" in
+  #               "antioquia") environment="matrixtech"; ;;
+  #               "cap")       environment="cap"; ;;
+  #               "tolima")    environment="seapto"; ;;
+  #               "huila")     environment="suchance"; ;;
+  #               "cauca")     environment="acertemos"; ;;
+  #               "boyaca")    environment="jer"; ;;
+  #               "santander") environment="laperla"; ;;
+  #             esac ;;
+  #         esac
 
-          if [[ "$environment" = "unknown" ]]; then
-            echo -e "\n##vso[task.logissue type=error]⚠️ Environment [$environment] no reconocido"
-            exit 99
-          fi
+  #         if [[ "$environment" = "unknown" ]]; then
+  #           echo -e "\n##vso[task.logissue type=error]⚠️ Environment [$environment] no reconocido"
+  #           exit 99
+  #         fi
 
-          cat <<EOF > .env
-          DOMAIN_ADMIN="${BASE_URL_ELECTRON_ADMIN}"
-          DOMAIN_SELLER="${BASE_URL_ELECTRON_SELLERS}"
-          TARGET="linux"
-          TARGET_ENVIRONMENT="$environment"
-          EOF
+  #         cat <<EOF > .env
+  #         DOMAIN_ADMIN="${BASE_URL_ELECTRON_ADMIN}"
+  #         DOMAIN_SELLER="${BASE_URL_ELECTRON_SELLERS}"
+  #         TARGET="linux"
+  #         TARGET_ENVIRONMENT="$environment"
+  #         EOF
 
-          echo "##vso[task.setvariable variable=environment]$environment"
-          echo -e "\n📁 File: .env"
-          ls -l .env
-          cat .env
-        displayName: "⚙️ Generate .env"
-        condition: succeeded()
-        env:
-          region: ${{ parameters.region }}
+  #         echo "##vso[task.setvariable variable=environment]$environment"
+  #         echo -e "\n📁 File: .env"
+  #         ls -l .env
+  #         cat .env
+  #       displayName: "⚙️ Generate .env"
+  #       condition: succeeded()
+  #       env:
+  #         region: ${{ parameters.region }}
 
-      - task: UsePythonVersion@0
-        displayName: "🔧 Use Python $(pythonVersion)"
-        inputs:
-          versionSpec: "$(pythonVersion)"
-          addToPath: true
-        condition: succeeded()
+  #     - task: UsePythonVersion@0
+  #       displayName: "🔧 Use Python $(pythonVersion)"
+  #       inputs:
+  #         versionSpec: "$(pythonVersion)"
+  #         addToPath: true
+  #       condition: succeeded()
 
-      - task: NodeTool@0
-        displayName: "🔧 Install Nodejs $(nodeVersion)"
-        inputs:
-          versionSource: "spec"
-          versionSpec: "$(nodeVersion)"
-        condition: succeeded()
+  #     - task: NodeTool@0
+  #       displayName: "🔧 Install Nodejs $(nodeVersion)"
+  #       inputs:
+  #         versionSource: "spec"
+  #         versionSpec: "$(nodeVersion)"
+  #       condition: succeeded()
 
-      - script: |
-          echo -e "\n📦 Modificando versión en package.json: $(version)"
-          PACKAGE_PATH="$(Build.SourcesDirectory)/package.json"
+  #     - script: |
+  #         echo -e "\n📦 Modificando versión en package.json: $(version)"
+  #         PACKAGE_PATH="$(Build.SourcesDirectory)/package.json"
 
-          if [[ -f "$PACKAGE_PATH" ]]; then
-            jq --arg ver "$(version)" '.version = $ver' "$PACKAGE_PATH" > "$PACKAGE_PATH.tmp" && mv "$PACKAGE_PATH.tmp" "$PACKAGE_PATH"
+  #         if [[ -f "$PACKAGE_PATH" ]]; then
+  #           jq --arg ver "$(version)" '.version = $ver' "$PACKAGE_PATH" > "$PACKAGE_PATH.tmp" && mv "$PACKAGE_PATH.tmp" "$PACKAGE_PATH"
 
-            echo -e "\n✅ Versión en package.json actualizada correctamente."
-            cat "$PACKAGE_PATH"
-          else
-            echo -e "\n##vso[task.logissue type=error]⚠️ No se encontró el archivo package.json en la ruta [$PACKAGE_PATH]"
-            exit 99
-          fi
-        displayName: "📝 Update Version package.json"
-        condition: succeeded()
+  #           echo -e "\n✅ Versión en package.json actualizada correctamente."
+  #           cat "$PACKAGE_PATH"
+  #         else
+  #           echo -e "\n##vso[task.logissue type=error]⚠️ No se encontró el archivo package.json en la ruta [$PACKAGE_PATH]"
+  #           exit 99
+  #         fi
+  #       displayName: "📝 Update Version package.json"
+  #       condition: succeeded()
 
-      - script: |
-          echo -e "\n📁 Generando archivo .pnpmrc en: $(System.DefaultWorkingDirectory)/.pnpmrc"
-          cat <<EOF > "$(System.DefaultWorkingDirectory)/.pnpmrc"
-          node-linker=hoisted
-          shamefully-hoist=true
-          ignore-scripts=false
-          allow-build-script=true
-          strict-peer-dependencies=false
-          EOF
-          ls -l $(System.DefaultWorkingDirectory)/.pnpmrc
-          cat $(System.DefaultWorkingDirectory)/.pnpmrc
+  #     - script: |
+  #         echo -e "\n📁 Generando archivo .pnpmrc en: $(System.DefaultWorkingDirectory)/.pnpmrc"
+  #         cat <<EOF > "$(System.DefaultWorkingDirectory)/.pnpmrc"
+  #         node-linker=hoisted
+  #         shamefully-hoist=true
+  #         ignore-scripts=false
+  #         allow-build-script=true
+  #         strict-peer-dependencies=false
+  #         EOF
+  #         ls -l $(System.DefaultWorkingDirectory)/.pnpmrc
+  #         cat $(System.DefaultWorkingDirectory)/.pnpmrc
 
-          cat $(System.DefaultWorkingDirectory)/.pnpmrc >> $(System.DefaultWorkingDirectory)/.npmrc
-          echo -e "\n✅ Contenido de .pnpmrc anexado a .npmrc correctamente."
+  #         cat $(System.DefaultWorkingDirectory)/.pnpmrc >> $(System.DefaultWorkingDirectory)/.npmrc
+  #         echo -e "\n✅ Contenido de .pnpmrc anexado a .npmrc correctamente."
 
-          echo -e "\n⚙️ Instalando dependencias ubuntu..."
-          sudo apt-get update
-          sudo apt-get install -y libcups2-dev
+  #         echo -e "\n⚙️ Instalando dependencias ubuntu..."
+  #         sudo apt-get update
+  #         sudo apt-get install -y libcups2-dev
 
-          echo -e "\n⚙️ Instalando dependencias node..."
-          npm install -g pnpm
-          pnpm install
-          pnpm exec electron-builder install-app-deps
-          pnpm ignored-builds
+  #         echo -e "\n⚙️ Instalando dependencias node..."
+  #         npm install -g pnpm
+  #         pnpm install
+  #         pnpm exec electron-builder install-app-deps
+  #         pnpm ignored-builds
 
-          OUTPUT=$(pnpm ls --depth=0 || true)
-          if [[ -z "$OUTPUT" ]]; then
-            echo -e "\n##vso[task.logissue type=error]⚠️ No se instalaron dependencias, esperar que se actualicen las dependencias a nivel global"
-            exit 99
-          else
-            echo -e "\n✅ Dependencias Instaladas:"
-            echo "$OUTPUT"
-          fi
-        displayName: "⚙️ Install Dependencies"
-        condition: succeeded()
+  #         OUTPUT=$(pnpm ls --depth=0 || true)
+  #         if [[ -z "$OUTPUT" ]]; then
+  #           echo -e "\n##vso[task.logissue type=error]⚠️ No se instalaron dependencias, esperar que se actualicen las dependencias a nivel global"
+  #           exit 99
+  #         else
+  #           echo -e "\n✅ Dependencias Instaladas:"
+  #           echo "$OUTPUT"
+  #         fi
+  #       displayName: "⚙️ Install Dependencies"
+  #       condition: succeeded()
 
-      - script: |
-          echo -e "\n📦 Build Electron..."
-          pnpm run build
-        displayName: "📦 Build Electron"
-        condition: succeeded()
+  #     - script: |
+  #         echo -e "\n📦 Build Electron..."
+  #         pnpm run build
+  #       displayName: "📦 Build Electron"
+  #       condition: succeeded()
 
-      - script: |
-          echo -e "\n📝 Validando build electron..."
-          BASE_PATH="$(Build.SourcesDirectory)/release/$(environment)/$(version)"
-          APP_DIR="$BASE_PATH/app"
-          mkdir -p $APP_DIR
-          all_found=true
+  #     - script: |
+  #         echo -e "\n📝 Validando build electron..."
+  #         BASE_PATH="$(Build.SourcesDirectory)/release/$(environment)/$(version)"
+  #         APP_DIR="$BASE_PATH/app"
+  #         mkdir -p $APP_DIR
+  #         all_found=true
 
-          echo -e "\n📂 Directorio: $BASE_PATH"
-          ls -lt $BASE_PATH
-          echo ""
+  #         echo -e "\n📂 Directorio: $BASE_PATH"
+  #         ls -lt $BASE_PATH
+  #         echo ""
 
-          FILES_TO_COPY=(
-            "InvictusUX-$(version).AppImage"
-            "latest-linux.yml"
-          )
+  #         FILES_TO_COPY=(
+  #           "InvictusUX-$(version).AppImage"
+  #           "latest-linux.yml"
+  #         )
 
-          for file in "${FILES_TO_COPY[@]}"; do
-            source_path="$BASE_PATH/$file"
-            destination_path="$APP_DIR/$file"
+  #         for file in "${FILES_TO_COPY[@]}"; do
+  #           source_path="$BASE_PATH/$file"
+  #           destination_path="$APP_DIR/$file"
 
-            if [[ -f "$source_path" ]]; then
-              cp -f "$source_path" "$destination_path"
-              echo "📂 Copiado: $file -> $destination_path"
-            else
-              echo "⚠️ Archivo no encontrado: $file"
-              all_found=false
-            fi
-          done
+  #           if [[ -f "$source_path" ]]; then
+  #             cp -f "$source_path" "$destination_path"
+  #             echo "📂 Copiado: $file -> $destination_path"
+  #           else
+  #             echo "⚠️ Archivo no encontrado: $file"
+  #             all_found=false
+  #           fi
+  #         done
 
-          if [[ "$all_found" == false ]]; then
-            echo -e "\n##vso[task.logissue type=error]⚠️ Error: archivos requeridos no encontrados."
-            exit 99
-          else
-            mkdir -p "$(Build.ArtifactStagingDirectory)/electron-artifacts/linux"
-            cp -R $APP_DIR/* "$(Build.ArtifactStagingDirectory)/electron-artifacts/linux/"
+  #         if [[ "$all_found" == false ]]; then
+  #           echo -e "\n##vso[task.logissue type=error]⚠️ Error: archivos requeridos no encontrados."
+  #           exit 99
+  #         else
+  #           mkdir -p "$(Build.ArtifactStagingDirectory)/electron-artifacts/linux"
+  #           cp -R $APP_DIR/* "$(Build.ArtifactStagingDirectory)/electron-artifacts/linux/"
 
-            echo -e "\n📂 Directorio: $APP_DIR"
-            ls -l $APP_DIR
-          fi
-        displayName: "🔍 Validate Build"
-        condition: succeeded()
+  #           echo -e "\n📂 Directorio: $APP_DIR"
+  #           ls -l $APP_DIR
+  #         fi
+  #       displayName: "🔍 Validate Build"
+  #       condition: succeeded()
 
-      - script: |
-          set -e
-          echo -e "\n📦 Cargando al Bucket S3..."
-
-          BASE_PATH="$(Build.SourcesDirectory)/release/$(environment)/$(version)"
-          echo -e "\n📂 Archivos a cargar: $BASE_PATH"
-          ls -l "$BASE_PATH"
-          echo ""
-
-          aws s3 cp "$BASE_PATH" "s3://e-remote/invictus-electron/linux/dev-test/" --recursive --acl public-read
-
-          echo -e "\n✅ Archivos subidos exitosamente."
-          echo "🔗 APP: InvictusUX-$(version).AppImage"
-          echo "🔗 URL: https://e-remote.s3.us-east-1.amazonaws.com/invictus-electron/linux/dev-test//InvictusUX-$(version).AppImage"
-
-        displayName: "🐧 Upload Bucket S3 Linux"
-        condition: succeeded()
-        env:
-          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
-          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
-          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
-
-      - task: PublishBuildArtifacts@1
-        inputs:
-          PathtoPublish: "$(Build.ArtifactStagingDirectory)/electron-artifacts"
-          ArtifactName: "electron"
-          publishLocation: "Container"
-        displayName: "📤 Publish artifact electron"
-        condition: succeeded()
+  #     - task: PublishBuildArtifacts@1
+  #       inputs:
+  #         PathtoPublish: "$(Build.ArtifactStagingDirectory)/electron-artifacts"
+  #         ArtifactName: "electron"
+  #         publishLocation: "Container"
+  #       displayName: "📤 Publish artifact electron"
+  #       condition: succeeded()
 
   #
   # Electron Windows
@@ -543,9 +521,9 @@ jobs:
         condition: succeeded()
 
       - script: |
-          $BASE_PATH = "$(Build.SourcesDirectory)\release\$($env:environment)\$($env:version)"
+          $basePath = "$(Build.SourcesDirectory)\release\$($env:environment)\$($env:version)\app"
 
-          aws s3 cp $BASE_PATH "s3://e-remote/invictus-electron/windows/dev-test/" --recursive --acl public-read
+          aws s3 cp "basePath" s3://e-remote/invictus-electron/windows/dev-test/ --recursive --acl public-read
 
         displayName: "🖥️ Upload Bucket S3 Windows"
         condition: succeeded()
