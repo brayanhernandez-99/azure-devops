@@ -543,19 +543,9 @@ jobs:
         condition: succeeded()
 
       - script: |
-          set -e
-          echo -e "\n📦 Cargando al Bucket S3..."
+          $BASE_PATH = "$(Build.SourcesDirectory)\release\$($env:environment)\$($env:version)"
 
-          BASE_PATH="$(Build.SourcesDirectory)/release/$(environment)/$(version)"
-          echo -e "\n📂 Archivos a cargar: $BASE_PATH"
-          ls -l "$BASE_PATH"
-          echo ""
-
-          aws s3 cp "$BASE_PATH" "s3://e-remote/invictus-electron/windows/dev-test/" --recursive --acl public-read
-
-          echo -e "\n✅ Archivos subidos exitosamente."
-          echo "🔗 APP: InvictusUX Setup $(version).exe"
-          echo "🔗 URL: https://e-remote.s3.us-east-1.amazonaws.com/invictus-electron/windows/dev-test//InvictusUX+Setup+$(version).exe"
+          aws s3 cp $BASE_PATH "s3://e-remote/invictus-electron/windows/dev-test/" --recursive --acl public-read
 
         displayName: "🖥️ Upload Bucket S3 Windows"
         condition: succeeded()
