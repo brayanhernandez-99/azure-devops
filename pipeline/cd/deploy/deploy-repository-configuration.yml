@@ -1,5 +1,5 @@
 jobs:
-  - job: deploy_repository_configuration_${{ parameters.region }}
+  - job: deploy_repository_configuration
     displayName: "🚀 deploy repository configuration"
     pool:
       name: "Azure Pipelines"

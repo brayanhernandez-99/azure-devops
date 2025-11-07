@@ -1,9 +1,10 @@
 jobs:
-  - job: "sonar_micro_services"
+  - job: "sonar_micro_service"
     displayName: "🛡️ sonarqube microservice"
     pool:
       name: "Azure Pipelines"
       vmImage: "ubuntu-22.04"
+
     variables:
       - template: ../../variables/groups-transversal-variables-backend.yml
         parameters:
