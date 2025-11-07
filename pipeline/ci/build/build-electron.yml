@@ -523,7 +523,7 @@ jobs:
       - script: |
           $basePath = "$(Build.SourcesDirectory)\release\$($env:environment)\$($env:version)\app"
 
-          aws s3 cp "basePath" s3://e-remote/invictus-electron/windows/dev-test/ --recursive --acl public-read
+          aws s3 cp "$basePath" s3://e-remote/invictus-electron/windows/dev-test/ --recursive --acl public-read
 
         displayName: "🖥️ Upload Bucket S3 Windows"
         condition: succeeded()
