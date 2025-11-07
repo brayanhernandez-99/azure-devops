@@ -34,15 +34,27 @@ variables:
 
   - ${{ if and(eq(parameters.region, 'tolima'), eq(variables['Build.SourceBranchName'], 'master')) }}:
       - group: trasversal-aws-tolima
+      - group: variables-cloudfront-tolima
+      - group: variables-microfrontend-vue2-tolima-old
+      - group: variables-microfrontend-tolima-old
 
   - ${{ if and(eq(parameters.region, 'huila'), eq(variables['Build.SourceBranchName'], 'master')) }}:
       - group: trasversal-aws-huila
+      - group: variables-cloudfront-huila
+      - group: variables-microfrontend-vue2-huila-old
+      - group: variables-microfrontend-huila-old
 
   - ${{ if and(eq(parameters.region, 'cauca'), eq(variables['Build.SourceBranchName'], 'master')) }}:
       - group: trasversal-aws-cauca
+      - group: variables-cloudfront-cauca
+      - group: variables-microfrontend-vue2-cauca-old
+      - group: variables-microfrontend-cauca-old
 
   - ${{ if and(eq(parameters.region, 'boyaca'), eq(variables['Build.SourceBranchName'], 'master')) }}:
       - group: trasversal-aws-boyaca
+      - group: variables-cloudfront-boyaca
+      - group: variables-microfrontend-vue2-boyaca-old
+      - group: variables-microfrontend-boyaca-old
 
   - ${{ if and(eq(parameters.region, 'santander'), eq(variables['Build.SourceBranchName'], 'master')) }}:
       - group: trasversal-aws-santander
