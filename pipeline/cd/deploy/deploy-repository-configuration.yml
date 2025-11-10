@@ -1,6 +1,6 @@
 jobs:
   - job: deploy_repository_configuration
-    displayName: "🚀 deploy repository configuration"
+    displayName: "🚀 Deploy Repository Configuration"
     pool:
       name: "Azure Pipelines"
       VmImage: ubuntu-22.04

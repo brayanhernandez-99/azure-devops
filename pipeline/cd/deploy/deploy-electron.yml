@@ -1,6 +1,6 @@
 jobs:
   - job: deploy_electron
-    displayName: "🚀 deploy electron"
+    displayName: "🚀 Deploy Electron"
     pool:
       name: "Azure Pipelines"
       VmImage: ubuntu-22.04
@@ -120,6 +120,7 @@ jobs:
           set -e
           echo -e "\n📦 Send Message SQS..."
           echo -e "\n📦 Account: $ACCOUNT_ID_INVIC"
+          echo -e "\n📦 Version: $(version)"
           
           aws sqs send-message \
             --queue-url https://sqs.us-east-1.amazonaws.com/$ACCOUNT_ID_INVIC/DynamicStorage \
@@ -128,7 +129,7 @@ jobs:
                 "parameterName": "VERSION",
                 "parameterDescription": "Parámetro que indica la versión actual del sistema.",
                 "parameterOrigin": "GLOBAL_PARAMETER",
-                "parameterValue": $(version)
+                "parameterValue": "$(version)"
               },
               "event": "setParameter"
             }' \
