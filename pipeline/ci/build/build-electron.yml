@@ -358,7 +358,7 @@ jobs:
             TARGET="windows"
             TARGET_ENVIRONMENT="$environment"
             "@ | Set-Content -Encoding UTF8 .env
-          
+
               Write-Host "##vso[task.setvariable variable=environment]$environment"
               Write-Host "`n📁 File: .env"
               Get-Item .env | Select-Object Mode, LastWriteTime, Length, Name | Format-Table
