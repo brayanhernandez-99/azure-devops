@@ -81,6 +81,20 @@ jobs:
       - script: |
           set -e
 
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/redis-cache/aws-service-elasticache
+          terragrunt plan --all --non-interactive -no-color
+          terragrunt apply --all --non-interactive -no-color
+
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/redis-cache/aws-service-ssm-parameter
+          terragrunt plan --all --non-interactive -no-color
+          terragrunt apply --all --non-interactive -no-color
+
+
+
+
+
+
+
           # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/redis-cache/aws-service-elasticache
           # terragrunt plan --all --non-interactive -no-color
           # terragrunt apply --all --non-interactive -no-color
@@ -88,50 +102,50 @@ jobs:
           # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3/s3-betplay
           # terragrunt plan --all --non-interactive -no-color
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-betplay
-          terragrunt plan --all --non-interactive -no-color
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-betplay
+          # terragrunt plan --all --non-interactive -no-color
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-betplay-policy
-          terragrunt plan --all --non-interactive -no-color
-
-
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3/s3-external
-          terragrunt plan --all --non-interactive -no-color
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-external
-          terragrunt plan --all --non-interactive -no-color
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-external-policy
-          terragrunt plan --all --non-interactive -no-color
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-betplay-policy
+          # terragrunt plan --all --non-interactive -no-color
 
 
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/collected/aws-service-secret-manager-credintegralsecret
-          terragrunt plan --all --non-interactive -no-color
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3/s3-external
+          # terragrunt plan --all --non-interactive -no-color
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/collected/aws-service-secret-manager-flamingosecret
-          terragrunt plan --all --non-interactive -no-color
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-external
+          # terragrunt plan --all --non-interactive -no-color
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/collected/aws-service-secret-manager-flamingotarjetasecret
-          terragrunt plan --all --non-interactive -no-color
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/collected/aws-service-secret-manager-sistecreditosecret
-          terragrunt plan --all --non-interactive -no-color
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-external-policy
+          # terragrunt plan --all --non-interactive -no-color
 
 
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/lotteries-games/aws-service-secret-manager-bingo-ies-secret
-          terragrunt plan --all --non-interactive -no-color
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/collected/aws-service-secret-manager-credintegralsecret
+          # terragrunt plan --all --non-interactive -no-color
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/scheduler
-          terragrunt plan --all --non-interactive -no-color
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/collected/aws-service-secret-manager-flamingosecret
+          # terragrunt plan --all --non-interactive -no-color
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/transaction/aws-service-ecs
-          terragrunt plan --all --non-interactive -no-color
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/collected/aws-service-secret-manager-flamingotarjetasecret
+          # terragrunt plan --all --non-interactive -no-color
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/sellers/aws-service-ecs
-          terragrunt plan --all --non-interactive -no-color
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/collected/aws-service-secret-manager-sistecreditosecret
+          # terragrunt plan --all --non-interactive -no-color
+
+
+
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/lotteries-games/aws-service-secret-manager-bingo-ies-secret
+          # terragrunt plan --all --non-interactive -no-color
+
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/scheduler
+          # terragrunt plan --all --non-interactive -no-color
+
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/transaction/aws-service-ecs
+          # terragrunt plan --all --non-interactive -no-color
+
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/sellers/aws-service-ecs
+          # terragrunt plan --all --non-interactive -no-color
 
         displayName: "🧩 Plan Infrastructure"
         condition: succeeded()
