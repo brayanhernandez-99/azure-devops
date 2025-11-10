@@ -36,10 +36,11 @@ stages:
         jobs:
           - template: ../ci/build/plan-infrastructure.yml
 
-      - stage: apply_infrastructure
-        displayName: "🚀 Apply Infrastructure"
-        dependsOn: plan_infrastructure
-        jobs:
-          - template: ../cd/deployment.yml
-            parameters:
-              release: ${{ parameters.release }}
+      - ${{ if in(variables['Build.SourceBranchName'], 'develop', 'staging') }}:
+          - stage: apply_infrastructure
+            displayName: "🚀 Apply Infrastructure"
+            dependsOn: plan_infrastructure
+            jobs:
+              - template: ../cd/deployment.yml
+                parameters:
+                  release: ${{ parameters.release }}
