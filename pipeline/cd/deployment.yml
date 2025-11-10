@@ -21,3 +21,5 @@ jobs:
 
   - ${{ if eq(parameters.release, 'iac') }}:
       - template: ./deploy/apply-infrastructure.yml
+        parameters:
+          region: ${{ parameters.region }}
