@@ -20,7 +20,7 @@ parameters:
     default:
       microservice-payments: "3.4.3"
       microservice-lotteries-games: "4.13.9"
-      microservice-siga: "x.x.x"
+      microservice-siga: "3.2.11"
 
 
 resources:
