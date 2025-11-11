@@ -22,7 +22,6 @@ parameters:
       microservice-lotteries-games: "4.13.9"
       microservice-siga: "3.2.11"
 
-
 resources:
   repositories:
     - repository: self
