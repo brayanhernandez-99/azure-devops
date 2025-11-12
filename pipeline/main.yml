@@ -30,19 +30,19 @@ resources:
       ref: $(Build.SourceBranch)
 
 stages:
-
- #DEPLOY REDES MOMENTANEMENTE 
+  #
+  # DEPLOY REDES MOMENTANEMENTE 
+  #
   - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(parameters.release, 'ecs-redes')) }}:
       - template: build/semantic-version-integration.yml
         parameters:
-          release: ${{ parameters.release }}
           apps: ${{ parameters.apps }}
+          release: ${{ parameters.release }}
 
-  # # Deploy integración si NO es Flutter, No es Electron y es tag, develop, staging
   - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(parameters.release, 'ecs-redes')) }}:
       - ${{ each region in parameters.red }}:
           - template: release/deploy-integration.yml
             parameters:
-              release: ${{ parameters.release }}
-              apps: ${{ parameters.apps }}
               red: ${{ region }}
+              apps: ${{ parameters.apps }}
+              release: ${{ parameters.release }}
