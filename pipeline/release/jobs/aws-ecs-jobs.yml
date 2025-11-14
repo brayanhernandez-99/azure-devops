@@ -70,10 +70,10 @@ jobs:
             fi
 
             # Validar microservicios transactions
-            if [[ "$(msName)" == "transaction-astro" || \
-                  "$(msName)" == "transaction-lotteries-games" || \
-                  "$(msName)" == "transaction-recharges" ]]; then
-              REPO_NAME="microservice-transaction"
+            if [[ "$(cleanMsName)" == "transaction-astro" || \
+                  "$(cleanMsName)" == "transaction-lotteries-games" || \
+                  "$(cleanMsName)" == "transaction-recharges" ]]; then
+              REPO_NAME="microservice-transaction-$clean_branch"
               IMAGE_TAG="$(msVersion)"
             else
               REPO_NAME="$(msName)-$clean_branch"
