@@ -69,8 +69,16 @@ jobs:
               clean_branch=prd
             fi
 
-            REPO_NAME="$(msName)-$clean_branch"
-            IMAGE_TAG="$(msVersion)"
+            # Validar microservicios transactions
+            if [[ "$(msName)" == "transaction-astro" || \
+                  "$(msName)" == "transaction-lotteries-games" || \
+                  "$(msName)" == "transaction-recharges" ]]; then
+              REPO_NAME="microservice-transaction"
+              IMAGE_TAG="$(msVersion)"
+            else
+              REPO_NAME="$(msName)-$clean_branch"
+              IMAGE_TAG="$(msVersion)"
+            fi
 
             echo "🔍 Verificando si la imagen '$IMAGE_TAG' existe en '$REPO_NAME'..."
 
