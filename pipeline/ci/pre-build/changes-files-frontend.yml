@@ -1,5 +1,5 @@
 jobs:
-  - job: "changes_files"
+  - job: "pre_build_micro_fronted"
     displayName: "🔍 Detect Changed Microfrontend Files"
     pool:
       name: "Azure Pipelines"

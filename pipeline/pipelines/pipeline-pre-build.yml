@@ -2,6 +2,6 @@ stages:
   - stage: pre_build_micro_fronted
     displayName: "🏷️ Pre Build MicroFrontend"
     jobs:
-      - template: ../ci/pre-build/changes-file-frontend.yml
+      - template: ../ci/pre-build/changes-files-frontend.yml
         parameters:
           release: ${{ parameters.release }}
