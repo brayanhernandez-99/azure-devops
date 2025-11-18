@@ -5,43 +5,62 @@ Este repositorio contiene plantillas YAML reutilizables para la definición de p
 ## Estructura del repositorio
 
 ```
+
 pipelines-templates/
-├── .gitignore
-├── README.md
-└── pipeline/
-    ├── main.yml
-    ├── main-pre-build.yml
-    ├── build/
-    │   ├── build-development.yml
-    │   ├── build-master-front.yml
-    │   ├── build-flutter.yml
-    │   ├── semantic-version-integration.yml
-    │   └── jobs/
-    │       ├── job-electron.yml
-    │       ├── job-flutter.yml
-    │       ├── job-frontend.yml
-    │       └── job-backend.yml
-    ├── docker/
-    │   └── Dockerfile
-    ├── general/
-    │   ├── commit-tag-changeload-flutter.yml
-    │   ├── commit-tag-changeload.yml
-    │   ├── semantic-version-frontend.yml
-    │   ├── semantic-version-backend.yml
-    │   └── semantic-version-flutter.yml
-    ├── pre-build/
-    │   ├── pre-build-development.yml
-    │   └── jobs/
-    │       ├── changes-file-front.yml
-    │       └── changes-file.yml
-    ├── release/
-    │   ├── artifacts-managment.yml
-    │   ├── deploy-integration.yml
-    │   └── jobs/
-    │       ├── aws-ecs-jobs.yml
-    │       └── aws-s3-jobs.yml
-    └── variables/
-        └── groups-transversal-variables.yml
+├── main.yml
+├── cd/
+│   ├── deployment.yml
+│   ├── commit/
+│   │   ├── commit-version-backend.yml
+│   │   ├── commit-version-electron.yml
+│   │   ├── commit-version-electron-new.yml
+│   │   ├── commit-version-flutter.yml
+│   │   ├── commit-version-frontend.yml
+│   │   └── commit-version-frontend-new.yml
+│   └── deploy/
+│       ├── deploy-backend.yml
+│       ├── deploy-electron.yml
+│       ├── deploy-electron-new.yml
+│       ├── deploy-flutter.yml
+│       ├── deploy-frontend.yml
+│       └── deploy-repository-configuration.yml
+├── ci/
+│   ├── semantic-version-integration.yml
+│   ├── build/
+│   │   ├── build-backend.yml
+│   │   ├── build-electron.yml
+│   │   ├── build-electron-new.yml
+│   │   ├── build-flutter.yml
+│   │   ├── build-frontend.yml
+│   │   ├── build-frontend-new.yml
+│   │   └── build-repository-configuration.yml
+│   ├── general/
+│   │   ├── semantic-version-backend.yml
+│   │   ├── semantic-version-electron.yml
+│   │   ├── semantic-version-electron-new.yml
+│   │   ├── semantic-version-flutter.yml
+│   │   ├── semantic-version-frontend.yml
+│   │   ├── semantic-version-frontend-new.yml
+│   │   └── semantic-version-repository-configuration.yml
+│   └── tests/
+│       └── sonar-backend.yml
+├── docker/
+│   └── Dockerfile
+├── pipelines/
+│   ├── pipeline-electron.yml
+│   ├── pipeline-flutter.yml
+│   ├── pipeline-micro-frontend.yml
+│   ├── pipeline-micro-frontend-electron.yml
+│   ├── pipeline-micro-services.yml
+│   └── pipeline-repository-configuration.yml
+└── variables/
+    ├── groups-transversal-variables-backend.yml
+    ├── groups-transversal-variables-electron.yml
+    ├── groups-transversal-variables-electron-new.yml
+    ├── groups-transversal-variables-flutter.yml
+    ├── groups-transversal-variables-frontend.yml
+    ├── groups-transversal-variables-frontend-new.yml
+    └── groups-transversal-variables-rpc.yml
 ```
 
 ## Descripción general
@@ -52,7 +71,7 @@ pipelines-templates/
 
 ## Parámetros principales
 
-- `release`: Tipo de release (`aws-s3`, `aws-ecs`, `apk`, `exe`).
+- `release`: Tipo de release (`aws-s3`, `aws-ecs`, `apk`, `exe`, `rpc`).
 - `red`: Lista de regiones para despliegue (por defecto: antioquia, cap, tolima, huila, cauca, boyaca).
 - `apps`: Objeto para definir aplicaciones específicas.
 
@@ -72,18 +91,32 @@ Incluye la plantilla principal en tu pipeline de Azure DevOps:
 trigger:
   branches:
     include:
-      - master
-      - develop
       - feature/*
       - hotfix/*
+      - develop
+      - master
+      - staging
+    exclude:
+      - version/*
+
+pr:
+  branches:
+    include:
+      - develop
+      - master
       - staging
 
+resources:
+  repositories:
+    - repository: templates
+      name: DevOps-templates-UX/pipelines-templates
+      type: git
+      ref: master
+
 extends:
-  template: pipeline/main.yml
+  template: pipeline/main.yml@templates
   parameters:
-    language: nodejs
-    release: aws-s3
-    apps: {}
+    release: <release>
 ```
 
 Ajusta los parámetros según tu proyecto y necesidades.
