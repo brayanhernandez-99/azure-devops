@@ -33,5 +33,9 @@
   "microservice-siga": "x.x.x",
   "microservice-transaction": "x.x.x",
   "microservice-transaction-notifier": "x.x.x",
-  "microservice-wiretransfer": "x.x.x"
+  "microservice-wiretransfer": "x.x.x",
+  
+  "microservice-transaction-astro": "x.x.x",
+  "microservice-transaction-lotteries-games": "x.x.x",
+  "microservice-transaction-recharges": "x.x.x"
 }
