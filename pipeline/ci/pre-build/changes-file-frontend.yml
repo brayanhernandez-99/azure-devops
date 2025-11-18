@@ -92,7 +92,8 @@ jobs:
 
           CURRENT_BRANCH=$(echo $(Build.SourceBranch))
           if [[ "$BUILD_REASON" == "IndividualCI" || "$BUILD_REASON" == "Manual" ]]; then
-            if [[ "$CURRENT_BRANCH" != refs/heads/feature/* && "$CURRENT_BRANCH" != refs/heads/hotfix/* ]]; then
+
+            if [[ "$CURRENT_BRANCH" == "refs/heads/develop" || "$CURRENT_BRANCH" == "refs/heads/staging" || "$CURRENT_BRANCH" == "refs/heads/master" ]]; then
               packages_changed=$(git diff --name-only HEAD~1 HEAD | grep "^packages/")
 
               if [[ -n "$packages_changed" ]]; then
