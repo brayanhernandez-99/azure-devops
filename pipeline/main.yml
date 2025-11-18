@@ -59,6 +59,14 @@ stages:
   #
   # MicroFronted
   #
+  - ${{ if and(eq(parameters.release, 'pre-build'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), in(variables['Build.SourceBranchName'], 'develop', 'staging', 'master'))) }}:
+      - template: ./pipelines/pipeline-pre-build.yml
+        parameters:
+          release: ${{ parameters.release }}
+
+  #
+  # MicroFronted
+  #
   - ${{ if and(eq(parameters.release, 'aws-s3'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), in(variables['Build.SourceBranchName'], 'develop', 'staging', 'master'))) }}:
       - template: ./pipelines/pipeline-micro-frontend.yml
         parameters:
