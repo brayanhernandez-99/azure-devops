@@ -122,7 +122,8 @@ jobs:
               echo "##[command]🌐 Build Results URL: https://dev.azure.com/ux-technology/Invictus/_build/results?buildId=$run_id"
               echo " - Release: $release"
             else
-              echo "⚠️ No se ejecuta este pipeline manual para las ramas feature y Hotfix"
+              echo -e "\n##vso[task.logissue type=error]⚠️ No se ejecuta este pipeline manual para las ramas feature y Hotfix"
+              exit 99
             fi
           fi
         displayName: "🔍 Detect Changed Files MS"
