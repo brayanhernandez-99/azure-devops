@@ -78,18 +78,18 @@ jobs:
               # pipeline_output=$(az pipelines run \
               #   --name "$(Build.Repository.Name)" \
               #   --branch "$CURRENT_BRANCH" \
-              #   --parameters release="$release" apps="$apps_json" \
+              #   --parameters release="aws-s3" apps="$apps_json" \
               #   --output json)
               pipeline_output=$(az pipelines run \
                 --name "apps-microfrontend-invictus" \
                 --branch "$CURRENT_BRANCH" \
-                --parameters release="$release" apps="$apps_json" \
+                --parameters release="aws-s3" apps="$apps_json" \
                 --output json)
               echo $pipeline_output
 
               run_id=$(echo "$pipeline_output" | jq -r '.id')              
               echo "##[command]🌐 Build Results URL: https://dev.azure.com/ux-technology/Invictus/_build/results?buildId=$run_id"
-              echo " - Release: $release"
+              echo " - Release: aws-s3"
             else
               echo "⚠️ No se ejecuta cuando source branch es stagign o develop solo con hotfix o features"
             fi
@@ -120,18 +120,18 @@ jobs:
               # pipeline_output=$(az pipelines run \
               #   --name "$(Build.Repository.Name)" \
               #   --branch "$CURRENT_BRANCH" \
-              #   --parameters release="$release" apps="$apps_json" \
+              #   --parameters release="aws-s3" apps="$apps_json" \
               #   --output json)
               pipeline_output=$(az pipelines run \
                 --name "apps-microfrontend-invictus" \
                 --branch "$CURRENT_BRANCH" \
-                --parameters release="$release" apps="$apps_json" \
+                --parameters release="aws-s3" apps="$apps_json" \
                 --output json)
               echo $pipeline_output
 
               run_id=$(echo "$pipeline_output" | jq -r '.id')              
               echo "##[command]🌐 Build Results URL: https://dev.azure.com/ux-technology/Invictus/_build/results?buildId=$run_id"
-              echo " - Release: $release"
+              echo " - Release: aws-s3"
             else
               echo -e "\n##vso[task.logissue type=error]⚠️ No se ejecuta este pipeline manual para las ramas feature y Hotfix"
               exit 99
