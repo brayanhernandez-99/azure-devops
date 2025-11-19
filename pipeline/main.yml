@@ -16,7 +16,7 @@ parameters:
   - name: apps
     type: object
     default: {}
-    
+
     # default:
     #   - "app-administration-vue2"
     #   - "app-sellers-vue2"
