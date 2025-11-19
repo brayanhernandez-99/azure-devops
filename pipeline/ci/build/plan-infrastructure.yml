@@ -84,10 +84,19 @@ jobs:
           # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/trino
           # terragrunt plan --all --non-interactive -no-color
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/awards/aws-service-ssm-parameter
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/awards/aws-service-ssm-parameter
+          # terragrunt plan --all --non-interactive -no-color
+
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-ssm-parameter
+          # terragrunt plan --all --non-interactive -no-color
+
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-vpc-endpoints/aws-sg
           terragrunt plan --all --non-interactive -no-color
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-ssm-parameter
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-vpc-endpoints/aws-endpoint-sqs
+          terragrunt plan --all --non-interactive -no-color
+
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-vpc-endpoints/aws-endpoint-dynamo
           terragrunt plan --all --non-interactive -no-color
 
         displayName: "🧩 Plan Infrastructure"
