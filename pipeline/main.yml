@@ -18,9 +18,7 @@ parameters:
   - name: apps
     type: object
     default:
-      microservice-dynamic-storage: "1.8.1"
-      microservice-payment-voucher: "3.2.1"
-      microservice-lotteries-games: "4.13.12"
+      microservice-siga: "3.2.13"
 
 resources:
   repositories:
