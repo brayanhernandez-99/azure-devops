@@ -59,9 +59,9 @@ resources:
 
 stages:
   #
-  # MicroFronted
+  # MicroFronted Pre-Build
   #
-  - ${{ if and(eq(parameters.release, 'pre-build'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), in(variables['Build.SourceBranchName'], 'develop', 'staging', 'master'))) }}:
+  - ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
       - template: ./pipelines/pipeline-pre-build.yml
         parameters:
           release: ${{ parameters.release }}
