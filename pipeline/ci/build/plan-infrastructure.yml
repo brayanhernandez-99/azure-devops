@@ -81,27 +81,20 @@ jobs:
       - script: |
           set -e
 
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds
-          terragrunt plan --all --non-interactive -no-color
-
-
-
-
-
-
-
-
-
+          ################# servicio de trino
 
           # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/trino
           # terragrunt plan --all --non-interactive -no-color
+
+          ###########################Creación de parametros faltantes
 
           # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/awards/aws-service-ssm-parameter
           # terragrunt plan --all --non-interactive -no-color
 
           # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-ssm-parameter
           # terragrunt plan --all --non-interactive -no-color
+
+          #######################Creación de endpoint services
 
           # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-vpc-endpoints/aws-sg
           # terragrunt plan --all --non-interactive -no-color
@@ -147,6 +140,49 @@ jobs:
 
           # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-vpc-endpoints/aws-endpoint-xray
           # terragrunt plan --all --non-interactive -no-color
+
+          ####################Eliminar redis
+
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/redis
+          # terragrunt plan --all --non-interactive -no-color
+
+           #########################actualización para eliminar schedulers
+
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/astro/aws-service-ecs
+          terragrunt plan --all --non-interactive -no-color
+          
+
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/bff-sellers/aws-service-ecs
+          terragrunt plan --all --non-interactive -no-color
+          
+
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/hierarchies/aws-service-ecs
+          terragrunt plan --all --non-interactive -no-color
+          
+
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/lotteries-games/aws-service-ecs
+          terragrunt plan --all --non-interactive -no-color
+          
+
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/payment-voucher/aws-service-ecs
+          terragrunt plan --all --non-interactive -no-color
+          
+
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/payments/aws-service-ecs
+          terragrunt plan --all --non-interactive -no-color
+          
+
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/products/aws-service-ecs
+          terragrunt plan --all --non-interactive -no-color
+          
+
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges/aws-service-ecs
+          terragrunt plan --all --non-interactive -no-color
+          
+
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/sellers/aws-service-ecs
+          terragrunt plan --all --non-interactive -no-color
+          
 
         displayName: "🧩 Plan Infrastructure"
         condition: succeeded()
