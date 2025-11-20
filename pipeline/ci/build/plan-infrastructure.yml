@@ -81,6 +81,19 @@ jobs:
       - script: |
           set -e
 
+
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds
+          terragrunt plan --all --non-interactive -no-color
+
+
+
+
+
+
+
+
+
+
           # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/trino
           # terragrunt plan --all --non-interactive -no-color
 
@@ -90,50 +103,50 @@ jobs:
           # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-ssm-parameter
           # terragrunt plan --all --non-interactive -no-color
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-vpc-endpoints/aws-sg
-          terragrunt plan --all --non-interactive -no-color
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-vpc-endpoints/aws-sg
+          # terragrunt plan --all --non-interactive -no-color
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-vpc-endpoints/aws-endpoint-sqs
-          terragrunt plan --all --non-interactive -no-color
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-vpc-endpoints/aws-endpoint-sqs
+          # terragrunt plan --all --non-interactive -no-color
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-vpc-endpoints/aws-endpoint-dynamo
-          terragrunt plan --all --non-interactive -no-color
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-vpc-endpoints/aws-endpoint-dynamo
+          # terragrunt plan --all --non-interactive -no-color
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-vpc-endpoints/aws-endpoint-cloudwatch-events
-          terragrunt plan --all --non-interactive -no-color
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-vpc-endpoints/aws-endpoint-cloudwatch-events
+          # terragrunt plan --all --non-interactive -no-color
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-vpc-endpoints/aws-endpoint-cloudwatch-logs
-          terragrunt plan --all --non-interactive -no-color
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-vpc-endpoints/aws-endpoint-cloudwatch-logs
+          # terragrunt plan --all --non-interactive -no-color
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-vpc-endpoints/aws-endpoint-cloudwatch-monitoring
-          terragrunt plan --all --non-interactive -no-color
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-vpc-endpoints/aws-endpoint-cloudwatch-monitoring
+          # terragrunt plan --all --non-interactive -no-color
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-vpc-endpoints/aws-endpoint-ec2-msg
-          terragrunt plan --all --non-interactive -no-color
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-vpc-endpoints/aws-endpoint-ec2-msg
+          # terragrunt plan --all --non-interactive -no-color
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-vpc-endpoints/aws-endpoint-ecr-api
-          terragrunt plan --all --non-interactive -no-color
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-vpc-endpoints/aws-endpoint-ecr-api
+          # terragrunt plan --all --non-interactive -no-color
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-vpc-endpoints/aws-endpoint-ecr-dkr
-          terragrunt plan --all --non-interactive -no-color
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-vpc-endpoints/aws-endpoint-ecr-dkr
+          # terragrunt plan --all --non-interactive -no-color
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-vpc-endpoints/aws-endpoint-kinesis
-          terragrunt plan --all --non-interactive -no-color
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-vpc-endpoints/aws-endpoint-kinesis
+          # terragrunt plan --all --non-interactive -no-color
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-vpc-endpoints/aws-endpoint-s3
-          terragrunt plan --all --non-interactive -no-color
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-vpc-endpoints/aws-endpoint-s3
+          # terragrunt plan --all --non-interactive -no-color
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-vpc-endpoints/aws-endpoint-secretsmanager
-          terragrunt plan --all --non-interactive -no-color
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-vpc-endpoints/aws-endpoint-secretsmanager
+          # terragrunt plan --all --non-interactive -no-color
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-vpc-endpoints/aws-endpoint-ssm
-          terragrunt plan --all --non-interactive -no-color
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-vpc-endpoints/aws-endpoint-ssm
+          # terragrunt plan --all --non-interactive -no-color
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-vpc-endpoints/aws-endpoint-ssm-msg
-          terragrunt plan --all --non-interactive -no-color
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-vpc-endpoints/aws-endpoint-ssm-msg
+          # terragrunt plan --all --non-interactive -no-color
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-vpc-endpoints/aws-endpoint-xray
-          terragrunt plan --all --non-interactive -no-color
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-vpc-endpoints/aws-endpoint-xray
+          # terragrunt plan --all --non-interactive -no-color
 
         displayName: "🧩 Plan Infrastructure"
         condition: succeeded()
