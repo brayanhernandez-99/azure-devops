@@ -19,9 +19,9 @@ jobs:
 
           if [[ "$(Build.Reason)" == "PullRequest" ]]; then
             echo -e "\nℹ️ Ejecucion Valida:"
+            echo "Branch: $(echo "$(System.PullRequest.SourceBranch)" | sed 's#refs/heads/##')"
             echo "Build Reason: $(Build.Reason)"
             echo "Pull Request: $(System.PullRequest.PullRequestId)"
-            echo "Branch: $(echo "$(System.PullRequest.SourceBranch)" | sed 's#refs/heads/##')"
           else
             echo -e "\n##vso[task.logissue type=error]⚠️ Ejecucion [$(Build.Reason)] no valida. La ejecucion deber ser por PR."
             exit 99
@@ -38,54 +38,53 @@ jobs:
           echo "⚙️ Configurando organización y proyecto por defecto"
           az devops configure --defaults organization=https://dev.azure.com/ux-technology project=$(System.TeamProject)
 
-          if [[ "$(Build.Reason)" == "PullRequest" ]]; then
-            clean_branch=$(echo "$(System.PullRequest.SourceBranch)" | sed 's#refs/heads/##')
-            git checkout $clean_branch
-            git reset --hard HEAD
+          clean_branch=$(echo "$(System.PullRequest.SourceBranch)" | sed 's#refs/heads/##')
+          git checkout $clean_branch
+          git reset --hard HEAD
 
-            cd $(Build.SourcesDirectory)
-            SOURCE_BRANCH=$(echo "$(System.PullRequest.SourceBranch)" | sed 's#refs/heads/##')
-            TARGET_BRANCH=$(echo "$(System.PullRequest.TargetBranch)" | sed 's#refs/heads/##')
-            CURRENT_BRANCH=$(Build.SourceBranchName)
+          cd $(Build.SourcesDirectory)
+          SOURCE_BRANCH=$(echo "$(System.PullRequest.SourceBranch)" | sed 's#refs/heads/##')
+          TARGET_BRANCH=$(echo "$(System.PullReq uest.TargetBranch)" | sed 's#refs/heads/##')
+          CURRENT_BRANCH=$SOURCE_BRANCH
 
-            echo -e "\n🔍 Comparando cambios entre: $TARGET_BRANCH ... $CURRENT_BRANCH"
-            changed_files=$(git diff --name-only "origin/$TARGET_BRANCH"..."origin/$CURRENT_BRANCH")
+          echo -e "\n🔍 Comparando cambios entre: $TARGET_BRANCH ... $CURRENT_BRANCH"
+          changed_files=$(git diff --name-only "origin/$TARGET_BRANCH"..."origin/$CURRENT_BRANCH")
 
-            packages_changed=$(echo "$changed_files" | grep "^packages/" || true)
+          packages_changed=$(echo "$changed_files" | grep "^packages/" || true)
 
-            if [[ -n "$packages_changed" ]]; then
-              apps=$(find apps app-legacy -mindepth 1 -maxdepth 1 -type d | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u)
-            else
-              apps=$(echo "$changed_files" | grep -E "^apps/|^app-legacy/" | cut -d '/' -f1,2 | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u)
-            fi
-
-            if [[ -z "$apps" ]]; then
-              echo -e "\n##vso[task.logissue type=error]⚠️ No se detectaron cambios en apps. Cancelando ejecución del pipeline."
-              exit 99
-            fi
-            
-            echo "🔍 Apps modificadas detectadas:"
-            echo "${apps[@]}"
-            apps_json=$(printf '%s\n' "${apps[@]}" | jq -R . | jq -s .)
-
-            echo -e "\n🔗 Creando ejecucion pipeline"
-            # pipeline_output=$(az pipelines run \
-            #   --name "$(Build.Repository.Name)" \
-            #   --branch "$CURRENT_BRANCH" \
-            #   --parameters release="aws-s3" apps="$apps_json" \
-            #   --output json)
-            pipeline_output=$(az pipelines run \
-              --name "apps-microfrontend-invictus" \
-              --branch "$CURRENT_BRANCH" \
-              --parameters release="aws-s3" apps="$apps_json" \
-              --output json)
-            echo $pipeline_output
-
-            run_id=$(echo "$pipeline_output" | jq -r '.id')              
-            echo "##[command]🌐 Build Results URL: https://dev.azure.com/ux-technology/Invictus/_build/results?buildId=$run_id"
-            echo " - Release: aws-s3"
+          if [[ -n "$packages_changed" ]]; then
+            apps=$(find apps app-legacy -mindepth 1 -maxdepth 1 -type d | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u)
+          else
+            apps=$(echo "$changed_files" | grep -E "^apps/|^app-legacy/" | cut -d '/' -f1,2 | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u)
           fi
-        displayName: "🔍 Detect Changed Files MS"
-        condition: succeeded()
+
+          if [[ -z "$apps" ]]; then
+            echo -e "\n##vso[task.logissue type=error]⚠️ No se detectaron cambios en apps. Cancelando ejecución del pipeline."
+            exit 99
+          fi
+          
+          echo "🔍 Apps modificadas detectadas:"
+          echo "${apps[@]}"
+          apps_json=$(printf '%s\n' "${apps[@]}" | jq -R . | jq -s .)
+
+          echo -e "\n🔗 Creando ejecucion pipeline"
+          # pipeline_output=$(az pipelines run \
+          #   --name "$(Build.Repository.Name)" \
+          #   --branch "$CURRENT_BRANCH" \
+          #   --parameters release="aws-s3" apps="$apps_json" \
+          #   --output json)
+          pipeline_output=$(az pipelines run \
+            --name "apps-microfrontend-invictus" \
+            --branch "$CURRENT_BRANCH" \
+            --parameters release="aws-s3" apps="$apps_json" \
+            --output json)
+          echo $pipeline_output
+
+          run_id=$(echo "$pipeline_output" | jq -r '.id')              
+          echo "##[command]🌐 Build Results URL: https://dev.azure.com/ux-technology/Invictus/_build/results?buildId=$run_id"
+          echo " - Release: aws-s3"
+
+        displayName: "🔍 Detect PR Changed Files MS"
+        condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'))
         env:
           AZURE_DEVOPS_EXT_PAT: $(PAT-AZ)
