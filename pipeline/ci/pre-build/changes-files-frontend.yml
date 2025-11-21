@@ -15,17 +15,25 @@ jobs:
 
       - script: |
           echo "🔍 Validando ejecucion..."
-          CURRENT_BRANCH=$(echo "$(System.PullRequest.SourceBranch)" | sed 's#refs/heads/##')
 
-          if [[ "$(Build.Reason)" == "PullRequest" ]]; then
-            echo -e "\nℹ️ Ejecucion Valida:"
-            echo "Branch: $(echo "$(System.PullRequest.SourceBranch)" | sed 's#refs/heads/##')"
-            echo "Build Reason: $(Build.Reason)"
-            echo "Pull Request: $(System.PullRequest.PullRequestId)"
-          else
-            echo -e "\n##vso[task.logissue type=error]⚠️ Ejecucion [$(Build.Reason)] no valida. La ejecucion deber ser por PR."
-            exit 99
-          fi
+          case "$(Build.Reason)" in
+            "PullRequest")
+              echo -e "\nℹ️ Ejecucion Valida por: PullRequest"
+              echo "Branch: $(echo "$(System.PullRequest.SourceBranch)" | sed 's#refs/heads/##')"
+              echo "Build Reason: $(Build.Reason)"
+              echo "Pull Request: $(System.PullRequest.PullRequestId)"
+              ;;
+            "IndividualCI")
+              echo -e "\nℹ️ Ejecucion Valida por: IndividualCI"
+              echo "Branch: $(Build.SourceBranch)"
+              echo "Build Reason: $(Build.Reason)"
+              ;;
+            *)
+              echo -e "\n##vso[task.logissue type=error]⚠️ Ejecucion [$(Build.Reason)] no valida."
+              echo "##vso[task.logissue type=error] Debe ejecutarse solo por PullRequest o IndividualCI."
+              exit 99
+              ;;
+          esac
         displayName: "🧩 Validate Execution (Auto/Manual)"
         condition: succeeded()
 
@@ -38,53 +46,87 @@ jobs:
           echo "⚙️ Configurando organización y proyecto por defecto"
           az devops configure --defaults organization=https://dev.azure.com/ux-technology project=$(System.TeamProject)
 
-          clean_branch=$(echo "$(System.PullRequest.SourceBranch)" | sed 's#refs/heads/##')
-          git checkout $clean_branch
-          git reset --hard HEAD
+          case "$(Build.Reason)" in
+            "PullRequest")
+              cd $(Build.SourcesDirectory)
+              clean_branch=$(echo "$(System.PullRequest.SourceBranch)" | sed 's#refs/heads/##')
+              git checkout $clean_branch
+              git reset --hard HEAD
 
-          cd $(Build.SourcesDirectory)
-          SOURCE_BRANCH=$(echo "$(System.PullRequest.SourceBranch)" | sed 's#refs/heads/##')
-          TARGET_BRANCH=$(echo "$(System.PullReq uest.TargetBranch)" | sed 's#refs/heads/##')
-          CURRENT_BRANCH=$SOURCE_BRANCH
-
-          echo -e "\n🔍 Comparando cambios entre: $TARGET_BRANCH ... $CURRENT_BRANCH"
-          changed_files=$(git diff --name-only "origin/$TARGET_BRANCH"..."origin/$CURRENT_BRANCH")
-
-          packages_changed=$(echo "$changed_files" | grep "^packages/" || true)
-
-          if [[ -n "$packages_changed" ]]; then
-            apps=$(find apps app-legacy -mindepth 1 -maxdepth 1 -type d | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u)
-          else
-            apps=$(echo "$changed_files" | grep -E "^apps/|^app-legacy/" | cut -d '/' -f1,2 | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u)
-          fi
-
-          if [[ -z "$apps" ]]; then
-            echo -e "\n##vso[task.logissue type=error]⚠️ No se detectaron cambios en apps. Cancelando ejecución del pipeline."
-            exit 99
-          fi
+              SOURCE_BRANCH=$(echo "$(System.PullRequest.SourceBranch)" | sed 's#refs/heads/##')
+              TARGET_BRANCH=$(echo "$(System.PullReq uest.TargetBranch)" | sed 's#refs/heads/##')
+              CURRENT_BRANCH=$SOURCE_BRANCH
           
-          echo "🔍 Apps modificadas detectadas:"
-          echo "${apps[@]}"
-          apps_json=$(printf '%s\n' "${apps[@]}" | jq -R . | jq -s .)
+              echo -e "\n🔍 Comparando cambios entre: $TARGET_BRANCH ... $CURRENT_BRANCH"
+              changed_files=$(git diff --name-only "origin/$TARGET_BRANCH"..."origin/$CURRENT_BRANCH")
+              packages_changed=$(echo "$changed_files" | grep "^packages/" || true)
 
-          echo -e "\n🔗 Creando ejecucion pipeline"
-          # pipeline_output=$(az pipelines run \
-          #   --name "$(Build.Repository.Name)" \
-          #   --branch "$CURRENT_BRANCH" \
-          #   --parameters release="aws-s3" apps="$apps_json" \
-          #   --output json)
-          pipeline_output=$(az pipelines run \
-            --name "apps-microfrontend-invictus" \
-            --branch "$CURRENT_BRANCH" \
-            --parameters release="aws-s3" apps="$apps_json" \
-            --output json)
-          echo $pipeline_output
+              if [[ -n "$packages_changed" ]]; then
+                apps=$(find apps app-legacy -mindepth 1 -maxdepth 1 -type d | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u)
+              else
+                apps=$(echo "$changed_files" | grep -E "^apps/|^app-legacy/" | cut -d '/' -f1,2 | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u)
+              fi
 
-          run_id=$(echo "$pipeline_output" | jq -r '.id')              
-          echo "##[command]🌐 Build Results URL: https://dev.azure.com/ux-technology/Invictus/_build/results?buildId=$run_id"
-          echo " - Release: aws-s3"
+              if [[ -z "$apps" ]]; then
+                echo -e "\n##vso[task.logissue type=error]⚠️ No se detectaron cambios en apps. Cancelando ejecución del pipeline."
+                exit 99
+              fi
+              
+              echo "🔍 Apps modificadas detectadas:"
+              echo "${apps[@]}"
+              apps_json=$(printf '%s\n' "${apps[@]}" | jq -R . | jq -s .)
 
-        displayName: "🔍 Detect PR Changed Files MS"
-        condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'))
+              echo -e "\n🔗 Creando ejecucion pipeline"
+              pipeline_output=$(az pipelines run \
+                --name "apps-microfrontend-invictus" \
+                --branch "$CURRENT_BRANCH" \
+                --parameters release="aws-s3" apps="$apps_json" \
+                --output json)
+              echo "$pipeline_output" | jq
+
+              run_id=$(echo "$pipeline_output" | jq -r '.id')              
+              echo -e "\n##[command]🌐 Build Results URL: https://dev.azure.com/ux-technology/Invictus/_build/results?buildId=$run_id"
+              ;;
+            "IndividualCI")
+                cd $(Build.SourcesDirectory)
+                CURRENT_BRANCH=$(echo $(Build.SourceBranch))
+
+                echo -e "\n🔍 Comparando cambios entre: $CURRENT_BRANCH ... $CURRENT_BRANCH"
+                packages_changed=$(git diff --name-only HEAD~1 HEAD | grep "^packages/")
+
+                if [[ -n "$packages_changed" ]]; then
+                    apps=$(find apps app-legacy -mindepth 1 -maxdepth 1 -type d | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u)
+                else
+                    apps=$(git diff --name-only HEAD~1 HEAD | grep -E "^apps/|^app-legacy/" | cut -d '/' -f1,2 | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u)
+                fi
+
+                if [[ -z "$apps" ]]; then
+                  echo -e "\n##vso[task.logissue type=error]⚠️ No se detectaron cambios en apps. Cancelando ejecución del pipeline."
+                  exit 99
+                fi
+
+                echo "🔍 Apps modificadas detectadas:"
+                echo "${apps[@]}"
+                apps_json=$(printf '%s\n' "${apps[@]}" | jq -R . | jq -s .)
+
+                echo -e "\n🔗 Creando ejecucion pipeline"
+                pipeline_output=$(az pipelines run \
+                  --name "$(Build.Repository.Name)" \
+                  --branch "$CURRENT_BRANCH" \
+                  --parameters release="aws-s3" apps="$apps_json" \
+                  --output json)
+                echo "$pipeline_output" | jq
+
+                run_id=$(echo "$pipeline_output" | jq -r '.id')              
+                echo -e "\n##[command]🌐 Build Results URL: https://dev.azure.com/ux-technology/Invictus/_build/results?buildId=$run_id"
+              ;;
+            *)
+              echo -e "\n##vso[task.logissue type=error]⚠️ Ejecucion [$(Build.Reason)] no valida."
+              echo "##vso[task.logissue type=error] Debe ejecutarse solo por PullRequest o IndividualCI."
+              exit 99
+              ;;
+          esac
+        displayName: "🔍 Detect Changed Files MS"
+        condition: succeeded()
         env:
           AZURE_DEVOPS_EXT_PAT: $(PAT-AZ)
