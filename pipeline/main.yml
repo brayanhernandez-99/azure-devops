@@ -61,7 +61,7 @@ stages:
   #
   # MicroFronted Pre-Build
   #
-  - ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
+  - ${{ if contains('PullRequest,IndividualCI,Manual', variables['Build.Reason']) }}:
       - template: ./pipelines/pipeline-pre-build.yml
         parameters:
           release: ${{ parameters.release }}

@@ -54,7 +54,7 @@ jobs:
               git reset --hard HEAD
 
               SOURCE_BRANCH=$(echo "$(System.PullRequest.SourceBranch)" | sed 's#refs/heads/##')
-              TARGET_BRANCH=$(echo "$(System.PullReq uest.TargetBranch)" | sed 's#refs/heads/##')
+              TARGET_BRANCH=$(echo "$(System.PullRequest.TargetBranch)" | sed 's#refs/heads/##')
               CURRENT_BRANCH=$SOURCE_BRANCH
           
               echo -e "\n🔍 Comparando cambios entre: $TARGET_BRANCH ... $CURRENT_BRANCH"
@@ -90,6 +90,8 @@ jobs:
             "IndividualCI")
                 cd $(Build.SourcesDirectory)
                 CURRENT_BRANCH=$(echo $(Build.SourceBranch))
+                git checkout $CURRENT_BRANCH
+                git reset --hard HEAD
 
                 echo -e "\n🔍 Comparando cambios entre: $CURRENT_BRANCH ... $CURRENT_BRANCH"
                 packages_changed=$(git diff --name-only HEAD~1 HEAD | grep "^packages/")
