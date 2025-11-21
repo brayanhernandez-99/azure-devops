@@ -25,7 +25,7 @@ jobs:
               ;;
             "IndividualCI")
               echo -e "\nℹ️ Ejecucion Valida por: IndividualCI"
-              echo "Branch: $(Build.SourceBranch)"
+              echo "Branch: $(echo "$(Build.SourceBranch)" | sed 's#refs/heads/##')"
               echo "Build Reason: $(Build.Reason)"
               ;;
             *)
@@ -80,7 +80,7 @@ jobs:
               pipeline_output=$(az pipelines run \
                 --name "apps-microfrontend-invictus" \
                 --branch "$CURRENT_BRANCH" \
-                --parameters release="aws-s3" apps="$apps_json" \
+                --parameters apps="$apps_json" \
                 --output json)
               echo "$pipeline_output" | jq
 
@@ -89,7 +89,7 @@ jobs:
               ;;
             "IndividualCI")
                 cd $(Build.SourcesDirectory)
-                CURRENT_BRANCH=$(echo $(Build.SourceBranch))
+                CURRENT_BRANCH="$(echo "$(Build.SourceBranch)" | sed 's#refs/heads/##')"
                 git checkout $CURRENT_BRANCH
                 git reset --hard HEAD
 
@@ -115,7 +115,7 @@ jobs:
                 pipeline_output=$(az pipelines run \
                   --name "$(Build.Repository.Name)" \
                   --branch "$CURRENT_BRANCH" \
-                  --parameters release="aws-s3" apps="$apps_json" \
+                  --parameters apps="$apps_json" \
                   --output json)
                 echo "$pipeline_output" | jq
 
