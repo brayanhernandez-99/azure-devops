@@ -113,7 +113,7 @@ jobs:
 
                 echo -e "\n🔗 Creando ejecucion pipeline"
                 pipeline_output=$(az pipelines run \
-                  --name "$(Build.Repository.Name)" \
+                  --name "apps-microfrontend-invictus" \
                   --branch "$CURRENT_BRANCH" \
                   --parameters apps="$apps_json" \
                   --output json)
