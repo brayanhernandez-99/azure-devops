@@ -53,9 +53,9 @@ resources:
     #   name: Invictus/security-sonarqube-invictus
     #   type: git
 
-    - repository: electron
-      name: Invictus/electron-app-invictus-test
-      type: git
+    # - repository: electron
+    #   name: Invictus/electron-app-invictus-test
+    #   type: git
 
 stages:
   #
