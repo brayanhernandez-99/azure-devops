@@ -350,6 +350,53 @@ jobs:
       #   parameters:
       #     projectKey: $(Build.Repository.Name)
 
+      - script: |
+          echo "🔎 Validando el estado del pipeline..."
+
+          if [[ "$(Agent.JobStatus)" == "Succeeded" ]]; then
+            STATE="succeeded"
+            DESCRIPTION="Build completed successfully"
+          else
+            STATE="failed"
+            DESCRIPTION="Build failed"
+          fi
+
+          echo -e "\n📡 Reportando resultado a Azure DevOps..."
+          echo "State: $STATE"
+          echo "Description: $DESCRIPTION"
+
+          PR_NUMBER=$(System.PullRequest.PullRequestNumber)
+          ORGANIZATION=$(System.CollectionUri)
+          PROJECT=$(System.TeamProject)
+          API_URL="${ORGANIZATION}/${PROJECT}/_apis/git/repositories/$(Build.Repository.Name)/pullRequests/${PR_NUMBER}/statuses?api-version=7.1-preview.1"
+
+          echo -e "\n🌐 Calling API:"
+          echo "##[command] URL: $API_URL"
+
+          cat <<EOF > body.json
+          {
+            "state": "$STATE",
+            "description": "$DESCRIPTION",
+            "context": {
+              "name": "CI Build",
+              "genre": "pipeline"
+            }
+          }
+          EOF
+
+          echo "📁 File: body.json"
+          cat body.json
+
+          curl -s \
+            -X POST "$API_URL" \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer $SYSTEM_ACCESSTOKEN" \
+            --data-binary "@status.json"
+        displayName: "📡 Update PR Status (Status Check)"
+        condition: and(always(),eq(variables['Build.Reason'], 'PullRequest'))
+        env:
+          SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+
       - task: PublishBuildArtifacts@1
         inputs:
           PathtoPublish: "$(Build.ArtifactStagingDirectory)/dists"
