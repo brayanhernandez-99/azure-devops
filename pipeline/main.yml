@@ -2,6 +2,10 @@ parameters:
   - name: release
     type: string
 
+  - name: pr_id
+    type: string
+    default: '0'
+
   - name: red
     type: object
     default:

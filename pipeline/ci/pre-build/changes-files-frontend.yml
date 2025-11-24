@@ -80,7 +80,7 @@ jobs:
               pipeline_output=$(az pipelines run \
                 --name "apps-microfrontend-invictus" \
                 --branch "$CURRENT_BRANCH" \
-                --parameters apps="$apps_json" \
+                --parameters pr_id="" apps="$apps_json" \
                 --output json)
               echo "$pipeline_output" | jq
 
@@ -115,7 +115,7 @@ jobs:
                 pipeline_output=$(az pipelines run \
                   --name "apps-microfrontend-invictus" \
                   --branch "$CURRENT_BRANCH" \
-                  --parameters apps="$apps_json" \
+                  --parameters pr_id="0" apps="$apps_json" \
                   --output json)
                 echo "$pipeline_output" | jq
 

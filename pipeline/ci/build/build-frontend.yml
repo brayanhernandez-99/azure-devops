@@ -362,13 +362,13 @@ jobs:
           fi
 
           echo -e "\n📡 Reportando resultado a Azure DevOps..."
-          echo "State: $STATE"
-          echo "Description: $DESCRIPTION"
- 
-          PR_NUMBER=$(System.PullRequest.PullRequestNumber)
+          echo "Estado: $STATE"
+          echo "Descripcion: $DESCRIPTION"
+          echo "Pull Request Id: $PR_ID"
+
           ORGANIZATION=$(System.CollectionUri)
           PROJECT=$(System.TeamProject)
-          API_URL="${ORGANIZATION}/${PROJECT}/_apis/git/repositories/$(Build.Repository.Name)/pullRequests/${PR_NUMBER}/statuses?api-version=7.1-preview.1"
+          API_URL="$ORGANIZATION/$PROJECT/_apis/git/repositories/$(Build.Repository.Name)/pullRequests/$PR_ID/statuses?api-version=7.1-preview.1"
 
           echo -e "\n🌐 Calling API:"
           echo "##[command] URL: $API_URL"
@@ -378,7 +378,7 @@ jobs:
             "state": "$STATE",
             "description": "$DESCRIPTION",
             "context": {
-              "name": "CI Build",
+              "name": "pre-build-check",
               "genre": "pipeline"
             }
           }
@@ -392,9 +392,10 @@ jobs:
             -H "Content-Type: application/json" \
             -H "Authorization: Bearer $SYSTEM_ACCESSTOKEN" \
             --data-binary "@body.json"
-        displayName: "📡 Update PR Status (Status Check)"
-        condition: and(always(),eq(variables['Build.Reason'], 'PullRequest'))
+        displayName: "📡 Update PR Status"
+        condition: and(always(), ne('${{ parameters.pr_id }}', '0'))        
         env:
+          PR_ID: ${{ parameters.pr_id }}
           SYSTEM_ACCESSTOKEN: $(System.AccessToken)
 
       - task: PublishBuildArtifacts@1
