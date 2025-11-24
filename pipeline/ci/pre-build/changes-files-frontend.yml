@@ -76,10 +76,6 @@ jobs:
               echo "${apps[@]}"
               apps_json=$(printf '%s\n' "${apps[@]}" | jq -R . | jq -s .)
 
-              echo "************"
-              echo "$(System.PullRequest.PullRequestId)"
-              echo "************"
-
               echo -e "\n🔗 Creando ejecucion pipeline"
               pipeline_output=$(az pipelines run \
                 --name "apps-microfrontend-invictus" \
