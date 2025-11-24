@@ -106,6 +106,9 @@ jobs:
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-ssm-parameter
           terragrunt plan --all --non-interactive -no-color
 
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/biometrics/aws-service-s3
           terragrunt plan --all --non-interactive -no-color
 
