@@ -127,6 +127,9 @@ jobs:
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/dynamic-storage/aws-service-ssm-parameter
           terragrunt plan --all --non-interactive -no-color
 
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/external-wager/aws-service-s3
           terragrunt plan --all --non-interactive -no-color
 
@@ -162,6 +165,9 @@ jobs:
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/online-games/aws-service-ssm-parameter
           terragrunt plan --all --non-interactive -no-color
+
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/payment-voucher/aws-service-s3
           terragrunt plan --all --non-interactive -no-color
