@@ -364,7 +364,7 @@ jobs:
           echo -e "\n📡 Reportando resultado a Azure DevOps..."
           echo "State: $STATE"
           echo "Description: $DESCRIPTION"
-
+ 
           PR_NUMBER=$(System.PullRequest.PullRequestNumber)
           ORGANIZATION=$(System.CollectionUri)
           PROJECT=$(System.TeamProject)
