@@ -391,7 +391,7 @@ jobs:
             -X POST "$API_URL" \
             -H "Content-Type: application/json" \
             -H "Authorization: Bearer $SYSTEM_ACCESSTOKEN" \
-            --data-binary "@status.json"
+            --data-binary "@body.json"
         displayName: "📡 Update PR Status (Status Check)"
         condition: and(always(),eq(variables['Build.Reason'], 'PullRequest'))
         env:
