@@ -84,10 +84,7 @@ jobs:
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/astro/aws-service-secret-manager
           terragrunt plan --all --non-interactive -no-color
-
-
-
-
+          
 
 
           ################# servicio de trino (LISTO EN DEV Y QA PENDIENTE EN LAS PDN)
