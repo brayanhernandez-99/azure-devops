@@ -18,7 +18,7 @@ parameters:
   - name: apps
     type: object
     default:
-      microservice-lotteries-games: "4.13.14"
+      microservice-collected: "3.5.7"
 
 resources:
   repositories:
