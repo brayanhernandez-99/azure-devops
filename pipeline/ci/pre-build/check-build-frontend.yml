@@ -19,7 +19,7 @@ jobs:
           PROJECT=$(System.TeamProject)
           API_URL="$ORGANIZATION/$PROJECT/_apis/git/repositories/$(Build.Repository.Name)/pullRequests/$PR_ID/statuses?api-version=7.1-preview.1"
 
-          echo -e "\n##[command]🌐 Calling API: $API_URL" 
+          echo -e "\n##[command]🌐 Calling API: $API_URL"
           cat <<EOF > body.json
           {
             "state": "$STATE",
