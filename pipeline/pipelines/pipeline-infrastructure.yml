@@ -2,7 +2,7 @@ stages:
   - stage: semantic_version_infrastructure
     displayName: "🏷️ Semantic Version Infrastructure"
     jobs:
-      - template: ../ci/semantic-version-integration.yml
+      - template: ../ci/general/semantic-version-infrastructure.yml
         parameters:
           release: ${{ parameters.release }}
 
