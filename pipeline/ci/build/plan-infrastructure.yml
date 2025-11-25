@@ -106,8 +106,8 @@ jobs:
 
           ####################Eliminar redis
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/redis
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/redis
+          terragrunt plan --all --non-interactive -no-color
 
         displayName: "🧩 Plan Infrastructure"
         condition: succeeded()
