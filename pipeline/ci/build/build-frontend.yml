@@ -17,6 +17,9 @@ jobs:
             msName: ${{ ms }}
 
     steps:
+      - checkout: self
+        persistCredentials: true
+
       - task: DownloadBuildArtifacts@0
         inputs:
           artifactName: "versions"
@@ -370,7 +373,8 @@ jobs:
           PROJECT=$(System.TeamProject)
           API_URL="$ORGANIZATION/$PROJECT/_apis/git/repositories/$(Build.Repository.Name)/pullRequests/$PR_ID/statuses?api-version=7.1-preview.1"
 
-          echo -e "\n🌐 Calling API: $API_URL"
+          echo -e "\n🌐 Calling API: $API_URL" 
+          echo "##[command] URL: $API_URL"
           cat <<EOF > body.json
           {
             "state": "$STATE",
@@ -391,7 +395,7 @@ jobs:
             -H "Authorization: Bearer $SYSTEM_ACCESSTOKEN" \
             --data-binary "@body.json"
         displayName: "📡 Update PR Status"
-        condition: and(always(), ne('${{ parameters.pr_id }}', '0'))        
+        condition: and(always(), ne('${{ parameters.pr_id }}', '0'))
         env:
           PR_ID: ${{ parameters.pr_id }}
           SYSTEM_ACCESSTOKEN: $(System.AccessToken)
