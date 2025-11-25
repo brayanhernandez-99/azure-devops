@@ -19,6 +19,7 @@ stages:
                 parameters:
                   region: ${{ region }}
                   apps: ${{ parameters.apps }}
+                  pr_id: ${{ parameters.pr_id }}
 
           - stage: deploy_micro_frontend_${{ region }}
             displayName: "🚀 Deploy MicroFrontend ${{ region }}"
@@ -40,6 +41,7 @@ stages:
           - template: ../ci/build/build-frontend.yml
             parameters:
               apps: ${{ parameters.apps }}
+              pr_id: ${{ parameters.pr_id }}
 
       - ${{ if in(variables['Build.SourceBranchName'], 'develop', 'staging') }}:
           - stage: deploy_micro_frontend

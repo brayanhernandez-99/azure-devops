@@ -76,6 +76,7 @@ stages:
         parameters:
           red: ${{ parameters.red }}
           apps: ${{ parameters.apps }}
+          pr_id: ${{ parameters.pr_id }}
           release: ${{ parameters.release }}
 
   #
