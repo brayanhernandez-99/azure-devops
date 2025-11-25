@@ -30,7 +30,7 @@ jobs:
               "name": "build-check",
               "genre": "pipeline"
             },
-            "iterationId": ITERATION_ID
+            "iterationId": $ITERATION_ID
           }
           EOF
 
