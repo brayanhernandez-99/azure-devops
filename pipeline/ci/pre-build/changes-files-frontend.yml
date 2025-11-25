@@ -1,6 +1,6 @@
 jobs:
   - job: "pre_build_micro_fronted"
-    displayName: "🔍 Detect Changed Microfrontend Files"
+    displayName: "🔍 Detect Changes Microfrontend"
     pool:
       name: "Azure Pipelines"
       VmImage: ubuntu-22.04
