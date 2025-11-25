@@ -37,7 +37,7 @@ jobs:
             -H "Authorization: Bearer $SYSTEM_ACCESSTOKEN" \
             --data-binary "@body.json"
         displayName: "📡 Update PR Status"
-        condition: ne('${{ parameters.pr_id }}', '0')
+        condition: succeeded()
         env:
           PR_ID: ${{ parameters.pr_id }}
           SYSTEM_ACCESSTOKEN: $(System.AccessToken)

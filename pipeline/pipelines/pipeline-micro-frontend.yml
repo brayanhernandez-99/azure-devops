@@ -46,6 +46,7 @@ stages:
           - stage: check_build_micro_frontend
             displayName: "🛡️ Check Build MicroFrontend"
             dependsOn: build_micro_frontend
+            condition: ne('${{ parameters.pr_id }}', '0')
             jobs:
               - template: ../ci/pre-build/check-build-frontend.yml
                 parameters:
