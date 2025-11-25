@@ -350,6 +350,24 @@ jobs:
       #   parameters:
       #     projectKey: $(Build.Repository.Name)
 
+      - task: PublishBuildArtifacts@1
+        inputs:
+          PathtoPublish: "$(Build.ArtifactStagingDirectory)/dists"
+          ArtifactName: "dists"
+          publishLocation: "Container"
+        displayName: "📤 Publish Dist Files"
+        condition: and(succeeded(),
+          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
+          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
+
+  - job: check_micro_frontend
+    dependsOn: build_micro_frontend_${{ parameters.region }}
+    displayName: "📦 check build"
+    pool:
+      name: "Azure Pipelines"
+      VmImage: ubuntu-22.04
+
+    steps:
       - script: |
           echo "🔎 Validando el estado del pipeline..."
 
@@ -395,13 +413,3 @@ jobs:
         env:
           PR_ID: ${{ parameters.pr_id }}
           SYSTEM_ACCESSTOKEN: $(System.AccessToken)
-
-      - task: PublishBuildArtifacts@1
-        inputs:
-          PathtoPublish: "$(Build.ArtifactStagingDirectory)/dists"
-          ArtifactName: "dists"
-          publishLocation: "Container"
-        displayName: "📤 Publish Dist Files"
-        condition: and(succeeded(),
-          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
-          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
