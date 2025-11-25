@@ -1,0 +1,43 @@
+jobs:
+  - job: check_build_micro_frontend
+    displayName: "🛡️ check build"
+    pool:
+      name: "Azure Pipelines"
+      VmImage: ubuntu-22.04
+
+    steps:
+      - script: |
+          echo -e "\n📡 Reportando resultado a Azure DevOps..."
+          echo "Estado: $STATE"
+          echo "Descripcion: $DESCRIPTION"
+          echo "Pull Request Id: $PR_ID"
+
+          ORGANIZATION=$(System.CollectionUri)
+          PROJECT=$(System.TeamProject)
+          API_URL="$ORGANIZATION/$PROJECT/_apis/git/repositories/$(Build.Repository.Name)/pullRequests/$PR_ID/statuses?api-version=7.1-preview.1"
+
+          echo -e "\n##[command]🌐 Calling API: $API_URL" 
+          cat <<EOF > body.json
+          {
+            "state": "$STATE",
+            "description": "$DESCRIPTION",
+            "context": {
+              "name": "build-check",
+              "genre": "pipeline"
+            }
+          }
+          EOF
+
+          echo "📁 File: body.json"
+          cat body.json
+
+          curl -s \
+            -X POST "$API_URL" \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer $SYSTEM_ACCESSTOKEN" \
+            --data-binary "@body.json"
+        displayName: "📡 Update PR Status"
+        condition: ne('${{ parameters.pr_id }}', '0')
+        env:
+          PR_ID: ${{ parameters.pr_id }}
+          SYSTEM_ACCESSTOKEN: $(System.AccessToken)
