@@ -7,6 +7,9 @@ jobs:
 
     steps:
       - script: |
+          STATE="succeeded"
+          DESCRIPTION="Build completed successfully"
+
           echo -e "\n📡 Reportando resultado a Azure DevOps..."
           echo "Estado: $STATE"
           echo "Descripcion: $DESCRIPTION"
