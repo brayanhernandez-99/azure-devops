@@ -12,9 +12,10 @@ jobs:
           STATE="succeeded"
           DESCRIPTION="Build completed successfully"
 
-          ITERATION_ID=$(az repos pr iteration list \
-            --id $PR_ID \
-            --output json | jq '.[-1].id')      
+          ITERATION_ID=$(curl -s \
+            -H "Authorization: Bearer $SYSTEM_ACCESSTOKEN" \
+            "$ORGANIZATION/$PROJECT/_apis/git/repositories/$(Build.Repository.Name)/pullRequests/$PR_ID/iterations?api-version=7.1-preview.1" \
+            | jq '.value[-1].id')    
 
           echo -e "\n📡 Reportando resultado a Azure DevOps..."
           echo "Estado: $STATE"
