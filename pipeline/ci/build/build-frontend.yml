@@ -376,7 +376,7 @@ jobs:
             "state": "$STATE",
             "description": "$DESCRIPTION",
             "context": {
-              "name": "pre-build-check",
+              "name": "build-check",
               "genre": "pipeline"
             }
           }
