@@ -7,19 +7,21 @@ jobs:
 
     steps:
       - script: |
+          ORGANIZATION=$(System.CollectionUri)
+          PROJECT=$(System.TeamProject)
           STATE="succeeded"
           DESCRIPTION="Build completed successfully"
+
+          ITERATION_ID=$(az repos pr iteration list \
+            --id $PR_ID \
+            --output json | jq '.[-1].id')      
 
           echo -e "\n📡 Reportando resultado a Azure DevOps..."
           echo "Estado: $STATE"
           echo "Descripcion: $DESCRIPTION"
           echo "Pull Request Id: $PR_ID"
+          echo "Iteration Id: $ITERATION_ID"
 
-          ORGANIZATION=$(System.CollectionUri)
-          PROJECT=$(System.TeamProject)
-          API_URL="$ORGANIZATION/$PROJECT/_apis/git/repositories/$(Build.Repository.Name)/pullRequests/$PR_ID/statuses?api-version=7.1-preview.1"
-
-          echo -e "\n##[command]🌐 Calling API: $API_URL"
           cat <<EOF > body.json
           {
             "state": "$STATE",
@@ -27,12 +29,16 @@ jobs:
             "context": {
               "name": "build-check",
               "genre": "pipeline"
-            }
+            },
+            "iterationId": ITERATION_ID
           }
           EOF
 
-          echo "📁 File: body.json"
+          echo -e "\n📁 File: body.json"
           cat body.json
+
+          API_URL="$ORGANIZATION/$PROJECT/_apis/git/repositories/$(Build.Repository.Name)/pullRequests/$PR_ID/statuses?api-version=7.1-preview.1"
+          echo -e "\n##[command]🌐 Calling API: $API_URL"
 
           curl -s \
             -X POST "$API_URL" \
