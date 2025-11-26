@@ -109,17 +109,17 @@ jobs:
                 echo "Pull Request Id: $PR_ID"
                 echo "Iteration Id: $ITERATION_ID"
 
-                cat <<EOF > body.json
-                {
-                  "state": "$STATE",
-                  "description": "$DESCRIPTION",
-                  "context": {
-                    "name": "build-check",
-                    "genre": "pipeline"
-                  },
-                  "iterationId": $ITERATION_ID
-                }
-                EOF
+              cat <<EOF > body.json
+              {
+                "state": "$STATE",
+                "description": "$DESCRIPTION",
+                "context": {
+                  "name": "build-check",
+                  "genre": "pipeline"
+                },
+                "iterationId": $ITERATION_ID
+              }
+              EOF
 
                 echo -e "\n📁 File: body.json"
                 cat body.json
