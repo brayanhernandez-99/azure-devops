@@ -111,13 +111,13 @@ jobs:
 
               cat <<EOF > body.json
               {
-                "state": "$STATE",
-                "description": "$DESCRIPTION",
-                "context": {
-                  "name": "build-check",
-                  "genre": "pipeline"
-                },
-                "iterationId": $ITERATION_ID
+              "state": "$STATE",
+              "description": "$DESCRIPTION",
+              "context": {
+                "name": "build-check",
+              "genre": "pipeline"
+              },
+              "iterationId": $ITERATION_ID
               }
               EOF
 
