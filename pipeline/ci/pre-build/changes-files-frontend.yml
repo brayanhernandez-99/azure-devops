@@ -71,7 +71,7 @@ jobs:
                 echo -e "\n##vso[task.logissue type=error]⚠️ No se detectaron cambios en apps. Cancelando ejecución del pipeline."
                 exit 99
               fi
-              
+
               echo "🔍 Apps modificadas detectadas:"
               echo "${apps[@]}"
               apps_json=$(printf '%s\n' "${apps[@]}" | jq -R . | jq -s .)
