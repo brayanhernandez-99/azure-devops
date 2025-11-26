@@ -91,7 +91,7 @@ jobs:
               clean_branch=prd
             fi
 
-            REPO_NAME="$(clean_name_ecr)-$clean_branch"
+            REPO_NAME="pruebas-$(clean_name_ecr)-$clean_branch"
             IMAGE_TAG="$(version)"
 
             echo "🔍 Verificando si la imagen '$IMAGE_TAG' existe en '$REPO_NAME'..."
@@ -190,7 +190,8 @@ jobs:
           echo "##vso[task.setvariable variable=cluster_name]$CLUSTER"
           echo "##vso[task.setvariable variable=service_name]$SERVICES"
         displayName: "🔗 Get Task Definition ARN"
-        condition: succeeded()
+        condition: and(succeeded(),
+          ne(variables['cleanMsName'], 'transaction'))
         env:
           red: ${{ parameters.region }}
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
@@ -198,70 +199,97 @@ jobs:
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVIC)
 
       - script: |
-          echo -e "\nℹ️ Obteniendo family de task definition..."
-          ARN='$(taskDefinitionArn)'
-          echo $ARN
-          FAMILY=$(echo $ARN | cut -d'/' -f2 | cut -d':' -f1)
-          echo "##vso[task.setvariable variable=taskFamily]$FAMILY"
-        displayName: "📌 Extract Family from ARN"
-        condition: succeeded()
-
-      - script: |
           export AWS_ACCESS_KEY_ID
           export AWS_SECRET_ACCESS_KEY
           export AWS_REGION
 
-          echo -e "\nℹ️ Obteniendo definición actual..."
-          aws ecs describe-task-definition \
-            --task-definition $(taskDefinitionArn) \
-            --query 'taskDefinition' \
-            > taskdef.json
-          cat taskdef.json
-        displayName: "📑 Get Current Task Definition"
-        condition: succeeded()
+          export AWS_ACCESS_KEY_ID
+          export AWS_SECRET_ACCESS_KEY
+          export AWS_REGION
+
+          BRANCH_NAME="$BUILD_SOURCEBRANCHNAME"
+          REPO_NAME="$BUILD_REPOSITORY_NAME"
+          RED="${red:-}"
+
+          echo "🏠 Red: $RED"
+          echo "📦 Repo: $REPO_NAME"
+          echo "🌿 Branch: $BRANCH_NAME"
+
+
+        displayName: "🔗 Get Task Definition ARN"
+        condition: and(succeeded(),
+          eq(variables['cleanMsName'], 'transaction'))
         env:
+          red: ${{ parameters.region }}
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVIC)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVIC)
 
-      - script: |
-          newTag="$(version)"
+      # - script: |
+      #     echo -e "\nℹ️ Obteniendo family de task definition..."
+      #     ARN='$(taskDefinitionArn)'
+      #     echo $ARN
+      #     FAMILY=$(echo $ARN | cut -d'/' -f2 | cut -d':' -f1)
+      #     echo "##vso[task.setvariable variable=taskFamily]$FAMILY"
+      #   displayName: "📌 Extract Family from ARN"
+      #   condition: succeeded()
 
-          jq --arg newTag "$newTag" '
-            .containerDefinitions |= map(
-              .image |= (split(":")[0] + ":" + $newTag)
-            )
-          ' taskdef.json > new-taskdef-$(cleanMsName).json
+      # - script: |
+      #     export AWS_ACCESS_KEY_ID
+      #     export AWS_SECRET_ACCESS_KEY
+      #     export AWS_REGION
 
-          echo -e "\nℹ️ Imagen actualizada con nuevo tag: $newTag"
-          cat new-taskdef-$(cleanMsName).json
-        displayName: "📝 Update image tag in task definition"
-        condition: succeeded()
+      #     echo -e "\nℹ️ Obteniendo definición actual..."
+      #     aws ecs describe-task-definition \
+      #       --task-definition $(taskDefinitionArn) \
+      #       --query 'taskDefinition' \
+      #       > taskdef.json
+      #     cat taskdef.json
+      #   displayName: "📑 Get Current Task Definition"
+      #   condition: succeeded()
+      #   env:
+      #     AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+      #     AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVIC)
+      #     AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVIC)
 
-      - script: |
-          jq '{
-            family,
-            taskRoleArn,
-            executionRoleArn,
-            networkMode,
-            containerDefinitions,
-            volumes,
-            placementConstraints,
-            requiresCompatibilities,
-            cpu,
-            memory,
-            tags,
-            pidMode,
-            ipcMode,
-            proxyConfiguration,
-            inferenceAccelerators,
-            ephemeralStorage,
-            runtimePlatform
-          } | with_entries(select(.value != null))' new-taskdef-$(cleanMsName).json > new-taskdef-$(cleanMsName)-ecs.json
+      # - script: |
+      #     newTag="$(version)"
 
-          cat new-taskdef-$(cleanMsName)-ecs.json
-        displayName: "🧹 Clean up attributes"
-        condition: succeeded()
+      #     jq --arg newTag "$newTag" '
+      #       .containerDefinitions |= map(
+      #         .image |= (split(":")[0] + ":" + $newTag)
+      #       )
+      #     ' taskdef.json > new-taskdef-$(cleanMsName).json
+
+      #     echo -e "\nℹ️ Imagen actualizada con nuevo tag: $newTag"
+      #     cat new-taskdef-$(cleanMsName).json
+      #   displayName: "📝 Update image tag in task definition"
+      #   condition: succeeded()
+
+      # - script: |
+      #     jq '{
+      #       family,
+      #       taskRoleArn,
+      #       executionRoleArn,
+      #       networkMode,
+      #       containerDefinitions,
+      #       volumes,
+      #       placementConstraints,
+      #       requiresCompatibilities,
+      #       cpu,
+      #       memory,
+      #       tags,
+      #       pidMode,
+      #       ipcMode,
+      #       proxyConfiguration,
+      #       inferenceAccelerators,
+      #       ephemeralStorage,
+      #       runtimePlatform
+      #     } | with_entries(select(.value != null))' new-taskdef-$(cleanMsName).json > new-taskdef-$(cleanMsName)-ecs.json
+
+      #     cat new-taskdef-$(cleanMsName)-ecs.json
+      #   displayName: "🧹 Clean up attributes"
+      #   condition: succeeded()
 
       # - script: |
       #     export AWS_REGION
