@@ -88,6 +88,11 @@ jobs:
                 run_id=$(echo "$pipeline_output" | jq -r '.id')              
                 echo -e "\n##[command]🌐 Build Results URL: https://dev.azure.com/ux-technology/Invictus/_build/results?buildId=$run_id"
               fi
+
+              # if [[ "$SOURCE_BRANCH" == "staging" && "$TARGET_BRANCH" == "master" ]]; then
+              #
+              # fi
+
               ;;
             "IndividualCI")
                 cd $(Build.SourcesDirectory)
@@ -134,3 +139,8 @@ jobs:
         condition: succeeded()
         env:
           AZURE_DEVOPS_EXT_PAT: $(PAT-AZ)
+
+  - ${{ if and(eq(variables['Build.Reason'], 'PullRequest'), eq(variables['System.PullRequest.SourceBranch'], 'refs/heads/staging'), eq(variables['System.PullRequest.TargetBranch'], 'refs/heads/master')) }}:
+      - template: check-build-frontend.yml
+        parameters:
+          pr_id: $(System.PullRequest.PullRequestId)
