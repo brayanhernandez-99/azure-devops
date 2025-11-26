@@ -109,20 +109,9 @@ jobs:
                 echo "Pull Request Id: $PR_ID"
                 echo "Iteration Id: $ITERATION_ID"
 
-              cat <<EOF > body.json
-              {
-              "state": "$STATE",
-              "description": "$DESCRIPTION",
-              "context": {
-                "name": "build-check",
-              "genre": "pipeline"
-              },
-              "iterationId": $ITERATION_ID
-              }
-              EOF
-
+                cat > body.json <<< "{\"state\":\"$STATE\",\"description\":\"$DESCRIPTION\",\"context\":{\"name\":\"build-check\",\"genre\":\"pipeline\"},\"iterationId\":$ITERATION_ID}"
                 echo -e "\n📁 File: body.json"
-                cat body.json
+                jq . body.json
 
                 API_URL="$ORGANIZATION/$PROJECT/_apis/git/repositories/$(Build.Repository.Name)/pullRequests/$PR_ID/statuses?api-version=7.1-preview.1"
                 echo -e "\n##[command]🌐 Calling API: $API_URL"
