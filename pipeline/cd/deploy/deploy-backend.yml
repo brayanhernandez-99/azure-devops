@@ -191,7 +191,7 @@ jobs:
           echo "##vso[task.setvariable variable=service_name]$SERVICES"
         displayName: "🔗 Get Task Definition ARN"
         condition: and(succeeded(),
-          ne(variables['cleanMsName'], 'transaction')
+          ne(variables['cleanMsName'], 'transaction'))
         env:
           red: ${{ parameters.region }}
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
@@ -218,7 +218,7 @@ jobs:
 
         displayName: "🔗 Get Task Definition ARN"
         condition: and(succeeded(),
-          eq(variables['cleanMsName'], 'transaction')
+          eq(variables['cleanMsName'], 'transaction'))
         env:
           red: ${{ parameters.region }}
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
