@@ -57,7 +57,7 @@ jobs:
               git checkout $clean_branch
               git reset --hard HEAD
 
-              echo -e "\n🔍 Comparando cambios entre: $TARGET_BRANCH ... $CURRENT_BRANCH"
+              echo -e "\n🔍 Comparando cambios entre: $CURRENT_BRANCH ... $TARGET_BRANCH"
               changed_files=$(git diff --name-only "origin/$TARGET_BRANCH"..."origin/$CURRENT_BRANCH")
               packages_changed=$(echo "$changed_files" | grep "^packages/" || true)
 
