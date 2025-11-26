@@ -89,10 +89,50 @@ jobs:
                 echo -e "\n##[command]🌐 Build Results URL: https://dev.azure.com/ux-technology/Invictus/_build/results?buildId=$run_id"
               fi
 
-              # if [[ "$SOURCE_BRANCH" == "staging" && "$TARGET_BRANCH" == "master" ]]; then
               #
-              # fi
+              ## Cuando se realiza un PR de stagin a master no se debe corre el check por eso, se habilita la propiedad para que continue sin problemas el PR 
+              #
+              if [[ "$SOURCE_BRANCH" == "staging" && "$TARGET_BRANCH" == "master" ]]; then
+                ORGANIZATION=$(System.CollectionUri)
+                PROJECT=$(System.TeamProject)
+                STATE="succeeded"
+                DESCRIPTION="Build completed successfully"
 
+                ITERATION_ID=$(curl -s \
+                  -H "Authorization: Bearer $SYSTEM_ACCESSTOKEN" \
+                  "$ORGANIZATION/$PROJECT/_apis/git/repositories/$(Build.Repository.Name)/pullRequests/$PR_ID/iterations?api-version=7.1-preview.1" \
+                  | jq '.value[-1].id')
+
+                echo -e "\n📡 Reportando resultado a Azure DevOps..."
+                echo "Estado: $STATE"
+                echo "Descripcion: $DESCRIPTION"
+                echo "Pull Request Id: $PR_ID"
+                echo "Iteration Id: $ITERATION_ID"
+
+                cat <<EOF > body.json
+                {
+                  "state": "$STATE",
+                  "description": "$DESCRIPTION",
+                  "context": {
+                    "name": "build-check",
+                    "genre": "pipeline"
+                  },
+                  "iterationId": $ITERATION_ID
+                }
+                EOF
+
+                echo -e "\n📁 File: body.json"
+                cat body.json
+
+                API_URL="$ORGANIZATION/$PROJECT/_apis/git/repositories/$(Build.Repository.Name)/pullRequests/$PR_ID/statuses?api-version=7.1-preview.1"
+                echo -e "\n##[command]🌐 Calling API: $API_URL"
+
+                curl -s \
+                  -X POST "$API_URL" \
+                  -H "Content-Type: application/json" \
+                  -H "Authorization: Bearer $SYSTEM_ACCESSTOKEN" \
+                  --data-binary "@body.json"
+              fi
               ;;
             "IndividualCI")
                 cd $(Build.SourcesDirectory)
@@ -139,8 +179,4 @@ jobs:
         condition: succeeded()
         env:
           AZURE_DEVOPS_EXT_PAT: $(PAT-AZ)
-
-  #- ${{ if and(eq(variables['Build.Reason'], 'PullRequest'), eq(variables['System.PullRequest.SourceBranch'], 'refs/heads/staging'), eq(variables['System.PullRequest.TargetBranch'], 'refs/heads/master')) }}:
-      - template: check-build-frontend.yml
-        parameters:
-          pr_id: $(System.PullRequest.PullRequestId)
+          SYSTEM_ACCESSTOKEN: $(System.AccessToken)
