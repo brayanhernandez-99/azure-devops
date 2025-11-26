@@ -92,7 +92,7 @@ jobs:
               #
               ## Cuando se realiza un PR de stagin a master no se debe corre el check por eso, se habilita la propiedad para que continue sin problemas el PR 
               #
-              if [[ "$SOURCE_BRANCH" == "develop" && "$TARGET_BRANCH" == "staging" || "$SOURCE_BRANCH" == "staging" && "$TARGET_BRANCH" == "master"]]; then
+              if [[ ("$SOURCE_BRANCH" == "develop" && "$TARGET_BRANCH" == "staging") || ("$SOURCE_BRANCH" == "staging" && "$TARGET_BRANCH" == "master") ]]; then
                 ORGANIZATION=$(System.CollectionUri)
                 PROJECT=$(System.TeamProject)
                 STATE="succeeded"
