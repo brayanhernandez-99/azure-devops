@@ -203,10 +203,6 @@ jobs:
           export AWS_SECRET_ACCESS_KEY
           export AWS_REGION
 
-          export AWS_ACCESS_KEY_ID
-          export AWS_SECRET_ACCESS_KEY
-          export AWS_REGION
-
           BRANCH_NAME="$BUILD_SOURCEBRANCHNAME"
           REPO_NAME="$BUILD_REPOSITORY_NAME"
           RED="${red:-}"
@@ -215,7 +211,47 @@ jobs:
           echo "📦 Repo: $REPO_NAME"
           echo "🌿 Branch: $BRANCH_NAME"
 
+          if [[ "$BRANCH_NAME" == "develop" || "$BRANCH_NAME" == "staging" || "$RED" == "cap" || "$RED" == "antioquia" ]]; then
+            # ⚡ FGs
+            clusters=("transaction-ms-cluster" "transaction-astro-ms-cluster" "transaction-lg-ms-cluster" "transaction-recharges-ms-cluster")
+            services=("transaction-ms-fg-service" "transaction-astro-ms-fg-service" "transaction-lg-ms-fg-service" "transaction-recharges-ms-fg-service")
+          else
+              # 🌐 Producción normal
+              clusters=("invictus" "invictus" "invictus" "invictus")
+              services=("transaction" "transaction-astro" "transaction-lotteries-games" "transaction-recharges")
+          fi
 
+          index=1
+          for i in 0 1 2 3; do
+              C="${clusters[$i]}"
+              S="${services[$i]}"
+
+              echo "-------------------------"
+              echo "🛡️ Cluster: $C"
+              echo "📦 Services: $S"
+              echo "Obteniendo task definition..."
+
+              arn=$(aws ecs describe-services \
+                --cluster "$C" \
+                --services "$S" \
+                --query 'services[0].taskDefinition' \
+                --output text \
+                --region "$AWS_DEFAULT_REGION")
+
+              if [[ -z "$arn" || "$arn" == "None" ]]; then
+                echo "❌ Error: No se encontró taskDefinition para $S en $C"
+                exit 99
+              fi
+
+              echo "✅ TaskDef ARN: $arn"
+
+              # Set variables por cada uno
+              echo "##vso[task.setvariable variable=cluster_name_${index}]$C"
+              echo "##vso[task.setvariable variable=service_name_${index}]$S"
+              echo "##vso[task.setvariable variable=taskDefinitionArn_${index}]$arn"
+
+              ((index++))
+          done
         displayName: "🔗 Get Task Definition ARN"
         condition: and(succeeded(),
           eq(variables['cleanMsName'], 'transaction'))
