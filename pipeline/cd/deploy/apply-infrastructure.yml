@@ -97,63 +97,63 @@ jobs:
 
 
           ###########################Eliminación de enpoints en dev
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-endpoint-cloudwatch-events
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-vpc-endpoints/aws-endpoint-cloudwatch-events
           terragrunt plan --all --non-interactive -no-color
           terragrunt destroy --all --non-interactive -no-color
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-endpoint-cloudwatch-logs
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-vpc-endpoints/aws-endpoint-cloudwatch-logs
           terragrunt plan --all --non-interactive -no-color
           terragrunt destroy --all --non-interactive -no-color
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-endpoint-cloudwatch-monitoring
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-vpc-endpoints/aws-endpoint-cloudwatch-monitoring
           terragrunt plan --all --non-interactive -no-color
           terragrunt destroy --all --non-interactive -no-color
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-endpoint-dynamo
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-vpc-endpoints/aws-endpoint-dynamo
           terragrunt plan --all --non-interactive -no-color
           terragrunt destroy --all --non-interactive -no-color
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-endpoint-ec2-msg
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-vpc-endpoints/aws-endpoint-ec2-msg
           terragrunt plan --all --non-interactive -no-color
           terragrunt destroy --all --non-interactive -no-color
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-endpoint-ecr-api
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-vpc-endpoints/aws-endpoint-ecr-api
           terragrunt plan --all --non-interactive -no-color
           terragrunt destroy --all --non-interactive -no-color
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-endpoint-ecr-dkr
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-vpc-endpoints/aws-endpoint-ecr-dkr
           terragrunt plan --all --non-interactive -no-color
           terragrunt destroy --all --non-interactive -no-color
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-endpoint-kinesis
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-vpc-endpoints/aws-endpoint-kinesis
           terragrunt plan --all --non-interactive -no-color
           terragrunt destroy --all --non-interactive -no-color
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-endpoint-s3
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-vpc-endpoints/aws-endpoint-s3
           terragrunt plan --all --non-interactive -no-color
           terragrunt destroy --all --non-interactive -no-color
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-endpoint-secretsmanager
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-vpc-endpoints/aws-endpoint-secretsmanager
           terragrunt plan --all --non-interactive -no-color
           terragrunt destroy --all --non-interactive -no-color
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-endpoint-sqs
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-vpc-endpoints/aws-endpoint-sqs
           terragrunt plan --all --non-interactive -no-color
           terragrunt destroy --all --non-interactive -no-color
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-endpoint-ssm
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-vpc-endpoints/aws-endpoint-ssm
           terragrunt plan --all --non-interactive -no-color
           terragrunt destroy --all --non-interactive -no-color
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-endpoint-ssm-msg
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-vpc-endpoints/aws-endpoint-ssm-msg
           terragrunt plan --all --non-interactive -no-color
           terragrunt destroy --all --non-interactive -no-color
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-endpoint-xray
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-vpc-endpoints/aws-endpoint-xray
           terragrunt plan --all --non-interactive -no-color
           terragrunt destroy --all --non-interactive -no-color
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-sg
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-vpc-endpoints/aws-sg
           terragrunt plan --all --non-interactive -no-color
           terragrunt destroy --all --non-interactive -no-color
 
