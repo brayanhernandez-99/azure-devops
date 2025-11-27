@@ -276,8 +276,9 @@ jobs:
 
           echo $(taskDefinitionArn_0)
           for i in 0 1 2 3; do
+            eval "export taskDefinitionArn_${i}=\"$(echo \${taskDefinitionArn_${i}})\""
             ARN_VAR="taskDefinitionArn_${i}"
-            ARN_VALUE=$(eval echo "\$$ARN_VAR")
+            ARN_VALUE="${!ARN_VAR}"
             echo $ARN_VAR
             echo $ARN_VALUE
 
