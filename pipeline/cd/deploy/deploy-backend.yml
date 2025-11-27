@@ -274,9 +274,10 @@ jobs:
       - script: |
           echo -e "\nℹ️ Extrayendo FAMILY para todos los taskDefinitionArn_X..."
 
+          echo $(taskDefinitionArn_1)
           for i in 0 1 2 3; do
             ARN_VAR="taskDefinitionArn_${i}"
-            ARN_VALUE='$(taskDefinitionArn_${i})'
+            ARN_VALUE="${!VAR}"
 
             echo -e "\n📌 Procesando índice $i"
             echo "ARN recibido: $ARN_VALUE"
