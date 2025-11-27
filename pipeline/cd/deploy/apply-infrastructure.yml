@@ -96,6 +96,12 @@ jobs:
           find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
 
+          ###########################Eliminación de enpoints en dev
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-vpc-endpoints
+          terragrunt plan --all --non-interactive -no-color
+          terragrunt destroy --all --non-interactive -no-color
+
+
           ####################Eliminar redis  (LISTO EN DEV Y QA PENDIENTE EN LAS PDN)
 
           # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/redis

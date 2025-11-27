@@ -94,6 +94,10 @@ jobs:
           # cd $(Build.SourcesDirectory)
           # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
+          ###########################Eliminación de enpoints en dev
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-vpc-endpoints
+          terragrunt plan --all --non-interactive -no-color
+
 
 
 
