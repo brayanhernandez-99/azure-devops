@@ -5,10 +5,8 @@ variables:
 
     # Develop - Feature - Hotfix branch
     - ${{ if or(eq(variables['Build.SourceBranchName'], 'develop'), startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')) }}:
-        # - group: trasversal-aws-developer
-        # - group: variables-flutter-develop
-        - group: trasversal-aws-antioquia-cap
-        - group: variables-flutter-antioquia-cap
+        - group: trasversal-aws-developer
+        - group: variables-flutter-develop
 
     # Staging branch
     - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
