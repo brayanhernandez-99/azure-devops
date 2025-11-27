@@ -275,25 +275,18 @@ jobs:
           echo -e "\nℹ️ Extrayendo FAMILY para todos los taskDefinitionArn_X..."
 
           echo $(taskDefinitionArn_0)
-
-          echo "🔍 Debug: buscando variables TASKDEFINITIONARN_*"
-          printenv | grep -i TASKDEFINITIONARN || echo "No encontré variables"
+          echo $(taskDefinitionArn_1)
+          echo $(taskDefinitionArn_2)
+          echo $(taskDefinitionArn_3)
 
           for i in 0 1 2 3; do
-            # eval "export taskDefinitionArn_${i}=\"$(echo \${taskDefinitionArn_${i}})\""
-            # ARN_VAR="taskDefinitionArn_${i}"
-            # ARN_VALUE=$(taskDefinitionArn_${i})
 
-            ARN_VAR="TASKDEFINITIONARN_${i}"
-            ARN_VALUE="${!ARN_VAR}"
+            ARN_VAR="taskDefinitionArn_$i"
+            ARN_VALUE="${!VAR_NAME}"
 
-
-            # ARN_VALUE="${!ARN_VAR}"
-            # echo $ARN_VAR
-            echo "valora: $ARN_VALUE"
-
-            echo -e "\n📌 Procesando índice $i"
-            echo "ARN recibido: $ARN_VALUE"
+            echo "----------------------------"
+            echo "📌 Índice: $i"
+            echo "📝 ARN: $ARN_VALUE"
 
             if [[ -z "$ARN_VALUE" ]]; then
               echo "❌ Error: ARN vacío para índice $i"
