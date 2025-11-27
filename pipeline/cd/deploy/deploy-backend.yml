@@ -221,7 +221,7 @@ jobs:
               services=("transaction" "transaction-astro" "transaction-lotteries-games" "transaction-recharges")
           fi
 
-          index=1
+          index=0
           for i in 0 1 2 3; do
               C="${clusters[$i]}"
               S="${services[$i]}"
