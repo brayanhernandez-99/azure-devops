@@ -19,8 +19,10 @@ variables:
         - group: variables-flutter-antioquia
 
     - ${{ if and(eq(parameters.region, 'cap'), eq(variables['Build.SourceBranchName'], 'master')) }}:
-        - group: trasversal-aws-master-cap
-        - group: variables-flutter-cap
+        # - group: trasversal-aws-master-cap
+        # - group: variables-flutter-cap
+        - group: trasversal-aws-antioquia-cap
+        - group: variables-flutter-antioquia-cap
 
     - ${{ if and(eq(parameters.region, 'tolima'), eq(variables['Build.SourceBranchName'], 'master')) }}:
         - group: trasversal-aws-tolima
