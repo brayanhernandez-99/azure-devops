@@ -283,7 +283,9 @@ jobs:
 
             # VAR_NAME="taskDefinitionArn_$i"
             # ARN_VALUE="${!VAR_NAME}"
-            ARN_VALUE=$(eval echo "\$(taskDefinitionArn_${i})")
+            ARN_NAME=$(eval echo "\$(taskDefinitionArn_${i})")
+
+            ARN_VALUE_="$(echo $ARN_NAME)"
 
             echo "----------------------------"
             echo "📌 Índice: $i"
