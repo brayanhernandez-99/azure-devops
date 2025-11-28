@@ -18,7 +18,10 @@ parameters:
   - name: apps
     type: object
     default:
-      microservice-sellers: "3.6.2"
+      microservice-transaction: "4.5.10"
+      microservice-transaction-astro: "4.5.10"
+      microservice-transaction-lotteries-games: "4.5.10"
+      microservice-transaction-recharges: "4.5.10"
 
 resources:
   repositories:
