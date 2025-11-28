@@ -281,8 +281,9 @@ jobs:
 
           for i in 0 1 2 3; do
 
-            VAR_NAME="taskDefinitionArn_$i"
-            ARN_VALUE="${!VAR_NAME}"
+            # VAR_NAME="taskDefinitionArn_$i"
+            # ARN_VALUE="${!VAR_NAME}"
+            ARN_VALUE=$(eval echo "\$(taskDefinitionArn_${i})")
 
             echo "----------------------------"
             echo "📌 Índice: $i"
