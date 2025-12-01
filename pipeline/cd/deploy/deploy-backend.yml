@@ -149,14 +149,14 @@ jobs:
 
           case "$(cleanMsName)" in
             notifier)
-              if [[ "$BRANCH_NAME" == "develop" || "$BRANCH_NAME" == "staging" || "$RED" == "cap" || "$RED" == "antioquia" ]]; then
+              if [[ "$BRANCH_NAME" == "develop" || "$BRANCH_NAME" == "staging" || "$RED" == "antioquia" ]]; then
                 set_cluster_service "msnotifier-cluster" "msnotifier-fg-service"
               fi
               ;;
             raffle)
-              if [[ "$BRANCH_NAME" == "develop" || "$BRANCH_NAME" == "staging" || "$RED" == "cap" || "$RED" == "antioquia" ]]; then
+              if [[ "$BRANCH_NAME" == "develop" || "$BRANCH_NAME" == "staging" || "$RED" == "antioquia" ]]; then
                 set_cluster_service "raffles-ms-cluster" "raffles-ms-fg-service"
-              elif [[ "$RED" != "cap" && "$RED" != "antioquia" && "$BRANCH_NAME" != "develop" && "$BRANCH_NAME" != "staging" ]]; then
+              elif [[ "$RED" != "antioquia" && "$BRANCH_NAME" != "develop" && "$BRANCH_NAME" != "staging" ]]; then
                 SERVICES="raffles"
               fi
               ;;
@@ -164,7 +164,7 @@ jobs:
 
           # ⚙️ Casos específicos para BFFs
           if [[ "$REPO_NAME" == "$name_bff" ]]; then
-              if [[ "$BRANCH_NAME" == "develop" || "$BRANCH_NAME" == "staging" || "$RED" == "cap" || "$RED" == "antioquia" ]]; then
+              if [[ "$BRANCH_NAME" == "develop" || "$BRANCH_NAME" == "staging" || "$RED" == "antioquia" ]]; then
                   set_cluster_service "bff-${CLEAN_NAME}-cluster" "bff-${CLEAN_NAME}-fg-service"
               fi
           fi
@@ -211,8 +211,7 @@ jobs:
           echo "📦 Repo: $REPO_NAME"
           echo "🌿 Branch: $BRANCH_NAME"
 
-          if [[ "$BRANCH_NAME" == "develop" || "$BRANCH_NAME" == "staging" || "$RED" == "cap" || "$RED" == "antioquia" ]]; then
-            # ⚡ FGs
+          if [[ "$BRANCH_NAME" == "develop" || "$BRANCH_NAME" == "staging" || "$RED" == "antioquia" ]]; then
             clusters=("transaction-ms-cluster" "transaction-astro-ms-cluster" "transaction-lg-ms-cluster" "transaction-recharges-ms-cluster")
             services=("transaction-ms-fg-service" "transaction-astro-ms-fg-service" "transaction-lg-ms-fg-service" "transaction-recharges-ms-fg-service")
           else
@@ -270,18 +269,30 @@ jobs:
         displayName: "📌 Extract Family from ARN"
         condition: and(succeeded(),
           ne(variables['cleanMsName'], 'transaction'))
+
+      - script: |
+          echo "Exportando ARNs..."
+
+          echo "##vso[task.setvariable variable=ARN_0]$(taskDefinitionArn_0)"
+          echo "##vso[task.setvariable variable=ARN_1]$(taskDefinitionArn_1)"
+          echo "##vso[task.setvariable variable=ARN_2]$(taskDefinitionArn_2)"
+          echo "##vso[task.setvariable variable=ARN_3]$(taskDefinitionArn_3)"
+        displayName: "🔄 Convertir ARNs en variables reales de Bash"
+        condition: and(succeeded(),
+          eq(variables['cleanMsName'], 'transaction'))
       
       - script: |
           echo -e "\nℹ️ Extrayendo FAMILY para todos los taskDefinitionArn_X..."
 
-          echo $(taskDefinitionArn_0)
-          echo $(taskDefinitionArn_1)
-          echo $(taskDefinitionArn_2)
-          echo $(taskDefinitionArn_3)
+          # echo $(taskDefinitionArn_0)
+          # echo $(taskDefinitionArn_1)
+          # echo $(taskDefinitionArn_2)
+          # echo $(taskDefinitionArn_3)
 
           for i in 0 1 2 3; do
 
-            ARN_VALUE=$(eval echo "$"taskDefinitionArn_${i})
+            VAR="ARN_${i}"
+            ARN_VALUE="${!VAR}"
 
             echo "----------------------------"
             echo "📌 Índice: $i"
