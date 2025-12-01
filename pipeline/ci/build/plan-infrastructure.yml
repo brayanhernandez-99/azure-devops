@@ -99,11 +99,6 @@ jobs:
           # terragrunt plan --all --non-interactive -no-color
 
 
-          ###########################SQS awards (LISTO EN DEV Y QA PENDIENTE EN LAS PDN)
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/awards/aws-service-sqs
-          terragrunt plan --all --non-interactive -no-color
-
-
           ####################Eliminar redis  (LISTO EN DEV Y QA PENDIENTE EN LAS PDN)
           # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/redis
           # terragrunt plan --all --non-interactive -no-color
