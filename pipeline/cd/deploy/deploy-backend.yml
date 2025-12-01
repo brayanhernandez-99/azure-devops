@@ -284,11 +284,6 @@ jobs:
       - script: |
           echo -e "\nℹ️ Extrayendo FAMILY para todos los taskDefinitionArn_X..."
 
-          # echo $(taskDefinitionArn_0)
-          # echo $(taskDefinitionArn_1)
-          # echo $(taskDefinitionArn_2)
-          # echo $(taskDefinitionArn_3)
-
           for i in 0 1 2 3; do
 
             VAR="ARN_${i}"
@@ -339,8 +334,8 @@ jobs:
           echo -e "\nℹ️ Obteniendo CURRENT TASK DEFINITIONS (4 servicios transaction)..."
 
           for i in 0 1 2 3; do
-            ARN_VAR="taskDefinitionArn_${i}"
-            ARN_VALUE='$(taskDefinitionArn_${i})'
+            VAR="ARN_${i}"
+            ARN_VALUE="${!VAR}"
 
             if [[ -z "$ARN_VALUE" ]]; then
               echo "❌ ARN vacío para índice $i"
