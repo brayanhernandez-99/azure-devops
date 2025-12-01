@@ -548,31 +548,6 @@ jobs:
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVIC)
 
       - script: |
-          echo "Exportando ARNs NEW..."
-
-          echo "##vso[task.setvariable variable=ARN_NEW_0]$(taskDefinitionArnNew_0)"
-          echo "##vso[task.setvariable variable=ARN_NEW_1]$(taskDefinitionArnNew_1)"
-          echo "##vso[task.setvariable variable=ARN_NEW_2]$(taskDefinitionArnNew_2)"
-          echo "##vso[task.setvariable variable=ARN_NEW_3]$(taskDefinitionArnNew_3)"
-
-          echo "Exportando CLUSTER NAME..."
-          echo "##vso[task.setvariable variable=CLUSTER_0]$(cluster_name_0)"
-          echo "##vso[task.setvariable variable=CLUSTER_1]$(cluster_name_1)"
-          echo "##vso[task.setvariable variable=CLUSTER_2]$(cluster_name_2)"
-          echo "##vso[task.setvariable variable=CLUSTER_3]$(cluster_name_3)"
-
-          echo "Exportando SERVICE NAME..."
-          echo "##vso[task.setvariable variable=SERVICE_1]$(service_name_1)"
-          echo "##vso[task.setvariable variable=SERVICE_1]$(service_name_1)"
-          echo "##vso[task.setvariable variable=SERVICE_1]$(service_name_1)"
-          echo "##vso[task.setvariable variable=SERVICE_1]$(service_name_1)"
-
-        displayName: "🔄 Convertir ARNs, SERVICES AND CLUSTER en variables reales de Bash"
-        condition: and(succeeded(),
-          eq(variables['cleanMsName'], 'transaction'))
-
-
-      - script: |
           export AWS_ACCESS_KEY_ID
           export AWS_SECRET_ACCESS_KEY
           export AWS_REGION
@@ -595,6 +570,30 @@ jobs:
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVIC)
 
       - script: |
+          echo "Exportando ARNs NEW..."
+
+          echo "##vso[task.setvariable variable=ARN_NEW_0]$(taskDefinitionArnNew_0)"
+          echo "##vso[task.setvariable variable=ARN_NEW_1]$(taskDefinitionArnNew_1)"
+          echo "##vso[task.setvariable variable=ARN_NEW_2]$(taskDefinitionArnNew_2)"
+          echo "##vso[task.setvariable variable=ARN_NEW_3]$(taskDefinitionArnNew_3)"
+
+          echo "Exportando CLUSTER NAME..."
+          echo "##vso[task.setvariable variable=CLUSTER_0]$(cluster_name_0)"
+          echo "##vso[task.setvariable variable=CLUSTER_1]$(cluster_name_1)"
+          echo "##vso[task.setvariable variable=CLUSTER_2]$(cluster_name_2)"
+          echo "##vso[task.setvariable variable=CLUSTER_3]$(cluster_name_3)"
+
+          echo "Exportando SERVICE NAME..."
+          echo "##vso[task.setvariable variable=SERVICE_0]$(service_name_0)"
+          echo "##vso[task.setvariable variable=SERVICE_1]$(service_name_1)"
+          echo "##vso[task.setvariable variable=SERVICE_2]$(service_name_2)"
+          echo "##vso[task.setvariable variable=SERVICE_3]$(service_name_3)"
+
+        displayName: "🔄 Convertir ARNs, SERVICES AND CLUSTER en variables reales de Bash"
+        condition: and(succeeded(),
+          eq(variables['cleanMsName'], 'transaction'))
+
+      - script: |
           export AWS_ACCESS_KEY_ID
           export AWS_SECRET_ACCESS_KEY
           export AWS_REGION
@@ -609,6 +608,7 @@ jobs:
             CLUSTER_VALUE="${!VAR_CLUSTER}"
             SERVICE_VALUE="${!VAR_SERVICE}"
 
+            echo "------------------------------------------"
             echo "🔹 Task Definition ARN : $ARN_VALUE"
             echo "🔹 Cluster             : $CLUSTER_VALUE"
             echo "🔹 Service             : $SERVICE_VALUE"
