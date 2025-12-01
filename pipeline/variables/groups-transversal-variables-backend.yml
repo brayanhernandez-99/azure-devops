@@ -10,8 +10,8 @@ variables:
 
   # Staging branch
   - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
-    #   - group: trasversal-aws-qa #cuentas viejas
-      - group: trasversal-aws-staging #cuenta nueva
+      - group: trasversal-aws-qa #cuentas viejas
+    #   - group: trasversal-aws-staging #cuenta nueva
 
   # Master branch → por red
   - ${{ if and(eq(parameters.region, 'antioquia'), eq(variables['Build.SourceBranchName'], 'master')) }}:
