@@ -413,30 +413,76 @@ jobs:
         condition: and(succeeded(),
           eq(variables['cleanMsName'], 'transaction'))
 
-      # - script: |
-      #     jq '{
-      #       family,
-      #       taskRoleArn,
-      #       executionRoleArn,
-      #       networkMode,
-      #       containerDefinitions,
-      #       volumes,
-      #       placementConstraints,
-      #       requiresCompatibilities,
-      #       cpu,
-      #       memory,
-      #       tags,
-      #       pidMode,
-      #       ipcMode,
-      #       proxyConfiguration,
-      #       inferenceAccelerators,
-      #       ephemeralStorage,
-      #       runtimePlatform
-      #     } | with_entries(select(.value != null))' new-taskdef-$(cleanMsName).json > new-taskdef-$(cleanMsName)-ecs.json
+      - script: |
+          jq '{
+            family,
+            taskRoleArn,
+            executionRoleArn,
+            networkMode,
+            containerDefinitions,
+            volumes,
+            placementConstraints,
+            requiresCompatibilities,
+            cpu,
+            memory,
+            tags,
+            pidMode,
+            ipcMode,
+            proxyConfiguration,
+            inferenceAccelerators,
+            ephemeralStorage,
+            runtimePlatform
+          } | with_entries(select(.value != null))' new-taskdef-$(cleanMsName).json > new-taskdef-$(cleanMsName)-ecs.json
 
-      #     cat new-taskdef-$(cleanMsName)-ecs.json
-      #   displayName: "🧹 Clean up attributes"
-      #   condition: succeeded()
+          cat new-taskdef-$(cleanMsName)-ecs.json
+        displayName: "🧹 Clean up attributes"
+        condition: and(succeeded(),
+          ne(variables['cleanMsName'], 'transaction'))
+
+      - script: |
+          echo -e "\n🧹 Limpiando atributos de las 4 task definitions..."
+
+          for i in 0 1 2 3; do
+            INPUT="new-taskdef_${i}.json"
+            OUTPUT="new-taskdef_${i}-ecs.json"
+
+            echo -e "\n----------------------------"
+            echo "📌 Índice: $i"
+            echo "📄 Archivo entrada: $INPUT"
+            echo "📄 Archivo salida:  $OUTPUT"
+
+            if [[ ! -f "$INPUT" ]]; then
+              echo "❌ No existe $INPUT — no se puede limpiar."
+              exit 92
+            fi
+
+            jq '{
+              family,
+              taskRoleArn,
+              executionRoleArn,
+              networkMode,
+              containerDefinitions,
+              volumes,
+              placementConstraints,
+              requiresCompatibilities,
+              cpu,
+              memory,
+              tags,
+              pidMode,
+              ipcMode,
+              proxyConfiguration,
+              inferenceAccelerators,
+              ephemeralStorage,
+              runtimePlatform
+            } | with_entries(select(.value != null))' \
+            "$INPUT" > "$OUTPUT"
+
+            echo "✅ Archivo limpio generado: $OUTPUT"
+            cat "$OUTPUT"
+          done
+        displayName: "🧹 Clean up attributes (4 definitions)"
+        condition: and(succeeded(),
+          eq(variables['cleanMsName'], 'transaction'))
 
       # - script: |
       #     export AWS_REGION
