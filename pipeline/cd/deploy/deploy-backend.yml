@@ -618,6 +618,7 @@ jobs:
               --service $SERVICE_VALUE \
               --task-definition $ARN_VALUE \
               --region $AWS_DEFAULT_REGION
+          done
 
         displayName: "⚡ Deploy New Task Definition to Service"
         condition: and(succeeded(),
