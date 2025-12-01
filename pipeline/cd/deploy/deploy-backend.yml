@@ -354,6 +354,7 @@ jobs:
               > "taskdef_${i}.json"
 
             echo "✅ Archivo generado: taskdef_${i}.json"
+            cat taskdef_${i}.json
           done
         displayName: "📑 Get Current Task Definition"
         condition: and(succeeded(),
@@ -363,19 +364,54 @@ jobs:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVIC)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVIC)
 
-      # - script: |
-      #     newTag="$(version)"
+      - script: |
+          newTag="$(version)"
 
-      #     jq --arg newTag "$newTag" '
-      #       .containerDefinitions |= map(
-      #         .image |= (split(":")[0] + ":" + $newTag)
-      #       )
-      #     ' taskdef.json > new-taskdef-$(cleanMsName).json
+          jq --arg newTag "$newTag" '
+            .containerDefinitions |= map(
+              .image |= (split(":")[0] + ":" + $newTag)
+            )
+          ' taskdef.json > new-taskdef-$(cleanMsName).json
 
-      #     echo -e "\nℹ️ Imagen actualizada con nuevo tag: $newTag"
-      #     cat new-taskdef-$(cleanMsName).json
-      #   displayName: "📝 Update image tag in task definition"
-      #   condition: succeeded()
+          echo -e "\nℹ️ Imagen actualizada con nuevo tag: $newTag"
+          cat new-taskdef-$(cleanMsName).json
+        displayName: "📝 Update image tag in task definition"
+        condition: and(succeeded(),
+          ne(variables['cleanMsName'], 'transaction'))
+
+
+      - script: |
+          echo -e "\n📝 Actualizando TAG de las 4 task definitions..."
+
+          newTag="$(version)"
+          echo "Nuevo TAG: $newTag"
+
+          for i in 0 1 2 3; do
+            INPUT="taskdef_${i}.json"
+            OUTPUT="new-taskdef_${i}.json"
+
+            echo -e "\n----------------------------"
+            echo "📌 Procesando índice: $i"
+            echo "📄 Archivo de entrada: $INPUT"
+            echo "📄 Archivo de salida: $OUTPUT"
+
+            if [[ ! -f "$INPUT" ]]; then
+              echo "❌ No existe $INPUT — no se puede actualizar."
+              exit 98
+            fi
+
+            jq --arg newTag "$newTag" '
+              .containerDefinitions |= map(
+                .image |= (split(":")[0] + ":" + $newTag)
+              )
+            ' "$INPUT" > "$OUTPUT"
+
+            echo "✅ Imagen actualizada en $OUTPUT"
+            cat "$OUTPUT"
+          done
+        displayName: "📝 Update image tag in ALL task definitions"
+        condition: and(succeeded(),
+          eq(variables['cleanMsName'], 'transaction'))
 
       # - script: |
       #     jq '{
