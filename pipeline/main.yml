@@ -18,16 +18,10 @@ parameters:
   - name: apps
     type: object
     default:
-<<<<<<< HEAD
       # microservice-hierarchies: "3.6.3"
       # microservice-papelery: "3.3.10"
       microservice-awards: "3.5.4"
       microservice-lotteries-games: "4.14.0"
-=======
-      microservice-transaction-astro: "4.5.10"
-      microservice-transaction-lotteries-games: "4.5.10"
-      microservice-transaction-recharges: "4.5.10"
->>>>>>> de5f75b807de7715b340674f09c305d82ba9b922
 
 resources:
   repositories:
