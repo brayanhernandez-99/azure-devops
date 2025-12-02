@@ -79,7 +79,9 @@ jobs:
         condition: succeeded()
 
       - script: |
+          set -e
 
+          
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-vpc-endpoints/aws-endpoint-cloudwatch-events
           terragrunt plan --all --non-interactive -no-color
           terragrunt destroy --all --non-interactive -no-color
