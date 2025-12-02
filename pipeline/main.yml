@@ -20,6 +20,7 @@ parameters:
     default:
       microservice-hierarchies: "3.6.4"
       microservice-products: "3.5.5"
+      microservice-sellers: "3.6.3"
 
 resources:
   repositories:
