@@ -88,7 +88,7 @@ jobs:
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/raspa
           terragrunt plan --all --non-interactive -no-color
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3/cloudfront-raspa
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3/s3-raspa
           terragrunt plan --all --non-interactive -no-color
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-raspa
