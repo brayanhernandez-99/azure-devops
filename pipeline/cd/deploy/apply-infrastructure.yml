@@ -81,12 +81,12 @@ jobs:
       - script: |
           set -e
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-ftp/aws-service-iam-ftp
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-ftp/aws-service-iam
           terragrunt plan --all --non-interactive -no-color
-          terragrunt destroy --all --non-interactive -no-color
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-ftp/aws-sg
+          terragrunt apply --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-ftp/aws-service-sg
           terragrunt plan --all --non-interactive -no-color
-          terragrunt destroy --all --non-interactive -no-color
+          terragrunt apply --all --non-interactive -no-color
 
           
 
