@@ -82,7 +82,10 @@ jobs:
           set -e
 
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-ftp/aws-service-ec2
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-ftp/aws-service-ec2
+          # terragrunt plan --all --non-interactive -no-color}
+
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-millonario-policy
           terragrunt plan --all --non-interactive -no-color
 
 
