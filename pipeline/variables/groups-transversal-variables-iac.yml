@@ -5,7 +5,7 @@ variables:
   # Feature branches
   - ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}:
     - group: trasversal-aws-develop
-    - group: variables-infrastructure-develop
+    - group: infrastructure-develop
     - group: cloudfront-develop
     - group: parameters-infrastructure-develop
     - group: secrets-infrastructure-develop
