@@ -5,13 +5,13 @@ parameters:
   - name: red
     type: object
     default:
-      # - antioquia
-      # - cap
+      - antioquia
+      - cap
       - tolima
-      # - huila
+      - huila
       - cauca
-      # - boyaca
-      # - santander
+      - boyaca
+      - santander
 
 resources:
   repositories:
