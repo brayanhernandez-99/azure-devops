@@ -82,10 +82,10 @@ jobs:
           set -e
 
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-ftp/aws-service-ec2
-          # terragrunt plan --all --non-interactive -no-color
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-ftp/aws-service-s3
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-ftp/aws-service-iam
+          terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-ftp/aws-service-sg
+          terragrunt plan --all --non-interactive -no-color
 
 
 
@@ -145,11 +145,11 @@ jobs:
           # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-external-wager-policy 
           # terragrunt plan --all --non-interactive -no-color
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-millonario-policy 
-          terragrunt plan --all --non-interactive -no-color
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-millonario-policy 
+          # terragrunt plan --all --non-interactive -no-color
 
-          cd $(Build.SourcesDirectory)
-          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          # cd $(Build.SourcesDirectory)
+          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
           # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-raffles-policy 
           # terragrunt plan --all --non-interactive -no-color
