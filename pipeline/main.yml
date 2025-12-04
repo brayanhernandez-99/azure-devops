@@ -8,7 +8,7 @@ parameters:
       # - antioquia
       # - cap
       - tolima
-      - huila
+      # - huila
       - cauca
       # - boyaca
       # - santander
