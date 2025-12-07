@@ -18,12 +18,12 @@ parameters:
   - name: apps
     type: object
     default:
-      microservice-recharges: "3.4.8"
-      microservice-siga: "3.2.16"
-      microservice-transaction: "4.5.10"
-      microservice-transaction-astro: "4.5.10"
-      microservice-transaction-lotteries-games: "4.5.10"
-      microservice-transaction-recharges: "4.5.10"
+      microservice-recharges: "3.4.11"
+      microservice-siga: "3.2.20"
+      microservice-transaction: "4.5.14"
+      microservice-transaction-astro: "4.5.14"
+      microservice-transaction-lotteries-games: "4.5.14"
+      microservice-transaction-recharges: "4.5.14"
 
 resources:
   repositories:
