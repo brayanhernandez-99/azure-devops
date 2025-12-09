@@ -6,24 +6,26 @@ variables:
   - ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}:
     - group: trasversal-aws-develop
     - group: infrastructure-develop
-    - group: cloudfront-develop
+    - group: cloudfront-infrastructure-develop
     - group: parameters-infrastructure-develop
     - group: secrets-infrastructure-develop
     - group: autoscaling-infrastructure-develop
+    - group: ftp-infrastructure-develop
 
   - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
     - group: trasversal-aws-staging
     - group: infrastructure-staging
-    - group: cloudfront-staging
+    - group: cloudfront-infrastructure-staging
     - group: parameters-infrastructure-staging
     - group: secrets-infrastructure-staging
     - group: autoscaling-infrastructure-staging
+    - group: ftp-infrastructure-staging
 
   # Master branch → por región
   - ${{ if and(eq(parameters.region, 'antioquia'), eq(variables['Build.SourceBranchName'], 'master')) }}:
     - group: trasversal-aws-antioquia
     - group: infrastructure-antioquia
-    - group: cloudfront-antioquia
+    - group: cloudfront-infrastructure-antioquia
     - group: parameters-infrastructure-antioquia
     - group: secrets-infrastructure-antioquia
     - group: autoscaling-infrastructure-antioquia
@@ -31,7 +33,7 @@ variables:
   - ${{ if and(eq(parameters.region, 'cap'), eq(variables['Build.SourceBranchName'], 'master')) }}:
     - group: trasversal-aws-antioquia-cap
     - group: infrastructure-antioquia-cap
-    - group: cloudfront-antioquia-cap
+    - group: cloudfront-infrastructure-antioquia-cap
     - group: parameters-infrastructure-antioquia-cap
     - group: secrets-infrastructure-antioquia-cap
     - group: autoscaling-infrastructure-antioquia-cap
@@ -39,7 +41,7 @@ variables:
   - ${{ if and(eq(parameters.region, 'tolima'), eq(variables['Build.SourceBranchName'], 'master')) }}:
     - group: trasversal-aws-tolima
     - group: infrastructure-tolima
-    - group: cloudfront-tolima
+    - group: cloudfront-infrastructure-tolima
     - group: parameters-infrastructure-tolima
     - group: secrets-infrastructure-tolima
     - group: autoscaling-infrastructure-tolima
@@ -47,7 +49,7 @@ variables:
   - ${{ if and(eq(parameters.region, 'huila'), eq(variables['Build.SourceBranchName'], 'master')) }}:
     - group: trasversal-aws-huila
     - group: infrastructure-huila
-    - group: cloudfront-huila
+    - group: cloudfront-infrastructure-huila
     - group: parameters-infrastructure-huila
     - group: secrets-infrastructure-huila
     - group: autoscaling-infrastructure-huila
@@ -55,7 +57,7 @@ variables:
   - ${{ if and(eq(parameters.region, 'cauca'), eq(variables['Build.SourceBranchName'], 'master')) }}:
     - group: trasversal-aws-cauca
     - group: infrastructure-cauca
-    - group: cloudfront-cauca
+    - group: cloudfront-infrastructure-cauca
     - group: parameters-infrastructure-cauca
     - group: secrets-infrastructure-cauca
     - group: autoscaling-infrastructure-cauca
@@ -63,7 +65,7 @@ variables:
   - ${{ if and(eq(parameters.region, 'boyaca'), eq(variables['Build.SourceBranchName'], 'master')) }}:
     - group: trasversal-aws-boyaca
     - group: infrastructure-boyaca
-    - group: cloudfront-boyaca
+    - group: cloudfront-infrastructure-boyaca
     - group: parameters-infrastructure-boyaca
     - group: secrets-infrastructure-boyaca
     - group: autoscaling-infrastructure-boyaca
@@ -71,7 +73,7 @@ variables:
   - ${{ if and(eq(parameters.region, 'santander'), eq(variables['Build.SourceBranchName'], 'master')) }}:
     - group: trasversal-aws-santander
     - group: infrastructure-santander
-    - group: cloudfront-santander
+    - group: cloudfront-infrastructure-santander
     - group: parameters-infrastructure-santander
     - group: secrets-infrastructure-santander
     - group: autoscaling-infrastructure-santander
