@@ -1,6 +1,7 @@
 jobs:
   - job: "sonarqube_infrastructure"
     displayName: "🛡️ sonarqube infrastructure"
+    condition: or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), eq(variables['Build.SourceBranchName'], 'develop'))
     pool:
       name: "Azure Pipelines"
       VmImage: ubuntu-22.04
