@@ -1,15 +1,12 @@
 jobs:
   - job: "sonarqube_infrastructure"
     displayName: "🛡️ sonarqube"
-    condition: or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), eq(variables['Build.SourceBranchName'], 'develop'))
     pool:
       name: "Azure Pipelines"
       VmImage: ubuntu-22.04
 
     variables:
       - template: ../../variables/groups-transversal-variables-iac.yml
-        parameters:
-          region: ${{ parameters.region }}
 
     steps:
       - task: JavaToolInstaller@0
