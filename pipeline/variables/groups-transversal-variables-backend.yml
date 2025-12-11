@@ -1,6 +1,6 @@
 variables:
-  - group: trasversal-aws-deployment
   - group: trasversal-azure-devops
+  - group: trasversal-aws-deployment
   - group: trasversal-versions-invictus
 
   # Develop - Feature - Hotfix branch
