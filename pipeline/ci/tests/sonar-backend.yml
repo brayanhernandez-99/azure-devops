@@ -7,8 +7,6 @@ jobs:
 
     variables:
       - template: ../../variables/groups-transversal-variables-backend.yml
-        parameters:
-          region: ${{ parameters.region }}
 
     steps:
       - task: DownloadBuildArtifacts@0
