@@ -1,6 +1,7 @@
 stages:
   - stage: semantic_version_infrastructure
     displayName: "🛡️ SonarQube Infrastructure"
+    condition: or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), eq(variables['Build.SourceBranchName'], 'develop'))
     jobs:
       - template: ../ci/sonar/sonar-infrastructure.yml
 
