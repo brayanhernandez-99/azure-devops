@@ -1,0 +1,17 @@
+jobs:
+  - job: "sonarqube_infrastructure"
+    displayName: "🛡️ sonarqube infrastructure"
+    pool:
+      name: "Azure Pipelines"
+      VmImage: ubuntu-22.04
+
+    variables:
+      - template: ../../variables/groups-transversal-variables-backend.yml
+        parameters:
+          region: ${{ parameters.region }}
+
+    steps:
+      - script: |
+          echo "Cambios"
+        displayName: "🔎 Read changes infrastructure"
+        condition: succeeded()

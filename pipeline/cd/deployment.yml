@@ -15,7 +15,7 @@ jobs:
         deploy:
           steps:
             - script: echo "✅ Aprobación recibida. Iniciando el despliegue..."
-              displayName: "🔓 Approval Confirmed"
+              displayName: "🔓 awaiting approval"
 
   #####################################################################
 
