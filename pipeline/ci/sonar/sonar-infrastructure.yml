@@ -30,7 +30,7 @@ jobs:
           cliProjectName: "$(Build.Repository.Name)"
           cliSources: "$(System.DefaultWorkingDirectory)"
           extraProperties: |
-            sonar.sources=.
+            sonar.sources=iac-template-terraform
             sonar.inclusions=**/*.tf,**/*.tfvars,**/*.hcl
             sonar.terraform.file.suffixes=tf,tfvars,hcl
             sonar.exclusions=**/.terraform/**,**/.terragrunt-cache/**,**/terraform.tfstate*,**/*tfplan*,**/terragrunt.hcl.lock*,**/*.lock.hcl,pipeline/**
