@@ -1,4 +1,5 @@
 variables:
+  - group: trasversal-azure-devops
   - group: trasversal-aws-deployment
   - group: trasversal-infrastructure-invictus
 

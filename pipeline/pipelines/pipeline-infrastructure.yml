@@ -1,10 +1,8 @@
 stages:
-  - stage: semantic_version_infrastructure
-    displayName: "🏷️ Semantic Version Infrastructure"
+  - stage: sonarqube_infrastructure
+    displayName: "🛡️ SonarQube Infrastructure"
     jobs:
-      - template: ../ci/general/semantic-version-infrastructure.yml
-        parameters:
-          release: ${{ parameters.release }}
+      - template: ../ci/sonar/sonar-infrastructure.yml
 
   #####################################################################
 
@@ -12,7 +10,7 @@ stages:
       - ${{ each region in parameters.red }}:
           - stage: plan_infrastructure_${{ region }}
             displayName: "🧩 Plan Infrastructure ${{ region }}"
-            dependsOn: semantic_version_infrastructure
+            dependsOn: sonarqube_infrastructure
             jobs:
               - template: ../ci/build/plan-infrastructure.yml
                 parameters:
@@ -25,14 +23,13 @@ stages:
               - template: ../cd/deployment.yml
                 parameters:
                   region: ${{ region }}
-                  release: ${{ parameters.release }}
 
   #####################################################################
 
   - ${{ if ne(variables['Build.SourceBranchName'], 'master') }}:
       - stage: plan_infrastructure
         displayName: "🧩 Plan Infrastructure"
-        dependsOn: semantic_version_infrastructure
+        dependsOn: sonarqube_infrastructure
         jobs:
           - template: ../ci/build/plan-infrastructure.yml
 
@@ -42,5 +39,3 @@ stages:
             dependsOn: plan_infrastructure
             jobs:
               - template: ../cd/deployment.yml
-                parameters:
-                  release: ${{ parameters.release }}
