@@ -6,7 +6,7 @@ jobs:
       VmImage: ubuntu-22.04
 
     variables:
-      - template: ../../variables/groups-transversal-variables-backend.yml
+      - template: ../../variables/groups-transversal-variables-iac.yml
         parameters:
           region: ${{ parameters.region }}
 
