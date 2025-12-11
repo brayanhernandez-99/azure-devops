@@ -23,6 +23,7 @@ stages:
               - template: ../cd/deployment.yml
                 parameters:
                   region: ${{ region }}
+                  release: ${{ parameters.release }}
 
   #####################################################################
 
@@ -39,3 +40,5 @@ stages:
             dependsOn: plan_infrastructure
             jobs:
               - template: ../cd/deployment.yml
+                parameters:
+                  release: ${{ parameters.release }}
