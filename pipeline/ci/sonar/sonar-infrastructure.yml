@@ -28,11 +28,11 @@ jobs:
           cliProjectKey: "$(Build.Repository.Name)"
           cliProjectName: "$(Build.Repository.Name)"
           cliSources: "$(System.DefaultWorkingDirectory)"
-        extraProperties: |
-          sonar.sources=iac-template-terraform,iac-terragrunt
-          sonar.inclusions=**/*.tf,**/*.tfvars,**/*.hcl
-          sonar.terraform.file.suffixes=tf,tfvars,hcl
-          sonar.exclusions=**/.terraform/**,**/.terragrunt-cache/**,**/terraform.tfstate*,**/*tfplan*,**/terragrunt.hcl.lock*,**/*.lock.hcl,pipeline/**
+          extraProperties: |
+            sonar.sources=iac-template-terraform,iac-terragrunt
+            sonar.inclusions=**/*.tf,**/*.tfvars,**/*.hcl
+            sonar.terraform.file.suffixes=tf,tfvars,hcl
+            sonar.exclusions=**/.terraform/**,**/.terragrunt-cache/**,**/terraform.tfstate*,**/*tfplan*,**/terragrunt.hcl.lock*,**/*.lock.hcl,pipeline/**
         condition: succeeded()
 
       - task: SonarQubeAnalyze@7
