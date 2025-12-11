@@ -335,10 +335,10 @@ jobs:
       #     else
       #       echo -e "\n✅ El proyecto cumple con los Qualitys."
       #     fi
-      #   displayName: "🛡️ Quality Gate Check: ${{ parameters.projectKey }}"
+      #   displayName: "🛡️ Quality Gate Check: $(Build.Repository.Name)"
       #   condition: and(succeeded(),
-      #     ne('${{ parameters.projectKey }}', 'bff-administration-invictus'),
-      #     ne('${{ parameters.projectKey }}', 'bff-sellers-invictus'),
+      #     ne('$(Build.Repository.Name)', 'bff-administration-invictus'),
+      #     ne('$(Build.Repository.Name)', 'bff-sellers-invictus'),
       #     ne(variables['Build.SourceBranchName'], 'staging'),
       #     ne(variables['Build.SourceBranchName'], 'master'))
       #   #continueOnError: true
