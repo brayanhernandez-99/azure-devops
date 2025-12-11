@@ -21,6 +21,7 @@ jobs:
         condition: succeeded()
 
       - task: SonarQubePrepare@7
+        displayName: "⚙️ Prepare SonarQube Analysis"
         inputs:
           SonarQube: "SonarQubeConection"
           scannerMode: "CLI"
@@ -36,10 +37,11 @@ jobs:
         condition: succeeded()
 
       - task: SonarQubeAnalyze@7
-        displayName: "📡 Run Sonar Analysis (Terraform + Terragrunt)"
+        displayName: "📡 Run Sonar Analysis"
         condition: succeeded()
 
       - task: SonarQubePublish@7
+        displayName: "📤 Publish Static Code Analysis Results"
         inputs:
           pollingTimeoutSec: 400
         condition: succeeded()
