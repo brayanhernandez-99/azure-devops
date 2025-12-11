@@ -181,8 +181,11 @@ jobs:
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/shopping-cart/aws-service-s3
           terragrunt plan --all --non-interactive -no-color
 
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-s3-lotteries-physical
+          terragrunt plan --all --non-interactive -no-color
 
-
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/remittances/aws-service-s3
+          terragrunt plan --all --non-interactive -no-color
 
 
           ################# Servicio de raspa (LISTO EN DEV)  PENDIENTE EN QA Y PDN
