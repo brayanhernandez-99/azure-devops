@@ -12,7 +12,34 @@ jobs:
           region: ${{ parameters.region }}
 
     steps:
-      - script: |
-          echo "Cambios"
-        displayName: "🔎 Read changes infrastructure"
+      - task: JavaToolInstaller@0
+        displayName: "🔧 Install JDK 17"
+        inputs:
+          versionSpec: "17"
+          jdkArchitectureOption: "x64"
+          jdkSourceOption: "PreInstalled"
+        condition: succeeded()
+
+      - task: SonarQubePrepare@7
+        inputs:
+          SonarQube: "SonarQubeConection"
+          scannerMode: "CLI"
+          configMode: "manual"
+          cliProjectKey: "$(Build.Repository.Name)"
+          cliProjectName: "$(Build.Repository.Name)"
+          cliSources: "$(System.DefaultWorkingDirectory)"
+        extraProperties: |
+          sonar.sources=iac-template-terraform,iac-terragrunt
+          sonar.inclusions=**/*.tf,**/*.tfvars,**/*.hcl
+          sonar.terraform.file.suffixes=tf,tfvars,hcl
+          sonar.exclusions=**/.terraform/**,**/.terragrunt-cache/**,**/terraform.tfstate*,**/*tfplan*,**/terragrunt.hcl.lock*,**/*.lock.hcl,pipeline/**
+        condition: succeeded()
+
+      - task: SonarQubeAnalyze@7
+        displayName: "📡 Run Sonar Analysis (Terraform + Terragrunt)"
+        condition: succeeded()
+
+      - task: SonarQubePublish@7
+        inputs:
+          pollingTimeoutSec: 400
         condition: succeeded()
