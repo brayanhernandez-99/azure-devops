@@ -36,6 +36,14 @@ jobs:
             sonar.exclusions=**/.terraform/**,**/.terragrunt-cache/**,**/terraform.tfstate*,**/*tfplan*,**/terragrunt.hcl.lock*,**/*.lock.hcl,pipeline/**
         condition: succeeded()
 
+      - script: |
+          response=$(echo $SONARQUBE_SCANNER_PARAMS | sed -E 's#"sonar\.branch\.name":"[^"]+",##g')
+          json=$(echo "$response" | sed 's/"sonar.token":\*\*\*/"sonar.token":"***"/')
+          echo "$json" | jq
+          echo "##vso[task.setvariable variable=SONARQUBE_SCANNER_PARAMS]$response"
+        displayName: "⚙️ Set Variable — SONARQUBE_SCANNER_PARAMS"
+        condition: succeeded()
+
       - task: SonarQubeAnalyze@7
         displayName: "📡 Run Sonar Analysis"
         condition: succeeded()
