@@ -19,10 +19,23 @@ jobs:
 
     steps:
       - script: |
-          echo "📣 Original msName: $(msName)"
-          cleanName=$(echo $(msName) | sed 's/microservice-//')
-          echo "🧹 Nombre limpio: $cleanName"
-          echo "##vso[task.setvariable variable=cleanMsName]$cleanName"
+          msCluster="$(msName)-ms-cluster"
+          msService="$(msName)-ms-fg-service"
+          filePath="$(System.DefaultWorkingDirectory)/taskdef-$msService.json"
+          tmpFilePath="$(System.DefaultWorkingDirectory)/tmp-taskdef-$msService.json"
+
+
+          echo "📣 Microservice:"
+          echo "Name: $(msName)"
+          echo "Cluster: $msCluster"
+          echo "Service: $msService"
+          echo "File Path: $filePath"
+          echo "Tmp File Path: $tmpFilePath"
+
+          echo "##vso[task.setvariable variable=msCluster]$msCluster"
+          echo "##vso[task.setvariable variable=msService]$msService"
+          echo "##vso[task.setvariable variable=filePath]$filePath"
+          echo "##vso[task.setvariable variable=tmpFilePath]$tmpFilePath"
         displayName: "⚙️ Prepare deploy $(msName)"
         condition: succeeded()
 
@@ -48,21 +61,8 @@ jobs:
           targetType: "inline"
           script: |
             CURRENT_BRANCH=$(echo $(Build.SourceBranch))
-
-            if [[ "$CURRENT_BRANCH" == refs/heads/master ]]; then
-              clean_branch=prd
-            fi
-
-            # Validar microservicios transactions
-            if [[ "$(cleanMsName)" == "transaction-astro" || \
-                  "$(cleanMsName)" == "transaction-lotteries-games" || \
-                  "$(cleanMsName)" == "transaction-recharges" ]]; then
-              REPO_NAME="microservice-transaction-$clean_branch"
-              IMAGE_TAG="$(msVersion)"
-            else
-              REPO_NAME="$(msName)-$clean_branch"
-              IMAGE_TAG="$(msVersion)"
-            fi
+            REPO_NAME="microservice-transaction-prd"
+            IMAGE_TAG="$(msVersion)"
 
             echo "🔍 Verificando si la imagen '$IMAGE_TAG' existe en '$REPO_NAME'..."
 
@@ -83,26 +83,16 @@ jobs:
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
 
       - script: |
-          export AWS_REGION
-          export AWS_ACCESS_KEY_ID
-          export AWS_SECRET_ACCESS_KEY
-
-          if [[ "$(cleanMsName)" == "raffle" ]]; then
-              SERVICES=raffles
-          fi
-          echo $CLUSTER
-          echo $SERVICES
-
           echo "🔍 Obteniendo task definition..."
-          arn=$(aws ecs describe-services \
-            --cluster $CLUSTER \
-            --services $SERVICES \
-            --query 'services[0].taskDefinition' \
-            --output text \
-            --region $(AWS_DEFAULT_REGION))
-            
-          echo "🆔 TaskDef ARN: $arn"
-          echo "##vso[task.setvariable variable=taskDefinitionArn]$arn"
+
+          TASK_ARN=$(aws ecs describe-services \
+            --cluster "$(msCluster)" \
+            --services "$(msService)" \
+            --query "services[0].taskDefinition" \
+            --output text)
+
+          echo "🆔 Task Definition actual: $TASK_ARN"
+          echo "##vso[task.setvariable variable=taskDefinitionArn]$TASK_ARN"
         displayName: "🔍 Get Task Definition ARN"
         condition: succeeded()
         env:
@@ -111,30 +101,16 @@ jobs:
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
 
       - script: |
-          echo "🔎 Obteniendo *family* de Task Definition..."
-          ARN='$(taskDefinitionArn)'
-          echo "📄 ARN detectado: $ARN"
+          echo "📤 Exportando Task Definition..."
 
-          FAMILY=$(echo $ARN | cut -d'/' -f2 | cut -d':' -f1)
-          echo "🧩 Family extraída: $FAMILY"
-          echo "##vso[task.setvariable variable=taskFamily]$FAMILY"
-        displayName: "🧩 Extract family from Task Definition ARN"
-        condition: succeeded()
-
-      - script: |
-          export AWS_ACCESS_KEY_ID
-          export AWS_SECRET_ACCESS_KEY
-          export AWS_REGION
-
-          echo "📥 Obteniendo definición actual desde ECS..."
           aws ecs describe-task-definition \
-            --task-definition $(taskDefinitionArn) \
-            --query 'taskDefinition' \
-            > taskdef.json
+            --task-definition "$(taskDefinitionArn)" \
+            --query "taskDefinition" \
+            --output json > "$(filePath)"
 
-          echo "📄 taskdef.json generado:"
-          cat taskdef.json
-        displayName: "📦 Get Current Task Definition"
+          echo -e "\n📁 File: $(filePath)"
+          jq . "$(filePath)"
+        displayName: "📤 Export Current Task Definition"
         condition: succeeded()
         env:
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
@@ -142,65 +118,39 @@ jobs:
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
 
       - script: |
-          newTag="$(msVersion)"
+          NEW_IMAGE="861262569826.dkr.ecr.us-east-1.amazonaws.com/microservice-transaction-prd:$(msVersion)"
 
-          jq --arg newTag "$newTag" '
-            .containerDefinitions |= map(
-              .image |= (split(":")[0] + ":" + $newTag)
-            )
-          ' taskdef.json > new-taskdef-$(cleanMsName).json
+          echo "🔄 Actualizando imagen: $NEW_IMAGE"
+          jq --arg IMG "$NEW_IMAGE" '
+          del(
+            .taskDefinitionArn,
+            .revision,
+            .status,
+            .requiresAttributes,
+            .compatibilities,
+            .registeredAt,
+            .registeredBy
+          )
+          | .containerDefinitions[0].image = $IMG
+          ' "$(filePath)" > "$(tmpFilePath)"
 
-          echo "🔄 Actualizando imagen con nuevo tag: $newTag"
-          echo "📄 Nueva task definition generada:"
-          cat new-taskdef-$(cleanMsName).json
-        displayName: "📝 Update Image Tag in Task Definition"
+          mv "$(tmpFilePath)" "$(filePath)"
+          echo -e "\n📁 File: $(filePath)"
+          jq . "$(filePath)"
+        displayName: "📝 Update Image in Task Definition"
         condition: succeeded()
 
       - script: |
-          echo "🧹 Limpiando atributos innecesarios del task definition..."
-
-          jq '{
-            family,
-            taskRoleArn,
-            executionRoleArn,
-            networkMode,
-            containerDefinitions,
-            volumes,
-            placementConstraints,
-            requiresCompatibilities,
-            cpu,
-            memory,
-            tags,
-            pidMode,
-            ipcMode,
-            proxyConfiguration,
-            inferenceAccelerators,
-            ephemeralStorage,
-            runtimePlatform
-          } | with_entries(select(.value != null))' new-taskdef-$(cleanMsName).json > new-taskdef-$(cleanMsName)-ecs.json
-
-          echo -e "\n📄 Resultado final del task definition limpio:"
-          cat new-taskdef-$(cleanMsName)-ecs.json
-        displayName: "🧹 Clean Up Task Definition Attributes"
-        condition: succeeded()
-
-      - script: |
-          export AWS_ACCESS_KEY_ID
-          export AWS_SECRET_ACCESS_KEY
-          export AWS_REGION
-
           echo "📝 Registrando la nueva Task Definition en ECS..."
+          NEW_TASK_ARN=$(aws ecs register-task-definition \
+            --cli-input-json file://"$(filePath)" \
+            --query "taskDefinition.taskDefinitionArn" \
+            --output text)
 
-          output=$(aws ecs register-task-definition \
-            --cli-input-json file://new-taskdef-$(cleanMsName)-ecs.json \
-            --region $AWS_DEFAULT_REGION)
+          echo -e "\n🚀 Nueva Task registrada"
+          echo "➡️ ARN: $NEW_TASK_ARN"
 
-          arn=$(echo $output | jq -r '.taskDefinition.taskDefinitionArn')
-
-          echo "📌 Nueva Task Definition"
-          echo "➡️ ARN: $arn"
-
-          echo "##vso[task.setvariable variable=taskDefinitionArnNew]$arn"
+          echo "##vso[task.setvariable variable=taskDefinitionArnNew]$NEW_TASK_ARN"
         displayName: "📄 Register New Task Definition"
         condition: succeeded()
         env:
@@ -209,27 +159,20 @@ jobs:
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
 
       - script: |
-          export AWS_ACCESS_KEY_ID
-          export AWS_SECRET_ACCESS_KEY
-          export AWS_REGION
+          echo "📣 Microservice:"
+          echo "Name: $(msName)"
+          echo "Cluster: $(msCluster)"
+          echo "Service: $(msService)"
+          echo "ARN: $(taskDeofinitionArnNew)"
 
-          echo "🆕 Usando el nuevo ARN de la Task Definition:"
-          echo "$(taskDefinitionArnNew)"
+          echo -e "\n🔄 Actualizando el servicio con la nueva Task Definition..."
+          # aws ecs update-service \
+          #   --cluster "$(msCluster)" \
+          #   --service "$(msService)" \
+          #   --task-definition "$(taskDeofinitionArnNew)" \
+          #   --force-new-deployment > /dev/null
 
-          if [[ "$(cleanMsName)" == "raffle" ]]; then
-              SERVICES=raffles
-          fi
-
-          echo "📌 Cluster: $CLUSTER"
-          echo "🔧 Service: $SERVICES"
-          echo "🚀 Actualizando el servicio de ECS con la nueva Task Definition..."
-
-          aws ecs update-service \
-            --cluster $CLUSTER \
-            --service $SERVICES \
-            --task-definition $(taskDefinitionArnNew) \
-            --region $AWS_DEFAULT_REGION
-
+          echo -e "\n✅ Servicio actualizado correctamente"
         displayName: "🔄 Update Service with New Task Definition"
         condition: succeeded()
         env:
