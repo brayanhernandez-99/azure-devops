@@ -1,6 +1,6 @@
 jobs:
   - job: deploy_electron
-    displayName: "🚀 Deploy Electron"
+    displayName: "🚀 deploy electron"
     pool:
       name: "Azure Pipelines"
       VmImage: ubuntu-22.04
