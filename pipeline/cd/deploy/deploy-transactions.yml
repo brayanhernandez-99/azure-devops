@@ -163,13 +163,13 @@ jobs:
           echo "Name: $(msName)"
           echo "Cluster: $(msCluster)"
           echo "Service: $(msService)"
-          echo "ARN: $(taskDeofinitionArnNew)"
+          echo "ARN: $(taskDefinitionArnNew)"
 
           echo -e "\n🔄 Actualizando el servicio con la nueva Task Definition..."
           # aws ecs update-service \
           #   --cluster "$(msCluster)" \
           #   --service "$(msService)" \
-          #   --task-definition "$(taskDeofinitionArnNew)" \
+          #   --task-definition "$(taskDefinitionArnNew)" \
           #   --force-new-deployment > /dev/null
 
           echo -e "\n✅ Servicio actualizado correctamente"
