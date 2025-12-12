@@ -12,13 +12,9 @@ parameters:
   - name: apps
     type: object
     default:
-      - "transaction-astro"
-      - "transaction-lg"
-      - "transaction-recharges"
-
-  - name: version
-    type: string
-    default: "0.0.0"
+      transaction-astro: "4.5.16"
+      transaction-lg: "4.5.16"
+      transaction-recharges: "4.5.16"
 
 resources:
   repositories:
@@ -37,4 +33,3 @@ stages:
           red: ${{ parameters.red }}
           apps: ${{ parameters.apps }}
           release: ${{ parameters.release }}
-          version: ${{ parameters.version }}

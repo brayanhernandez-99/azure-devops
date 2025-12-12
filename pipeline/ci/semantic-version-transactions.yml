@@ -7,10 +7,10 @@ jobs:
 
     strategy:
       matrix:
-        ${{ each ms in parameters.apps }}:
-          ${{ ms }}:
-            msName: ${{ ms }}
-            msVersion: ${{ parameters.version }}
+        ${{ each pair in parameters.apps }}:
+          ${{ pair.Key }}:
+            msName: ${{ pair.Key }}
+            msVersion: ${{ pair.Value }}
 
     steps:
       - checkout: self
