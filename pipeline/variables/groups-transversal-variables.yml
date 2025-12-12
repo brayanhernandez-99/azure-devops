@@ -1,0 +1,6 @@
+variables:
+    - group: trasversal-aws-deployment
+
+    # ANTIOQUIA
+    - ${{ if and(eq(parameters.red, 'antioquia'), in(variables['Build.SourceBranchName'], 'master')) }}:
+          - group: trasversal-aws-master-antioquia

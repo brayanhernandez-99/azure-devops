@@ -1,21 +1,21 @@
 jobs:
-  - job: deploy_networks
+  - job: deploy_transactions
     displayName: "🚀 deploy "
     pool:
       name: "Azure Pipelines"
       VmImage: ubuntu-22.04
 
     variables:
-      - template: ../../variables/groups-transversal-variables-ecs-redes.yml
+      - template: ../../variables/groups-transversal-variables.yml
         parameters:
           red: ${{ parameters.red }}
 
     strategy:
       matrix:
-        ${{ each pair in parameters.apps }}:
-          ${{ pair.Key }}:
-            msName: ${{ pair.Key }}
-            msVersion: ${{ pair.Value }}
+        ${{ each ms in parameters.apps }}:
+          ${{ ms }}:
+            msName: ${{ ms }}
+            msVersion: ${{ parameters.version }}
 
     steps:
       - script: |
@@ -106,7 +106,6 @@ jobs:
         displayName: "🔍 Get Task Definition ARN"
         condition: succeeded()
         env:
-          #red: ${{ parameters.red }}
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)

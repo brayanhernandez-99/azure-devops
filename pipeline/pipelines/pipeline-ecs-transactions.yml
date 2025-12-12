@@ -13,10 +13,10 @@ stages:
       - ${{ each region in parameters.red }}:
           - stage: deploy_micro_services_${{ region }}
             displayName: "🚀 Deploy MicroServices ${{ region }}"
-            dependsOn: semantic_version_integration
+            dependsOn: semantic_version_transactions
             jobs:
               - template: ../cd/deployment.yml
                 parameters:
-                  red: ${{ region }}
                   apps: ${{ parameters.apps }}
+                  version: ${{ parameters.version }}
                   release: ${{ parameters.release }}
