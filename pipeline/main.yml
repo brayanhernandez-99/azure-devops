@@ -12,8 +12,8 @@ parameters:
   - name: apps
     type: object
     default:
-      # transaction-astro: "4.5.16"
-      # transaction-lg: "4.5.16"
+      transaction-astro: "4.5.16"
+      transaction-lg: "4.5.16"
       transaction-recharges: "4.5.16"
 
 resources:
