@@ -5,18 +5,17 @@ stages:
       - template: ../ci/semantic-version-transactions.yml
         parameters:
           apps: ${{ parameters.apps }}
-          version: ${{ parameters.version }}
 
   #####################################################################
 
   - ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
       - ${{ each region in parameters.red }}:
-          - stage: deploy_micro_services_${{ region }}
+          - stage: deploy_transactions_${{ region }}
             displayName: "🚀 Deploy Transactions Antioquia"
             dependsOn: semantic_version_transactions
             jobs:
               - template: ../cd/deployment.yml
                 parameters:
+                  red: ${{ region }}
                   apps: ${{ parameters.apps }}
-                  version: ${{ parameters.version }}
                   release: ${{ parameters.release }}

@@ -19,9 +19,8 @@ jobs:
 
   #####################################################################
 
-  - ${{ if eq(parameters.release, 'ecs-transactions--') }}:
+  - ${{ if eq(parameters.release, 'ecs-transactions---') }}:
       - template: ./deploy/deploy-transactions.yml
         parameters:
           red: ${{ parameters.red }}
           apps: ${{ parameters.apps }}
-          version: ${{ parameters.version }}
