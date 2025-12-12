@@ -213,7 +213,7 @@ jobs:
 
           # # cd $(Build.SourcesDirectory)
           # # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
-          
+
         displayName: "🧩 Plan Infrastructure"
         condition: succeeded()
         env:
