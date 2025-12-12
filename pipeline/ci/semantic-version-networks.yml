@@ -26,5 +26,5 @@ jobs:
 
           echo "{ \"ms\": \"$(msName)\", \"version\": \"$(msVersion)\" }" > $(Build.ArtifactStagingDirectory)/$(msName)/version.json
           echo -e "\n📂 File ./$(msName)/version.json"
-          cat $(Build.ArtifactStagingDirectory)/$(msName)/version.json
+          jq . "$(Build.ArtifactStagingDirectory)/$(msName)/version.json"
         displayName: "⚙️ Create version file for: $(msName)"
