@@ -1,6 +1,6 @@
 jobs:
-  - job: "semantic_version"
-    displayName: "Semantic Version"
+  - job: "semantic_version_integration"
+    displayName: "🏷️ version "
     pool:
       name: "Azure Pipelines"
       VmImage: ubuntu-22.04
@@ -17,11 +17,14 @@ jobs:
         fetchDepth: 0
         persistCredentials: true
 
-
       - script: |
-          echo "Procesando $(msName) versión $(msVersion)"
+          echo "🚀 Procesando $(msName)..."
+          echo "Version: $(msVersion)"
 
           mkdir -p $(Build.ArtifactStagingDirectory)/$(msName)
           touch $(Build.ArtifactStagingDirectory)/$(msName)/version.json
+
           echo "{ \"ms\": \"$(msName)\", \"version\": \"$(msVersion)\" }" > $(Build.ArtifactStagingDirectory)/$(msName)/version.json
-        displayName: "Create version file for $(msName)"
+          echo -e "\n📂 File ./$(msName)/version.json"
+          cat $(Build.ArtifactStagingDirectory)/$(msName)/version.json
+        displayName: "⚙️ Create version file for: $(msName)"

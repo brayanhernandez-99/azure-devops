@@ -1,9 +1,0 @@
-stages:
-  - stage: "semantic_version_integration"
-    displayName: "🏷️ Semantic Version Integration"
-
-    jobs:
-      - ${{ if eq(parameters.release, 'ecs-redes') }}:
-          - template: ../general/semantic-version-ecs-redes.yml
-            parameters:
-              apps: ${{ parameters.apps }}

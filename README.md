@@ -10,7 +10,6 @@ pipelines-templates/
 ├── README.md
 └── pipeline/
     ├── main.yml
-    ├── main-pre-build.yml
     ├── build/
     │   ├── build-development.yml
     │   ├── build-master-front.yml

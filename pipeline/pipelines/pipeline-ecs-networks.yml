@@ -1,0 +1,21 @@
+stages:
+  - stage: "semantic_version_integration"
+    displayName: "🏷️ Semantic Version Integration"
+    jobs:
+      - template: ../ci/semantic-version-networks.yml
+        parameters:
+          apps: ${{ parameters.apps }}
+
+  #####################################################################
+
+  - ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
+      - ${{ each region in parameters.red }}:
+          - stage: deploy_micro_services_${{ region }}
+            displayName: "🚀 Deploy MicroServices ${{ region }}"
+            dependsOn: semantic_version_integration
+            jobs:
+              - template: ../cd/deployment.yml
+                parameters:
+                  red: ${{ region }}
+                  apps: ${{ parameters.apps }}
+                  release: ${{ parameters.release }}

@@ -1,0 +1,216 @@
+jobs:
+  - job: deploy_networks
+    displayName: "🚀 Deploy flutter"
+    pool:
+      name: "Azure Pipelines"
+      VmImage: ubuntu-22.04
+
+    variables:
+      - template: ../../variables/groups-transversal-variables-ecs-redes.yml
+        parameters:
+          red: ${{ parameters.red }}
+
+    strategy:
+      matrix:
+        ${{ each pair in parameters.apps }}:
+          ${{ pair.Key }}:
+            msName: ${{ pair.Key }}
+            msVersion: ${{ pair.Value }}
+
+    steps:
+      - script: |
+          echo "Original msName: $(msName)"
+          cleanName=$(echo $(msName) | sed 's/microservice-//')
+          echo "Nombre limpio: $cleanName"
+          echo "##vso[task.setvariable variable=cleanMsName]$cleanName"
+        displayName: "deploy $(msName)"
+
+      - script: |
+          echo -e "\n🚀 Versión detectada para $(msName): $(msVersion)"
+        displayName: "📖 Read Microservice Versions"
+
+      - script: |
+          echo "Logging in to ECR..."
+          aws ecr get-login-password --region $AWS_DEFAULT_REGION | \
+          docker login --username AWS --password-stdin $ACCOUNT_ID_DEPLOY.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+        displayName: "Login to AWS ECR"
+        env:
+          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
+          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+
+      - task: Bash@3
+        displayName: "Verificar si la imagen existe en ECR"
+        inputs:
+          targetType: "inline"
+          script: |
+            CURRENT_BRANCH=$(echo $(Build.SourceBranch))
+
+            if [[ "$CURRENT_BRANCH" == refs/heads/master ]]; then
+              clean_branch=prd
+            fi
+
+            # Validar microservicios transactions
+            if [[ "$(cleanMsName)" == "transaction-astro" || \
+                  "$(cleanMsName)" == "transaction-lotteries-games" || \
+                  "$(cleanMsName)" == "transaction-recharges" ]]; then
+              REPO_NAME="microservice-transaction-$clean_branch"
+              IMAGE_TAG="$(msVersion)"
+            else
+              REPO_NAME="$(msName)-$clean_branch"
+              IMAGE_TAG="$(msVersion)"
+            fi
+
+            echo "🔍 Verificando si la imagen '$IMAGE_TAG' existe en '$REPO_NAME'..."
+
+            if aws ecr describe-images \
+                --repository-name "$REPO_NAME" \
+                --image-ids imageTag=$IMAGE_TAG \
+                --region "$AWS_DEFAULT_REGION" > /dev/null 2>&1; then
+              echo "✅ Imagen encontrada en ECR."
+            else
+              echo "❌ Imagen no encontrada: $REPO_NAME:$IMAGE_TAG"
+              exit 99
+            fi
+          displayName: "🔍 Verify image in ECR"
+        env:
+          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
+          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+
+      - script: |
+          export AWS_ACCESS_KEY_ID
+          export AWS_SECRET_ACCESS_KEY
+          export AWS_REGION
+
+          if [[ "$(cleanMsName)" == "raffle" ]]; then
+              SERVICES=raffles
+          fi
+          echo $CLUSTER
+          echo $SERVICES
+
+          echo "Obteniendo task definition..."
+          arn=$(aws ecs describe-services \
+            --cluster $CLUSTER \
+            --services $SERVICES \
+            --query 'services[0].taskDefinition' \
+            --output text \
+            --region $(AWS_DEFAULT_REGION))
+            
+          echo "TaskDef ARN: $arn"
+          echo "##vso[task.setvariable variable=taskDefinitionArn]$arn"
+        displayName: "Get ARN Task Definition"
+        env:
+          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
+          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+          red: ${{ parameters.red }}
+
+      - script: |
+          echo "Obteniendo family de task definition..."
+          ARN='$(taskDefinitionArn)'
+          echo $ARN
+
+          FAMILY=$(echo $ARN | cut -d'/' -f2 | cut -d':' -f1)
+          echo "##vso[task.setvariable variable=taskFamily]$FAMILY"
+        displayName: "Extract family from ARN"
+
+      - script: |
+          export AWS_ACCESS_KEY_ID
+          export AWS_SECRET_ACCESS_KEY
+          export AWS_REGION
+
+          echo "Obteniendo definición actual..."
+          aws ecs describe-task-definition \
+            --task-definition $(taskDefinitionArn) \
+            --query 'taskDefinition' \
+            > taskdef.json
+          cat taskdef.json
+        displayName: "Get current task definition"
+        env:
+          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
+          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+
+      - script: |
+          newTag="$(msVersion)"
+
+          jq --arg newTag "$newTag" '
+            .containerDefinitions |= map(
+              .image |= (split(":")[0] + ":" + $newTag)
+            )
+          ' taskdef.json > new-taskdef-$(cleanMsName).json
+
+          echo "Imagen actualizada con nuevo tag: $newTag"
+          cat new-taskdef-$(cleanMsName).json
+        displayName: "📝 Update image tag in task definition"
+
+      - script: |
+          jq '{
+            family,
+            taskRoleArn,
+            executionRoleArn,
+            networkMode,
+            containerDefinitions,
+            volumes,
+            placementConstraints,
+            requiresCompatibilities,
+            cpu,
+            memory,
+            tags,
+            pidMode,
+            ipcMode,
+            proxyConfiguration,
+            inferenceAccelerators,
+            ephemeralStorage,
+            runtimePlatform
+          } | with_entries(select(.value != null))' new-taskdef-$(cleanMsName).json > new-taskdef-$(cleanMsName)-ecs.json
+
+          cat new-taskdef-$(cleanMsName)-ecs.json
+        displayName: "🧹 Clean up attributes"
+
+      - script: |
+          export AWS_ACCESS_KEY_ID
+          export AWS_SECRET_ACCESS_KEY
+          export AWS_REGION
+
+          output=$(aws ecs register-task-definition \
+          --cli-input-json file://new-taskdef-$(cleanMsName)-ecs.json \
+          --region $AWS_DEFAULT_REGION)
+
+          arn=$(echo $output | jq -r '.taskDefinition.taskDefinitionArn')
+
+          echo "Nueva Task Definition ARN: $arn"
+
+          echo "##vso[task.setvariable variable=taskDefinitionArnNew]$arn"
+
+        displayName: "Registrar nueva task definition"
+        env:
+          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
+          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+
+      - script: |
+          export AWS_ACCESS_KEY_ID
+          export AWS_SECRET_ACCESS_KEY
+          export AWS_REGION
+
+          echo $(taskDefinitionArnNew)
+
+          if [[ "$(cleanMsName)" == "raffle" ]]; then
+              SERVICES=raffles
+          fi
+
+          echo $CLUSTER
+          echo $SERVICES
+
+          aws ecs update-service \
+            --cluster $CLUSTER \
+            --service $SERVICES \
+            --task-definition $(taskDefinitionArnNew) \
+            --region $AWS_DEFAULT_REGION
+        displayName: "Actualizar servicio con nueva task definition"
+        env:
+          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
+          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)

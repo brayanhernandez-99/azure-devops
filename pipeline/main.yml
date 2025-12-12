@@ -2,12 +2,12 @@ parameters:
   - name: release
     type: string
     values:
-      - ecs-redes
+      - ecs-networks
 
   - name: red
     type: object
     default:
-      - antioquia
+      # - antioquia
       - cap
       - tolima
       - huila
@@ -33,18 +33,11 @@ resources:
 
 stages:
   #
-  # DEPLOY REDES MOMENTANEMENTE 
+  # DEPLOY REDES MOMENTANEMENTE
   #
-  - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(parameters.release, 'ecs-redes')) }}:
-      - template: build/semantic-version-integration.yml
+  - ${{ if and(eq(parameters.release, 'ecs-networks'), eq(variables['Build.SourceBranchName'], 'master')) }}:
+      - template: pipelines/pipeline-ecs-networks.yml
         parameters:
+          red: ${{ parameters.red }}
           apps: ${{ parameters.apps }}
           release: ${{ parameters.release }}
-
-  - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(parameters.release, 'ecs-redes')) }}:
-      - ${{ each region in parameters.red }}:
-          - template: release/deploy-integration.yml
-            parameters:
-              red: ${{ region }}
-              apps: ${{ parameters.apps }}
-              release: ${{ parameters.release }}
