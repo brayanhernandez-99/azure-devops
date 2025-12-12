@@ -1,6 +1,6 @@
 jobs:
   - job: deploy_networks
-    displayName: "🚀 Deploy flutter"
+    displayName: "🚀 Deploy "
     pool:
       name: "Azure Pipelines"
       VmImage: ubuntu-22.04
