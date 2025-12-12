@@ -101,8 +101,8 @@ jobs:
 
           # # # ##Pruebas CrossAccountRole
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-iam-profile/deploy-CrossAccountRole
-          terragrunt plan --all --non-interactive -no-color
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-iam-profile/deploy-CrossAccountRole
+          # terragrunt plan --all --non-interactive -no-color
 
 
 
@@ -163,14 +163,14 @@ jobs:
           # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/payments/aws-service-s3
           # terragrunt plan --all --non-interactive -no-color
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/products/aws-service-s3
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/products/aws-service-s3
+          terragrunt plan --all --non-interactive -no-color
 
-          # cd $(Build.SourcesDirectory)
-          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/products/aws-service-s3-products-icons
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/products/aws-service-s3-products-icons
+          terragrunt plan --all --non-interactive -no-color
 
           # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges/aws-service-s3
           # terragrunt plan --all --non-interactive -no-color
