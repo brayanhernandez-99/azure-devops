@@ -7,8 +7,6 @@ jobs:
 
     variables:
       - template: ../../variables/groups-transversal-variables-backend.yml
-        parameters:
-          region: ${{ parameters.region }}
 
     steps:
       - task: DownloadBuildArtifacts@0
@@ -79,14 +77,6 @@ jobs:
           versionSpec: "$(nodeVersion)"
         condition: succeeded()
 
-      - task: JavaToolInstaller@0
-        displayName: "🔧 Install JDK 17"
-        inputs:
-          versionSpec: "17"
-          jdkArchitectureOption: "x64"
-          jdkSourceOption: "PreInstalled"
-        condition: succeeded()
-
       - script: |
           echo -e "\n📁 Generando archivo .pnpmrc en: $(System.DefaultWorkingDirectory)/.pnpmrc"
           cat <<EOF > "$(System.DefaultWorkingDirectory)/.pnpmrc"
@@ -116,6 +106,23 @@ jobs:
             echo "$OUTPUT"
           fi
         displayName: "⚙️ Install Dependencies"
+        condition: succeeded()
+
+      - script: |
+          echo "🔧 Actualizando versión en package.json: $(version)"
+          jq --arg version "$(version)" '.version = $version' package.json > tmp.json && mv tmp.json package.json
+
+          echo -e "\n📁 File package.json:"      
+          cat $(System.DefaultWorkingDirectory)/package.json
+        displayName: "📝 Update Version package.json"
+        condition: succeeded()
+
+      - task: JavaToolInstaller@0
+        displayName: "🔧 Install JDK 17"
+        inputs:
+          versionSpec: "17"
+          jdkArchitectureOption: "x64"
+          jdkSourceOption: "PreInstalled"
         condition: succeeded()
 
       - task: SonarQubePrepare@7
@@ -149,15 +156,6 @@ jobs:
         condition: and( eq(variables['Build.Reason'], 'PullRequest'), or(startsWith(variables['System.PullRequest.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['System.PullRequest.SourceBranch'], 'refs/heads/hotfix/')))
 
       - script: |
-          echo "🔧 Actualizando versión en package.json: $(version)"
-          jq --arg version "$(version)" '.version = $version' package.json > tmp.json && mv tmp.json package.json
-
-          echo -e "\n📁 File package.json:"      
-          cat $(System.DefaultWorkingDirectory)/package.json
-        displayName: "📝 Update Version package.json"
-        condition: succeeded()
-
-      - script: |
           pnpm run test
         displayName: "🧪 Run Tests for: $(Build.Repository.Name)"
         condition: succeeded()
@@ -180,6 +178,6 @@ jobs:
         displayName: "📤 Publish Static Code Analysis Results"
         condition: succeeded()
 
-      - template: sonarqube/job-sonarqube.yml@sonarqube
-        parameters:
-          projectKey: $(Build.Repository.Name)
+      # - template: sonarqube/job-sonarqube.yml@sonarqube
+      #   parameters:
+      #     projectKey: $(Build.Repository.Name)

@@ -2,6 +2,10 @@ parameters:
   - name: release
     type: string
 
+  - name: pr_id
+    type: number
+    default: 0
+
   - name: red
     type: object
     default:
@@ -34,7 +38,7 @@ parameters:
       - "lotteries"
       - "millonario"
       - "money-control"
-      #- "notifications"
+      - "notifications"
       - "papelery"
       - "promotional"
       - "raffles"
@@ -47,15 +51,23 @@ resources:
       name: $(System.TeamProject)/$(Build.Repository.Name)
       type: git
 
-    - repository: sonarqube
-      name: Invictus/security-sonarqube-invictus
-      type: git
+    # - repository: sonarqube
+    #   name: Invictus/security-sonarqube-invictus
+    #   type: git
 
-    - repository: electron
-      name: Invictus/electron-app-invictus-test
-      type: git
+    # - repository: electron
+    #   name: Invictus/electron-app-invictus-test
+    #   type: git
 
 stages:
+  #
+  # MicroFronted Pre-Build
+  #
+  - ${{ if and( contains('PullRequest,IndividualCI', variables['Build.Reason']), eq(variables['Build.Repository.Name'], 'Pruebas-apps-microfrontend-azure')) }}:
+      - template: ./pipelines/pipeline-pre-build.yml
+        parameters:
+          release: ${{ parameters.release }}
+
   #
   # MicroFronted
   #
@@ -64,6 +76,7 @@ stages:
         parameters:
           red: ${{ parameters.red }}
           apps: ${{ parameters.apps }}
+          pr_id: ${{ parameters.pr_id }}
           release: ${{ parameters.release }}
 
   #

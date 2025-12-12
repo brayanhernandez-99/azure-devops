@@ -1,0 +1,171 @@
+jobs:
+  - job: "pre_build_micro_fronted"
+    displayName: "🔍 Detect Changes Microfrontend"
+    pool:
+      name: "Azure Pipelines"
+      VmImage: ubuntu-22.04
+
+    variables:
+      - template: ../../variables/groups-transversal-variables-pre-build.yml
+
+    steps:
+      - checkout: self
+        fetchDepth: 0
+        persistCredentials: true
+
+      - script: |
+          echo "🔍 Validando ejecucion..."
+
+          case "$(Build.Reason)" in
+            "PullRequest")
+              echo -e "\nℹ️ Ejecucion Valida por: PullRequest"
+              echo "Branch: $(echo "$(System.PullRequest.SourceBranch)" | sed 's#refs/heads/##')"
+              echo "Build Reason: $(Build.Reason)"
+              echo "Pull Request: $(System.PullRequest.PullRequestId)"
+              ;;
+            "IndividualCI")
+              echo -e "\nℹ️ Ejecucion Valida por: IndividualCI"
+              echo "Branch: $(echo "$(Build.SourceBranch)" | sed 's#refs/heads/##')"
+              echo "Build Reason: $(Build.Reason)"
+              ;;
+            *)
+              echo -e "\n##vso[task.logissue type=error]⚠️ Ejecucion [$(Build.Reason)] no valida."
+              echo "##vso[task.logissue type=error] Debe ejecutarse solo por PullRequest o IndividualCI."
+              exit 99
+              ;;
+          esac
+        displayName: "🧩 Validate Execution (Auto/Manual)"
+        condition: succeeded()
+
+      - script: |
+          az devops configure --defaults organization='$(System.TeamFoundationCollectionUri)' project='$(System.TeamProject)' --use-git-aliases true
+        displayName: "📌 Set Azure DevOps organization"
+        condition: succeeded()
+
+      - script: |
+          echo "⚙️ Configurando organización y proyecto por defecto"
+          az devops configure --defaults organization=https://dev.azure.com/ux-technology project=$(System.TeamProject)
+
+          case "$(Build.Reason)" in
+            "PullRequest")
+              SOURCE_BRANCH=$(echo "$(System.PullRequest.SourceBranch)" | sed 's#refs/heads/##')
+              TARGET_BRANCH=$(echo "$(System.PullRequest.TargetBranch)" | sed 's#refs/heads/##')
+              CURRENT_BRANCH=$SOURCE_BRANCH
+
+              cd $(Build.SourcesDirectory)
+              clean_branch=$(echo "$(System.PullRequest.SourceBranch)" | sed 's#refs/heads/##')
+              git checkout $clean_branch
+              git reset --hard HEAD
+
+              echo -e "\n🔍 Comparando cambios entre: $CURRENT_BRANCH ... $TARGET_BRANCH"
+              changed_files=$(git diff --name-only "origin/$TARGET_BRANCH"..."origin/$CURRENT_BRANCH")
+              packages_changed=$(echo "$changed_files" | grep "^packages/" || true)
+
+              if [[ -n "$packages_changed" ]]; then
+                apps=$(find apps app-legacy -mindepth 1 -maxdepth 1 -type d | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u)
+              else
+                apps=$(echo "$changed_files" | grep -E "^apps/|^app-legacy/" | cut -d '/' -f1,2 | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u)
+              fi
+
+              if [[ -z "$apps" ]]; then
+                echo -e "\n##vso[task.logissue type=error]⚠️ No se detectaron cambios en apps. Cancelando ejecución del pipeline."
+                exit 99
+              fi
+
+              echo "🔍 Apps modificadas detectadas:"
+              echo "${apps[@]}"
+              apps_json=$(printf '%s\n' "${apps[@]}" | jq -R . | jq -s .)
+
+              if [[ "$SOURCE_BRANCH" == feature/* || "$SOURCE_BRANCH" == hotfix/* ]]; then
+                echo -e "\n🔗 Creando ejecucion pipeline"
+                pipeline_output=$(az pipelines run \
+                  --name "apps-microfrontend-invictus" \
+                  --branch "$CURRENT_BRANCH" \
+                  --parameters pr_id="$(System.PullRequest.PullRequestId)" apps="$apps_json" \
+                  --output json)
+                echo "$pipeline_output" | jq
+
+                run_id=$(echo "$pipeline_output" | jq -r '.id')              
+                echo -e "\n##[command]🌐 Build Results URL: https://dev.azure.com/ux-technology/Invictus/_build/results?buildId=$run_id"
+              fi
+
+              #
+              ## Cuando se realiza un PR de stagin a master no se debe corre el check por eso, se habilita la propiedad para que continue sin problemas el PR 
+              #
+              if [[ ("$SOURCE_BRANCH" == "develop" && "$TARGET_BRANCH" == "staging") || ("$SOURCE_BRANCH" == "staging" && "$TARGET_BRANCH" == "master") ]]; then
+                ORGANIZATION=$(System.CollectionUri)
+                PROJECT=$(System.TeamProject)
+                STATE="succeeded"
+                DESCRIPTION="Build completed successfully"
+
+                ITERATION_ID=$(curl -s \
+                  -H "Authorization: Bearer $SYSTEM_ACCESSTOKEN" \
+                  "$ORGANIZATION/$PROJECT/_apis/git/repositories/$(Build.Repository.Name)/pullRequests/$(System.PullRequest.PullRequestId)/iterations?api-version=7.1-preview.1" \
+                  | jq '.value[-1].id')
+
+                echo -e "\n📡 Reportando resultado a Azure DevOps..."
+                echo "Estado: $STATE"
+                echo "Descripcion: $DESCRIPTION"
+                echo "Pull Request Id: $(System.PullRequest.PullRequestId)"
+                echo "Iteration Id: $ITERATION_ID"
+
+                cat > body.json <<< "{\"state\":\"$STATE\",\"description\":\"$DESCRIPTION\",\"context\":{\"name\":\"build-check\",\"genre\":\"pipeline\"},\"iterationId\":$ITERATION_ID}"
+                echo -e "\n📁 File: body.json"
+                jq . body.json
+
+                API_URL="$ORGANIZATION/$PROJECT/_apis/git/repositories/$(Build.Repository.Name)/pullRequests/$(System.PullRequest.PullRequestId)/statuses?api-version=7.1-preview.1"
+                echo -e "\n##[command]🌐 Calling API: $API_URL"
+
+                curl -s \
+                  -X POST "$API_URL" \
+                  -H "Content-Type: application/json" \
+                  -H "Authorization: Bearer $SYSTEM_ACCESSTOKEN" \
+                  --data-binary "@body.json"
+              fi
+              ;;
+            "IndividualCI")
+                cd $(Build.SourcesDirectory)
+                CURRENT_BRANCH="$(echo "$(Build.SourceBranch)" | sed 's#refs/heads/##')"
+                git checkout $CURRENT_BRANCH
+                git reset --hard HEAD
+
+                echo -e "\n🔍 Comparando cambios entre: $CURRENT_BRANCH ... $CURRENT_BRANCH"
+                packages_changed=$(git diff --name-only HEAD~1 HEAD | grep "^packages/")
+
+                if [[ -n "$packages_changed" ]]; then
+                    apps=$(find apps app-legacy -mindepth 1 -maxdepth 1 -type d | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u)
+                else
+                    apps=$(git diff --name-only HEAD~1 HEAD | grep -E "^apps/|^app-legacy/" | cut -d '/' -f1,2 | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u)
+                fi
+
+                if [[ -z "$apps" ]]; then
+                  echo -e "\n##vso[task.logissue type=error]⚠️ No se detectaron cambios en apps. Cancelando ejecución del pipeline."
+                  exit 99
+                fi
+
+                echo "🔍 Apps modificadas detectadas:"
+                echo "${apps[@]}"
+                apps_json=$(printf '%s\n' "${apps[@]}" | jq -R . | jq -s .)
+
+                echo -e "\n🔗 Creando ejecucion pipeline"
+                pipeline_output=$(az pipelines run \
+                  --name "apps-microfrontend-invictus" \
+                  --branch "$CURRENT_BRANCH" \
+                  --parameters pr_id="0" apps="$apps_json" \
+                  --output json)
+                echo "$pipeline_output" | jq
+
+                run_id=$(echo "$pipeline_output" | jq -r '.id')              
+                echo -e "\n##[command]🌐 Build Results URL: https://dev.azure.com/ux-technology/Invictus/_build/results?buildId=$run_id"
+              ;;
+            *)
+              echo -e "\n##vso[task.logissue type=error]⚠️ Ejecucion [$(Build.Reason)] no valida."
+              echo "##vso[task.logissue type=error] Debe ejecutarse solo por PullRequest o IndividualCI."
+              exit 99
+              ;;
+          esac
+        displayName: "🔍 Detect Changed Files MS"
+        condition: succeeded()
+        env:
+          AZURE_DEVOPS_EXT_PAT: $(PAT-AZ)
+          SYSTEM_ACCESSTOKEN: $(System.AccessToken)

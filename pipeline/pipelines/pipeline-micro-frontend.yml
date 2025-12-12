@@ -19,6 +19,7 @@ stages:
                 parameters:
                   region: ${{ region }}
                   apps: ${{ parameters.apps }}
+                  pr_id: ${{ parameters.pr_id }}
 
           - stage: deploy_micro_frontend_${{ region }}
             displayName: "🚀 Deploy MicroFrontend ${{ region }}"
@@ -40,6 +41,16 @@ stages:
           - template: ../ci/build/build-frontend.yml
             parameters:
               apps: ${{ parameters.apps }}
+
+      - ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')) }}:
+          - stage: check_build_micro_frontend
+            displayName: "🛡️ Check Build MicroFrontend"
+            dependsOn: build_micro_frontend
+            condition: and(succeeded(), ne('${{ parameters.pr_id }}', '0'))
+            jobs:
+              - template: ../ci/pre-build/check-build-frontend.yml
+                parameters:
+                  pr_id: ${{ parameters.pr_id }}
 
       - ${{ if in(variables['Build.SourceBranchName'], 'develop', 'staging') }}:
           - stage: deploy_micro_frontend
