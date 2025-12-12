@@ -1,5 +1,5 @@
 jobs:
-  - job: "semantic_version_integration"
+  - job: "semantic_version_transactions"
     displayName: "🏷️ version "
     pool:
       name: "Azure Pipelines"
@@ -7,10 +7,10 @@ jobs:
 
     strategy:
       matrix:
-        ${{ each pair in parameters.apps }}:
-          ${{ pair.Key }}:
-            msName: ${{ pair.Key }}
-            msVersion: ${{ pair.Value }}
+        ${{ each ms in parameters.apps }}:
+          ${{ ms }}:
+            msName: ${{ ms }}
+            msVersion: ${{ parameters.version }}
 
     steps:
       - checkout: self
@@ -28,3 +28,4 @@ jobs:
           echo -e "\n📂 File ./$(msName)/version.json"
           jq . "$(Build.ArtifactStagingDirectory)/$(msName)/version.json"
         displayName: "⚙️ Create version file for: $(msName)"
+        condition: succeeded()

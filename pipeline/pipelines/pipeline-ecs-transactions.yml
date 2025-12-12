@@ -1,10 +1,11 @@
 stages:
-  - stage: "semantic_version_integration"
-    displayName: "🏷️ Semantic Version Integration"
+  - stage: "semantic_version_transactions"
+    displayName: "🏷️ Semantic Version Transactions"
     jobs:
-      - template: ../ci/semantic-version-networks.yml
+      - template: ../ci/semantic-version-transactions.yml
         parameters:
           apps: ${{ parameters.apps }}
+          version: ${{ parameters.version }}
 
   #####################################################################
 

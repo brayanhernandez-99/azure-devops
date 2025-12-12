@@ -8,21 +8,17 @@ parameters:
     type: object
     default:
       - antioquia
-      - cap
-      - tolima
-      - huila
-      - cauca
-      - boyaca
-      - santander
 
   - name: apps
     type: object
     default:
-      microservice-lotteries-games: "4.14.2"
-      microservice-transaction: "4.5.16"
-      microservice-transaction-astro: "4.5.16"
-      microservice-transaction-lotteries-games: "4.5.16"
-      microservice-transaction-recharges: "4.5.16"
+      - "transaction-astro"
+      - "transaction-lg"
+      - "transaction-recharges"
+
+  - name: version
+    type: string
+    default: "0.0.0"
 
 resources:
   repositories:
@@ -33,11 +29,12 @@ resources:
 
 stages:
   #
-  # DEPLOY REDES MOMENTANEMENTE
+  # DEPLOY TRANSACTIONS MOMENTANEMENTE
   #
   - ${{ if and(eq(parameters.release, 'ecs-transactions'), eq(variables['Build.SourceBranchName'], 'master')) }}:
-      - template: pipelines/pipeline-ecs-networks.yml
+      - template: pipelines/pipeline-ecs-transactions.yml
         parameters:
           red: ${{ parameters.red }}
           apps: ${{ parameters.apps }}
           release: ${{ parameters.release }}
+          version: ${{ parameters.version }}
