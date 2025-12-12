@@ -83,9 +83,9 @@ jobs:
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
 
       - script: |
+          export AWS_REGION
           export AWS_ACCESS_KEY_ID
           export AWS_SECRET_ACCESS_KEY
-          export AWS_REGION
 
           if [[ "$(cleanMsName)" == "raffle" ]]; then
               SERVICES=raffles
@@ -93,7 +93,7 @@ jobs:
           echo $CLUSTER
           echo $SERVICES
 
-          echo "Obteniendo task definition..."
+          echo "🔍 Obteniendo task definition..."
           arn=$(aws ecs describe-services \
             --cluster $CLUSTER \
             --services $SERVICES \
@@ -101,7 +101,7 @@ jobs:
             --output text \
             --region $(AWS_DEFAULT_REGION))
             
-          echo "TaskDef ARN: $arn"
+          echo "🆔 TaskDef ARN: $arn"
           echo "##vso[task.setvariable variable=taskDefinitionArn]$arn"
         displayName: "🔍 Get Task Definition ARN"
         condition: succeeded()
