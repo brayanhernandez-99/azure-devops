@@ -15,8 +15,7 @@ variables:
       #- group: trasversal-aws-antioquia
 
   - ${{ if and(eq(parameters.region, 'cap'), eq(variables['Build.SourceBranchName'], 'master')) }}:
-      - group: trasversal-aws-master-cap
-      #- group: trasversal-aws-antioquia-cap
+      - group: trasversal-aws-antioquia-cap
 
   - ${{ if and(eq(parameters.region, 'tolima'), eq(variables['Build.SourceBranchName'], 'master')) }}:
       - group: trasversal-aws-tolima
