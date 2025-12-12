@@ -2,7 +2,7 @@ parameters:
   - name: release
     type: string
     values:
-      - ecs-networks
+      - ecs-transactions
 
   - name: red
     type: object
@@ -35,7 +35,7 @@ stages:
   #
   # DEPLOY REDES MOMENTANEMENTE
   #
-  - ${{ if and(eq(parameters.release, 'ecs-networks'), eq(variables['Build.SourceBranchName'], 'master')) }}:
+  - ${{ if and(eq(parameters.release, 'ecs-transactions'), eq(variables['Build.SourceBranchName'], 'master')) }}:
       - template: pipelines/pipeline-ecs-networks.yml
         parameters:
           red: ${{ parameters.red }}
