@@ -24,20 +24,23 @@ jobs:
           echo "Nombre limpio: $cleanName"
           echo "##vso[task.setvariable variable=cleanMsName]$cleanName"
         displayName: "deploy $(msName)"
+        condition: succeeded()
 
       - script: |
           echo -e "\n🚀 Versión detectada para $(msName): $(msVersion)"
         displayName: "📖 Read Microservice Versions"
+        condition: succeeded()
 
       - script: |
           echo "Logging in to ECR..."
           aws ecr get-login-password --region $AWS_DEFAULT_REGION | \
           docker login --username AWS --password-stdin $ACCOUNT_ID_DEPLOY.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
         displayName: "Login to AWS ECR"
+        condition: succeeded()
         env:
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
-          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
 
       - task: Bash@3
         displayName: "Verificar si la imagen existe en ECR"
@@ -73,10 +76,11 @@ jobs:
               exit 99
             fi
           displayName: "🔍 Verify image in ECR"
+        condition: succeeded()
         env:
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
-          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
 
       - script: |
           export AWS_ACCESS_KEY_ID
@@ -100,11 +104,12 @@ jobs:
           echo "TaskDef ARN: $arn"
           echo "##vso[task.setvariable variable=taskDefinitionArn]$arn"
         displayName: "Get ARN Task Definition"
+        condition: succeeded()
         env:
+          red: ${{ parameters.red }}
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
-          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
-          red: ${{ parameters.red }}
 
       - script: |
           echo "Obteniendo family de task definition..."
@@ -114,6 +119,7 @@ jobs:
           FAMILY=$(echo $ARN | cut -d'/' -f2 | cut -d':' -f1)
           echo "##vso[task.setvariable variable=taskFamily]$FAMILY"
         displayName: "Extract family from ARN"
+        condition: succeeded()
 
       - script: |
           export AWS_ACCESS_KEY_ID
@@ -127,10 +133,11 @@ jobs:
             > taskdef.json
           cat taskdef.json
         displayName: "Get current task definition"
+        condition: succeeded()
         env:
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
-          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
 
       - script: |
           newTag="$(msVersion)"
@@ -144,6 +151,7 @@ jobs:
           echo "Imagen actualizada con nuevo tag: $newTag"
           cat new-taskdef-$(cleanMsName).json
         displayName: "📝 Update image tag in task definition"
+        condition: succeeded()
 
       - script: |
           jq '{
@@ -168,6 +176,7 @@ jobs:
 
           cat new-taskdef-$(cleanMsName)-ecs.json
         displayName: "🧹 Clean up attributes"
+        condition: succeeded()
 
       - script: |
           export AWS_ACCESS_KEY_ID
@@ -185,10 +194,11 @@ jobs:
           echo "##vso[task.setvariable variable=taskDefinitionArnNew]$arn"
 
         displayName: "Registrar nueva task definition"
+        condition: succeeded()
         env:
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
-          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
 
       - script: |
           export AWS_ACCESS_KEY_ID
@@ -210,7 +220,8 @@ jobs:
             --task-definition $(taskDefinitionArnNew) \
             --region $AWS_DEFAULT_REGION
         displayName: "Actualizar servicio con nueva task definition"
+        condition: succeeded()
         env:
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
-          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
