@@ -112,8 +112,8 @@ jobs:
           # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/astro/aws-service-s3
           # terragrunt plan --all --non-interactive -no-color
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/awards/aws-service-s3
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/awards/aws-service-s3
+          terragrunt plan --all --non-interactive -no-color
 
           # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/biometrics/aws-service-s3
           # terragrunt plan --all --non-interactive -no-color
@@ -136,8 +136,8 @@ jobs:
           # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/external-wager/aws-service-s3
           # terragrunt plan --all --non-interactive -no-color
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/generic-services/aws-service-s3
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/generic-services/aws-service-s3
+          terragrunt plan --all --non-interactive -no-color
 
           # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/lotteries-games/aws-service-s3
           # terragrunt plan --all --non-interactive -no-color
@@ -178,11 +178,11 @@ jobs:
           # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/security/aws-service-s3
           # terragrunt plan --all --non-interactive -no-color
 
-          # cd $(Build.SourcesDirectory)
-          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/sellers/aws-service-s3
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/sellers/aws-service-s3
+          terragrunt plan --all --non-interactive -no-color
 
           # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/shopping-cart/aws-service-s3
           # terragrunt plan --all --non-interactive -no-color
