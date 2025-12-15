@@ -1,16 +1,9 @@
 jobs:
-  - job: "semantic_version_transactions"
-    displayName: "🏷️ version "
+  - job: "semantic_version_microservices"
+    displayName: "🏷️ version microservices"
     pool:
       name: "Azure Pipelines"
       VmImage: ubuntu-22.04
-
-    strategy:
-      matrix:
-        ${{ each pair in parameters.apps }}:
-          ${{ pair.Key }}:
-            msName: ${{ pair.Key }}
-            msVersion: ${{ pair.Value }}
 
     steps:
       - checkout: self
@@ -18,7 +11,7 @@ jobs:
         persistCredentials: true
 
       - script: |
-          echo "🚀 Procesando $(msName)..."
+          echo "⚙️ Procesando microservices..."
           echo "Version: $(msVersion)"
 
           mkdir -p $(Build.ArtifactStagingDirectory)/$(msName)

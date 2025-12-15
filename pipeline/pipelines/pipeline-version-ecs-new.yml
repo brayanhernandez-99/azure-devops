@@ -1,0 +1,15 @@
+stages:
+  - stage: "semantic_version_microservices"
+    displayName: "🏷️ Semantic Version Microservices"
+    jobs:
+      - template: ../ci/semantic-version-ecs-new.yml
+
+  #####################################################################
+
+  - stage: deploy_microservices
+    displayName: "🚀 Deploy Microservices"
+    dependsOn: semantic_version_microservices
+    jobs:
+      - template: ../cd/deployment.yml
+        parameters:
+          release: ${{ parameters.release }}

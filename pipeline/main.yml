@@ -1,20 +1,6 @@
 parameters:
   - name: release
     type: string
-    values:
-      - ecs-transactions
-
-  - name: red
-    type: object
-    default:
-      - antioquia
-
-  - name: apps
-    type: object
-    default:
-      transaction-astro: "4.5.16"
-      transaction-lg: "4.5.16"
-      transaction-recharges: "4.5.16"
 
 resources:
   repositories:
@@ -25,11 +11,17 @@ resources:
 
 stages:
   #
-  # DEPLOY TRANSACTIONS MOMENTANEMENTE
+  # DEPLOY VERSION ECS ACCOUNTS NEWS
   #
-  - ${{ if and(eq(parameters.release, 'ecs-transactions'), eq(variables['Build.SourceBranchName'], 'master')) }}:
-      - template: pipelines/pipeline-ecs-transactions.yml
+  - ${{ if and(eq(parameters.release, 'ecs-new'), in(variables['Build.SourceBranchName'], 'develop', 'staging', 'master')) }}:
+      - template: pipelines/pipeline-version-ecs-new.yml
         parameters:
-          red: ${{ parameters.red }}
-          apps: ${{ parameters.apps }}
+          release: ${{ parameters.release }}
+
+  #
+  # DEPLOY VERSION ECS ACCOUNTS OLDS
+  #
+  - ${{ if and(eq(parameters.release, 'ecs-old'), in(variables['Build.SourceBranchName'], 'develop', 'staging')) }}:
+      - template: pipelines/pipeline-version-ecs-old.yml
+        parameters:
           release: ${{ parameters.release }}

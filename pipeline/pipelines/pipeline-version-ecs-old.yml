@@ -1,0 +1,15 @@
+stages:
+  - stage: "semantic_version_transactions"
+    displayName: "🏷️ Semantic Version Transactions"
+    jobs:
+      - template: ../ci/semantic-version-ecs-old.yml
+
+  #####################################################################
+
+  - stage: deploy_transactions
+    displayName: "🚀 Deploy Transactions"
+    dependsOn: semantic_version_transactions
+    jobs:
+      - template: ../cd/deployment.yml
+        parameters:
+          release: ${{ parameters.release }}
