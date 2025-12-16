@@ -206,19 +206,17 @@ jobs:
 
  
 
-          # ################# Servicio de trino (LISTO EN DEV Y QA) PENDIENTE EN LAS PDN)
-          # # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/trino
-          # # terragrunt plan --all --non-interactive -no-color
 
+          ################# Servicio de trino (LISTO EN DEV Y QA) PENDIENTE EN LAS PDN)
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/trino
+          # terragrunt plan --all --non-interactive -no-color
 
-          # #################### Eliminar redis  (LISTO EN DEV Y QA) PENDIENTE EN LAS PDN)
-          # # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/redis
-          # # terragrunt plan --all --non-interactive -no-color
+          #################### Eliminar redis  (LISTO EN DEV Y QA) PENDIENTE EN LAS PDN)
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/redis
+          # terragrunt plan --all --non-interactive -no-color
 
-
-
-          # # cd $(Build.SourcesDirectory)
-          # # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          # cd $(Build.SourcesDirectory)
+          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
         displayName: "🧩 Plan Infrastructure"
         condition: succeeded()
