@@ -3,6 +3,8 @@ stages:
     displayName: "🏷️ Semantic Version Microservices"
     jobs:
       - template: ../ci/semantic-version-ecs-old.yml
+        parameters:
+          release: ${{ parameters.release }}
 
   #####################################################################
 

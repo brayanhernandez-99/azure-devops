@@ -7,6 +7,8 @@ jobs:
 
     variables:
       - template: ../variables/groups-transversal-variables.yml
+        parameters:
+          release: ${{ parameters.release }}
 
     steps:
       - checkout: self
