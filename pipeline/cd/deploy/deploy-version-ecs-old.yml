@@ -29,6 +29,7 @@ jobs:
             ["transaction-recharges"]="transaction-recharges-ms-cluster"
           )
 
+          SERVICES_JSON=$(cat services.json)
           echo "✅ Versiones ECS:"
           jq . "services.json"
 
