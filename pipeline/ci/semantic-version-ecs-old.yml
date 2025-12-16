@@ -75,8 +75,8 @@ jobs:
           )' services.json > services-modified.json
           mv services-modified.json services.json
 
-          mkdir -p $(Build.ArtifactStagingDirectory)/versions
-          cp services.json $(Build.ArtifactStagingDirectory)/versions/services.json
+          mkdir -p $(Build.ArtifactStagingDirectory)/microservices
+          cp services.json $(Build.ArtifactStagingDirectory)/microservices/versions.json
 
           echo -e "\n📂 File : ./services.json"
           jq . "services.json"
@@ -86,3 +86,11 @@ jobs:
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
+
+      - task: PublishBuildArtifacts@1
+        inputs:
+          PathtoPublish: "$(Build.ArtifactStagingDirectory)"
+          ArtifactName: "versions"
+          publishLocation: "Container"
+        displayName: "📥 Publish artifact version"
+        condition: succeeded()

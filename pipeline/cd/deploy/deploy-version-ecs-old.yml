@@ -11,10 +11,17 @@ jobs:
           release: ${{ parameters.release }}
 
     steps:
+      - task: DownloadBuildArtifacts@0
+        inputs:
+          artifactName: "versions"
+          downloadPath: "$(Pipeline.Workspace)/versions-downloaded"
+        displayName: "📥 Download Version"
+        condition: succeeded()
+
       - script: |
           set -e
 
-          cp $(Build.ArtifactStagingDirectory)/versions/services.json $(System.DefaultWorkingDirectory)/services.json
+          cp $(Build.ArtifactStagingDirectory)/versions/microservices/versions.json $(System.DefaultWorkingDirectory)/services.json
 
           declare -A CLUSTERS=(
             ["transaction-astro"]="transaction-astro-ms-cluster"
