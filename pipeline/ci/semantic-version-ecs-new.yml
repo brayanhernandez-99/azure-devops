@@ -5,20 +5,92 @@ jobs:
       name: "Azure Pipelines"
       VmImage: ubuntu-22.04
 
+    variables:
+      - template: ../variables/groups-transversal-variables.yml
+
     steps:
       - checkout: self
         fetchDepth: 0
         persistCredentials: true
 
       - script: |
+          set -e
           echo "⚙️ Procesando microservices..."
-          echo "Version: $(msVersion)"
 
-          mkdir -p $(Build.ArtifactStagingDirectory)/$(msName)
-          touch $(Build.ArtifactStagingDirectory)/$(msName)/version.json
+          CURRENT_BRANCH="$(Build.SourceBranch)"
+          ECR="861262569826.dkr.ecr.us-east-1.amazonaws.com"
+          ENVIRONMENT="unknown"
 
-          echo "{ \"ms\": \"$(msName)\", \"version\": \"$(msVersion)\" }" > $(Build.ArtifactStagingDirectory)/$(msName)/version.json
-          echo -e "\n📂 File ./$(msName)/version.json"
-          jq . "$(Build.ArtifactStagingDirectory)/$(msName)/version.json"
-        displayName: "⚙️ Create version file for: $(msName)"
+          case "$CURRENT_BRANCH" in
+            refs/heads/develop)   ENVIRONMENT="develop"; ;;
+            refs/heads/staging)   ENVIRONMENT="qa"; ;;
+          esac
+
+          if [[ "$ENVIRONMENT" == "unknown" ]]; then
+            echo -e "\n##vso[task.logissue type=error]⚠️ Error: ENVIRONMENT [$ENVIRONMENT] no reconocido debe ser develop o staging"
+            exit 99
+          fi
+
+          declare -A SERVICES=(
+            [transaction-astro]="microservice-transaction-$ENVIRONMENT"
+            [transaction-lg]="microservice-transaction-$ENVIRONMENT"
+            [transaction-recharges]="microservice-transaction-$ENVIRONMENT"
+          )
+
+          for SERVICE in "${!SERVICES[@]}"; do
+            REPO_NAME="${SERVICES[$SERVICE]}"
+            echo -e "\n🔍 Consultando $SERVICE ..."
+
+            VERSION=$(aws ecr describe-images --repository-name "$REPO_NAME" --region "$AWS_DEFAULT_REGION" --query "reverse(sort_by(imageDetails, &imagePushedAt))[0]" --output json | jq -r '.imageTags // [] | map(select(. != "latest")) | .[0]')
+            if [[ -z "$VERSION" || "$VERSION" == "null" ]]; then
+              echo -e "\n##vso[task.logissue type=error]⚠️ No se encontró versión para -> $REPO_NAME"
+              exit 99
+            fi
+
+            FULL_IMAGE="$ECR/$REPO_NAME:$VERSION"
+            SERVICES[$SERVICE]="$FULL_IMAGE"
+
+            echo "Repo: $REPO_NAME → $VERSION"
+            echo "Imagen: $FULL_IMAGE"
+            echo "------------------------------------------------------------"
+          done
+
+          # Convertir array a JSON
+          SERVICES_JSON=$(jq -n '{
+            '"$(for k in "${!SERVICES[@]}"; do
+                  echo "\"$k\": \"${SERVICES[$k]}\","
+                done | sed '$s/,$//')"'
+          }')
+
+          echo "$SERVICES_JSON" > services.json
+
+          jq 'with_entries(
+            if (.key | startswith("bff-")) then
+              {key: (.key + "-fg-service"), value: .value}
+            elif (.key | startswith("notifier")) then
+              {key: ("ms" + .key + "-fg-service"), value: .value}
+            else
+              {key: (.key + "-ms-fg-service"), value: .value}
+            end
+          )' services.json > services-modified.json
+          mv services-modified.json services.json
+
+          mkdir -p $(Build.ArtifactStagingDirectory)/microservices
+          cp services.json $(Build.ArtifactStagingDirectory)/microservices/versions.json
+
+          echo -e "\n📂 File : ./services.json"
+          jq . "services.json"
+        displayName: "🔎 Visualizando versiones"
+        condition: succeeded()
+        env:
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
+          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
+
+      - task: PublishBuildArtifacts@1
+        inputs:
+          PathtoPublish: "$(Build.ArtifactStagingDirectory)"
+          ArtifactName: "versions"
+          publishLocation: "Container"
+        displayName: "📥 Publish artifact version"
         condition: succeeded()

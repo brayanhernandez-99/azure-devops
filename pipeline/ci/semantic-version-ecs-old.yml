@@ -76,7 +76,7 @@ jobs:
           mv services-modified.json services.json
 
           mkdir -p $(Build.ArtifactStagingDirectory)/microservices
-          cp services.json $(Build.ArtifactStagingDirectory)/microservices/versions.json
+          cp services.json $(Build.ArtifactStagingDirectory)/microservices/version.json
 
           echo -e "\n📂 File : ./services.json"
           jq . "services.json"
