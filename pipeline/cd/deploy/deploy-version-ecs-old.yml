@@ -32,45 +32,45 @@ jobs:
           echo "✅ Versiones ECS:"
           jq . "services.json"
 
-          # for CLUSTER in "${!CLUSTERS[@]}"; do
-          #   CLUSTER_NAME=${CLUSTERS[$CLUSTER]}
-          #   SERVICE=""
-          #   case "$CLUSTER" in
-          #       bff-*)      SERVICE="$CLUSTER-fg-service" ;;
-          #       msnotifier) SERVICE="$CLUSTER-fg-service" ;;
-          #       *)          SERVICE="$CLUSTER-ms-fg-service" ;;
-          #   esac
+          for CLUSTER in "${!CLUSTERS[@]}"; do
+            CLUSTER_NAME=${CLUSTERS[$CLUSTER]}
+            SERVICE=""
+            case "$CLUSTER" in
+                bff-*)      SERVICE="$CLUSTER-fg-service" ;;
+                msnotifier) SERVICE="$CLUSTER-fg-service" ;;
+                *)          SERVICE="$CLUSTER-ms-fg-service" ;;
+            esac
 
-          #   FULL_IMAGE=$(echo "$SERVICES_JSON" | jq -r --arg svc "$SERVICE" '.[$svc]')
+            FULL_IMAGE=$(echo "$SERVICES_JSON" | jq -r --arg svc "$SERVICE" '.[$svc]')
 
-          #   # Obtener task definition actual
-          #   TASK_DEF_ARN=$(aws ecs describe-services --cluster "$CLUSTER_NAME" --services "$SERVICE" --query "services[0].taskDefinition" --output text --region us-east-1)
+            # Obtener task definition actual
+            TASK_DEF_ARN=$(aws ecs describe-services --cluster "$CLUSTER_NAME" --services "$SERVICE" --query "services[0].taskDefinition" --output text --region us-east-1)
 
-          #   echo -e "\n📄 Cluster: $CLUSTER_NAME"
-          #   echo "📄 Servicio: $SERVICE"
-          #   echo "📄 Task Definition actual: $TASK_DEF_ARN"
+            echo -e "\n📄 Cluster: $CLUSTER_NAME"
+            echo "📄 Servicio: $SERVICE"
+            echo "📄 Task Definition actual: $TASK_DEF_ARN"
 
-          #   # Obtener definición completa de la task definition
-          #   TASKDEF_JSON=$(aws ecs describe-task-definition --task-definition "$TASK_DEF_ARN" --query "taskDefinition" --output json --region us-east-1)
+            # Obtener definición completa de la task definition
+            TASKDEF_JSON=$(aws ecs describe-task-definition --task-definition "$TASK_DEF_ARN" --query "taskDefinition" --output json --region us-east-1)
 
-          #   # Limpiar campos innecesarios
-          #   TASKDEF_CLEAN=$(echo "$TASKDEF_JSON" | jq 'del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .registeredBy)')
+            # Limpiar campos innecesarios
+            TASKDEF_CLEAN=$(echo "$TASKDEF_JSON" | jq 'del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .registeredBy)')
 
-          #   # Detectar nombre real del contenedor
-          #   CONTAINER_NAME=$(echo "$TASKDEF_JSON" | jq -r '.containerDefinitions[0].name')
-          #   echo "📄 Contenedor detectado: $CONTAINER_NAME"
+            # Detectar nombre real del contenedor
+            CONTAINER_NAME=$(echo "$TASKDEF_JSON" | jq -r '.containerDefinitions[0].name')
+            echo "📄 Contenedor detectado: $CONTAINER_NAME"
 
-          #   # Registrar nueva task definition con imagen actualizada
-          #   NEW_TASKDEF_ARN=$(aws ecs register-task-definition --cli-input-json "$(echo "$TASKDEF_CLEAN" | jq -c --arg img "$FULL_IMAGE" --arg cname "$CONTAINER_NAME" '.containerDefinitions |= map(if .name == $cname then .image = $img else . end)')" --query "taskDefinition.taskDefinitionArn" --output text --region us-east-1)
+            # Registrar nueva task definition con imagen actualizada
+            NEW_TASKDEF_ARN=$(aws ecs register-task-definition --cli-input-json "$(echo "$TASKDEF_CLEAN" | jq -c --arg img "$FULL_IMAGE" --arg cname "$CONTAINER_NAME" '.containerDefinitions |= map(if .name == $cname then .image = $img else . end)')" --query "taskDefinition.taskDefinitionArn" --output text --region us-east-1)
 
-          #   # Actualizar ECS service con nueva task definition
-          #   UPDATED_TASK_DEF=$(aws ecs update-service --cluster "$CLUSTER_NAME" --service "$SERVICE" --task-definition "$NEW_TASKDEF_ARN" --force-new-deployment --query "service.taskDefinition" --output text --region us-east-1)
+            # Actualizar ECS service con nueva task definition
+            UPDATED_TASK_DEF=$(aws ecs update-service --cluster "$CLUSTER_NAME" --service "$SERVICE" --task-definition "$NEW_TASKDEF_ARN" --force-new-deployment --query "service.taskDefinition" --output text --region us-east-1)
 
-          #   echo "🚀 ECS Service actualizado:"
-          #   echo -e "Task Image: \t\t$FULL_IMAGE"
-          #   echo -e "Task Definition: \t$UPDATED_TASK_DEF"
-          #   echo "------------------------------------------------------------"
-          # done
+            echo "🚀 ECS Service actualizado:"
+            echo -e "Task Image: \t\t$FULL_IMAGE"
+            echo -e "Task Definition: \t$UPDATED_TASK_DEF"
+            echo "------------------------------------------------------------"
+          done
         displayName: "🚀 Actualizando Taks Definition"
         env:
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)

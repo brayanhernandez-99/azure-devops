@@ -61,7 +61,6 @@ jobs:
                   echo "\"$k\": \"${SERVICES[$k]}\","
                 done | sed '$s/,$//')"'
           }')
-
           echo "$SERVICES_JSON" > services.json
 
           jq 'with_entries(
