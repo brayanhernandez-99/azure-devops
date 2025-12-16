@@ -21,7 +21,7 @@ jobs:
       - script: |
           set -e
 
-          cp $(Build.ArtifactStagingDirectory)/versions/microservices/versions.json $(System.DefaultWorkingDirectory)/services.json
+          cp $(Build.ArtifactStagingDirectory)/versions-downloaded/versions/microservices/versions.json $(System.DefaultWorkingDirectory)/services.json
 
           declare -A CLUSTERS=(
             ["transaction-astro"]="transaction-astro-ms-cluster"
