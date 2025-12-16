@@ -204,7 +204,11 @@ jobs:
           # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-raspa-policy
           # terragrunt plan --all --non-interactive -no-color
 
- 
+
+
+
+
+
 
 
           ################# Servicio de trino (LISTO EN DEV Y QA) PENDIENTE EN LAS PDN)
