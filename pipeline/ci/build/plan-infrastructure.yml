@@ -90,14 +90,14 @@ jobs:
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds
 
           terragrunt init
-          terragrunt state list
+          terragrunt state list -no-color
 
           # terragrunt state rm aws_rds_cluster.default
-          terragrunt state rm aws_rds_cluster_instance.rds_cluster_instances["invictus-instance-db"]
-          terragrunt state rm aws_rds_cluster_instance.rds_cluster_instances["invictus-instance-db-reader"]
+          terragrunt state rm aws_rds_cluster_instance.rds_cluster_instances["0"]
+          terragrunt state rm aws_rds_cluster_instance.rds_cluster_instances["1"]
           terragrunt state rm random_password.master_password
 
-          terragrunt state list
+          terragrunt state list -no-color
 
           # terragrunt import aws_rds_cluster.default invictus-db-cluster
 
