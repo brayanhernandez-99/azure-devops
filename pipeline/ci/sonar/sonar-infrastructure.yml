@@ -71,11 +71,6 @@ jobs:
 
           echo ""
           echo "🔹 Proyecto:        $PROJECT_KEY"
-          echo "🧪 Coverage:        $coverage%"
-          echo "📐 Duplicación:     $duplication%"
-          echo "🛡️ Quality Gate:    $quality_gate"
-          echo "📘 Quality Profile: $quality_profile"
-          echo "🈯 Lenguaje Base:   $language"
           echo "📊 Estado:          $status_code"
           echo ""
 
