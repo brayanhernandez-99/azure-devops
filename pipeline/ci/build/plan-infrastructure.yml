@@ -92,9 +92,9 @@ jobs:
           terragrunt init
           terragrunt state list
 
-          terragrunt import aws_rds_cluster.default invictus-db-cluster
+          # terragrunt import aws_rds_cluster.default invictus-db-cluster
 
-          terragrunt plan --all --non-interactive -no-color
+          # terragrunt plan --all --non-interactive -no-color
 
 
 
