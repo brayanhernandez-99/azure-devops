@@ -84,7 +84,6 @@ jobs:
 
 
 
-<<<<<<< HEAD
 
 
 
@@ -97,14 +96,6 @@ jobs:
 
           # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-ssm-parameter
           # terragrunt plan --all --non-interactive -no-color
-=======
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/lotteries-games/aws-service-secret-manager-national-bn3-secret
-          terragrunt plan --all --non-interactive -no-color
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/lotteries-games/aws-service-secret-manager-national-bn4-secret
-          terragrunt plan --all --non-interactive -no-color
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/lotteries-games/aws-service-secret-manager-national-chc-secret
-          terragrunt plan --all --non-interactive -no-color
->>>>>>> a37242ace40f6e18a7ea4fd8cfb58f95c57609ff
 
 
 
@@ -166,16 +157,6 @@ jobs:
           # # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/payment-voucher/aws-service-s3
           # # terragrunt plan --all --non-interactive -no-color
 
-<<<<<<< HEAD
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/awards/aws-service-s3
-          # terragrunt plan --all --non-interactive -no-color
-=======
-          # # cd $(Build.SourcesDirectory)
-          # # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
->>>>>>> a37242ace40f6e18a7ea4fd8cfb58f95c57609ff
-
-          # # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/payments/aws-service-s3
-          # # terragrunt plan --all --non-interactive -no-color
 
           # # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/payments/aws-service-s3
           # # terragrunt plan --all --non-interactive -no-color
@@ -201,90 +182,16 @@ jobs:
           # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/sellers/aws-service-s3
           # terragrunt plan --all --non-interactive -no-color
 
-<<<<<<< HEAD
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/generic-services/aws-service-s3
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/shopping-cart/aws-service-s3
           # terragrunt plan --all --non-interactive -no-color
-=======
-          # # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/shopping-cart/aws-service-s3
-          # # terragrunt plan --all --non-interactive -no-color
->>>>>>> a37242ace40f6e18a7ea4fd8cfb58f95c57609ff
+
 
           # # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-s3-lotteries-physical
           # # terragrunt plan --all --non-interactive -no-color
 
-<<<<<<< HEAD
-          # cd $(Build.SourcesDirectory)
-          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
-
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/millonario/aws-service-s3
-          # terragrunt plan --all --non-interactive -no-color
-
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/online-games/aws-service-s3
-          # terragrunt plan --all --non-interactive -no-color
-
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/payment-voucher/aws-service-s3
-          # terragrunt plan --all --non-interactive -no-color
-
-          # cd $(Build.SourcesDirectory)
-          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
-
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/payments/aws-service-s3
-          # terragrunt plan --all --non-interactive -no-color
-
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/payments/aws-service-s3
-          # terragrunt plan --all --non-interactive -no-color
-
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/products/aws-service-s3
-          # terragrunt plan --all --non-interactive -no-color
-
-          # cd $(Build.SourcesDirectory)
-          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
-
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/products/aws-service-s3-products-icons
-          # terragrunt plan --all --non-interactive -no-color
-
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges/aws-service-s3
-          # terragrunt plan --all --non-interactive -no-color
-
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/security/aws-service-s3
-          # terragrunt plan --all --non-interactive -no-color
-
-          # cd $(Build.SourcesDirectory)
-          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
-
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/sellers/aws-service-s3
-          # terragrunt plan --all --non-interactive -no-color
-
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/shopping-cart/aws-service-s3
-          # terragrunt plan --all --non-interactive -no-color
-
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-s3-lotteries-physical
-          # terragrunt plan --all --non-interactive -no-color
-
+          
           # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/remittances/aws-service-s3
           # terragrunt plan --all --non-interactive -no-color
-
-
-          ################# Servicio de raspa (LISTO EN DEV)  PENDIENTE EN QA Y PDN
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/raspa
-          # terragrunt plan --all --non-interactive -no-color
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3/s3-raspa
-          # terragrunt plan --all --non-interactive -no-color
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-raspa
-          # terragrunt plan --all --non-interactive -no-color
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-raspa-policy
-          # terragrunt plan --all --non-interactive -no-color
-=======
-          # # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/remittances/aws-service-s3
-          # # terragrunt plan --all --non-interactive -no-color
->>>>>>> a37242ace40f6e18a7ea4fd8cfb58f95c57609ff
-
-
-
-
-
-
-
 
 
 
