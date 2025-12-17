@@ -108,6 +108,8 @@ jobs:
 
           terragrunt plan --all --non-interactive -no-color
 
+          terragrunt apply --all --non-interactive -no-color
+
 
 
 
