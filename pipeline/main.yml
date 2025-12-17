@@ -23,7 +23,7 @@ stages:
   #
   # Infrastructure pipeline
   #
-  - ${{ if and(eq(parameters.release, 'iac'), in(variables['Build.SourceBranchName'], 'develop', 'staging', 'master')) }}:
+  - ${{ if and(eq(parameters.release, 'iac'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), in(variables['Build.SourceBranchName'], 'develop', 'staging', 'master'))) }}:
       - template: ./pipelines/pipeline-infrastructure.yml
         parameters:
           red: ${{ parameters.red }}
