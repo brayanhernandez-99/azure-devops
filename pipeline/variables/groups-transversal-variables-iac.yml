@@ -4,7 +4,7 @@ variables:
   - group: trasversal-infrastructure-invictus
 
   # Feature branches
-  - ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}:
+  - ${{ if or(eq(variables['Build.SourceBranchName'], 'develop'), startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')) }}:
     - group: trasversal-aws-develop
     - group: infrastructure-develop
     - group: cloudfront-infrastructure-develop
