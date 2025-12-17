@@ -84,9 +84,37 @@ jobs:
 
 
 
+          ##################################IMPORT DB
+
+
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds
+
+          terragrunt init
+
+          terragrunt import \
+            module.aws-service-rds-cluster.aws_rds_cluster.default \
+            invictus-db-cluster
+
+          terragrunt plan --all --non-interactive -no-color
 
 
 
+
+
+
+
+
+          ####### SECRETS BN3, BN4, CHC FALTA EN AMBIENTES PRODUCTIVOS
+
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/lotteries-games/aws-service-secret-manager-national-bn3-secret
+          # terragrunt plan --all --non-interactive -no-color
+          
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/lotteries-games/aws-service-secret-manager-national-bn4-secret
+          # terragrunt plan --all --non-interactive -no-color
+          
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/lotteries-games/aws-service-secret-manager-national-chc-secret
+          # terragrunt plan --all --non-interactive -no-color
+          
 
 
 
