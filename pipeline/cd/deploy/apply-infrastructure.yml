@@ -95,6 +95,9 @@ jobs:
           terragrunt plan --non-interactive -no-color
           terraform apply --non-interactive -no-color
 
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/bff-integration/
           terragrunt plan --non-interactive -no-color
           terraform apply --non-interactive -no-color
@@ -117,6 +120,9 @@ jobs:
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/conciliation/
           terragrunt plan --non-interactive -no-color
           terraform apply --non-interactive -no-color
+
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/dynamic-storage/
           terragrunt plan --non-interactive -no-color
@@ -141,6 +147,9 @@ jobs:
           terragrunt plan --non-interactive -no-color
           terraform apply --non-interactive -no-color
 
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/lotteries/
           terragrunt plan --non-interactive -no-color
           terraform apply --non-interactive -no-color
@@ -163,6 +172,9 @@ jobs:
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/money-control/
           terragrunt plan --non-interactive -no-color
           terraform apply --non-interactive -no-color
+
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/notifications/
           terragrunt plan --non-interactive -no-color
@@ -187,6 +199,9 @@ jobs:
           terragrunt plan --non-interactive -no-color
           terraform apply --non-interactive -no-color
 
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/payments/
           terragrunt plan --non-interactive -no-color
           terraform apply --non-interactive -no-color
@@ -209,6 +224,9 @@ jobs:
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/raspa/
           terragrunt plan --non-interactive -no-color
           terraform apply --non-interactive -no-color
+
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges/
           terragrunt plan --non-interactive -no-color
@@ -233,6 +251,9 @@ jobs:
           terragrunt plan --non-interactive -no-color
           terraform apply --non-interactive -no-color
 
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/security/
           terragrunt plan --non-interactive -no-color
           terraform apply --non-interactive -no-color
@@ -255,6 +276,9 @@ jobs:
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/transaction/
           terragrunt plan --non-interactive -no-color
           terraform apply --non-interactive -no-color
+
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/transaction-astro/
           terragrunt plan --non-interactive -no-color
