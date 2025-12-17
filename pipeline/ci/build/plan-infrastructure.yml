@@ -96,16 +96,16 @@ jobs:
           # terragrunt import aws_rds_cluster.default invictus-db-cluster
 
 
-          terragrunt import \
-            'aws_rds_cluster_instance.rds_cluster_instances["0"]' \
-            invictus-db
+          # terragrunt import \
+          #   'aws_rds_cluster_instance.rds_cluster_instances["0"]' \
+          #   invictus-db
 
-          terragrunt import \
-            'aws_rds_cluster_instance.rds_cluster_instances["1"]' \
-            invictus-db-reader
+          # terragrunt import \
+          #   'aws_rds_cluster_instance.rds_cluster_instances["1"]' \
+          #   invictus-db-reader
 
 
-
+          terragrunt plan --all --non-interactive -no-color
 
 
 
