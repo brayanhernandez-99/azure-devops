@@ -91,7 +91,7 @@ jobs:
 
           terragrunt init
 
-          terragrunt import --all --non-interactive -no-color \
+          terragrunt import -no-color \
             module.aws-service-rds-cluster.aws_rds_cluster.default \
             invictus-db-cluster
 
