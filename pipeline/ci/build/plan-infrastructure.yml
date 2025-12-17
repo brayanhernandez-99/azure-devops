@@ -97,6 +97,7 @@ jobs:
           terragrunt state rm aws_rds_cluster_instance.rds_cluster_instances["1"]
           terragrunt state rm random_password.master_password
 
+          terragrunt state list
 
           # terragrunt import aws_rds_cluster.default invictus-db-cluster
 
