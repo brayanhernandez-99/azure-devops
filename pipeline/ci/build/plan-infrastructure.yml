@@ -1,6 +1,7 @@
 jobs:
   - job: plan_infrastructure_${{ parameters.region }}
     displayName: "🧩 terragrunt plan"
+    timeoutInMinutes: 120
     pool:
       name: "Azure Pipelines"
       VmImage: ubuntu-22.04
