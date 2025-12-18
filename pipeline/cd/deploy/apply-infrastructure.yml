@@ -557,6 +557,7 @@ jobs:
           # # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
         displayName: "🚀 Apply Infrastructure"
+        timeoutInMinutes: 120
         condition: succeeded()
         env:
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
