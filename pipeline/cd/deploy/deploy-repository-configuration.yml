@@ -20,7 +20,7 @@ jobs:
           echo -e "\n📦 Cargando al Bucket S3..."
           ls -l
 
-          aws s3 cp . s3://configuration-$(ACCOUNT_ID_INVIC) --recursive --exclude "pipeline/*"
+          aws s3 cp . s3://configuration-$(ACCOUNT_ID_INVICTUS) --recursive --exclude "pipeline/*"
         displayName: "📤 Upload Configuration to S3"
         condition: and(succeeded(),
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
@@ -37,7 +37,7 @@ jobs:
             echo "✅ Se detectaron cambios en reports/ y no es develop, enviando mensaje a SQS"; 
             json_complete='{"event":"migration","streamNotifier":"Notifier","model":{"method":"insert","reports":[{"name":"modelos_invictus","type_card":"model"},{"name":"reportes_invictus","type_card":"question"},{"name":"archivos_cem","type_card":"question"}]}}'; 
             aws sqs send-message \
-              --queue-url https://sqs.us-east-1.amazonaws.com/$(ACCOUNT_ID_INVIC)/Sellers \
+              --queue-url https://sqs.us-east-1.amazonaws.com/$(ACCOUNT_ID_INVICTUS)/Sellers \
               --message-body "$json_complete" \
               --delay-seconds 0
           else 
