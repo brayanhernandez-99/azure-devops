@@ -78,3 +78,5 @@ jobs:
 
   - ${{ if eq(parameters.release, 'rpc') }}:
       - template: ./deploy/deploy-repository-configuration.yml
+        parameters:
+          region: ${{ parameters.region }}
