@@ -174,164 +174,164 @@ jobs:
           cd $(Build.SourcesDirectory)
           find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/metabase
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/metabase
+          terragrunt plan --all --non-interactive -no-color
 
-          # cd $(Build.SourcesDirectory)
-          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/millonario
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/millonario
+          terragrunt plan --all --non-interactive -no-color
 
-          # cd $(Build.SourcesDirectory)
-          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/money-control
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/money-control
+          terragrunt plan --all --non-interactive -no-color
 
-          # cd $(Build.SourcesDirectory)
-          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/notifications
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/notifications
+          terragrunt plan --all --non-interactive -no-color
 
-          # cd $(Build.SourcesDirectory)
-          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/notifier
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/notifier
+          terragrunt plan --all --non-interactive -no-color
 
-          # cd $(Build.SourcesDirectory)
-          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/online-games
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/online-games
+          terragrunt plan --all --non-interactive -no-color
 
-          # cd $(Build.SourcesDirectory)
-          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/papelery
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/papelery
+          terragrunt plan --all --non-interactive -no-color
 
-          # cd $(Build.SourcesDirectory)
-          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/payment-voucher
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/payment-voucher
+          terragrunt plan --all --non-interactive -no-color
 
-          # cd $(Build.SourcesDirectory)
-          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/payments
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/payments
+          terragrunt plan --all --non-interactive -no-color
 
-          # cd $(Build.SourcesDirectory)
-          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/products
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/products
+          terragrunt plan --all --non-interactive -no-color
 
-          # cd $(Build.SourcesDirectory)
-          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/promotional
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/promotional
+          terragrunt plan --all --non-interactive -no-color
 
-          # cd $(Build.SourcesDirectory)
-          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/raffles
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/raffles
+          terragrunt plan --all --non-interactive -no-color
 
-          # cd $(Build.SourcesDirectory)
-          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/raspa
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/raspa
+          terragrunt plan --all --non-interactive -no-color
 
-          # cd $(Build.SourcesDirectory)
-          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges
+          terragrunt plan --all --non-interactive -no-color
 
-          # cd $(Build.SourcesDirectory)
-          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/remittances
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/remittances
+          terragrunt plan --all --non-interactive -no-color
 
-          # cd $(Build.SourcesDirectory)
-          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/reports
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/reports
+          terragrunt plan --all --non-interactive -no-color
 
-          # cd $(Build.SourcesDirectory)
-          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/scheduler
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/scheduler
+          terragrunt plan --all --non-interactive -no-color
 
-          # cd $(Build.SourcesDirectory)
-          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/security
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/security
+          terragrunt plan --all --non-interactive -no-color
 
-          # cd $(Build.SourcesDirectory)
-          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/sellers
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/sellers
+          terragrunt plan --all --non-interactive -no-color
 
-          # cd $(Build.SourcesDirectory)
-          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/shopping-cart
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/shopping-cart
+          terragrunt plan --all --non-interactive -no-color
 
-          # cd $(Build.SourcesDirectory)
-          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/siga
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/siga
+          terragrunt plan --all --non-interactive -no-color
 
-          # cd $(Build.SourcesDirectory)
-          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/transaction
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/transaction
+          terragrunt plan --all --non-interactive -no-color
 
-          # cd $(Build.SourcesDirectory)
-          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/transaction-astro
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/transaction-astro
+          terragrunt plan --all --non-interactive -no-color
 
-          # cd $(Build.SourcesDirectory)
-          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/transaction-lotteries-games
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/transaction-lotteries-games
+          terragrunt plan --all --non-interactive -no-color
 
-          # cd $(Build.SourcesDirectory)
-          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/transaction-notifier
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/transaction-notifier
+          terragrunt plan --all --non-interactive -no-color
 
-          # cd $(Build.SourcesDirectory)
-          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/transaction-recharges
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/transaction-recharges
+          terragrunt plan --all --non-interactive -no-color
 
-          # cd $(Build.SourcesDirectory)
-          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/wiretransfer
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/wiretransfer
+          terragrunt plan --all --non-interactive -no-color
 
 
 
