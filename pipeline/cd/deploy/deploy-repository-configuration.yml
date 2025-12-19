@@ -9,7 +9,7 @@ jobs:
       - template: ../../variables/groups-transversal-variables-rpc.yml
         parameters:
           region: ${{ parameters.region }}
-          environments: ${{ environments }}
+          environments: ${{ parameters.environments }}
 
     steps:
       - checkout: self
