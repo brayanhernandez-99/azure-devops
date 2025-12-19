@@ -20,9 +20,7 @@ jobs:
           set -e
           echo -e "\n📦 Cargando al Bucket S3..."
           ls -l
-
           echo $(ACCOUNT_ID_INVICTUS)
-
           # aws s3 cp . s3://configuration-$(ACCOUNT_ID_INVICTUS) --recursive --exclude "pipeline/*"
         displayName: "📤 Upload Configuration to S3"
         condition: and(succeeded(),
@@ -46,9 +44,7 @@ jobs:
           # else 
           #   echo "ℹ️ No se enviará mensaje a SQS: no hubo cambios en reports/"
           # fi
-
           echo $(ACCOUNT_ID_INVICTUS)
-
         displayName: "🔍 Verify Changes in reports/"
         condition: and(succeeded(),
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
