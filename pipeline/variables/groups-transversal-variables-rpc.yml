@@ -3,14 +3,14 @@ variables:
   - ${{ if or(eq(variables['Build.SourceBranchName'], 'develop'), startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')) }}:
       - ${{ if eq(parameters.environments, 'develop') }}:
         - group: trasversal-aws-developer
-      - ${{ if eq(parameters.environments, 'develop-new') }}:
+      - ${{ if eq(parameters.environments, 'develop_new') }}:
         - group: trasversal-aws-develop
 
   # Staging branch
   - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
       - ${{ if eq(parameters.environments, 'staging') }}:
         - group: trasversal-aws-qa
-      - ${{ if eq(parameters.environments, 'staging-new') }}:
+      - ${{ if eq(parameters.environments, 'staging_new') }}:
         - group: trasversal-aws-staging
 
   # Master branch → por red
