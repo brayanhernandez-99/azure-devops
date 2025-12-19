@@ -12,7 +12,7 @@ jobs:
 
     steps:
       - script: |
-          # echo "ID Cuenta AWS: $(ACCOUNT_ID_INVIC)"
+          # echo "ID Cuenta AWS: $(ACCOUNT_ID_INVICTUS)"
           tree
         displayName: "📂 File Structure & Account ID"
         condition: succeeded()
