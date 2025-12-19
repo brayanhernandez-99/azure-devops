@@ -1,13 +1,17 @@
 variables:
   # Develop branch
   - ${{ if or(eq(variables['Build.SourceBranchName'], 'develop'), startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')) }}:
-      - group: trasversal-aws-developer
-      #- group: trasversal-aws-develop
+      - ${{ if eq(parameters.environments, 'develop') }}:
+        - group: trasversal-aws-developer
+      - ${{ if eq(parameters.environments, 'develop-new') }}:
+        - group: trasversal-aws-develop
 
   # Staging branch
   - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
-      - group: trasversal-aws-qa
-      #- group: trasversal-aws-staging
+      - ${{ if eq(parameters.environments, 'staging') }}:
+        - group: trasversal-aws-qa
+      - ${{ if eq(parameters.environments, 'staging-new') }}:
+        - group: trasversal-aws-staging
 
   # Master branch → por red
   - ${{ if and(eq(parameters.region, 'antioquia'), eq(variables['Build.SourceBranchName'], 'master')) }}:
