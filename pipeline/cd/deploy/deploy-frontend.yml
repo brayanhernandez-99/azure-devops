@@ -71,7 +71,7 @@ jobs:
             msName=$(msName)
           fi
 
-          aws s3 cp $BASE_PATH s3://mf-$msName-$(ACCOUNT_ID_INVIC)/$(msVersion)/ --recursive
+          aws s3 cp $BASE_PATH s3://mf-$msName-$(ACCOUNT_ID_INVICTUS)/$(msVersion)/ --recursive
         displayName: "📤 Upload Bucket S3"
         condition: succeeded()
         env:
