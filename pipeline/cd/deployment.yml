@@ -80,4 +80,4 @@ jobs:
       - template: ./deploy/deploy-repository-configuration.yml
         parameters:
           region: ${{ parameters.region }}
-          environments: ${{ environments }}
+          environments: ${{ parameters.environments }}
