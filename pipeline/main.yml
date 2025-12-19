@@ -6,6 +6,18 @@ parameters:
     type: number
     default: 0
 
+  - name: environments_new_develop
+    type: object
+    default:
+      - develop
+      - develop_new
+
+  - name: environments_new_staging
+    type: object
+    default:
+      - staging
+      - staging_new
+
   - name: red
     type: object
     default:
@@ -114,6 +126,9 @@ stages:
         parameters:
           red: ${{ parameters.red }}
           release: ${{ parameters.release }}
+          environments_new_develop: ${{ parameters.environments_new_develop }}
+          environments_new_staging: ${{ parameters.environments_new_staging }}
+
 
   #
   # MicroFronted - Electron

@@ -153,6 +153,11 @@ jobs:
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
 
       - script: |
+
+          pwd
+          ls -ltra
+
+
           cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
           CURRENT_BRANCH=$(echo $(Build.SourceBranch))
           echo -e "\nℹ️ Branch Actual: $CURRENT_BRANCH"
