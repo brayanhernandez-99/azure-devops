@@ -78,3 +78,11 @@ variables:
     - group: parameters-infrastructure-santander
     - group: secrets-infrastructure-santander
     - group: autoscaling-infrastructure-santander
+    
+  - ${{ if and(eq(parameters.region, 'putumayo'), eq(variables['Build.SourceBranchName'], 'master')) }}:
+    - group: trasversal-aws-putumayo
+    - group: infrastructure-putumayo
+    - group: cloudfront-infrastructure-putumayo
+    - group: parameters-infrastructure-putumayo
+    - group: secrets-infrastructure-putumayo
+    - group: autoscaling-infrastructure-putumayo
