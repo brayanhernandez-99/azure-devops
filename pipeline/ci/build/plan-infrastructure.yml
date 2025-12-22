@@ -82,7 +82,7 @@ jobs:
       - script: |
           set -e
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-iam-profile/User-IOT
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-iam-profile/user-iot
           terragrunt plan --all --non-interactive -no-color
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-secret-manager
