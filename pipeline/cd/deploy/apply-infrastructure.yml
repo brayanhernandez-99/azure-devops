@@ -84,137 +84,137 @@ jobs:
 
 
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-app-administration
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-app-administration-policy
           terragrunt plan --all --non-interactive -no-color
           terragrunt apply --all --non-interactive -no-color
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-app-sellers
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-app-sellers-policy
           terragrunt plan --all --non-interactive -no-color
           terragrunt apply --all --non-interactive -no-color
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-astro
-          terragrunt plan --all --non-interactive -no-color
-          terragrunt apply --all --non-interactive -no-color
-
-          cd $(Build.SourcesDirectory)
-          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-awards
-          terragrunt plan --all --non-interactive -no-color
-          terragrunt apply --all --non-interactive -no-color
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-betplay
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-astro-policy
           terragrunt plan --all --non-interactive -no-color
           terragrunt apply --all --non-interactive -no-color
 
           cd $(Build.SourcesDirectory)
           find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-biometrics
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-awards-policy
           terragrunt plan --all --non-interactive -no-color
           terragrunt apply --all --non-interactive -no-color
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-cashier
-          terragrunt plan --all --non-interactive -no-color
-          terragrunt apply --all --non-interactive -no-color
-
-          cd $(Build.SourcesDirectory)
-          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-chance
-          terragrunt plan --all --non-interactive -no-color
-          terragrunt apply --all --non-interactive -no-color
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-commissions
-          terragrunt plan --all --non-interactive -no-color
-          terragrunt apply --all --non-interactive -no-color
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-conciliation
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-betplay-policy
           terragrunt plan --all --non-interactive -no-color
           terragrunt apply --all --non-interactive -no-color
 
           cd $(Build.SourcesDirectory)
           find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-dashboard
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-biometrics-policy
           terragrunt plan --all --non-interactive -no-color
           terragrunt apply --all --non-interactive -no-color
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-dynamic-storage
-          terragrunt plan --all --non-interactive -no-color
-          terragrunt apply --all --non-interactive -no-color
-
-          cd $(Build.SourcesDirectory)
-          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-external
-          terragrunt plan --all --non-interactive -no-color
-          terragrunt apply --all --non-interactive -no-color
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-external-wager
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-cashier-policy
           terragrunt plan --all --non-interactive -no-color
           terragrunt apply --all --non-interactive -no-color
 
           cd $(Build.SourcesDirectory)
           find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-hierarchies
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-chance-policy
           terragrunt plan --all --non-interactive -no-color
           terragrunt apply --all --non-interactive -no-color
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-invictus
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-commissions-policy
           terragrunt plan --all --non-interactive -no-color
           terragrunt apply --all --non-interactive -no-color
 
-          cd $(Build.SourcesDirectory)
-          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-login
-          terragrunt plan --all --non-interactive -no-color
-          terragrunt apply --all --non-interactive -no-color
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-lotteries
-          terragrunt plan --all --non-interactive -no-color
-          terragrunt apply --all --non-interactive -no-color
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-millonario
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-conciliation-policy
           terragrunt plan --all --non-interactive -no-color
           terragrunt apply --all --non-interactive -no-color
 
           cd $(Build.SourcesDirectory)
           find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-money-control
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-dashboard-policy
           terragrunt plan --all --non-interactive -no-color
           terragrunt apply --all --non-interactive -no-color
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-notifications
-          terragrunt plan --all --non-interactive -no-color
-          terragrunt apply --all --non-interactive -no-color
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-papelery
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-dynamic-storage-policy
           terragrunt plan --all --non-interactive -no-color
           terragrunt apply --all --non-interactive -no-color
 
           cd $(Build.SourcesDirectory)
           find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-promotional
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-external-policy
           terragrunt plan --all --non-interactive -no-color
           terragrunt apply --all --non-interactive -no-color
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-raffles
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-external-wager-policy
           terragrunt plan --all --non-interactive -no-color
           terragrunt apply --all --non-interactive -no-color
 
           cd $(Build.SourcesDirectory)
           find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-recharges
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-hierarchies-policy
           terragrunt plan --all --non-interactive -no-color
           terragrunt apply --all --non-interactive -no-color
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-users
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-invictus-policy
+          terragrunt plan --all --non-interactive -no-color
+          terragrunt apply --all --non-interactive -no-color
+
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-login-policy
+          terragrunt plan --all --non-interactive -no-color
+          terragrunt apply --all --non-interactive -no-color
+
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-lotteries-policy
+          terragrunt plan --all --non-interactive -no-color
+          terragrunt apply --all --non-interactive -no-color
+
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-millonario-policy
+          terragrunt plan --all --non-interactive -no-color
+          terragrunt apply --all --non-interactive -no-color
+
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-money-control-policy
+          terragrunt plan --all --non-interactive -no-color
+          terragrunt apply --all --non-interactive -no-color
+
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-notifications-policy
+          terragrunt plan --all --non-interactive -no-color
+          terragrunt apply --all --non-interactive -no-color
+
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-papelery-policy
+          terragrunt plan --all --non-interactive -no-color
+          terragrunt apply --all --non-interactive -no-color
+
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-promotional-policy
+          terragrunt plan --all --non-interactive -no-color
+          terragrunt apply --all --non-interactive -no-color
+
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-raffles-policy
+          terragrunt plan --all --non-interactive -no-color
+          terragrunt apply --all --non-interactive -no-color
+
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-recharges-policy
+          terragrunt plan --all --non-interactive -no-color
+          terragrunt apply --all --non-interactive -no-color
+
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-users-policy
           terragrunt plan --all --non-interactive -no-color
           terragrunt apply --all --non-interactive -no-color
 
