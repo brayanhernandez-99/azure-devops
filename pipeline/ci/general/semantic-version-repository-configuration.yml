@@ -21,19 +21,16 @@ jobs:
           # Encuentra el punto de bifurcación (base común)
           MERGE_BASE=$(git merge-base HEAD origin/master)
 
-          # Verifica si la rama está actualizada
-          if [ "$MERGE_BASE" = "$(git rev-parse origin/master)" ]; then
-            echo "✅ La rama feature o hotfix está actualizada con master."
+          if git merge-base --is-ancestor origin/master HEAD; then
+            echo "✅ La rama feature o hotfix contiene todos los commits de master."
           else
-            echo "⚠️ La rama feature o hotfix NO contiene todos los commits de master. Verificando cambios relevantes en master..."
+            echo "⚠️ La rama feature o hotfix NO contiene todos los commits de master."
 
-            # Obtén los archivos cambiados en master desde el punto de bifurcación
-            CHANGED_FILES=$(git diff --name-only "$MERGE_BASE".."origin/master")
+            CHANGED_FILES=$(git diff --name-only HEAD..origin/master)
 
-            echo "🔍 Archivos nuevos en master desde el punto de bifurcación:"
+            echo "🔍 Archivos pendientes de integrar desde master:"
             echo "$CHANGED_FILES"
 
-            # Filtrar cambios relevantes (ignorar carpeta pipeline/)
             RELEVANT_CHANGES=$(echo "$CHANGED_FILES" | grep -vE '^pipeline/')
 
             if [[ -z "$RELEVANT_CHANGES" ]]; then
