@@ -34,3 +34,6 @@ variables:
 
   - ${{ if and(eq(parameters.region, 'santander'), eq(variables['Build.SourceBranchName'], 'master')) }}:
       - group: trasversal-aws-santander
+
+  - ${{ if and(eq(parameters.region, 'putumayo'), eq(variables['Build.SourceBranchName'], 'master')) }}:
+      - group: trasversal-aws-putumayo

@@ -28,6 +28,7 @@ parameters:
       - cauca
       - boyaca
       - santander
+      - putumayo
 
   - name: apps
     type: object
