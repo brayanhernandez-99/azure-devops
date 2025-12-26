@@ -41,3 +41,7 @@ variables:
     - ${{ if and(eq(parameters.region, 'santander'), eq(variables['Build.SourceBranchName'], 'master')) }}:
         - group: trasversal-aws-santander
         - group: variables-flutter-santander
+    
+    - ${{ if and(eq(parameters.region, 'putumayo'), eq(variables['Build.SourceBranchName'], 'master')) }}:
+      - group: trasversal-aws-putumayo
+      - group: variables-flutter-putumayo
