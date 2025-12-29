@@ -12,6 +12,7 @@ jobs:
       - template: ../../variables/groups-transversal-variables-electron.yml
         parameters:
           region: ${{ parameters.region }}
+          environments: ${{ parameters.environments }}
 
     steps:
       - task: DownloadBuildArtifacts@0
@@ -82,8 +83,20 @@ jobs:
 
           case "$CURRENT_BRANCH" in
             refs/heads/feature/*) environment="dev"; ;;
-            refs/heads/develop)   environment="dev"; ;;
-            refs/heads/staging)   environment="qa"; ;;
+            refs/heads/develop)
+              if [[ "$environments" == "develop_new" ]]; then
+                environment="dev_new"
+              else
+                environment="dev"
+              fi
+              ;;
+            refs/heads/staging)
+              if [[ "$environments" == "staging_new" ]]; then
+                environment="qa_new"
+              else
+                environment="qa"
+              fi
+              ;;
             refs/heads/master) 
               case "$region" in
                 "antioquia") environment="matrixtech"; ;;
@@ -116,6 +129,7 @@ jobs:
         condition: succeeded()
         env:
           region: ${{ parameters.region }}
+          environments: ${{ parameters.environments }}
 
       - task: UsePythonVersion@0
         displayName: "🔧 Use Python $(pythonVersion)"
@@ -252,6 +266,7 @@ jobs:
       - template: ../../variables/groups-transversal-variables-electron.yml
         parameters:
           region: ${{ parameters.region }}
+          environments: ${{ parameters.environments }}
 
     steps:
       - task: DownloadBuildArtifacts@0
@@ -336,8 +351,23 @@ jobs:
 
             switch -Wildcard ($currentBranch) {
               "refs/heads/feature/*" { $environment = "dev"; break }
-              "refs/heads/develop"   { $environment = "dev"; break }
-              "refs/heads/staging"   { $environment = "qa"; break }
+              "refs/heads/develop" {
+                if ($env:environments -eq "develop_new") {
+                  $environment = "dev_new"
+                } else {
+                  $environment = "dev"
+                }
+                break
+              }
+
+              "refs/heads/staging" {
+                if ($env:environments -eq "staging_new") {
+                  $environment = "qa_new"
+                } else {
+                  $environment = "qa"
+                }
+                break
+              }
               "refs/heads/master" {
                 switch ($env:region) {
                   "antioquia" { $environment = "matrixtech"; break }
@@ -370,6 +400,7 @@ jobs:
         condition: succeeded()
         env:
           region: ${{ parameters.region }}
+          environments: ${{ parameters.environments }}
 
       - task: UsePythonVersion@0
         displayName: "🔧 Use Python $(pythonVersion)"
