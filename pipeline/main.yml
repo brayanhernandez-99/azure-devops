@@ -118,6 +118,8 @@ stages:
         parameters:
           red: ${{ parameters.red }}
           release: ${{ parameters.release }}
+          environments_new_develop: ${{ parameters.environments_new_develop }}
+          environments_new_staging: ${{ parameters.environments_new_staging }}
 
   #
   # Repository Configuration
