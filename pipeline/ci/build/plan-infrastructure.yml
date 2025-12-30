@@ -406,14 +406,14 @@ jobs:
           # # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/awards/aws-service-s3
           # # terragrunt plan --all --non-interactive -no-color
 
-          # # # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/biometrics/aws-service-s3
-          # # # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/biometrics/aws-service-s3
+          terragrunt plan --all --non-interactive -no-color
 
           # # # cd $(Build.SourcesDirectory)
           # # # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
-          # # # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/collected/aws-service-s3
-          # # # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/collected/aws-service-s3
+          terragrunt plan --all --non-interactive -no-color
 
           # # # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/conciliation/aws-service-s3
           # # # terragrunt plan --all --non-interactive -no-color
@@ -436,8 +436,8 @@ jobs:
           # # # cd $(Build.SourcesDirectory)
           # # # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
-          # # # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/millonario/aws-service-s3
-          # # # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/millonario/aws-service-s3
+          terragrunt plan --all --non-interactive -no-color
 
           # # # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/online-games/aws-service-s3
           # # # terragrunt plan --all --non-interactive -no-color
