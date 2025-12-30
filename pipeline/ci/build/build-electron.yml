@@ -106,6 +106,7 @@ jobs:
                 "cauca")     environment="acertemos"; ;;
                 "boyaca")    environment="jer"; ;;
                 "santander") environment="laperla"; ;;
+                "putumayo")  environment="matrixredes"; ;;
               esac ;;
           esac
 
@@ -377,6 +378,7 @@ jobs:
                   "cauca"     { $environment = "acertemos"; break }
                   "boyaca"    { $environment = "jer"; break }
                   "santander" { $environment = "laperla"; break }
+                  "putumayo"  { $environment = "matrixredes"; break }
                 }
               }
             }
