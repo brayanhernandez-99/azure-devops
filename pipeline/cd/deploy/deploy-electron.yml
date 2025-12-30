@@ -9,6 +9,7 @@ jobs:
       - template: ../../variables/groups-transversal-variables-electron.yml
         parameters:
           region: ${{ parameters.region }}
+          environments: ${{ parameters.environments }}
 
     steps:
       - task: DownloadBuildArtifacts@0
@@ -84,6 +85,7 @@ jobs:
         condition: succeeded()
         env:
           region: ${{ parameters.region }}
+          environments: ${{ parameters.environments }}
 
       # - script: |
       #     set -e
