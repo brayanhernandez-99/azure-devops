@@ -89,7 +89,12 @@ jobs:
           # terragrunt plan --all --non-interactive -no-color
 
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/redis-cache
+
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/redis-cache/aws-service-sg
+          terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/redis-cache/aws-service-elasticache
+          terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/redis-cache/aws-service-ssm-parameter
           terragrunt plan --all --non-interactive -no-color
 
 
