@@ -60,6 +60,7 @@ jobs:
                 "cauca")     environment="prd-acertemos"; ;;
                 "boyaca")    environment="prd-jer"; ;;
                 "santander") environment="prd-laperla"; ;;
+                "putumayo")  environment="prd-matrixredes"; ;;
               esac ;;
           esac
 
