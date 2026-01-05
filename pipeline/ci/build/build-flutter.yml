@@ -75,6 +75,7 @@ jobs:
                 "cauca")     environment="prd-acertemos"; appId="ACERTEMOS"; ;;
                 "boyaca")    environment="prd-jer"; appId="JER"; ;;
                 "santander") environment="prd-laperla"; appId="LAPERLA"; ;;
+                "putumayo")  environment="prd-matrixredes"; appId="MATRIXREDES"; ;;
               esac ;;
           esac
 
