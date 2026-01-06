@@ -107,21 +107,6 @@ jobs:
 
 
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-vpn
-          # terragrunt destroy \
-          #   -target=aws_vpn_connection.vpn \
-          #   -target=aws_vpn_connection_route.vpn_routes \
-          #   --non-interactive -auto-approve -no-color
-
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-vpc
-          # terragrunt destroy \
-          #   -target=aws_nat_gateway.gw \
-          #   -target=aws_vpn_gateway.vgw \
-          #   -target=aws_customer_gateway.cgw \
-          #   -target=aws_customer_gateway.cgwTerra \
-          #   --non-interactive -auto-approve -no-color
-
-
 
 
 
