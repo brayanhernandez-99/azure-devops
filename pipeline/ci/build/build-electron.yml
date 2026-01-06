@@ -545,8 +545,8 @@ jobs:
               exit 99
             } else {
               New-Item -ItemType Directory -Path "$(Build.ArtifactStagingDirectory)\electron-artifacts" | Out-Null
-              New-Item -ItemType Directory -Path "$(Build.ArtifactStagingDirectory)\electron-artifacts\windows" | Out-Null
-              Copy-Item -Path "$APP_DIR\*" -Destination "$(Build.ArtifactStagingDirectory)\electron-artifacts\windows" -Recurse -Force
+              New-Item -ItemType Directory -Path "$(Build.ArtifactStagingDirectory)\electron-artifacts\windows\$($env:environment)" | Out-Null
+              Copy-Item -Path "$APP_DIR\*" -Destination "$(Build.ArtifactStagingDirectory)\electron-artifacts\windows\$($env:environment)" -Recurse -Force
 
               Write-Host "`n📂 Directorio: $APP_DIR"
               Get-ChildItem "$APP_DIR" | Select-Object Mode, LastWriteTime, Length, Name | Format-Table
