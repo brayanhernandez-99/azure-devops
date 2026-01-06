@@ -237,8 +237,8 @@ jobs:
             echo -e "\n##vso[task.logissue type=error]⚠️ Error: archivos requeridos no encontrados."
             exit 99
           else
-            mkdir -p "$(Build.ArtifactStagingDirectory)/electron-artifacts/linux"
-            cp -R $APP_DIR/* "$(Build.ArtifactStagingDirectory)/electron-artifacts/linux/"
+            mkdir -p "$(Build.ArtifactStagingDirectory)/electron-artifacts/linux/$(environment)"
+            cp -R $APP_DIR/* "$(Build.ArtifactStagingDirectory)/electron-artifacts/linux/$(environment)/"
 
             echo -e "\n📂 Directorio: $APP_DIR"
             ls -l $APP_DIR
