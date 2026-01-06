@@ -91,7 +91,7 @@ jobs:
           set -e
           echo -e "\n📦 Cargando al Bucket S3..."
 
-          BASE_PATH="$(Pipeline.Workspace)/electron-artifacts/electron/linux"
+          BASE_PATH="$(Pipeline.Workspace)/electron-artifacts/electron/linux/$(environment)"
           echo -e "\n📂 Archivos a cargar: $BASE_PATH"
           ls -l "$BASE_PATH"
           echo ""
@@ -113,7 +113,7 @@ jobs:
           set -e
           echo -e "\n📦 Cargando al Bucket S3..."
 
-          BASE_PATH="$(Pipeline.Workspace)/electron-artifacts/electron/windows"
+          BASE_PATH="$(Pipeline.Workspace)/electron-artifacts/electron/windows/$(environment)"
           echo -e "\n📂 Archivos a cargar: $BASE_PATH"
           ls -l "$BASE_PATH"
           echo ""
