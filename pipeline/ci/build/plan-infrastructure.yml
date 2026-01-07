@@ -94,9 +94,13 @@ jobs:
           # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-elasticache/aws-service-elasticache
           # terragrunt plan --all --non-interactive -no-color
 
+
+
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/astro
           terragrunt plan --all --non-interactive -no-color
 
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-vpc
+          terragrunt plan --all --non-interactive -no-color
 
 
 
