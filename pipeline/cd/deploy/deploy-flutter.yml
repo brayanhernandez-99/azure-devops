@@ -92,27 +92,27 @@ jobs:
           region: ${{ parameters.region }}
           environments: ${{ parameters.environments }}
 
-      # - script: |
-      #     set -e
-      #     echo -e "\n📦 Cargando al Bucket S3..."
-      #     APK_NAME="invictus-$(environment)-$(version).apk"
-      #     BASE_PATH="$(Pipeline.Workspace)/flutter-artifact/flutter"
+      - script: |
+          set -e
+          echo -e "\n📦 Cargando al Bucket S3..."
+          APK_NAME="invictus-$(environment)-$(version).apk"
+          BASE_PATH="$(Pipeline.Workspace)/flutter-artifact/flutter"
           
-      #     echo "APK: $APK_NAME"
-      #     echo "Environment: $(environment)"
+          echo "APK: $APK_NAME"
+          echo "Environment: $(environment)"
 
-      #     echo -e "\n📁 Archivos a cargar:"
-      #     ls -la $BASE_PATH/*
+          echo -e "\n📁 Archivos a cargar:"
+          ls -la $BASE_PATH/*
 
-      #     aws s3 cp $BASE_PATH/$APK_NAME s3://repository-native/app-seller/android/$(environment)/$APK_NAME --acl public-read
+          aws s3 cp $BASE_PATH/$APK_NAME s3://repository-native/app-seller/android/$(environment)/$APK_NAME --acl public-read
 
-      #     echo -e "\n✅ Archivos subidos exitosamente."
-      #     echo "🔗 APK: $APK_NAME"
-      #     echo "🔗 URL: https://repository-native.s3.us-east-1.amazonaws.com/app-seller/android/$(environment)/$APK_NAME"
+          echo -e "\n✅ Archivos subidos exitosamente."
+          echo "🔗 APK: $APK_NAME"
+          echo "🔗 URL: https://repository-native.s3.us-east-1.amazonaws.com/app-seller/android/$(environment)/$APK_NAME"
 
-      #   displayName: "📤 Upload Bucket S3"
-      #   condition: succeeded()
-      #   env:
-      #     AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
-      #     AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
-      #     AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
+        displayName: "📤 Upload Bucket S3"
+        condition: succeeded()
+        env:
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
+          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
