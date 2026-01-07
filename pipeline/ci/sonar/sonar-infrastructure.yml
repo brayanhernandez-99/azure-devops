@@ -82,7 +82,7 @@ jobs:
           fi
         displayName: "🛡️ Quality Gate Check: $(Build.Repository.Name)"
         condition: succeeded()
-        continueOnError: true
+        # continueOnError: true
         env:
           SONAR_TOKEN: $(SONAR_TOKEN)
           SONAR_HOST_URL: $(SONAR_HOST_URL)
