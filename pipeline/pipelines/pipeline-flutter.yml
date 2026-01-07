@@ -7,12 +7,12 @@ stages:
           release: ${{ parameters.release }}
   
   - ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/') }}:
-    - stage: build_flutter_${{ environments }}
-      displayName: "📦 Build Flutter ${{ environments }}"
+    - stage: build_flutter
+      displayName: "📦 Build Flutter"
       dependsOn: semantic_version_flutter
       jobs:
         - template: ../ci/build/build-flutter.yml
-        
+
   #####################################################################
 
   - ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
