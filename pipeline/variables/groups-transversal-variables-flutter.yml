@@ -4,7 +4,11 @@ variables:
     - group: trasversal-flutter-keystore
 
     # Develop - Feature - Hotfix branch
-    - ${{ if or(eq(variables['Build.SourceBranchName'], 'develop'), startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')) }}:
+    - ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')) }}:
+        - group: trasversal-aws-developer
+        - group: variables-flutter-developer
+
+    - ${{ if eq(variables['Build.SourceBranchName'], 'develop')}}:
         
         - ${{ if eq(parameters.environments, 'develop') }}:
             - group: trasversal-aws-developer
