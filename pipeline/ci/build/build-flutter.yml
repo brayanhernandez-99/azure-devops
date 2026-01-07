@@ -68,7 +68,7 @@ jobs:
             refs/heads/develop)
               if [[ "$environments" == "develop_new" ]]; then
                 environment="dev_new"
-                appId="dev_new"
+                appId="dev"
               else
                 environment="dev"
                 appId="dev"
@@ -77,7 +77,7 @@ jobs:
             refs/heads/staging)
               if [[ "$environments" == "staging_new" ]]; then
                 environment="qa_new"
-                appId="qa_new"
+                appId="qa"
               else
                 environment="qa"
                 appId="qa"
@@ -145,7 +145,7 @@ jobs:
         condition: succeeded()
 
       - script: |
-          echo -e "\nℹ️ Actualizando version:"
+          echo -e "\nℹ️ Actualizando App ID:"
           echo "App Id: com.ux.mobile.$(appId)"
 
           NEW_APP_ID="com.ux.mobile.$(appId)"
