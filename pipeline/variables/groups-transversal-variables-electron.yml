@@ -4,11 +4,15 @@ variables:
   - group: trasversal-versions-invictus
 
   # Develop - Feature - Hotfix branch
-  - ${{ if or(eq(variables['Build.SourceBranchName'], 'develop'), startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')) }}:
+  - ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')) }}:
+        - group: trasversal-aws-developer 
+        - group: variables-electron-developer
+
+  - ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}:
       
       - ${{ if eq(parameters.environments, 'develop') }}:
         - group: trasversal-aws-developer 
-        - group: variables-electron-develop-old
+        - group: variables-electron-developer
 
       - ${{ if eq(parameters.environments, 'develop_new') }}:
         - group: trasversal-aws-develop
@@ -19,7 +23,7 @@ variables:
 
       - ${{ if eq(parameters.environments, 'staging') }}:
         - group: trasversal-aws-qa
-        - group: variables-electron-staging-old
+        - group: variables-electron-qa
 
       - ${{ if eq(parameters.environments, 'staging_new') }}:
         - group: trasversal-aws-staging
