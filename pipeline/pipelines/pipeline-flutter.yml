@@ -5,6 +5,13 @@ stages:
       - template: ../ci/semantic-version-integration.yml
         parameters:
           release: ${{ parameters.release }}
+  
+  - ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/') }}:
+    - stage: build_flutter
+      displayName: "📦 Build Flutter"
+      dependsOn: semantic_version_flutter
+      jobs:
+        - template: ../ci/build/build-flutter.yml
 
   #####################################################################
 
