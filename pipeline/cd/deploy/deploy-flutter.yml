@@ -90,6 +90,7 @@ jobs:
         condition: succeeded()
         env:
           region: ${{ parameters.region }}
+          environments: ${{ parameters.environments }}
 
       # - script: |
       #     set -e
