@@ -12,6 +12,7 @@ jobs:
       - template: ../../variables/groups-transversal-variables-flutter.yml
         parameters:
           region: ${{ parameters.region }}
+          environments: ${{ parameters.environments }}
 
     steps:
       - task: DownloadBuildArtifacts@0
@@ -64,8 +65,24 @@ jobs:
 
           case "$CURRENT_BRANCH" in
             refs/heads/feature/*) environment="dev"; appId="dev"; ;;
-            refs/heads/develop) environment="dev"; appId="dev"; ;;
-            refs/heads/staging) environment="qa"; appId="qa"; ;;
+            refs/heads/develop)
+              if [[ "$environments" == "develop_new" ]]; then
+                environment="dev_new"
+                appId="dev_new"
+              else
+                environment="dev"
+                appId="dev"
+              fi
+              ;;
+            refs/heads/staging)
+              if [[ "$environments" == "staging_new" ]]; then
+                environment="qa_new"
+                appId="qa_new"
+              else
+                environment="qa"
+                appId="qa"
+              fi
+              ;;
             refs/heads/master) 
               case "$region" in
                 "antioquia") environment="prd-gana"; appId="GANA"; ;;
@@ -96,6 +113,7 @@ jobs:
         condition: succeeded()
         env:
           region: ${{ parameters.region }}
+          environments: ${{ parameters.environments }}
 
       - script: |
           CURRENT_BRANCH="$(Build.SourceBranch)"
