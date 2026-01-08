@@ -102,6 +102,7 @@ jobs:
 
 
 
+          cat $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-vpc/terragrunt.hcl
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-vpc
           terragrunt plan --all --non-interactive -no-color
           terragrunt apply --all --non-interactive -no-color
