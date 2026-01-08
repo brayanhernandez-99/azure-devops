@@ -112,6 +112,7 @@ jobs:
           terragrunt apply \
             --terragrunt-non-interactive \
             -- \
+            -auto-approve \
             -target=aws_security_group.SG-FortigatePublic
 
 
