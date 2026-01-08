@@ -95,9 +95,13 @@ jobs:
 
 
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/redis-cache
-          terragrunt plan --all --non-interactive -no-color
+
+
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-elasticache/aws-service-sg
+          terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-elasticache/aws-service-elasticache-node
+          terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-elasticache/aws-service-elasticache-serverless
           terragrunt plan --all --non-interactive -no-color
 
 
