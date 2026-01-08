@@ -8,10 +8,10 @@ parameters:
       # - antioquia
       # - cap
       # - tolima
-      # - huila
-      # - cauca
-      # - boyaca
-      # - santander
+      - huila
+      - cauca
+      - boyaca
+      - santander
       - putumayo
 
 resources:
