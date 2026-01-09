@@ -99,7 +99,7 @@ jobs:
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/aws-service-sg-test
           terragrunt plan --all --non-interactive -no-color
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/aws-service-sg-test/.terraform.lock.hcl
+          cat $(Build.SourcesDirectory)/iac-terragrunt/invictus/aws-service-sg-test/.terraform.lock.hcl
 
 
 
