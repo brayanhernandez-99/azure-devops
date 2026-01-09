@@ -94,6 +94,111 @@ jobs:
           # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-ssm-parameter
           # terragrunt plan --all --non-interactive -no-color
 
+
+
+
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/astro/aws-service-sqs-dlq
+          # terragrunt plan --all --non-interactive -no-color
+
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/astro/aws-service-sqs
+          # terragrunt plan --all --non-interactive -no-color
+
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/awards/aws-service-sqs
+          # terragrunt plan --all --non-interactive -no-color
+
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/biometrics/aws-service-sqs
+          # terragrunt plan --all --non-interactive -no-color
+
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/collected/aws-service-sqs
+          # terragrunt plan --all --non-interactive -no-color
+
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/conciliation/aws-service-sqs
+          # terragrunt plan --all --non-interactive -no-color
+
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/dynamic-storage/aws-service-sqs
+          # terragrunt plan --all --non-interactive -no-color
+
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/generic-services/aws-service-sqs
+          # terragrunt plan --all --non-interactive -no-color
+
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-sqs
+          # terragrunt plan --all --non-interactive -no-color
+
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/legacy/aws-service-sqs
+          # terragrunt plan --all --non-interactive -no-color
+
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/lotteries/aws-service-sqs
+          # terragrunt plan --all --non-interactive -no-color
+
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/lotteries-games/aws-service-sqs
+          # terragrunt plan --all --non-interactive -no-color
+
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/millonario/aws-service-sqs
+          # terragrunt plan --all --non-interactive -no-color
+
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/money-control/aws-service-sqs
+          # terragrunt plan --all --non-interactive -no-color
+
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/online-games/aws-service-sqs
+          # terragrunt plan --all --non-interactive -no-color
+
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/papelery/aws-service-sqs
+          # terragrunt plan --all --non-interactive -no-color
+
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/payment-voucher/aws-service-sqs
+          # terragrunt plan --all --non-interactive -no-color
+
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/promotional/aws-service-sqs
+          # terragrunt plan --all --non-interactive -no-color
+
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/raffles/aws-service-sqs
+          # terragrunt plan --all --non-interactive -no-color
+
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges/aws-service-sqs
+          # terragrunt plan --all --non-interactive -no-color
+
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/scheduler/aws-service-sqs
+          # terragrunt plan --all --non-interactive -no-color
+
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/sellers/aws-service-sqs
+          # terragrunt plan --all --non-interactive -no-color
+
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/shopping-cart/aws-service-sqs
+          # terragrunt plan --all --non-interactive -no-color
+
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/sellers/aws-service-sqs
+          # terragrunt plan --all --non-interactive -no-color
+
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/siga/aws-service-sqs-dlq
+          # terragrunt plan --all --non-interactive -no-color
+
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/siga/aws-service-sqs
+          # terragrunt plan --all --non-interactive -no-color
+
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/transaction/aws-service-sqs
+          # terragrunt plan --all --non-interactive -no-color
+
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/transaction-astro/aws-service-sqs
+          # terragrunt plan --all --non-interactive -no-color
+
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/transaction-lotteries-games/aws-service-sqs
+          # terragrunt plan --all --non-interactive -no-color
+
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/transaction-notifier/aws-service-sqs
+          # terragrunt plan --all --non-interactive -no-color
+
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/transaction-recharges/aws-service-sqs
+          # terragrunt plan --all --non-interactive -no-color
+
+
+
+
+
+
+
+
+
+
           # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/lotteries-games/aws-service-secret-manager-national-bn3-secret
           # terragrunt plan --all --non-interactive -no-color
  
