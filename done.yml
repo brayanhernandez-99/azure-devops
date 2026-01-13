@@ -6,7 +6,21 @@
 # terragrunt apply --all --non-interactive -no-color
 
 
+ ##########
+          ####        SERVICIOS PENDIENTES DE DESPLEGAR EN PDN
+          ###########
 
+          # ################# Servicio de raspa (LISTO EN DEV)  PENDIENTE EN QA Y PDN
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/raspa
+          # terragrunt plan --all --non-interactive -no-color
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3/s3-raspa
+          # terragrunt plan --all --non-interactive -no-color
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-raspa
+          # terragrunt plan --all --non-interactive -no-color
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-raspa-policy
+          # terragrunt plan --all --non-interactive -no-color
+
+          
 
 ################## Eliminar redis  (LISTO EN DEV Y QA - PENDIENTE EN LAS PDN)
 # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/redis
@@ -261,3 +275,11 @@
 # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/transaction-recharges/aws-service-sqs
 # terragrunt plan --all --non-interactive -no-color
 # terragrunt apply --all --non-interactive -no-color
+
+
+
+
+# # # # # ##Pruebas CrossAccountRole
+
+          # # # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-iam-profile/deploy-CrossAccountRole
+          # # # terragrunt plan --all --non-interactive -no-color
