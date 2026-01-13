@@ -1,0 +1,263 @@
+
+
+################## Servicio de trino (LISTO EN DEV Y QA - PENDIENTE EN LAS PDN)
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/trino
+# terragrunt plan --all --non-interactive -no-color
+# terragrunt apply --all --non-interactive -no-color
+
+
+
+
+################## Eliminar redis  (LISTO EN DEV Y QA - PENDIENTE EN LAS PDN)
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/redis
+# terragrunt plan --all --non-interactive -no-color
+# terragrunt destroy --all --non-interactive -no-color
+
+
+
+
+################## Servicio de FTP Recaudos (LISTO EN DEV Y QA - PENDIENTE EN LAS PDN)
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-ftp/aws-service-s3
+# terragrunt plan --all --non-interactive -no-color
+# terragrunt apply --all --non-interactive -no-color
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-ftp/aws-service-iam
+# terragrunt plan --all --non-interactive -no-color
+# terragrunt apply --all --non-interactive -no-color
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-ftp/aws-service-sg
+# terragrunt plan --all --non-interactive -no-color
+# terragrunt apply --all --non-interactive -no-color
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-ftp/aws-service-ec2
+# terragrunt plan --all --non-interactive -no-color
+# terragrunt apply --all --non-interactive -no-color
+
+
+
+
+##################  SECRETS BN3, BN4, CHC (LISTO EN DEV Y QA - PENDIENTE EN LAS PDN)
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/lotteries-games/aws-service-secret-manager-national-bn3-secret
+# terragrunt plan --all --non-interactive -no-color
+# terragrunt apply --all --non-interactive -no-color
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/lotteries-games/aws-service-secret-manager-national-bn4-secret
+# terragrunt plan --all --non-interactive -no-color
+# terragrunt apply --all --non-interactive -no-color
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/lotteries-games/aws-service-secret-manager-national-chc-secret
+# terragrunt plan --all --non-interactive -no-color
+# terragrunt apply --all --non-interactive -no-color
+
+
+
+
+################## PERMISOS S3 (LISTO EN DEV Y QA - PENDIENTE EN LAS PDN)
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/astro/aws-service-s3
+# terragrunt plan --all --non-interactive -no-color
+# terragrunt apply --all --non-interactive -no-color
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/awards/aws-service-s3
+# terragrunt plan --all --non-interactive -no-color
+# terragrunt apply --all --non-interactive -no-color
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/biometrics/aws-service-s3
+# terragrunt plan --all --non-interactive -no-color
+# terragrunt apply --all --non-interactive -no-color
+# cd $(Build.SourcesDirectory)
+# find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/collected/aws-service-s3
+# terragrunt plan --all --non-interactive -no-color
+# terragrunt apply --all --non-interactive -no-color
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/conciliation/aws-service-s3
+# terragrunt plan --all --non-interactive -no-color
+# terragrunt apply --all --non-interactive -no-color
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/dynamic-storage/aws-service-s3
+# terragrunt plan --all --non-interactive -no-color
+# terragrunt apply --all --non-interactive -no-color
+# cd $(Build.SourcesDirectory)
+# find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/external-wager/aws-service-s3
+# terragrunt plan --all --non-interactive -no-color
+# terragrunt apply --all --non-interactive -no-color
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/generic-services/aws-service-s3
+# terragrunt plan --all --non-interactive -no-color
+# terragrunt apply --all --non-interactive -no-color
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/lotteries-games/aws-service-s3
+# terragrunt plan --all --non-interactive -no-color
+# terragrunt apply --all --non-interactive -no-color
+# cd $(Build.SourcesDirectory)
+# find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/millonario/aws-service-s3
+# terragrunt plan --all --non-interactive -no-color
+# terragrunt apply --all --non-interactive -no-color
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/online-games/aws-service-s3
+# terragrunt plan --all --non-interactive -no-color
+# terragrunt apply --all --non-interactive -no-color
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/payment-voucher/aws-service-s3
+# terragrunt plan --all --non-interactive -no-color
+# terragrunt apply --all --non-interactive -no-color
+# cd $(Build.SourcesDirectory)
+# find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/payments/aws-service-s3
+# terragrunt plan --all --non-interactive -no-color
+# terragrunt apply --all --non-interactive -no-color
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/payments/aws-service-s3
+# terragrunt plan --all --non-interactive -no-color
+# terragrunt apply --all --non-interactive -no-color
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/products/aws-service-s3
+# terragrunt plan --all --non-interactive -no-color
+# terragrunt apply --all --non-interactive -no-color
+# cd $(Build.SourcesDirectory)
+# find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/products/aws-service-s3-products-icons
+# terragrunt plan --all --non-interactive -no-color
+# terragrunt apply --all --non-interactive -no-color
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges/aws-service-s3
+# terragrunt plan --all --non-interactive -no-color
+# terragrunt apply --all --non-interactive -no-color
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/security/aws-service-s3
+# terragrunt plan --all --non-interactive -no-color
+# terragrunt apply --all --non-interactive -no-color
+# cd $(Build.SourcesDirectory)
+# find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/sellers/aws-service-s3
+# terragrunt plan --all --non-interactive -no-color
+# terragrunt apply --all --non-interactive -no-color
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/shopping-cart/aws-service-s3
+# terragrunt plan --all --non-interactive -no-color
+# terragrunt apply --all --non-interactive -no-color
+# cd $(Build.SourcesDirectory)
+# find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-s3-lotteries-physical
+# terragrunt plan --all --non-interactive -no-color
+# terragrunt apply --all --non-interactive -no-color
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/remittances/aws-service-s3
+# terragrunt plan --all --non-interactive -no-color
+# terragrunt apply --all --non-interactive -no-color
+
+
+
+
+################## HOMOLOGACIÓN CMK (LISTO EN DEV Y QA - PENDIENTE EN LAS PDN)
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-dynamo-ckm
+# terragrunt plan --all --non-interactive -no-color
+# terragrunt apply --all --non-interactive -no-color
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds-ckm
+# terragrunt plan --all --non-interactive -no-color
+# terragrunt apply --all --non-interactive -no-color
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-secrets-ckm
+# terragrunt plan --all --non-interactive -no-color
+# terragrunt apply --all --non-interactive -no-color
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-ssm-parameter
+# terragrunt plan --all --non-interactive -no-color
+# terragrunt apply --all --non-interactive -no-color
+
+
+
+
+################## HOMOLOGACIÓN SQS (LISTO EN DEV Y QA - PENDIENTE EN LAS PDN)
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/astro/aws-service-sqs-dlq
+# terragrunt plan --all --non-interactive -no-color
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/astro/aws-service-sqs
+# terragrunt plan --all --non-interactive -no-color
+# terragrunt apply --all --non-interactive -no-color
+# cd $(Build.SourcesDirectory)
+# find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/awards/aws-service-sqs
+# terragrunt plan --all --non-interactive -no-color
+# terragrunt apply --all --non-interactive -no-color
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/biometrics/aws-service-sqs
+# terragrunt plan --all --non-interactive -no-color
+# terragrunt apply --all --non-interactive -no-color
+# cd $(Build.SourcesDirectory)
+# find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/collected/aws-service-sqs
+# terragrunt plan --all --non-interactive -no-color
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/conciliation/aws-service-sqs
+# terragrunt plan --all --non-interactive -no-color
+# terragrunt apply --all --non-interactive -no-color
+# cd $(Build.SourcesDirectory)
+# find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/dynamic-storage/aws-service-sqs
+# terragrunt plan --all --non-interactive -no-color
+# terragrunt apply --all --non-interactive -no-color
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/generic-services/aws-service-sqs
+# terragrunt plan --all --non-interactive -no-color
+# terragrunt apply --all --non-interactive -no-color
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-sqs
+# terragrunt plan --all --non-interactive -no-color
+# terragrunt apply --all --non-interactive -no-color
+# cd $(Build.SourcesDirectory)
+# find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/legacy/aws-service-sqs
+# terragrunt plan --all --non-interactive -no-color
+# terragrunt apply --all --non-interactive -no-color
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/lotteries/aws-service-sqs
+# terragrunt plan --all --non-interactive -no-color
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/lotteries-games/aws-service-sqs
+# terragrunt plan --all --non-interactive -no-color
+# terragrunt apply --all --non-interactive -no-color
+# cd $(Build.SourcesDirectory)
+# find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/millonario/aws-service-sqs
+# terragrunt plan --all --non-interactive -no-color
+# terragrunt apply --all --non-interactive -no-color
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/money-control/aws-service-sqs
+# terragrunt plan --all --non-interactive -no-color
+# terragrunt apply --all --non-interactive -no-color
+# cd $(Build.SourcesDirectory)
+# find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/online-games/aws-service-sqs
+# terragrunt plan --all --non-interactive -no-color
+# terragrunt apply --all --non-interactive -no-color
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/papelery/aws-service-sqs
+# terragrunt plan --all --non-interactive -no-color
+# terragrunt apply --all --non-interactive -no-color
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/payment-voucher/aws-service-sqs-dlq
+# terragrunt plan --all --non-interactive -no-color
+# terragrunt apply --all --non-interactive -no-color
+# cd $(Build.SourcesDirectory)
+# find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/payment-voucher/aws-service-sqs
+# terragrunt plan --all --non-interactive -no-color
+# terragrunt apply --all --non-interactive -no-color
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/promotional/aws-service-sqs
+# terragrunt plan --all --non-interactive -no-color
+# terragrunt apply --all --non-interactive -no-color
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/raffles/aws-service-sqs
+# terragrunt plan --all --non-interactive -no-color
+# terragrunt apply --all --non-interactive -no-color
+# cd $(Build.SourcesDirectory)
+# find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges/aws-service-sqs
+# terragrunt plan --all --non-interactive -no-color
+# terragrunt apply --all --non-interactive -no-color
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/scheduler/aws-service-sqs
+# terragrunt plan --all --non-interactive -no-color
+# terragrunt apply --all --non-interactive -no-color
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/sellers/aws-service-sqs
+# terragrunt plan --all --non-interactive -no-color
+# terragrunt apply --all --non-interactive -no-color
+# cd $(Build.SourcesDirectory)
+# find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/shopping-cart/aws-service-sqs
+# terragrunt plan --all --non-interactive -no-color
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/siga/aws-service-sqs-dlq
+# terragrunt plan --all --non-interactive -no-color
+# terragrunt apply --all --non-interactive -no-color
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/siga/aws-service-sqs
+# terragrunt plan --all --non-interactive -no-color
+# terragrunt apply --all --non-interactive -no-color
+# cd $(Build.SourcesDirectory)
+# find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/transaction/aws-service-sqs
+# terragrunt plan --all --non-interactive -no-color
+# terragrunt apply --all --non-interactive -no-color
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/transaction-astro/aws-service-sqs
+# terragrunt plan --all --non-interactive -no-color
+# terragrunt apply --all --non-interactive -no-color
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/transaction-lotteries-games/aws-service-sqs
+# terragrunt plan --all --non-interactive -no-color
+# terragrunt apply --all --non-interactive -no-color
+# cd $(Build.SourcesDirectory)
+# find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/transaction-notifier/aws-service-sqs
+# terragrunt plan --all --non-interactive -no-color
+# terragrunt apply --all --non-interactive -no-color
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/transaction-recharges/aws-service-sqs
+# terragrunt plan --all --non-interactive -no-color
+# terragrunt apply --all --non-interactive -no-color
