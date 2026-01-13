@@ -9,6 +9,7 @@ jobs:
       - template: ../../variables/groups-transversal-variables-frontend.yml
         parameters:
           region: ${{ parameters.region }}
+          environments: ${{ parameters.environments }}
 
     strategy:
       matrix:
@@ -60,7 +61,19 @@ jobs:
       - script: |
           set -e
           echo -e "\n📦 Cargando al Bucket S3..."
-          BASE_PATH="$(Pipeline.Workspace)/downloaded-dists/$region/$(msName)"
+          
+          ######## MULTI DEPLOY ##############
+          CURRENT_BRANCH=$(echo $(Build.SourceBranch))
+          if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|staging)$ ]]; then
+            BASE_PATH="$(Pipeline.Workspace)/downloaded-dists/$environments/$(msName)"
+          else
+            BASE_PATH="$(Pipeline.Workspace)/downloaded-dists/$region/$(msName)"
+          fi
+
+          ###########DEPLOY UNICO#########################
+          # BASE_PATH="$(Pipeline.Workspace)/downloaded-dists/$region/$(msName)"
+
+
           echo -e "\n📂 Archivos a cargar: $BASE_PATH"
           ls -l "$BASE_PATH"
 
@@ -76,6 +89,7 @@ jobs:
         condition: succeeded()
         env:
           region: ${{ parameters.region }}
+          environments: ${{ parameters.environments }}
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
