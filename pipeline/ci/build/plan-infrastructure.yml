@@ -93,8 +93,8 @@ jobs:
           # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-secrets-ckm
           # terragrunt plan --all --non-interactive -no-color
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-ssm-parameter
-          terragrunt plan --all --non-interactive -no-color
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-ssm-parameter
+          # terragrunt plan --all --non-interactive -no-color
 
 
 
@@ -525,13 +525,13 @@ jobs:
           # ##################################IMPORT DB#############################################################
 
 
-          # # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds
 
-          # # terragrunt init -reconfigure
+          terragrunt init -reconfigure
 
-          # # terragrunt state list -no-color
+          terragrunt state list -no-color
 
-          # # terragrunt import aws_rds_cluster.default invictus-db
+          terragrunt import aws_rds_cluster.default invictus-db
 
 
           # # terragrunt import \
