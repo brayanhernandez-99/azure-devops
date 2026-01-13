@@ -91,8 +91,8 @@ stages:
           apps: ${{ parameters.apps }}
           pr_id: ${{ parameters.pr_id }}
           release: ${{ parameters.release }}
-          environments_new_develop: ${{ parameters.environments_new_develop }}
-          environments_new_staging: ${{ parameters.environments_new_staging }}
+          # environments_new_develop: ${{ parameters.environments_new_develop }}
+          # environments_new_staging: ${{ parameters.environments_new_staging }}
 
   #
   # MicroServices

@@ -9,7 +9,7 @@ jobs:
       - template: ../../variables/groups-transversal-variables-frontend.yml
         parameters:
           region: ${{ parameters.region }}
-          environments: ${{ parameters.environments }}
+          # environments: ${{ parameters.environments }}
 
     strategy:
       matrix:
@@ -202,18 +202,18 @@ jobs:
             exit 99
           else
             ##################################DEPLOY MULTI AMBIENTE############################
-            CURRENT_BRANCH=$(echo $(Build.SourceBranch))
-            if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|staging)$ ]]; then
-              mkdir -p "$(Build.ArtifactStagingDirectory)/dists/$environments"
-              cp -R $DIST_PATH $(Build.ArtifactStagingDirectory)/dists/$environments/$(msName)
-            else
-              mkdir -p "$(Build.ArtifactStagingDirectory)/dists/$region"
-              cp -R $DIST_PATH $(Build.ArtifactStagingDirectory)/dists/$region/$(msName)
-            fi
+            # CURRENT_BRANCH=$(echo $(Build.SourceBranch))
+            # if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|staging)$ ]]; then
+            #   mkdir -p "$(Build.ArtifactStagingDirectory)/dists/$environments"
+            #   cp -R $DIST_PATH $(Build.ArtifactStagingDirectory)/dists/$environments/$(msName)
+            # else
+            #   mkdir -p "$(Build.ArtifactStagingDirectory)/dists/$region"
+            #   cp -R $DIST_PATH $(Build.ArtifactStagingDirectory)/dists/$region/$(msName)
+            # fi
             
             #########################DEPLOY UNICO AMBIENTE#########################
-            # mkdir -p "$(Build.ArtifactStagingDirectory)/dists/$region"
-            # cp -R $DIST_PATH $(Build.ArtifactStagingDirectory)/dists/$region/$(msName)
+            mkdir -p "$(Build.ArtifactStagingDirectory)/dists/$region"
+            cp -R $DIST_PATH $(Build.ArtifactStagingDirectory)/dists/$region/$(msName)
 
             echo "✅ Build generado correctamente en $DIST_PATH"
             ls -l "$DIST_PATH"
