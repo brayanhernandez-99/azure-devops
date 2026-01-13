@@ -1,28 +1,31 @@
 
 
-################## Servicio de trino (LISTO EN DEV Y QA - PENDIENTE EN LAS PDN)
+################## Servicio de trino (LISTO EN DEV Y QA - PENDIENTE EN LAS PDN) ##################
 # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/trino
 # terragrunt plan --all --non-interactive -no-color
 # terragrunt apply --all --non-interactive -no-color
 
 
- ##########
-          ####        SERVICIOS PENDIENTES DE DESPLEGAR EN PDN
-          ###########
 
-          # ################# Servicio de raspa (LISTO EN DEV)  PENDIENTE EN QA Y PDN
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/raspa
-          # terragrunt plan --all --non-interactive -no-color
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3/s3-raspa
-          # terragrunt plan --all --non-interactive -no-color
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-raspa
-          # terragrunt plan --all --non-interactive -no-color
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-raspa-policy
-          # terragrunt plan --all --non-interactive -no-color
 
-          
+################## Servicio de raspa (LISTO EN DEV Y QA - PENDIENTE EN LAS PDN) ##################
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/raspa
+# terragrunt plan --all --non-interactive -no-color
+# terragrunt apply --all --non-interactive -no-color
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3/s3-raspa
+# terragrunt plan --all --non-interactive -no-color
+# terragrunt apply --all --non-interactive -no-color
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-raspa
+# terragrunt plan --all --non-interactive -no-color
+# terragrunt apply --all --non-interactive -no-color
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-raspa-policy
+# terragrunt plan --all --non-interactive -no-color
+# terragrunt apply --all --non-interactive -no-color
 
-################## Eliminar redis  (LISTO EN DEV Y QA - PENDIENTE EN LAS PDN)
+
+         
+
+################## Eliminar redis  (LISTO EN DEV Y QA - PENDIENTE EN LAS PDN) ##################
 # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/redis
 # terragrunt plan --all --non-interactive -no-color
 # terragrunt destroy --all --non-interactive -no-color
@@ -30,7 +33,7 @@
 
 
 
-################## Servicio de FTP Recaudos (LISTO EN DEV Y QA - PENDIENTE EN LAS PDN)
+################## Servicio de FTP Recaudos (LISTO EN DEV Y QA - PENDIENTE EN LAS PDN) ##################
 # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-ftp/aws-service-s3
 # terragrunt plan --all --non-interactive -no-color
 # terragrunt apply --all --non-interactive -no-color
@@ -47,7 +50,7 @@
 
 
 
-##################  SECRETS BN3, BN4, CHC (LISTO EN DEV Y QA - PENDIENTE EN LAS PDN)
+##################  SECRETS BN3, BN4, CHC (LISTO EN DEV Y QA - PENDIENTE EN LAS PDN) ##################
 # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/lotteries-games/aws-service-secret-manager-national-bn3-secret
 # terragrunt plan --all --non-interactive -no-color
 # terragrunt apply --all --non-interactive -no-color
@@ -61,7 +64,7 @@
 
 
 
-################## PERMISOS S3 (LISTO EN DEV Y QA - PENDIENTE EN LAS PDN)
+################## PERMISOS S3 (LISTO EN DEV Y QA - PENDIENTE EN LAS PDN) ##################
 # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/astro/aws-service-s3
 # terragrunt plan --all --non-interactive -no-color
 # terragrunt apply --all --non-interactive -no-color
@@ -146,7 +149,7 @@
 
 
 
-################## HOMOLOGACIÓN CMK (LISTO EN DEV Y QA - PENDIENTE EN LAS PDN)
+################## HOMOLOGACIÓN CMK (LISTO EN DEV Y QA - PENDIENTE EN LAS PDN) ##################
 # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-dynamo-ckm
 # terragrunt plan --all --non-interactive -no-color
 # terragrunt apply --all --non-interactive -no-color
@@ -163,7 +166,7 @@
 
 
 
-################## HOMOLOGACIÓN SQS (LISTO EN DEV Y QA - PENDIENTE EN LAS PDN)
+################## HOMOLOGACIÓN SQS (LISTO EN DEV Y QA - PENDIENTE EN LAS PDN) ##################
 # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/astro/aws-service-sqs-dlq
 # terragrunt plan --all --non-interactive -no-color
 # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/astro/aws-service-sqs
@@ -279,7 +282,19 @@
 
 
 
-# # # # # ##Pruebas CrossAccountRole
+################## Pruebas CrossAccountRole ##################
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-iam-profile/deploy-CrossAccountRole
+# terragrunt plan --all --non-interactive -no-color
+# terragrunt apply --all --non-interactive -no-color
 
-          # # # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-iam-profile/deploy-CrossAccountRole
-          # # # terragrunt plan --all --non-interactive -no-color
+
+
+
+
+################## Cambios VPC ##################
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-vpc
+# terragrunt plan --all --non-interactive -no-color
+# terragrunt apply --all --non-interactive -no-color
+# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/metabase
+# terragrunt plan --all --non-interactive -no-color
+# terragrunt apply --all --non-interactive -no-color
