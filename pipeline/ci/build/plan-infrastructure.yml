@@ -88,9 +88,9 @@ jobs:
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds
 
-          terragrunt init -reconfigure
-          terragrunt import aws_rds_cluster.default invictus-db
-          terragrunt state list -no-color
+          # terragrunt init -reconfigure
+          # terragrunt import aws_rds_cluster.default invictus-db
+          # terragrunt state list -no-color
           terragrunt plan --all --non-interactive -no-color
 
 
