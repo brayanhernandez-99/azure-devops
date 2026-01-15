@@ -49,10 +49,25 @@ stages:
           - template: ../ci/build/build-backend.yml
 
   - ${{ if in(variables['Build.SourceBranchName'], 'develop', 'staging') }}:
-      - stage: deploy_micro_service
-        displayName: "🚀 Deploy MicroService"
-        dependsOn: build_micro_service
-        jobs:
-          - template: ../cd/deployment.yml
-            parameters:
-              release: ${{ parameters.release }}
+
+    - ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}: 
+      - ${{ each environments in parameters.environments_new_develop }}:
+        - stage: deploy_micro_service_${{ environments }}
+          displayName: "🚀 Deploy MicroService ${{ environments }}"
+          dependsOn: build_micro_service
+          jobs:
+            - template: ../cd/deployment.yml
+              parameters:
+                environments: ${{ environments }}
+                release: ${{ parameters.release }}
+    
+    - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
+      - ${{ each environments in parameters.environments_new_staging }}:
+        - stage: deploy_micro_service_${{ environments }}
+          displayName: "🚀 Deploy MicroService ${{ environments }}"
+          dependsOn: build_micro_service
+          jobs:
+            - template: ../cd/deployment.yml
+              parameters:
+                environments: ${{ environments }}
+                release: ${{ parameters.release }}

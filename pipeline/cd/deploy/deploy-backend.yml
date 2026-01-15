@@ -9,6 +9,7 @@ jobs:
       - template: ../../variables/groups-transversal-variables-backend.yml
         parameters:
           region: ${{ parameters.region }}
+          environments: ${{ parameters.environments }}
 
     steps:
       - script: |
@@ -118,6 +119,7 @@ jobs:
           export AWS_REGION
 
           BRANCH_NAME="$BUILD_SOURCEBRANCHNAME"
+          BRANCH_NAME_MULTI=$environments
           REPO_NAME="$BUILD_REPOSITORY_NAME"
           RED="${red:-}"
 
@@ -149,17 +151,14 @@ jobs:
 
           case "$(cleanMsName)" in
             notifier)
-              if [[ "$BRANCH_NAME" == "staging" || "$RED" == "antioquia" ]]; then
-              # if [[ "$BRANCH_NAME" == "develop" || "$BRANCH_NAME" == "staging" || "$RED" == "antioquia" ]]; then
+              if [[ ( "$BRANCH_NAME" == "develop" && "$BRANCH_NAME_MULTI" == "develop" ) || ( "$BRANCH_NAME" == "staging" && "$BRANCH_NAME_MULTI" == "staging" ) || "$RED" == "antioquia" ]]; then
                 set_cluster_service "msnotifier-cluster" "msnotifier-fg-service"
               fi
               ;;
             raffle)
-              if [[ "$BRANCH_NAME" == "staging" || "$RED" == "antioquia" ]]; then
-              # if [[ "$BRANCH_NAME" == "develop" || "$BRANCH_NAME" == "staging" || "$RED" == "antioquia" ]]; then
+              if [[ ( "$BRANCH_NAME" == "develop" && "$BRANCH_NAME_MULTI" == "develop" ) || ( "$BRANCH_NAME" == "staging" && "$BRANCH_NAME_MULTI" == "staging" ) || "$RED" == "antioquia" ]]; then
                 set_cluster_service "raffles-ms-cluster" "raffles-ms-fg-service"
-              elif [[ "$RED" != "antioquia" && "$BRANCH_NAME" != "staging" ]]; then
-              # elif [[ "$RED" != "antioquia" && "$BRANCH_NAME" != "develop" && "$BRANCH_NAME" != "staging" ]]; then
+              elif [[ "$RED" != "antioquia" && ! ( ( "$BRANCH_NAME" == "develop" && "$BRANCH_NAME_MULTI" == "develop" ) || ( "$BRANCH_NAME" == "staging" && "$BRANCH_NAME_MULTI" == "staging" ) ) ]]; then
                 SERVICES="raffles"
               fi
               ;;
@@ -167,8 +166,7 @@ jobs:
 
           # ⚙️ Casos específicos para BFFs
           if [[ "$REPO_NAME" == "$name_bff" ]]; then
-              if [[ "$BRANCH_NAME" == "staging" || "$RED" == "antioquia" ]]; then
-              # if [[ "$BRANCH_NAME" == "develop" || "$BRANCH_NAME" == "staging" || "$RED" == "antioquia" ]]; then
+              if [[ ( "$BRANCH_NAME" == "develop" && "$BRANCH_NAME_MULTI" == "develop" ) || ( "$BRANCH_NAME" == "staging" && "$BRANCH_NAME_MULTI" == "staging" ) || "$RED" == "antioquia" ]]; then
                   set_cluster_service "bff-${CLEAN_NAME}-cluster" "bff-${CLEAN_NAME}-fg-service"
               fi
           fi
@@ -198,6 +196,7 @@ jobs:
           ne(variables['cleanMsName'], 'transaction'))
         env:
           red: ${{ parameters.region }}
+          environments: ${{ parameters.environments }}
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
@@ -215,8 +214,8 @@ jobs:
           echo "📦 Repo: $REPO_NAME"
           echo "🌿 Branch: $BRANCH_NAME"
 
-          if [[ "$BRANCH_NAME" == "staging" || "$RED" == "antioquia" ]]; then
-          # if [[ "$BRANCH_NAME" == "develop" || "$BRANCH_NAME" == "staging" || "$RED" == "antioquia" ]]; then
+        
+          if [[ ( "$BRANCH_NAME" == "develop" && "$BRANCH_NAME_MULTI" == "develop" ) || ( "$BRANCH_NAME" == "staging" && "$BRANCH_NAME_MULTI" == "staging" ) || "$RED" == "antioquia" ]]; then
             clusters=("transaction-ms-cluster" "transaction-astro-ms-cluster" "transaction-lg-ms-cluster" "transaction-recharges-ms-cluster")
             services=("transaction-ms-fg-service" "transaction-astro-ms-fg-service" "transaction-lg-ms-fg-service" "transaction-recharges-ms-fg-service")
           else
