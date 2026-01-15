@@ -30,6 +30,7 @@ variables:
     - group: parameters-infrastructure-antioquia
     - group: secrets-infrastructure-antioquia
     - group: autoscaling-infrastructure-antioquia
+    - group: ftp-infrastructure-antioquia
 
   - ${{ if and(eq(parameters.region, 'cap'), eq(variables['Build.SourceBranchName'], 'master')) }}:
     - group: trasversal-aws-antioquia-cap
@@ -38,6 +39,7 @@ variables:
     - group: parameters-infrastructure-antioquia-cap
     - group: secrets-infrastructure-antioquia-cap
     - group: autoscaling-infrastructure-antioquia-cap
+    - group: ftp-infrastructure-antioquia-cap
 
   - ${{ if and(eq(parameters.region, 'tolima'), eq(variables['Build.SourceBranchName'], 'master')) }}:
     - group: trasversal-aws-tolima
@@ -46,6 +48,7 @@ variables:
     - group: parameters-infrastructure-tolima
     - group: secrets-infrastructure-tolima
     - group: autoscaling-infrastructure-tolima
+    - group: ftp-infrastructure-tolima
 
   - ${{ if and(eq(parameters.region, 'huila'), eq(variables['Build.SourceBranchName'], 'master')) }}:
     - group: trasversal-aws-huila
@@ -54,6 +57,7 @@ variables:
     - group: parameters-infrastructure-huila
     - group: secrets-infrastructure-huila
     - group: autoscaling-infrastructure-huila
+    - group: ftp-infrastructure-huila
 
   - ${{ if and(eq(parameters.region, 'cauca'), eq(variables['Build.SourceBranchName'], 'master')) }}:
     - group: trasversal-aws-cauca
@@ -62,6 +66,7 @@ variables:
     - group: parameters-infrastructure-cauca
     - group: secrets-infrastructure-cauca
     - group: autoscaling-infrastructure-cauca
+    - group: ftp-infrastructure-cauca
 
   - ${{ if and(eq(parameters.region, 'boyaca'), eq(variables['Build.SourceBranchName'], 'master')) }}:
     - group: trasversal-aws-boyaca
@@ -70,6 +75,7 @@ variables:
     - group: parameters-infrastructure-boyaca
     - group: secrets-infrastructure-boyaca
     - group: autoscaling-infrastructure-boyaca
+    - group: ftp-infrastructure-boyaca
 
   - ${{ if and(eq(parameters.region, 'santander'), eq(variables['Build.SourceBranchName'], 'master')) }}:
     - group: trasversal-aws-santander
@@ -78,6 +84,7 @@ variables:
     - group: parameters-infrastructure-santander
     - group: secrets-infrastructure-santander
     - group: autoscaling-infrastructure-santander
+    - group: ftp-infrastructure-santander
     
   - ${{ if and(eq(parameters.region, 'putumayo'), eq(variables['Build.SourceBranchName'], 'master')) }}:
     - group: trasversal-aws-putumayo
@@ -86,3 +93,4 @@ variables:
     - group: parameters-infrastructure-putumayo
     - group: secrets-infrastructure-putumayo
     - group: autoscaling-infrastructure-putumayo
+    - group: ftp-infrastructure-putumayo
