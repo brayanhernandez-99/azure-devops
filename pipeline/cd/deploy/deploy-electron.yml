@@ -136,7 +136,7 @@ jobs:
           echo -e "\n📦 Send Message SQS..."
           echo "📦 Account: $(ACCOUNT_ID_INVICTUS)"
           echo "📦 Version: $(version)"
-          
+
           aws sqs send-message \
             --queue-url https://sqs.us-east-1.amazonaws.com/$(ACCOUNT_ID_INVICTUS)/DynamicStorage \
             --message-body '{

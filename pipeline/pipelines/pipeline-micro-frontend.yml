@@ -34,7 +34,6 @@ stages:
   # #####################################################################
 
   - ${{ if ne(variables['Build.SourceBranchName'], 'master') }}:
-
       ##################### DEPLOY UNICO AMBIENTE #########################
       - stage: build_micro_frontend
         displayName: "📦 Build MicroFrontend"
@@ -65,9 +64,8 @@ stages:
                   apps: ${{ parameters.apps }}
                   release: ${{ parameters.release }}
 
-
       ##################### DEPLOY MULTI AMBIENTES #########################
-      # - ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}: 
+      # - ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}:
       #   - ${{ each environments in parameters.environments_new_develop }}:
       #     - stage: build_micro_frontend_${{ environments }}
       #       displayName: "📦 Build MicroFrontend ${{ environments }}"

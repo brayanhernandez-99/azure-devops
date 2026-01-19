@@ -20,7 +20,7 @@ jobs:
           set -e
           echo -e "\n📦 Cargando al Bucket S3..."
           ls -l
-          
+
           aws s3 cp . s3://configuration-$(ACCOUNT_ID_INVICTUS) --recursive --exclude "pipeline/*"
         displayName: "📤 Upload Configuration to S3"
         condition: and(succeeded(),

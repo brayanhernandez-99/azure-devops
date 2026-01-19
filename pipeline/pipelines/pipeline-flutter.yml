@@ -5,13 +5,13 @@ stages:
       - template: ../ci/semantic-version-integration.yml
         parameters:
           release: ${{ parameters.release }}
-  
+
   - ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/') }}:
-    - stage: build_flutter
-      displayName: "📦 Build Flutter"
-      dependsOn: semantic_version_flutter
-      jobs:
-        - template: ../ci/build/build-flutter.yml
+      - stage: build_flutter
+        displayName: "📦 Build Flutter"
+        dependsOn: semantic_version_flutter
+        jobs:
+          - template: ../ci/build/build-flutter.yml
 
   #####################################################################
 
@@ -37,41 +37,40 @@ stages:
   #####################################################################
 
   - ${{ if ne(variables['Build.SourceBranchName'], 'master') }}:
+      - ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}:
+          - ${{ each environments in parameters.environments_new_develop }}:
+              - stage: build_flutter_${{ environments }}
+                displayName: "📦 Build Flutter ${{ environments }}"
+                dependsOn: semantic_version_flutter
+                jobs:
+                  - template: ../ci/build/build-flutter.yml
+                    parameters:
+                      environments: ${{ environments }}
 
-      - ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}: 
-        - ${{ each environments in parameters.environments_new_develop }}:
-          - stage: build_flutter_${{ environments }}
-            displayName: "📦 Build Flutter ${{ environments }}"
-            dependsOn: semantic_version_flutter
-            jobs:
-              - template: ../ci/build/build-flutter.yml
-                parameters:
-                    environments: ${{ environments }}
+              - stage: deploy_flutter_${{ environments }}
+                displayName: "🚀 Deploy Flutter ${{ environments }}"
+                dependsOn: build_flutter_${{ environments }}
+                jobs:
+                  - template: ../cd/deployment.yml
+                    parameters:
+                      release: ${{ parameters.release }}
+                      environments: ${{ environments }}
 
-          - stage: deploy_flutter_${{ environments }}
-            displayName: "🚀 Deploy Flutter ${{ environments }}"
-            dependsOn: build_flutter_${{ environments }}
-            jobs:
-              - template: ../cd/deployment.yml
-                parameters:
-                  release: ${{ parameters.release }}
-                  environments: ${{ environments }}
-      
       - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
-        - ${{ each environments in parameters.environments_new_staging }}:
-          - stage: build_flutter_${{ environments }}
-            displayName: "📦 Build Flutter ${{ environments }}"
-            dependsOn: semantic_version_flutter
-            jobs:
-              - template: ../ci/build/build-flutter.yml
-                parameters:
-                    environments: ${{ environments }}
+          - ${{ each environments in parameters.environments_new_staging }}:
+              - stage: build_flutter_${{ environments }}
+                displayName: "📦 Build Flutter ${{ environments }}"
+                dependsOn: semantic_version_flutter
+                jobs:
+                  - template: ../ci/build/build-flutter.yml
+                    parameters:
+                      environments: ${{ environments }}
 
-          - stage: deploy_flutter_${{ environments }}
-            displayName: "🚀 Deploy Flutter ${{ environments }}"
-            dependsOn: build_flutter_${{ environments }}
-            jobs:
-              - template: ../cd/deployment.yml
-                parameters:
-                  release: ${{ parameters.release }}
-                  environments: ${{ environments }}
+              - stage: deploy_flutter_${{ environments }}
+                displayName: "🚀 Deploy Flutter ${{ environments }}"
+                dependsOn: build_flutter_${{ environments }}
+                jobs:
+                  - template: ../cd/deployment.yml
+                    parameters:
+                      release: ${{ parameters.release }}
+                      environments: ${{ environments }}

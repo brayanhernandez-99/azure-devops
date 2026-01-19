@@ -215,7 +215,7 @@ jobs:
           echo "📦 Repo: $REPO_NAME"
           echo "🌿 Branch: $BRANCH_NAME"
 
-        
+
           if [[ ( "$BRANCH_NAME" == "develop" && "$BRANCH_NAME_MULTI" == "develop" ) || ( "$BRANCH_NAME" == "staging" && "$BRANCH_NAME_MULTI" == "staging" ) || "$RED" == "antioquia" ]]; then
             clusters=("transaction-ms-cluster" "transaction-astro-ms-cluster" "transaction-lg-ms-cluster" "transaction-recharges-ms-cluster")
             services=("transaction-ms-fg-service" "transaction-astro-ms-fg-service" "transaction-lg-ms-fg-service" "transaction-recharges-ms-fg-service")
@@ -286,7 +286,7 @@ jobs:
         displayName: "🔄 Convertir ARNs en variables reales de Bash"
         condition: and(succeeded(),
           eq(variables['cleanMsName'], 'transaction'))
-      
+
       - script: |
           echo -e "\nℹ️ Extrayendo FAMILY para todos los taskDefinitionArn_X..."
 
@@ -331,7 +331,7 @@ jobs:
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
-      
+
       - script: |
           export AWS_ACCESS_KEY_ID
           export AWS_SECRET_ACCESS_KEY
@@ -383,7 +383,6 @@ jobs:
         displayName: "📝 Update image tag in task definition"
         condition: and(succeeded(),
           ne(variables['cleanMsName'], 'transaction'))
-
 
       - script: |
           echo -e "\n📝 Actualizando TAG de las 4 task definitions..."
