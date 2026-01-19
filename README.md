@@ -43,7 +43,7 @@ pipelines-templates/
 │   │   ├── semantic-version-frontend-new.yml
 │   │   └── semantic-version-repository-configuration.yml
 │   └── tests/
-│       └── sonar-backend.yml
+│       └── sonarqube.yml
 ├── docker/
 │   └── Dockerfile
 ├── pipelines/
