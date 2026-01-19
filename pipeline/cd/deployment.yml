@@ -24,6 +24,7 @@ jobs:
         parameters:
           apps: ${{ parameters.apps }}
           region: ${{ parameters.region }}
+          # environments: ${{ parameters.environments }}
 
       - ${{ if eq(parameters.region, 'antioquia') }}:
           - template: ./commit/commit-version-frontend.yml
@@ -36,6 +37,7 @@ jobs:
       - template: ./deploy/deploy-backend.yml
         parameters:
           region: ${{ parameters.region }}
+          environments: ${{ parameters.environments }}
 
       - ${{ if eq(parameters.region, 'antioquia') }}:
           - template: ./commit/commit-version-backend.yml

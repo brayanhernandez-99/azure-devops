@@ -3,15 +3,26 @@ variables:
   - group: trasversal-aws-deployment
   - group: trasversal-versions-invictus
 
-  # Develop - Feature - Hotfix branch
-  - ${{ if or(eq(variables['Build.SourceBranchName'], 'develop'), startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')) }}:
-    #   - group: trasversal-aws-developer #cuenta viejas
-      - group: trasversal-aws-develop #cuenta nueva
+    # Develop - Feature - Hotfix branch
+  - ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')) }}:
+        - group: trasversal-aws-developer
 
-  # Staging branch
+  - ${{ if eq(variables['Build.SourceBranchName'], 'develop')}}:
+        
+        - ${{ if eq(parameters.environments, 'develop') }}:
+            - group: trasversal-aws-developer
+
+        - ${{ if eq(parameters.environments, 'develop_new') }}:
+            - group: trasversal-aws-develop
+
+    # Staging branch
   - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
-      - group: trasversal-aws-qa #cuentas viejas
-    #   - group: trasversal-aws-staging #cuenta nueva
+
+        - ${{ if eq(parameters.environments, 'staging') }}:
+            - group: trasversal-aws-qa
+
+        - ${{ if eq(parameters.environments, 'staging_new') }}:
+            - group: trasversal-aws-staging
 
   # Master branch → por red
   - ${{ if and(eq(parameters.region, 'antioquia'), eq(variables['Build.SourceBranchName'], 'master')) }}:

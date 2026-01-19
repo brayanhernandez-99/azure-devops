@@ -9,6 +9,7 @@ jobs:
       - template: ../../variables/groups-transversal-variables-frontend.yml
         parameters:
           region: ${{ parameters.region }}
+          # environments: ${{ parameters.environments }}
 
     strategy:
       matrix:
@@ -200,6 +201,17 @@ jobs:
             echo -e "\n##vso[task.logissue type=error]⚠️ Error: No se generó el build o la carpeta dist está vacía." 
             exit 99
           else
+            ##################################DEPLOY MULTI AMBIENTE############################
+            # CURRENT_BRANCH=$(echo $(Build.SourceBranch))
+            # if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|staging)$ ]]; then
+            #   mkdir -p "$(Build.ArtifactStagingDirectory)/dists/$environments"
+            #   cp -R $DIST_PATH $(Build.ArtifactStagingDirectory)/dists/$environments/$(msName)
+            # else
+            #   mkdir -p "$(Build.ArtifactStagingDirectory)/dists/$region"
+            #   cp -R $DIST_PATH $(Build.ArtifactStagingDirectory)/dists/$region/$(msName)
+            # fi
+            
+            #########################DEPLOY UNICO AMBIENTE#########################
             mkdir -p "$(Build.ArtifactStagingDirectory)/dists/$region"
             cp -R $DIST_PATH $(Build.ArtifactStagingDirectory)/dists/$region/$(msName)
 
@@ -210,6 +222,7 @@ jobs:
         condition: succeeded()
         env:
           region: ${{ parameters.region }}
+          environments: ${{ parameters.environments }}
 
       - script: |
           echo "Descomentando app-legacy/*"
@@ -242,6 +255,7 @@ jobs:
       #     cliProjectName: "$(Build.Repository.Name)"
       #     cliSources: "$(System.DefaultWorkingDirectory)/$(file)/$(msName)"
       #     extraProperties: |
+      #       sonar.projectVersion=$(version)
       #       sonar.javascript.lcov.reportPaths=$(System.DefaultWorkingDirectory)/$(file)/$(msName)/coverage/lcov.info
       #       sonar.exclusions=**/test/**,**/coverage/**,**/.nyc_output/**,**/reports/**,sured-plugin/**,**/reports_bck/**,**/node_modules/**,**/dist/**
       #   condition: and(succeeded(),

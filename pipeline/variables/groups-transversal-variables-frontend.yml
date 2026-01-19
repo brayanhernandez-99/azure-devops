@@ -5,6 +5,7 @@ variables:
   - group: trasversal-microfrontend-vue2-old
   - group: trasversal-microfrontend-old
 
+  ########################################DEPLOY UNICO AMBIENTE#####################################
   # Develop - Feature - Hotfix branch
   - ${{ if or(eq(variables['Build.SourceBranchName'], 'develop'), startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')) }}:
       - group: trasversal-aws-develop
@@ -18,6 +19,40 @@ variables:
       - group: variables-cloudfront-staging
       - group: variables-microfrontend-vue2-staging-old
       - group: variables-microfrontend-staging-old
+
+
+  ######################DEPLOY MULTI AMBIENTES#########################
+#   - ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')) }}:
+#       - group: trasversal-aws-develop
+#       - group: variables-cloudfront-develop
+#       - group: variables-microfrontend-vue2-develop-old
+#       - group: variables-microfrontend-develop-old
+
+#   - ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}:
+#       - ${{ if eq(parameters.environments, 'develop') }}:
+#             - group: trasversal-aws-developer
+#             - group: variables-cloudfront-developer
+#             - group: variables-microfrontend-vue2-developer-old
+#             - group: variables-microfrontend-developer-old
+
+#       - ${{ if eq(parameters.environments, 'develop_new') }}:
+#             - group: trasversal-aws-develop
+#             - group: variables-cloudfront-develop
+#             - group: variables-microfrontend-vue2-develop-old
+#             - group: variables-microfrontend-develop-old
+
+#   - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
+#       - ${{ if eq(parameters.environments, 'staging') }}:
+#             - group: trasversal-aws-qa
+#             - group: variables-cloudfront-qa
+#             - group: variables-microfrontend-vue2-qa-old
+#             - group: variables-microfrontend-qa-old
+
+#       - ${{ if eq(parameters.environments, 'staging_new') }}:
+#             - group: trasversal-aws-staging
+#             - group: variables-cloudfront-staging
+#             - group: variables-microfrontend-vue2-staging-old
+#             - group: variables-microfrontend-staging-old
 
   # Master branch → por red
   - ${{ if and(eq(parameters.region, 'antioquia'), eq(variables['Build.SourceBranchName'], 'master')) }}:

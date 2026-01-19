@@ -97,7 +97,7 @@ jobs:
           echo -e "\n📦 Cargando al Bucket S3..."
           APK_NAME="invictus-$(environment)-$(version).apk"
           BASE_PATH="$(Pipeline.Workspace)/flutter-artifact/flutter"
-          
+
           echo "APK: $APK_NAME"
           echo "Environment: $(environment)"
 

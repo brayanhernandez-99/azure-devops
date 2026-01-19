@@ -1,5 +1,5 @@
 jobs:
-  - job: "sonar_micro_service"
+  - job: "sonarqube_micro_service"
     displayName: "🛡️ sonarqube microservice"
     pool:
       name: "Azure Pipelines"
@@ -135,6 +135,7 @@ jobs:
           cliProjectName: "$(Build.Repository.Name)"
           cliSources: "$(System.DefaultWorkingDirectory)"
           extraProperties: |
+            sonar.projectVersion=$(version)
             sonar.javascript.lcov.reportPaths=$(System.DefaultWorkingDirectory)/coverage/lcov.info
             sonar.exclusions=**/*.java,**/test/**,**/android/**,**/ios/**,**/coverage/**,**/.nyc_output/**,**/reports/**,**/node_modules/**,**/migrations/**,**/config/**
         condition: succeeded()
