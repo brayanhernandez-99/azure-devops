@@ -236,6 +236,7 @@ jobs:
           cliProjectName: "pruebas-microfronted-$(msName)"
           cliSources: "$(System.DefaultWorkingDirectory)/$(file)/$(msName)"
           extraProperties: |
+            sonar.projectVersion=$(version)
             sonar.javascript.lcov.reportPaths=$(System.DefaultWorkingDirectory)/$(file)/$(msName)/coverage/lcov.info
             sonar.exclusions=**/test/**,**/coverage/**,**/.nyc_output/**,**/reports/**,sured-plugin/**,**/reports_bck/**,**/node_modules/**,**/dist/**
         condition: and(succeeded(),
