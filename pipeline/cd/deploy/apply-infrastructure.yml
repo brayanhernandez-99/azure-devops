@@ -87,17 +87,17 @@ jobs:
           # terragrunt plan --all --non-interactive -no-color
           # terragrunt destroy --all --non-interactive -no-color
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/event-bridge-role
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/antioquia/Payments-CLOSURE-1
           terragrunt plan --all --non-interactive -no-color
           terragrunt apply --all --non-interactive -no-color
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/parameter-store-rule
-          terragrunt plan --all --non-interactive -no-color
-          terragrunt apply --all --non-interactive -no-color
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/parameter-store-rule
+          # terragrunt plan --all --non-interactive -no-color
+          # terragrunt apply --all --non-interactive -no-color
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/task-draw-automatic-scheduler
-          terragrunt plan --all --non-interactive -no-color
-          terragrunt apply --all --non-interactive -no-color
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/task-draw-automatic-scheduler
+          # terragrunt plan --all --non-interactive -no-color
+          # terragrunt apply --all --non-interactive -no-color
 
 
           # cd $(Build.SourcesDirectory)
