@@ -90,150 +90,175 @@ jobs:
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/antioquia/Collected-Task_4_DOWNLOAD
           terragrunt plan --all --non-interactive -no-color
+          terragrunt apply --all --non-interactive -no-color
 
           cd $(Build.SourcesDirectory)
           find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/antioquia/Collected-Task_5_DOWNLOAD
           terragrunt plan --all --non-interactive -no-color
+          terragrunt apply --all --non-interactive -no-color
 
           cd $(Build.SourcesDirectory)
           find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/antioquia/Collected-Task_5_LOAD
           terragrunt plan --all --non-interactive -no-color
+          terragrunt apply --all --non-interactive -no-color
 
           cd $(Build.SourcesDirectory)
           find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/antioquia/Collected-Task_6_DOWNLOAD
           terragrunt plan --all --non-interactive -no-color
+          terragrunt apply --all --non-interactive -no-color
 
           cd $(Build.SourcesDirectory)
           find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/antioquia/Collected-Task_6_LOAD
           terragrunt plan --all --non-interactive -no-color
+          terragrunt apply --all --non-interactive -no-color
 
           cd $(Build.SourcesDirectory)
           find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/antioquia/Collected-Task_7_DOWNLOAD
           terragrunt plan --all --non-interactive -no-color
+          terragrunt apply --all --non-interactive -no-color
 
           cd $(Build.SourcesDirectory)
           find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/antioquia/Collected-Task_7_LOAD
           terragrunt plan --all --non-interactive -no-color
+          terragrunt apply --all --non-interactive -no-color
 
           cd $(Build.SourcesDirectory)
           find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/antioquia/Collected-Task_8_DOWNLOAD
           terragrunt plan --all --non-interactive -no-color
+          terragrunt apply --all --non-interactive -no-color
 
           cd $(Build.SourcesDirectory)
           find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/antioquia/Collected-Task_8_LOAD
           terragrunt plan --all --non-interactive -no-color
+          terragrunt apply --all --non-interactive -no-color
 
           cd $(Build.SourcesDirectory)
           find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/antioquia/Collected-Task_9_DOWNLOAD
           terragrunt plan --all --non-interactive -no-color
+          terragrunt apply --all --non-interactive -no-color
 
           cd $(Build.SourcesDirectory)
           find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/antioquia/Collected-Task_9_LOAD
           terragrunt plan --all --non-interactive -no-color
+          terragrunt apply --all --non-interactive -no-color
 
           cd $(Build.SourcesDirectory)
           find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/antioquia/Collected-Task_10_DOWNLOAD
           terragrunt plan --all --non-interactive -no-color
+          terragrunt apply --all --non-interactive -no-color
 
           cd $(Build.SourcesDirectory)
           find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/antioquia/Collected-Task_10_LOAD
           terragrunt plan --all --non-interactive -no-color
+          terragrunt apply --all --non-interactive -no-color
 
           cd $(Build.SourcesDirectory)
           find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/antioquia/Collected-Task_11_DOWNLOAD
           terragrunt plan --all --non-interactive -no-color
+          terragrunt apply --all --non-interactive -no-color
 
           cd $(Build.SourcesDirectory)
           find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/antioquia/Collected-Task_11_LOAD
           terragrunt plan --all --non-interactive -no-color
+          terragrunt apply --all --non-interactive -no-color
 
           cd $(Build.SourcesDirectory)
           find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/antioquia/Collected-Task_12_DOWNLOAD
           terragrunt plan --all --non-interactive -no-color
+          terragrunt apply --all --non-interactive -no-color
 
           cd $(Build.SourcesDirectory)
           find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/antioquia/Collected-Task_12_LOAD
           terragrunt plan --all --non-interactive -no-color
+          terragrunt apply --all --non-interactive -no-color
 
           cd $(Build.SourcesDirectory)
           find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/antioquia/Collected-Task_13_DOWNLOAD
           terragrunt plan --all --non-interactive -no-color
+          terragrunt apply --all --non-interactive -no-color
 
           cd $(Build.SourcesDirectory)
           find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/antioquia/Collected-Task_13_LOAD
           terragrunt plan --all --non-interactive -no-color
+          terragrunt apply --all --non-interactive -no-color
 
           cd $(Build.SourcesDirectory)
           find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/antioquia/Collected-Task_14_DOWNLOAD
           terragrunt plan --all --non-interactive -no-color
+          terragrunt apply --all --non-interactive -no-color
 
           cd $(Build.SourcesDirectory)
           find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/antioquia/Collected-Task_14_LOAD
           terragrunt plan --all --non-interactive -no-color
+          terragrunt apply --all --non-interactive -no-color
 
           cd $(Build.SourcesDirectory)
           find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/antioquia/Collected-Task_17_DOWNLOAD
           terragrunt plan --all --non-interactive -no-color
+          terragrunt apply --all --non-interactive -no-color
 
           cd $(Build.SourcesDirectory)
           find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/antioquia/Collected-Task_17_LOAD
           terragrunt plan --all --non-interactive -no-color
+          terragrunt apply --all --non-interactive -no-color
 
           cd $(Build.SourcesDirectory)
           find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/antioquia/Conciliation-taskbackupauto
           terragrunt plan --all --non-interactive -no-color
+          terragrunt apply --all --non-interactive -no-color
 
           cd $(Build.SourcesDirectory)
           find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/antioquia/Payments-CLOSURE-1
           terragrunt plan --all --non-interactive -no-color
+          terragrunt apply --all --non-interactive -no-color
 
           cd $(Build.SourcesDirectory)
           find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
