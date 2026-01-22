@@ -86,9 +86,9 @@ jobs:
           # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/trino
           # terragrunt plan --all --non-interactive -no-color
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/antioquia/Payments-CLOSURE-1
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/antioquia
           terragrunt plan --all --non-interactive -no-color
-          terragrunt destroy --all --non-interactive -no-color
+          # terragrunt destroy --all --non-interactive -no-color
 
           # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/parameter-store-rule
           # terragrunt plan --all --non-interactive -no-color
