@@ -90,6 +90,9 @@ jobs:
           cd $(Build.SourcesDirectory)
           find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/event-bridge-role
+          terragrunt plan --all --non-interactive -no-color
+
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/staging/Collected-Task_151_LOAD
           terragrunt plan --all --non-interactive -no-color
 
