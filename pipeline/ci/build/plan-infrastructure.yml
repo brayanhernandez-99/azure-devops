@@ -97,6 +97,13 @@ jobs:
           cd $(Build.SourcesDirectory)
           find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/staging/Collected-Task_151_DOWNLOAD
+          terragrunt plan --all --non-interactive -no-color
+          terragrunt destroy --all --non-interactive -no-color
+
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/staging/Collected-Task_152_DOWNLOAD
           terragrunt plan --all --non-interactive -no-color
           terragrunt destroy --all --non-interactive -no-color
