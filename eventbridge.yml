@@ -1,3 +1,5 @@
+##############ANTIOQUIA#################
+
 # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/antioquia/Collected-Task_4_DOWNLOAD
 # terragrunt plan --all --non-interactive -no-color
 # terragrunt apply --all --non-interactive -no-color
@@ -97,3 +99,115 @@
 # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/antioquia/Payments-CLOSURE-1
 # terragrunt plan --all --non-interactive -no-color
 # terragrunt apply --all --non-interactive -no-color
+
+
+
+############STAGING#######################################
+
+cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/antioquia/Collected-Task_151_DOWNLOAD
+terragrunt plan --all --non-interactive -no-color
+terragrunt apply --all --non-interactive -no-color
+
+cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/antioquia/Collected-Task_151_LOAD
+terragrunt plan --all --non-interactive -no-color
+terragrunt apply --all --non-interactive -no-color
+
+cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/antioquia/Collected-Task_152_DOWNLOAD
+terragrunt plan --all --non-interactive -no-color
+terragrunt apply --all --non-interactive -no-color
+
+cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/antioquia/Collected-Task_152_LOAD
+terragrunt plan --all --non-interactive -no-color
+terragrunt apply --all --non-interactive -no-color
+
+cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/antioquia/Collected-Task_153_LOAD
+terragrunt plan --all --non-interactive -no-color
+terragrunt apply --all --non-interactive -no-color
+
+cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/antioquia/Collected-Task_154_DOWNLOAD
+terragrunt plan --all --non-interactive -no-color
+terragrunt apply --all --non-interactive -no-color
+
+cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/antioquia/Collected-Task_154_LOAD
+terragrunt plan --all --non-interactive -no-color
+terragrunt apply --all --non-interactive -no-color
+
+cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/antioquia/Collected-Task_155_DOWNLOAD
+terragrunt plan --all --non-interactive -no-color
+terragrunt apply --all --non-interactive -no-color
+
+cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/antioquia/Collected-Task_155_LOAD
+terragrunt plan --all --non-interactive -no-color
+terragrunt apply --all --non-interactive -no-color
+
+cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/antioquia/Collected-Task_156_DOWNLOAD
+terragrunt plan --all --non-interactive -no-color
+terragrunt apply --all --non-interactive -no-color
+
+cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/antioquia/Collected-Task_156_LOAD
+terragrunt plan --all --non-interactive -no-color
+terragrunt apply --all --non-interactive -no-color
+
+cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/antioquia/Collected-Task_157_DOWNLOAD
+terragrunt plan --all --non-interactive -no-color
+terragrunt apply --all --non-interactive -no-color
+
+cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/antioquia/Collected-Task_157_LOAD
+terragrunt plan --all --non-interactive -no-color
+terragrunt apply --all --non-interactive -no-color
+
+cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/antioquia/Collected-Task_158_LOAD
+terragrunt plan --all --non-interactive -no-color
+terragrunt apply --all --non-interactive -no-color
+
+cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/antioquia/Collected-Task_159_DOWNLOAD
+terragrunt plan --all --non-interactive -no-color
+terragrunt apply --all --non-interactive -no-color
+
+cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/antioquia/Collected-Task_159_LOAD
+terragrunt plan --all --non-interactive -no-color
+terragrunt apply --all --non-interactive -no-color
+
+cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/antioquia/Collected-Task_161_DOWNLOAD
+terragrunt plan --all --non-interactive -no-color
+terragrunt apply --all --non-interactive -no-color
+
+cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/antioquia/Collected-Task_161_LOAD
+terragrunt plan --all --non-interactive -no-color
+terragrunt apply --all --non-interactive -no-color
+
+cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/antioquia/Collected-Task_162_DOWNLOAD
+terragrunt plan --all --non-interactive -no-color
+terragrunt apply --all --non-interactive -no-color
+
+cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/antioquia/Collected-Task_162_LOAD
+terragrunt plan --all --non-interactive -no-color
+terragrunt apply --all --non-interactive -no-color
+
+cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/antioquia/Collected-Task_164_DOWNLOAD
+terragrunt plan --all --non-interactive -no-color
+terragrunt apply --all --non-interactive -no-color
+
+cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/antioquia/Collected-Task_164_LOAD
+terragrunt plan --all --non-interactive -no-color
+terragrunt apply --all --non-interactive -no-color
+
+cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/antioquia/Collected-Task_165_LOAD
+terragrunt plan --all --non-interactive -no-color
+terragrunt apply --all --non-interactive -no-color
+
+cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/antioquia/Collected-Task_166_DOWNLOAD
+terragrunt plan --all --non-interactive -no-color
+terragrunt apply --all --non-interactive -no-color
+
+cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/antioquia/Collected-Task_166_LOAD
+terragrunt plan --all --non-interactive -no-color
+terragrunt apply --all --non-interactive -no-color
+
+cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/antioquia/Collected-Task_168_DOWNLOAD
+terragrunt plan --all --non-interactive -no-color
+terragrunt apply --all --non-interactive -no-color
+
+cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/antioquia/Collected-Task_167_DOWNLOAD
+terragrunt plan --all --non-interactive -no-color
+terragrunt apply --all --non-interactive -no-color
