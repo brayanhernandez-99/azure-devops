@@ -84,9 +84,9 @@ jobs:
 
 
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/redis
-          terragrunt plan --all --non-interactive -no-color
-          terragrunt destroy --all --non-interactive -no-color
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/redis
+          # terragrunt plan --all --non-interactive -no-color
+          # terragrunt destroy --all --non-interactive -no-color
 
 
 
