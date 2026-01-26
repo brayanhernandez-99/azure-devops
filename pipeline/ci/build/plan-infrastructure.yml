@@ -84,10 +84,8 @@ jobs:
 
 
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/trino/aws-service-secret-manager
-          # terragrunt plan --all --non-interactive -no-color
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/trino/aws-service-ecs
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/redis
+          terragrunt plan --all --non-interactive -no-color
 
 
 
@@ -103,9 +101,9 @@ jobs:
           # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/parameter-store-rule
           # terragrunt plan --all --non-interactive -no-color
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/Update-Agreements-Collections
-          terragrunt plan --all --non-interactive -no-color
-          terragrunt apply --all --non-interactive -no-color
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/Update-Agreements-Collections
+          # terragrunt plan --all --non-interactive -no-color
+          # terragrunt apply --all --non-interactive -no-color
 
 
 
