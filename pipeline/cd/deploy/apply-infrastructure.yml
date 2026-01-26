@@ -90,23 +90,23 @@ jobs:
           cd $(Build.SourcesDirectory)
           find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/metabase/reports
-          terragrunt plan --all --non-interactive -no-color
-          terragrunt apply" --all --non-interactive -no-color
-          cd $(Build.SourcesDirectory)
-          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/metabase/reports
+          # terragrunt plan --all --non-interactive -no-color
+          # terragrunt apply" --all --non-interactive -no-color
+          # cd $(Build.SourcesDirectory)
+          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/metabase/shopping-cart
-          terragrunt plan --all --non-interactive -no-color
-          terragrunt apply" --all --non-interactive -no-color
-          cd $(Build.SourcesDirectory)
-          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/metabase/shopping-cart
+          # terragrunt plan --all --non-interactive -no-color
+          # terragrunt apply" --all --non-interactive -no-color
+          # cd $(Build.SourcesDirectory)
+          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
           
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/metabase/transaction-notifier
-          terragrunt plan --all --non-interactive -no-color
-          terragrunt apply" --all --non-interactive -no-color
-          cd $(Build.SourcesDirectory)
-          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/metabase/transaction-notifier
+          # terragrunt plan --all --non-interactive -no-color
+          # terragrunt apply" --all --non-interactive -no-color
+          # cd $(Build.SourcesDirectory)
+          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
 
 
