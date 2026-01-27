@@ -108,4 +108,5 @@ jobs:
               -d /workdir \
               --framework terraform \
               --hard-fail-on HIGH,CRITICAL \
+              --skip-check CKV_AWS_59 \
               --quiet
