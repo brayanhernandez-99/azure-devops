@@ -105,6 +105,6 @@ jobs:
             docker run --rm \
               -v $(System.DefaultWorkingDirectory):/workdir \
               bridgecrew/checkov:latest \
-              checkov -d /workdir \
+              -d /workdir \
               --framework terraform \
               --quiet
