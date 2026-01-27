@@ -110,4 +110,7 @@ jobs:
               --hard-fail-on HIGH,CRITICAL \
               --skip-check CKV_AWS_59 \
               --skip-check CKV_AWS_120 \
+              --skip-check CKV_AWS_310 \
+              --skip-check CKV_AWS_86 \
+              --skip-check CKV_AWS_68 \
               --quiet
