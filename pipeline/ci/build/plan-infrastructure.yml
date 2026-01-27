@@ -83,6 +83,8 @@ jobs:
           set -e
 
 
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/trino
+          terragrunt plan --all --non-interactive -no-color
 
           # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/metabase/aws-service-ecs
           # terragrunt plan --all --non-interactive -no-color
@@ -98,11 +100,14 @@ jobs:
           # terragrunt plan --all --non-interactive -no-color
           # cd $(Build.SourcesDirectory)
           # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
-          
+
           # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/transaction-notifier/aws-service-ecs
           # terragrunt plan --all --non-interactive -no-color
           # cd $(Build.SourcesDirectory)
           # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+
+
+
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3/s3-generic
           terragrunt plan --all --non-interactive -no-color
