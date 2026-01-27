@@ -107,5 +107,5 @@ jobs:
               bridgecrew/checkov:latest \
               -d /workdir \
               --framework terraform \
-              --quiet \
-              --severity HIGH,CRITICAL
+              --hard-fail-on HIGH,CRITICAL \
+              --quiet
