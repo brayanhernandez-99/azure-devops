@@ -86,3 +86,25 @@ jobs:
         env:
           SONAR_TOKEN: $(SONAR_TOKEN)
           SONAR_HOST_URL: $(SONAR_HOST_URL)
+
+  - job: "Checkov_infrastructure"
+    displayName: "🛡️ Checkov - IaC scan"
+    pool:
+      name: "Azure Pipelines"
+      VmImage: ubuntu-22.04
+
+    variables:
+      - template: ../../variables/groups-transversal-variables-iac.yml
+
+    steps:
+      - task: Bash@3
+        displayName: 'Checkov - IaC scan'
+        inputs:
+          targetType: 'inline'
+          script: |
+            docker run --rm \
+              -v $(System.DefaultWorkingDirectory):/workdir \
+              bridgecrew/checkov:latest \
+              checkov -d /workdir \
+              --framework terraform \
+              --quiet
