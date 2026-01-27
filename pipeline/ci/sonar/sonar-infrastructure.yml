@@ -108,3 +108,4 @@ jobs:
               -d /workdir \
               --framework terraform \
               --quiet
+              --severity HIGH,CRITICAL
