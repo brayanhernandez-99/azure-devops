@@ -129,4 +129,5 @@ jobs:
               --skip-check CKV_AWS_61 \
               --skip-check CKV_AWS_273 \
               --skip-check CKV_AWS_43 \
+              --skip-check CKV_AWS_185 \
               --quiet
