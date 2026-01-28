@@ -95,8 +95,7 @@ jobs:
 
 
 
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/invictus/initial-infrastructure/aws-service-vpc
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-vpc
           terragrunt plan --all --non-interactive -no-color
 
 
