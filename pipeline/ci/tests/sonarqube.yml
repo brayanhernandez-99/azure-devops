@@ -190,7 +190,7 @@ jobs:
           echo "Token length: ${#SYSTEM_ACCESSTOKEN}"
 
           response=$(curl -sS -w "\nHTTP_STATUS:%{http_code}\n" \
-            -H "Authorization: Bearer $AZURE_DEVOPS_CLI_PAT" \
+            -H "Authorization: Bearer $SYSTEM_ACCESSTOKEN" \
             -H "Content-Type: application/json" \
             -X POST \
             "https://dev.azure.com/ORG/PROJECT/_apis/git/repositories/$(Build.Repository.ID)/commits/$(Build.SourceVersion)/statuses?api-version=7.1-preview.1" \
