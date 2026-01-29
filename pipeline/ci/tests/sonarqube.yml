@@ -193,6 +193,8 @@ jobs:
       - script: |
           ORGANIZATION=$(System.CollectionUri)
           PROJECT=$(System.TeamProject)
+          echo $ORGANIZATION
+          echo $PROJECT
           echo "Publishing commit status..."
           echo "Repo: $(Build.Repository.Name)"
           echo "Commit: $(Build.SourceVersion)"
