@@ -184,13 +184,6 @@ jobs:
       #     projectKey: $(Build.Repository.Name)
 
       - script: |
-          echo "Token length: ${#SYSTEM_ACCESSTOKEN}"
-          curl -s -H "Authorization: Bearer $SYSTEM_ACCESSTOKEN" \
-            https://dev.azure.com/ORG/PROJECT/_apis/projects?api-version=7.1-preview.1
-        env:
-          SYSTEM_ACCESSTOKEN: $(System.AccessToken)
-
-      - script: |
           ORGANIZATION=$(System.CollectionUri)
           PROJECT=$(System.TeamProject)
           echo $ORGANIZATION
