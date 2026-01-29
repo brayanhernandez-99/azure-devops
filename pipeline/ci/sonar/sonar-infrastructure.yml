@@ -88,7 +88,7 @@ jobs:
           SONAR_HOST_URL: $(SONAR_HOST_URL)
 
   - job: "Checkov_infrastructure"
-    displayName: "🛡️ Checkov - IaC scan"
+    displayName: "🛡️ checkov - IaC scan"
     pool:
       name: "Azure Pipelines"
       VmImage: ubuntu-22.04
