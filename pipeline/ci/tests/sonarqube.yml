@@ -204,7 +204,7 @@ jobs:
             -X POST \
             -H "Authorization: Bearer $SYSTEM_ACCESSTOKEN" \
             -H "Content-Type: application/json" \
-            "https://dev.azure.com/$ORGANIZATION/$PROJECT/_apis/git/repositories/$(Build.Repository.ID)/commits/$(Build.SourceVersion)/statuses?api-version=7.1-preview.1" \
+            "$ORGANIZATION$PROJECT/_apis/git/repositories/$(Build.Repository.ID)/commits/$(Build.SourceVersion)/statuses?api-version=7.1-preview.1" \
             -d '{
               "state": "succeeded",
               "description": "Code coverage OK",
