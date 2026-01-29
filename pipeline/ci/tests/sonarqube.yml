@@ -209,8 +209,8 @@ jobs:
               "state": "succeeded",
               "description": "Code coverage OK",
               "context": {
-                "name": "$(Build.Repository.Name)/status",
-                "genre": "pipeline"
+                "name": "$(Build.Repository.Name)",
+                "genre": "status"
               }
             }')
 
