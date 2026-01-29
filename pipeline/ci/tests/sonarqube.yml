@@ -204,7 +204,8 @@ jobs:
 
           echo "$response"
         displayName: "Publish commit status: SUCCESS"
-        SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+        env:
+          SYSTEM_ACCESSTOKEN: $(System.AccessToken)
         condition: and(succeeded(), or(
           startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'),
           startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
