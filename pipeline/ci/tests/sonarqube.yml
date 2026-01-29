@@ -184,18 +184,25 @@ jobs:
       #     projectKey: $(Build.Repository.Name)
 
       - script: |
-          curl -sS -u :$(System.AccessToken) \
+          echo "Publishing commit status..."
+          echo "Repo: $(Build.Repository.Name)"
+          echo "Commit: $(Build.SourceVersion)"
+
+          response=$(curl -sS -w "\nHTTP_STATUS:%{http_code}\n" \
+            -u :$(System.AccessToken) \
             -X POST \
             -H "Content-Type: application/json" \
-            https://dev.azure.com/ORG/PROJECT/_apis/git/repositories/REPO_ID/commits/$(Build.SourceVersion)/statuses?api-version=7.1-preview.1 \
-            -d '{
-              "state": "succeeded",
-              "description": "Code coverage OK",
-              "context": {
-                "name": "$(Build.Repository.Name)/status",
-                "genre": "pipeline"
+            https://dev.azure.com/ORG/PROJECT/_apis/git/repositories/$(Build.Repository.ID)/commits/$(Build.SourceVersion)/statuses?api-version=7.1-preview.1 \
+            -d "{
+              \"state\": \"succeeded\",
+              \"description\": \"Code coverage OK\",
+              \"context\": {
+                \"name\": \"$(Build.Repository.Name)/status\",
+                \"genre\": \"pipeline\"
               }
-            }'
+            }")
+
+          echo "$response"
         displayName: "Publish commit status: SUCCESS"
         env:
           AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
