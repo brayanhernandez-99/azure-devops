@@ -1,3 +1,7 @@
+permissions:
+  contents: write
+  statuses: write
+
 jobs:
   - job: "sonarqube_micro_service"
     displayName: "🛡️ sonarqube microservice"
