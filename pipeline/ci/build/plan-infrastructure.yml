@@ -84,13 +84,13 @@ jobs:
 
 
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/invictus/apps/aws-service-custom-cache-policy
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-custom-cache-policy
           terragrunt plan --all --non-interactive -no-color
 
           cd $(Build.SourcesDirectory)
           find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/invictus/apps/aws-service-cloudfront-function
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront-function
           terragrunt plan --all --non-interactive -no-color
 
 
