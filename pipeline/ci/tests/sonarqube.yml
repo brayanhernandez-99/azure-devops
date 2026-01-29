@@ -189,7 +189,7 @@ jobs:
           echo "Commit: $(Build.SourceVersion)"
 
           response=$(curl -sS -w "\nHTTP_STATUS:%{http_code}\n" \
-            -u :$(System.AccessToken) \
+            -u :$SYSTEM_ACCESSTOKEN \
             -X POST \
             -H "Content-Type: application/json" \
             https://dev.azure.com/ORG/PROJECT/_apis/git/repositories/$(Build.Repository.ID)/commits/$(Build.SourceVersion)/statuses?api-version=7.1-preview.1 \
@@ -204,8 +204,7 @@ jobs:
 
           echo "$response"
         displayName: "Publish commit status: SUCCESS"
-        env:
-          AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
+        SYSTEM_ACCESSTOKEN: $(System.AccessToken)
         condition: and(succeeded(), or(
           startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'),
           startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
