@@ -191,6 +191,8 @@ jobs:
           SYSTEM_ACCESSTOKEN: $(System.AccessToken)
 
       - script: |
+          ORGANIZATION=$(System.CollectionUri)
+          PROJECT=$(System.TeamProject)
           echo "Publishing commit status..."
           echo "Repo: $(Build.Repository.Name)"
           echo "Commit: $(Build.SourceVersion)"
@@ -200,7 +202,7 @@ jobs:
             -X POST \
             -H "Authorization: Bearer $SYSTEM_ACCESSTOKEN" \
             -H "Content-Type: application/json" \
-            "https://dev.azure.com/ORG/PROJECT/_apis/git/repositories/$(Build.Repository.ID)/commits/$(Build.SourceVersion)/statuses?api-version=7.1-preview.1" \
+            "https://dev.azure.com/$ORGANIZATION/$PROJECT/_apis/git/repositories/$(Build.Repository.ID)/commits/$(Build.SourceVersion)/statuses?api-version=7.1-preview.1" \
             -d '{
               "state": "succeeded",
               "description": "Code coverage OK",
