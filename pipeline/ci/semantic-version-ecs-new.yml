@@ -66,7 +66,7 @@ jobs:
             [remittances]="microservice-remittances-$ENVIRONMENT"
             [reports]="microservice-reports-$ENVIRONMENT"
             [security]="microservice-security-$ENVIRONMENT"
-            [scheduler]="microservice-scheduler-$ENVIRONMENT"
+            #[scheduler]="microservice-scheduler-$ENVIRONMENT"
             [sellers]="microservice-sellers-$ENVIRONMENT"
             [shopping-cart]="microservice-shopping-cart-$ENVIRONMENT"
             [siga]="microservice-siga-$ENVIRONMENT"
