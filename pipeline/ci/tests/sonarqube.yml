@@ -184,7 +184,7 @@ jobs:
       #     projectKey: $(Build.Repository.Name)
 
       - script: |
-          curl -sS -u :$AZURE_DEVOPS_CLI_PAT \
+          curl -sS -u :$(System.AccessToken) \
             -X POST \
             -H "Content-Type: application/json" \
             https://dev.azure.com/ORG/PROJECT/_apis/git/repositories/REPO_ID/commits/$(Build.SourceVersion)/statuses?api-version=7.1-preview.1 \
