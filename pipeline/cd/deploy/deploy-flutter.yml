@@ -128,7 +128,7 @@ jobs:
             --message-body '{
               "model": {
                 "parameterName": "VERSION-ANDROID",
-                "parameterDescription": "Parámetro que indica la versión actual del sistema.",
+                "parameterDescription": "Parámetro que indica la versión actual Android.",
                 "parameterOrigin": "GLOBAL_PARAMETER",
                 "parameterValue": "$(version)"
               },
