@@ -166,6 +166,8 @@ jobs:
             $(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/pruebas-$(clean_name_ecr)-$(branch_docker):$(version)
         displayName: "🛡️ Trivy scan Docker image"
         continueOnError: true
+        condition: and(succeeded(),
+          ne(variables['Build.SourceBranchName'], 'master'))
 
       - script: |
           echo -e "\nℹ️ Verificando si existe el repositorio $(clean_name_ecr)-$(branch_docker)..."
