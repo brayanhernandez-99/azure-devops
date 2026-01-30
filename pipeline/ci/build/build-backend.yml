@@ -155,6 +155,16 @@ jobs:
           Dockerfile: "$(Build.Repository.Name)/Dockerfile"
           repository: "$(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/pruebas-$(clean_name_ecr)-$(branch_docker)"
           tags: $(version)
+      
+      - script: |
+          docker run --rm \
+            -v /var/run/docker.sock:/var/run/docker.sock \
+            aquasec/trivy:latest \
+            image \
+            --severity CRITICAL,HIGH \
+            --exit-code 1 \
+            myapp:$(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/pruebas-$(clean_name_ecr)-$(branch_docker):$(version)
+        displayName: "Trivy scan Docker image"
 
       - script: |
           echo -e "\nℹ️ Verificando si existe el repositorio $(clean_name_ecr)-$(branch_docker)..."
