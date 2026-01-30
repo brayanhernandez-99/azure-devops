@@ -1,8 +1,9 @@
 stages:
-  - stage: sonarqube_infrastructure
-    displayName: "🛡️ SonarQube Infrastructure"
+  - stage: scan_infrastructure
+    displayName: "🛡️ Scan Infrastructure"
     jobs:
-      - template: ../ci/sonar/sonar-infrastructure.yml
+      - template: ../ci/scan/sonar-infrastructure.yml
+      - template: ../ci/scan/checkov-infrastructure.yml
 
   #####################################################################
 
@@ -10,7 +11,7 @@ stages:
       - ${{ each region in parameters.red }}:
           - stage: plan_infrastructure_${{ region }}
             displayName: "🧩 Plan Infrastructure ${{ region }}"
-            dependsOn: sonarqube_infrastructure
+            dependsOn: scan_infrastructure
             jobs:
               - template: ../ci/build/plan-infrastructure.yml
                 parameters:
@@ -30,7 +31,7 @@ stages:
   - ${{ if ne(variables['Build.SourceBranchName'], 'master') }}:
       - stage: plan_infrastructure
         displayName: "🧩 Plan Infrastructure"
-        dependsOn: sonarqube_infrastructure
+        dependsOn: scan_infrastructure
         jobs:
           - template: ../ci/build/plan-infrastructure.yml
 
