@@ -163,7 +163,7 @@ jobs:
             image \
             --severity CRITICAL,HIGH \
             --exit-code 1 \
-            myapp:$(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/pruebas-$(clean_name_ecr)-$(branch_docker):$(version)
+            $(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/pruebas-$(clean_name_ecr)-$(branch_docker):$(version)
         displayName: "Trivy scan Docker image"
 
       - script: |
