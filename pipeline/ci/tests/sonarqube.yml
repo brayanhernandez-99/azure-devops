@@ -182,3 +182,9 @@ jobs:
       # - template: sonarqube/job-sonarqube.yml@sonarqube
       #   parameters:
       #     projectKey: $(Build.Repository.Name)
+
+      - task: Gitleaks@2
+        displayName: "🔍 Gitleaks (feature)"
+        continueOnError: true
+        inputs:
+          scanType: diff
