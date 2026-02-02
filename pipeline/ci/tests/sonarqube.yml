@@ -183,8 +183,18 @@ jobs:
       #   parameters:
       #     projectKey: $(Build.Repository.Name)
 
-      - task: Gitleaks@3
-        displayName: "🔍 Gitleaks (feature)"
-        continueOnError: true
-        inputs:
-          scanType: repo
+      # - task: Gitleaks@3
+      #   displayName: "🔍 Gitleaks (feature)"
+      #   continueOnError: true
+      #   inputs:
+      #     scanType: repo
+      
+      - script: |
+          docker run --rm \
+            -v $(Build.SourcesDirectory):/repo \
+            zricethezav/gitleaks:latest \
+            detect \
+            --source=/repo \
+            --no-git \
+            --verbose
+        displayName: "🔍 Gitleaks full repo scan"
