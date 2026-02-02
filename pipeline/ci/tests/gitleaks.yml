@@ -1,0 +1,32 @@
+jobs:
+  - job: "gitleaks_micro_service"
+    displayName: "🔐 Gitleaks microservices"
+    pool:
+      name: "Azure Pipelines"
+      vmImage: "ubuntu-22.04"
+
+    variables:
+      - template: ../../variables/groups-transversal-variables-backend.yml
+
+    steps:
+      - checkout: self
+        fetchDepth: 0
+
+      # - task: Gitleaks@3
+      #   displayName: "🔍 Gitleaks (feature)"
+      #   continueOnError: true
+      #   inputs:
+      #     scanType: repo
+      
+      - script: |
+          docker run --rm \
+            -v $(Build.SourcesDirectory):/repo \
+            zricethezav/gitleaks:latest \
+            detect \
+            --source=/repo \
+            --log-opts="origin/master..HEAD" \
+            --verbose \
+            --redact \
+            --report-format json
+        displayName: "🔍 Gitleaks full repo scan"
+        continueOnError: true
