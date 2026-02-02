@@ -5,10 +5,15 @@ jobs:
       name: "Azure Pipelines"
       vmImage: "ubuntu-22.04"
 
+    
+
     variables:
       - template: ../../variables/groups-transversal-variables-backend.yml
 
     steps:
+      - checkout: self
+        fetchDepth: 0
+
       - task: DownloadBuildArtifacts@0
         inputs:
           artifactName: "versions"
@@ -195,6 +200,6 @@ jobs:
             zricethezav/gitleaks:latest \
             detect \
             --source=/repo \
-            --no-git \
+            --log-opts="origin/master..HEAD" \
             --verbose
         displayName: "🔍 Gitleaks full repo scan"
