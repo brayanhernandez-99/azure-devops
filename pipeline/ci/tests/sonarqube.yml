@@ -187,4 +187,4 @@ jobs:
         displayName: "🔍 Gitleaks (feature)"
         continueOnError: true
         inputs:
-          scanType: diff
+          scanType: repo
