@@ -27,5 +27,6 @@ jobs:
             --log-opts="origin/master..HEAD" \
             --verbose
             --redact
+            --report-format json
         displayName: "🔍 Gitleaks full repo scan"
         continueOnError: true
