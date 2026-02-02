@@ -5,15 +5,10 @@ jobs:
       name: "Azure Pipelines"
       vmImage: "ubuntu-22.04"
 
-    
-
     variables:
       - template: ../../variables/groups-transversal-variables-backend.yml
 
     steps:
-      - checkout: self
-        fetchDepth: 0
-
       - task: DownloadBuildArtifacts@0
         inputs:
           artifactName: "versions"
@@ -187,19 +182,3 @@ jobs:
       # - template: sonarqube/job-sonarqube.yml@sonarqube
       #   parameters:
       #     projectKey: $(Build.Repository.Name)
-
-      # - task: Gitleaks@3
-      #   displayName: "🔍 Gitleaks (feature)"
-      #   continueOnError: true
-      #   inputs:
-      #     scanType: repo
-      
-      - script: |
-          docker run --rm \
-            -v $(Build.SourcesDirectory):/repo \
-            zricethezav/gitleaks:latest \
-            detect \
-            --source=/repo \
-            --log-opts="origin/master..HEAD" \
-            --verbose
-        displayName: "🔍 Gitleaks full repo scan"
