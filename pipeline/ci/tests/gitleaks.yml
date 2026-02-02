@@ -26,5 +26,6 @@ jobs:
             --source=/repo \
             --log-opts="origin/master..HEAD" \
             --verbose
+            --redact
         displayName: "🔍 Gitleaks full repo scan"
         continueOnError: true
