@@ -183,7 +183,7 @@ jobs:
       #   parameters:
       #     projectKey: $(Build.Repository.Name)
 
-      - task: Gitleaks@2
+      - task: Gitleaks@3
         displayName: "🔍 Gitleaks (feature)"
         continueOnError: true
         inputs:
