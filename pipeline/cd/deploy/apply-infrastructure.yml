@@ -100,6 +100,7 @@ jobs:
           terragrunt apply --all --non-interactive -no-color
 
 
+
           # cd $(Build.SourcesDirectory)
           # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
         displayName: "🚀 Apply Infrastructure"
