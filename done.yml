@@ -1,4 +1,3 @@
----------------------------Este siva 
 ################## MF GENERIC (LISTO EN DEV Y QA - PENDIENTE EN LAS PDN) ##################
 # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3/s3-generic
 # terragrunt plan --all --non-interactive -no-color
@@ -49,28 +48,6 @@
 # terragrunt plan --all --non-interactive -no-color
 # terragrunt apply --all --non-interactive -no-color
 # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-ftp/aws-service-ec2
-# terragrunt plan --all --non-interactive -no-color
-# terragrunt apply --all --non-interactive -no-color
-
-
-
----------------------------Este siva 
-##################  SECRETS BN3, BN4, CHC (LISTO EN DEV Y QA - PENDIENTE EN LAS PDN) ##################
-# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/lotteries-games/aws-service-secret-manager-national-bn3-secret
-# terragrunt plan --all --non-interactive -no-color
-# terragrunt apply --all --non-interactive -no-color
-# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/lotteries-games/aws-service-secret-manager-national-bn4-secret
-# terragrunt plan --all --non-interactive -no-color
-# terragrunt apply --all --non-interactive -no-color
-# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/lotteries-games/aws-service-secret-manager-national-chc-secret
-# terragrunt plan --all --non-interactive -no-color
-# terragrunt apply --all --non-interactive -no-color
-
-
-
----------------------------Este siva 
-##################  SECRETS recharges-tigo-secret (LISTO EN DEV Y QA - PENDIENTE EN LAS PDN) ##################
-# cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges/aws-service-secret-manager-tigo
 # terragrunt plan --all --non-interactive -no-color
 # terragrunt apply --all --non-interactive -no-color
 
