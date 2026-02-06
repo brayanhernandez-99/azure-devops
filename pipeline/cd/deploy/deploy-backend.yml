@@ -61,12 +61,8 @@ jobs:
       - script: |
           REPO_NAME="$(Build.Repository.Name)"
           echo -e "\nℹ️ Repositorio: $REPO_NAME"
-
-          if [[ "$REPO_NAME" == "microservice-notifier-invictus" ]]; then
-              CLEAN_NAME="notifier"
-          else
-              CLEAN_NAME="${REPO_NAME%-invictus}"         # quita solo el sufijo -invictus
-          fi
+          
+          CLEAN_NAME="${REPO_NAME%-invictus}"         # quita solo el sufijo -invictus
 
           echo -e "\nℹ️ Clean Repositorio: $CLEAN_NAME"
           echo "##vso[task.setvariable variable=clean_name_ecr]$CLEAN_NAME"
@@ -92,7 +88,7 @@ jobs:
               clean_branch=prd
             fi
 
-            REPO_NAME="pruebas-$(clean_name_ecr)-$clean_branch"
+            REPO_NAME="$(clean_name_ecr)-$clean_branch"
             IMAGE_TAG="$(version)"
 
             echo "🔍 Verificando si la imagen '$IMAGE_TAG' existe en '$REPO_NAME'..."
@@ -128,8 +124,8 @@ jobs:
           echo "🌿 Branch: $BRANCH_NAME"
 
           # 🧹 Limpieza base del nombre (para BFFs)
-          if [[ "$REPO_NAME" == bff-*-invictus ]]; then
-              CLEAN_NAME="${REPO_NAME#bff-}"
+          if [[ "$REPO_NAME" == microservice-bff-*-invictus ]]; then
+              CLEAN_NAME="${REPO_NAME#microservice-bff-}"
               CLEAN_NAME="${CLEAN_NAME%-invictus}"
               name_bff="bff-${CLEAN_NAME}-invictus"
           else
@@ -488,146 +484,146 @@ jobs:
         condition: and(succeeded(),
           eq(variables['cleanMsName'], 'transaction'))
 
-      # - script: |
-      #     export AWS_REGION
-      #     export AWS_ACCESS_KEY_ID
-      #     export AWS_SECRET_ACCESS_KEY
+      - script: |
+          export AWS_REGION
+          export AWS_ACCESS_KEY_ID
+          export AWS_SECRET_ACCESS_KEY
 
-      #     output=$(aws ecs register-task-definition \
-      #     --cli-input-json file://new-taskdef-$(cleanMsName)-ecs.json \
-      #     --region $AWS_DEFAULT_REGION)
+          output=$(aws ecs register-task-definition \
+          --cli-input-json file://new-taskdef-$(cleanMsName)-ecs.json \
+          --region $AWS_DEFAULT_REGION)
 
-      #     arn=$(echo $output | jq -r '.taskDefinition.taskDefinitionArn')
+          arn=$(echo $output | jq -r '.taskDefinition.taskDefinitionArn')
 
-      #     echo -e "\nℹ️ Nueva Task Definition ARN: $arn"
-      #     echo "##vso[task.setvariable variable=taskDefinitionArnNew]$arn"
-      #   displayName: "🆕 Register New Task Definition"
-      #   condition: and(succeeded(),
-      #     ne(variables['cleanMsName'], 'transaction'))
-      #   env:
-      #     AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
-      #     AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
-      #     AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
+          echo -e "\nℹ️ Nueva Task Definition ARN: $arn"
+          echo "##vso[task.setvariable variable=taskDefinitionArnNew]$arn"
+        displayName: "🆕 Register New Task Definition"
+        condition: and(succeeded(),
+          ne(variables['cleanMsName'], 'transaction'))
+        env:
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
+          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
 
-      # - script: |
-      #     export AWS_REGION
-      #     export AWS_ACCESS_KEY_ID
-      #     export AWS_SECRET_ACCESS_KEY
+      - script: |
+          export AWS_REGION
+          export AWS_ACCESS_KEY_ID
+          export AWS_SECRET_ACCESS_KEY
 
-      #     echo -e "\n🆕 Registrando las 4 nuevas Task Definitions..."
+          echo -e "\n🆕 Registrando las 4 nuevas Task Definitions..."
 
-      #     for i in 0 1 2 3; do
-      #       INPUT="new-taskdef_${i}-ecs.json"
+          for i in 0 1 2 3; do
+            INPUT="new-taskdef_${i}-ecs.json"
 
-      #       echo -e "\n----------------------------"
-      #       echo "📌 Registrando índice: $i"
-      #       echo "📄 Input: $INPUT"
+            echo -e "\n----------------------------"
+            echo "📌 Registrando índice: $i"
+            echo "📄 Input: $INPUT"
 
-      #       if [[ ! -f "$INPUT" ]]; then
-      #         echo "❌ No existe archivo $INPUT"
-      #         exit 95
-      #       fi
+            if [[ ! -f "$INPUT" ]]; then
+              echo "❌ No existe archivo $INPUT"
+              exit 95
+            fi
 
-      #       output=$(aws ecs register-task-definition \
-      #         --cli-input-json file://"$INPUT" \
-      #         --region "$AWS_DEFAULT_REGION")
+            output=$(aws ecs register-task-definition \
+              --cli-input-json file://"$INPUT" \
+              --region "$AWS_DEFAULT_REGION")
 
-      #       arn=$(echo "$output" | jq -r '.taskDefinition.taskDefinitionArn')
+            arn=$(echo "$output" | jq -r '.taskDefinition.taskDefinitionArn')
 
-      #       if [[ -z "$arn" ]]; then
-      #         echo "❌ No se pudo obtener el ARN de la nueva task definition"
-      #         exit 94
-      #       fi
+            if [[ -z "$arn" ]]; then
+              echo "❌ No se pudo obtener el ARN de la nueva task definition"
+              exit 94
+            fi
 
-      #       echo "✅ Nueva Task Definition ARN_$i: $arn"
+            echo "✅ Nueva Task Definition ARN_$i: $arn"
 
-      #       echo "##vso[task.setvariable variable=taskDefinitionArnNew_${i}]$arn"
-      #     done
-      #   displayName: "🆕 Register New Task Definitions (ALL)"
-      #   condition: and(succeeded(),
-      #     eq(variables['cleanMsName'], 'transaction'))
-      #   env:
-      #     AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
-      #     AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
-      #     AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
+            echo "##vso[task.setvariable variable=taskDefinitionArnNew_${i}]$arn"
+          done
+        displayName: "🆕 Register New Task Definitions (ALL)"
+        condition: and(succeeded(),
+          eq(variables['cleanMsName'], 'transaction'))
+        env:
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
+          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
 
-      # - script: |
-      #     export AWS_ACCESS_KEY_ID
-      #     export AWS_SECRET_ACCESS_KEY
-      #     export AWS_REGION
+      - script: |
+          export AWS_ACCESS_KEY_ID
+          export AWS_SECRET_ACCESS_KEY
+          export AWS_REGION
 
-      #     echo "🔹 Task Definition ARN : $(taskDefinitionArnNew)"
-      #     echo "🔹 Cluster             : $(cluster_name)"
-      #     echo "🔹 Service             : $(service_name)"
+          echo "🔹 Task Definition ARN : $(taskDefinitionArnNew)"
+          echo "🔹 Cluster             : $(cluster_name)"
+          echo "🔹 Service             : $(service_name)"
 
-      #     aws ecs update-service \
-      #       --cluster $(cluster_name) \
-      #       --service $(service_name) \
-      #       --task-definition $(taskDefinitionArnNew) \
-      #       --region $AWS_DEFAULT_REGION
-      #   displayName: "⚡ Deploy New Task Definition to Service"
-      #   condition: and(succeeded(),
-      #     ne(variables['cleanMsName'], 'transaction'))
-      #   env:
-      #     AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
-      #     AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
-      #     AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
+          aws ecs update-service \
+            --cluster $(cluster_name) \
+            --service $(service_name) \
+            --task-definition $(taskDefinitionArnNew) \
+            --region $AWS_DEFAULT_REGION
+        displayName: "⚡ Deploy New Task Definition to Service"
+        condition: and(succeeded(),
+          ne(variables['cleanMsName'], 'transaction'))
+        env:
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
+          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
 
-      # - script: |
-      #     echo "Exportando ARNs NEW..."
+      - script: |
+          echo "Exportando ARNs NEW..."
 
-      #     echo "##vso[task.setvariable variable=ARN_NEW_0]$(taskDefinitionArnNew_0)"
-      #     echo "##vso[task.setvariable variable=ARN_NEW_1]$(taskDefinitionArnNew_1)"
-      #     echo "##vso[task.setvariable variable=ARN_NEW_2]$(taskDefinitionArnNew_2)"
-      #     echo "##vso[task.setvariable variable=ARN_NEW_3]$(taskDefinitionArnNew_3)"
+          echo "##vso[task.setvariable variable=ARN_NEW_0]$(taskDefinitionArnNew_0)"
+          echo "##vso[task.setvariable variable=ARN_NEW_1]$(taskDefinitionArnNew_1)"
+          echo "##vso[task.setvariable variable=ARN_NEW_2]$(taskDefinitionArnNew_2)"
+          echo "##vso[task.setvariable variable=ARN_NEW_3]$(taskDefinitionArnNew_3)"
 
-      #     echo "Exportando CLUSTER NAME..."
-      #     echo "##vso[task.setvariable variable=CLUSTER_0]$(cluster_name_0)"
-      #     echo "##vso[task.setvariable variable=CLUSTER_1]$(cluster_name_1)"
-      #     echo "##vso[task.setvariable variable=CLUSTER_2]$(cluster_name_2)"
-      #     echo "##vso[task.setvariable variable=CLUSTER_3]$(cluster_name_3)"
+          echo "Exportando CLUSTER NAME..."
+          echo "##vso[task.setvariable variable=CLUSTER_0]$(cluster_name_0)"
+          echo "##vso[task.setvariable variable=CLUSTER_1]$(cluster_name_1)"
+          echo "##vso[task.setvariable variable=CLUSTER_2]$(cluster_name_2)"
+          echo "##vso[task.setvariable variable=CLUSTER_3]$(cluster_name_3)"
 
-      #     echo "Exportando SERVICE NAME..."
-      #     echo "##vso[task.setvariable variable=SERVICE_0]$(service_name_0)"
-      #     echo "##vso[task.setvariable variable=SERVICE_1]$(service_name_1)"
-      #     echo "##vso[task.setvariable variable=SERVICE_2]$(service_name_2)"
-      #     echo "##vso[task.setvariable variable=SERVICE_3]$(service_name_3)"
+          echo "Exportando SERVICE NAME..."
+          echo "##vso[task.setvariable variable=SERVICE_0]$(service_name_0)"
+          echo "##vso[task.setvariable variable=SERVICE_1]$(service_name_1)"
+          echo "##vso[task.setvariable variable=SERVICE_2]$(service_name_2)"
+          echo "##vso[task.setvariable variable=SERVICE_3]$(service_name_3)"
 
-      #   displayName: "🔄 Convertir ARNs, SERVICES AND CLUSTER en variables reales de Bash"
-      #   condition: and(succeeded(),
-      #     eq(variables['cleanMsName'], 'transaction'))
+        displayName: "🔄 Convertir ARNs, SERVICES AND CLUSTER en variables reales de Bash"
+        condition: and(succeeded(),
+          eq(variables['cleanMsName'], 'transaction'))
 
-      # - script: |
-      #     export AWS_ACCESS_KEY_ID
-      #     export AWS_SECRET_ACCESS_KEY
-      #     export AWS_REGION
+      - script: |
+          export AWS_ACCESS_KEY_ID
+          export AWS_SECRET_ACCESS_KEY
+          export AWS_REGION
 
-      #     for i in 0 1 2 3; do
+          for i in 0 1 2 3; do
 
-      #       VAR_ARN="ARN_NEW_${i}"
-      #       VAR_CLUSTER="CLUSTER_${i}"
-      #       VAR_SERVICE="SERVICE_${i}"
+            VAR_ARN="ARN_NEW_${i}"
+            VAR_CLUSTER="CLUSTER_${i}"
+            VAR_SERVICE="SERVICE_${i}"
 
-      #       ARN_VALUE="${!VAR_ARN}"
-      #       CLUSTER_VALUE="${!VAR_CLUSTER}"
-      #       SERVICE_VALUE="${!VAR_SERVICE}"
+            ARN_VALUE="${!VAR_ARN}"
+            CLUSTER_VALUE="${!VAR_CLUSTER}"
+            SERVICE_VALUE="${!VAR_SERVICE}"
 
-      #       echo "------------------------------------------"
-      #       echo "🔹 Task Definition ARN : $ARN_VALUE"
-      #       echo "🔹 Cluster             : $CLUSTER_VALUE"
-      #       echo "🔹 Service             : $SERVICE_VALUE"
+            echo "------------------------------------------"
+            echo "🔹 Task Definition ARN : $ARN_VALUE"
+            echo "🔹 Cluster             : $CLUSTER_VALUE"
+            echo "🔹 Service             : $SERVICE_VALUE"
 
-      #       aws ecs update-service \
-      #         --cluster $CLUSTER_VALUE \
-      #         --service $SERVICE_VALUE \
-      #         --task-definition $ARN_VALUE \
-      #         --region $AWS_DEFAULT_REGION
-      #     done
+            aws ecs update-service \
+              --cluster $CLUSTER_VALUE \
+              --service $SERVICE_VALUE \
+              --task-definition $ARN_VALUE \
+              --region $AWS_DEFAULT_REGION
+          done
 
-      #   displayName: "⚡ Deploy New Task Definition to Service"
-      #   condition: and(succeeded(),
-      #     eq(variables['cleanMsName'], 'transaction'))
-      #   env:
-      #     AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
-      #     AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
-      #     AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
+        displayName: "⚡ Deploy New Task Definition to Service"
+        condition: and(succeeded(),
+          eq(variables['cleanMsName'], 'transaction'))
+        env:
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
+          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
