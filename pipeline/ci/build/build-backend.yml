@@ -118,11 +118,9 @@ jobs:
           echo "Branch: $CURRENT_BRANCH"
           echo "Repositorio: $REPO_NAME"
 
-          if [[ "$REPO_NAME" == "microservice-notifier-invictus" ]]; then
-              CLEAN_NAME="notifier"
-          else
-              CLEAN_NAME="${REPO_NAME%-invictus}"   # quita solo el sufijo -invictus
-          fi
+         
+          CLEAN_NAME="${REPO_NAME%-invictus}"   # quita solo el sufijo -invictus
+          
 
           if [[ "$CURRENT_BRANCH" == refs/heads/develop ]]; then
             raw_branch=$(Build.SourceBranch)
