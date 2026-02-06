@@ -64,9 +64,9 @@ resources:
       name: $(System.TeamProject)/$(Build.Repository.Name)
       type: git
 
-    # - repository: sonarqube
-    #   name: Invictus/security-sonarqube-invictus
-    #   type: git
+    - repository: sonarqube
+      name: Invictus/security-sonarqube-invictus
+      type: git
 
     # - repository: electron
     #   name: Invictus/electron-app-invictus-test
