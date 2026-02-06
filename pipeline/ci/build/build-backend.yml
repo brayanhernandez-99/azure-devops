@@ -153,7 +153,7 @@ jobs:
         inputs:
           command: "build"
           Dockerfile: "$(Build.Repository.Name)/Dockerfile"
-          repository: "$(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/pruebas-$(clean_name_ecr)-$(branch_docker)"
+          repository: "$(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/$(clean_name_ecr)-$(branch_docker)"
           tags: $(version)
       
       - script: |
@@ -163,7 +163,7 @@ jobs:
             image \
             --severity CRITICAL,HIGH \
             --exit-code 1 \
-            $(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/pruebas-$(clean_name_ecr)-$(branch_docker):$(version)
+            $(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/$(clean_name_ecr)-$(branch_docker):$(version)
         displayName: "🛡️ Trivy scan Docker image"
         continueOnError: true
         condition: and(succeeded(),
@@ -195,5 +195,5 @@ jobs:
         condition: succeeded()
         inputs:
           command: "Push"
-          repository: "$(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/pruebas-$(clean_name_ecr)-$(branch_docker)"
+          repository: "$(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/$(clean_name_ecr)-$(branch_docker)"
           tags: $(version)
