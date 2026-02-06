@@ -61,12 +61,8 @@ jobs:
       - script: |
           REPO_NAME="$(Build.Repository.Name)"
           echo -e "\nℹ️ Repositorio: $REPO_NAME"
-
-          if [[ "$REPO_NAME" == "microservice-notifier-invictus" ]]; then
-              CLEAN_NAME="notifier"
-          else
-              CLEAN_NAME="${REPO_NAME%-invictus}"         # quita solo el sufijo -invictus
-          fi
+          
+          CLEAN_NAME="${REPO_NAME%-invictus}"         # quita solo el sufijo -invictus
 
           echo -e "\nℹ️ Clean Repositorio: $CLEAN_NAME"
           echo "##vso[task.setvariable variable=clean_name_ecr]$CLEAN_NAME"
