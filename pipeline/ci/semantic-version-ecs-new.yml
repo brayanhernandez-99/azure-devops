@@ -38,7 +38,6 @@ jobs:
             [bff-administration]="bff-administration-$ENVIRONMENT"
             [bff-integration]="bff-integration-$ENVIRONMENT"
             [bff-sellers]="bff-sellers-$ENVIRONMENT"
-            [notifier]="notifier-$ENVIRONMENT"
             [raffles]="microservice-raffle-$ENVIRONMENT"
 
             [astro]="microservice-astro-$ENVIRONMENT"
@@ -56,6 +55,7 @@ jobs:
             [millonario]="microservice-millonario-$ENVIRONMENT"
             [money-control]="microservice-money-control-$ENVIRONMENT"
             [notifications]="microservice-notifications-$ENVIRONMENT"
+            [notifier]="microservice-notifier-$ENVIRONMENT"
             [online-games]="microservice-online-games-$ENVIRONMENT"
             [papelery]="microservice-papelery-$ENVIRONMENT"
             [payment-voucher]="microservice-payment-voucher-$ENVIRONMENT"
