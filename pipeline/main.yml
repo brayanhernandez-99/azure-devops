@@ -6,13 +6,13 @@ parameters:
     type: object
     default:
       - antioquia
-      - cap
-      - tolima
-      - huila
-      - cauca
-      - boyaca
-      - santander
-      - putumayo
+      # - cap
+      # - tolima
+      # - huila
+      # - cauca
+      # - boyaca
+      # - santander
+      # - putumayo
 
 resources:
   repositories:
