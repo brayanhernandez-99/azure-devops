@@ -5,24 +5,14 @@ parameters:
   - name: red
     type: object
     default:
-<<<<<<< HEAD
       - antioquia
-=======
-      # - antioquia
->>>>>>> c4d4f2cdfd7157bc086dd33a01bdc1c30a168ae8
       # - cap
       # - tolima
       # - huila
       # - cauca
-<<<<<<< HEAD
       # - boyaca
       # - santander
       # - putumayo
-=======
-      - boyaca
-      - santander
-      - putumayo
->>>>>>> c4d4f2cdfd7157bc086dd33a01bdc1c30a168ae8
 
 resources:
   repositories:
