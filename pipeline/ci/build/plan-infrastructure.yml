@@ -101,11 +101,10 @@ jobs:
           # terragrunt plan --all --non-interactive -no-color
 
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-elasticache-serverless
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/redis-cache
           terragrunt plan --all --non-interactive -no-color
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-elasticache-node
           terragrunt plan --all --non-interactive -no-color
-
 
 
 
