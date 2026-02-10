@@ -88,8 +88,8 @@ jobs:
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds/aws-service-sg
           terragrunt init -reconfigure
-          terragrunt state list -no-color
-          # terragrunt import aws_security_group.sg sg-06c7e4963937c6b78
+          # terragrunt state list -no-color
+          terragrunt import aws_security_group.sg sg-06c7e4963937c6b78
           # terragrunt plan --non-interactive -no-color
 
           # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds/aws-service-cmk
