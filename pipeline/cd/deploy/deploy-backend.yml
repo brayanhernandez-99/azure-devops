@@ -127,7 +127,7 @@ jobs:
           if [[ "$REPO_NAME" == microservice-bff-*-invictus ]]; then
               CLEAN_NAME="${REPO_NAME#microservice-bff-}"
               CLEAN_NAME="${CLEAN_NAME%-invictus}"
-              name_bff="bff-${CLEAN_NAME}-invictus"
+              name_bff="microservice-bff-${CLEAN_NAME}-invictus"
           else
               CLEAN_NAME="${REPO_NAME%-invictus}"
           fi
