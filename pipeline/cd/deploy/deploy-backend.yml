@@ -88,7 +88,7 @@ jobs:
               clean_branch=prd
             fi
 
-            REPO_NAME="$(clean_name_ecr)-$clean_branch"
+            REPO_NAME="pruebas-$(clean_name_ecr)-$clean_branch"
             IMAGE_TAG="$(version)"
 
             echo "🔍 Verificando si la imagen '$IMAGE_TAG' existe en '$REPO_NAME'..."
