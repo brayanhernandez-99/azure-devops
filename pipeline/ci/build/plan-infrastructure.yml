@@ -84,8 +84,8 @@ jobs:
 
 
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-generic
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-generic
+          terragrunt plan --all --non-interactive -no-color
 
           # cd $(Build.SourcesDirectory)
           # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
@@ -94,8 +94,8 @@ jobs:
           # terragrunt plan --all --non-interactive -no-color
 
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds
-          terragrunt plan --all --non-interactive -no-color
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds
+          # terragrunt plan --all --non-interactive -no-color
 
 
 
