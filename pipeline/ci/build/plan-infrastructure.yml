@@ -94,8 +94,8 @@ jobs:
 
           # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds/aws-service-cmk
           # terragrunt init -reconfigure
+          # terragrunt state rm aws_kms_key.cmk
           # terragrunt import aws_kms_key.cmk f09e2fee-32c8-42dc-bee9-9e2b2e3cda78
-          # terragrunt state list -no-color
           # terragrunt plan --non-interactive -no-color
 
 
