@@ -101,6 +101,7 @@ jobs:
           # terragrunt import aws_kms_key.cmk f09e2fee-32c8-42dc-bee9-9e2b2e3cda78
           # terragrunt import aws_kms_alias.cmk_alias alias/km-rds
           terragrunt plan --non-interactive -no-color
+          terragrunt apply --non-interactive -no-color
 
 
 
