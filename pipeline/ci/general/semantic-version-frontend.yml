@@ -171,11 +171,11 @@ jobs:
               mkdir -p "$(dirname "$pkg")"
 
               cat > "$pkg" <<EOF
-            {
-              "name": "$(msName)",
+          {
+            "name": "$(msName)",
               "version": "1.0.0"
-            }
-            EOF
+          }
+          EOF
               git add "$pkg"
               git commit -m "chore: bootstrap new micro-frontends"
               git push origin version/$br
