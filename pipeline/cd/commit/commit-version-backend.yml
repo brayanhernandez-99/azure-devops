@@ -31,9 +31,9 @@ jobs:
               version=$(jq -r .version "$file")
               jq --arg version "$version" \
                 '.version = $version' \
-                "package.json" > tmp.json && mv tmp.json "$package.json"
+                package.json > tmp.json && mv tmp.json package.json
 
-              git add "package.json"
+              git add package.json
             
 
               git commit -m "chore($(Build.Repository.Name)): bump version to $version"
