@@ -164,21 +164,19 @@ jobs:
 
           BOOTSTRAPPED=false
 
-          pkg="$(file)/$(msName)/package.json"
+          pkg="$(System.DefaultWorkingDirectory)/$(file)/$(msName)/package.json"
 
           if [[ ! -f "$pkg" ]]; then
             echo "🆕 Bootstrap MF: $ms no existe"
-            cd $(System.DefaultWorkingDirectory)/$(file)
 
-            mkdir -p "$(file)/$(msName)"
+            mkdir -p "$(dirname "$pkg")"
 
             cat > "$pkg" <<EOF
-            {
-              "name": "$ms",
-              "version": "1.0.0"
-            }
-            EOF
-
+          {
+            "name": "$(msName)",
+            "version": "1.0.0"
+          }
+          EOF
             git add "$pkg"
             BOOTSTRAPPED=true
 
