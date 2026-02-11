@@ -45,6 +45,6 @@ jobs:
               cat env.json
 
               git add env.json pubspec.yaml
-              git commit -m "chore Flutter: bump version to $(cleanNEXT_VERSION)"
+              git commit -m "chore Flutter: bump version to $cleanNEXT_VERSION"
               git push origin version/$clean_branch
             displayName: "⚡ Commit Version & Push — $(Build.Repository.Name)"
