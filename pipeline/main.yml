@@ -9,8 +9,8 @@ parameters:
       # - cap
       # - tolima
       # - huila
-      - cauca
-      # - boyaca
+      # - cauca
+      - boyaca
       # - santander
       # - putumayo
 
