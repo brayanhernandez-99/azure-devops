@@ -28,12 +28,13 @@ jobs:
 
               file=$(Pipeline.Workspace)/versions/microservice/version.json
 
+
               cleanNEXT_VERSION=$(jq -r .version "$file")
               jq --arg version "$cleanNEXT_VERSION" '.version = $version' package.json > tmp.json && mv tmp.json package.json
 
-              git add package.json
-            
+              echo "🔧 $(Build.Repository.Name) → $cleanNEXT_VERSION"
 
+              git add package.json
               git commit -m "chore($(Build.Repository.Name)): bump version to $cleanNEXT_VERSION"
               git push origin version/$clean_branch
             displayName: "⚡ Commit Version & Push — $(Build.Repository.Name)"
