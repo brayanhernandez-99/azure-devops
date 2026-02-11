@@ -1,6 +1,7 @@
 jobs:
   - deployment: push_versions
     displayName: "🔐 Serial Git Push (version/*)"
+    dependsOn: "deploy_micro_frontend"
     condition: in(dependencies.deploy_micro_frontend.result, 'Succeeded', 'SucceededWithIssues')
     environment: git-version-lock
     strategy:
