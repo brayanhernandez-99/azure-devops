@@ -22,14 +22,14 @@ parameters:
     type: object
     default:
       - antioquia
-      # - antioquia_new
-      # - cap
-      # - tolima
-      # - huila
-      # - cauca
-      # - boyaca
-      # - santander
-      # - putumayo
+      - antioquia_new
+      - cap
+      - tolima
+      - huila
+      - cauca
+      - boyaca
+      - santander
+      - putumayo
 
   - name: apps
     type: object
