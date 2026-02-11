@@ -156,33 +156,35 @@ jobs:
           git config user.name "pipeline"
           git config user.email "pipelineUX@ux.technology"
 
-          echo "🔄 Fetch version/master"
-          git fetch origin version/master
+          for br in develop staging master
+            echo "🔄 Fetch version/$br"
+            git fetch origin version/$br
 
-          echo "📌 Checkout version/master"
-          git checkout -B version/master origin/version/master
+            echo "📌 Checkout version/$br"
+            git checkout -B version/$br origin/version/$br
 
-          pkg="$(System.DefaultWorkingDirectory)/$(file)/$(msName)/package.json"
+            pkg="$(System.DefaultWorkingDirectory)/$(file)/$(msName)/package.json"
 
-          if [[ ! -f "$pkg" ]]; then
-            echo "🆕 Bootstrap MF: $ms no existe"
+            if [[ ! -f "$pkg" ]]; then
+              echo "🆕 Bootstrap MF: $ms no existe"
 
-            mkdir -p "$(dirname "$pkg")"
+              mkdir -p "$(dirname "$pkg")"
 
-            cat > "$pkg" <<EOF
-          {
-            "name": "$(msName)",
-            "version": "1.0.0"
-          }
-          EOF
-            git add "$pkg"
-            git commit -m "chore: bootstrap new micro-frontends"
-            git push origin version/master
-            echo "ℹ️ Se creó el MF  $(file) en la rama version/master"
+              cat > "$pkg" <<EOF
+            {
+              "name": "$(msName)",
+              "version": "1.0.0"
+            }
+            EOF
+              git add "$pkg"
+              git commit -m "chore: bootstrap new micro-frontends"
+              git push origin version/$br
+              echo "ℹ️ Se creó el MF  $(file) en la rama version/$br"
 
-          else
-              echo "ℹ️ $ms ya existe en version/master"
-          fi
+            else
+                echo "ℹ️ $ms ya existe en version/$br"
+            fi
+          done
         displayName: "🔍 Validate Micro-Frontend Exists in version/master"
 
 
