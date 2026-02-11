@@ -1,152 +1,44 @@
 jobs:
-  - job: "commit_version_backend"
-    displayName: "⚡commit version backend"
-    dependsOn: "deploy_micro_service"
+  - deployment: push_versions
+    displayName: "🔐 Serial Git Push (version/*)"
     condition: in(dependencies.deploy_micro_service.result, 'Succeeded', 'SucceededWithIssues')
-    pool:
-      name: Azure Pipelines
-      vmImage: "ubuntu-22.04"
+    environment: git-version-lock
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - checkout: self
+            fetchDepth: 0
+            persistCredentials: true
 
-    steps:
-      - checkout: self
-        fetchDepth: 0
-        persistCredentials: true
+          - download: current
+            artifact: versions
+            displayName: "📥 Download Versions"
 
-      - script: |
-          REPO_ID=$(curl -s -u ":$AZURE_DEVOPS_CLI_PAT" \
-            "https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories?api-version=5.0" \
-            | jq -r '.value[] | select(.name == "$(Build.Repository.Name)").id')
-          echo "id del repositorio $(Build.Repository.Name) = $REPO_ID"
-          echo "##vso[task.setvariable variable=repoID]$REPO_ID"
-        env:
-          AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
-        displayName: "📌 Set Repository ID"
+          - script: |
+              raw_branch=$(Build.SourceBranch)
+              clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
 
-      - script: |
-          echo "id del repositorio $(Build.Repository.Name) = $(repoID)"
+              git config user.name "pipeline"
+              git config user.email "pipelineUX@ux.technology"
 
-          CURRENT_BRANCH=$(echo $(Build.SourceBranch))
+              git fetch origin version/$clean_branch
+              git checkout -B version/$clean_branch origin/version/$clean_branch
 
-          if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
-            CURRENT_BRANCH_PR=refs/heads/feature
-          fi
+              file=(Pipeline.Workspace)/versions/microservice/version.json
 
-          if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|staging|master)$ ]]; then
-            CURRENT_BRANCH_PR=$(echo $(Build.SourceBranch))
-          fi
+              version=$(jq -r .version "$file")
+              jq --arg version "$version" \
+                '.version = $version' \
+                "package.json" > tmp.json && mv tmp.json "$package.json"
 
-          URL="https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories/$(repoID)/pullrequests?searchCriteria.status=completed&searchCriteria.targetRefName=$CURRENT_BRANCH_PR&api-version=5.0"
-          response=$(curl -s -u ":$AZURE_DEVOPS_CLI_PAT" "$URL")
-          echo "$response" | jq '.value[0]'
-          PR_ID=$(echo "$response" | jq -r '.value[0].pullRequestId')
-
-          echo "id del pr $PR_ID"
-          echo "##vso[task.setvariable variable=ultimoPR]$PR_ID"
-
-          mkdir -p $(Build.ArtifactStagingDirectory)/idpr
-          touch $(Build.ArtifactStagingDirectory)/idpr/idpr.json
-          echo "{\"idpr\": \"$PR_ID\" }" > $(Build.ArtifactStagingDirectory)/idpr/idpr.json
-        env:
-          AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
-        displayName: "📌 Set Pull Request ID"
-        condition: not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
-
-      - script: |
-          echo "Pull Request ID recuperado: $(ultimoPR)"
-          echo "id del repositorio $(Build.Repository.Name) = $(repoID)" 
-          COMMITS=$(curl -s -u ":$AZURE_DEVOPS_CLI_PAT" \
-            "https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories/$(repoID)/pullRequests/$(ultimoPR)/commits?api-version=7.0" \
-            | jq -r '.value[].comment' | grep -E 'feat:|fix:|!')
-          SAFE_COMMITS=$(echo "$COMMITS" | tr '\n' '|')
-          echo $SAFE_COMMITS
-          echo "##vso[task.setvariable variable=filteredCommits]$SAFE_COMMITS"
-        env:
-          AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
-        displayName: "📝 Pull Request Commit Details"
-        condition: not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'))
-
-      - script: |
-          CURRENT_BRANCH=$(echo $(Build.SourceBranch))
-          echo $CURRENT_BRANCH
-
-          if [[ "$CURRENT_BRANCH" == refs/heads/master ]]; then
-
-            raw_branch=$(Build.SourceBranch)
-            clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
-
-            COMMITS=$(echo "$(filteredCommits)" | tr '|' '\n')
-            echo "📝 Commits de la rama staging a master:"
-            echo $COMMITS
+              git add "package.json"
             
-            IS_MAJOR=0
-            IS_MINOR=0
-            IS_PATCH=0
 
-            while read -r COMMIT; do
-              if [[ "$COMMIT" == *"!"* ]]; then
-                IS_MAJOR=1
-              elif [[ "$COMMIT" == feat:* ]]; then
-                IS_MINOR=1
-              elif [[ "$COMMIT" == fix:* ]]; then
-                IS_PATCH=1
-              fi
-            done <<< "$COMMITS"
+              git commit -m "chore($(Build.Repository.Name)): bump version to $version"
+              git push origin version/$clean_branch
+            displayName: "⚡ Commit Version & Push"
 
-            if [[ $IS_MAJOR -eq 1 ]]; then
-              RELEASE_TYPE="major"
-            elif [[ $IS_MINOR -eq 1 ]]; then
-              RELEASE_TYPE="minor"
-            elif [[ $IS_PATCH -eq 1 ]]; then
-              RELEASE_TYPE="patch"
-            else
-              RELEASE_TYPE="patch" 
-            fi
-            echo $RELEASE_TYPE
-
-            bump_version() {
-              IFS='.' read -r MAJOR MINOR PATCH <<< "$1"
-              case "$2" in
-                major) echo "$((MAJOR + 1)).0.0" ;;
-                minor) echo "$MAJOR.$((MINOR + 1)).0" ;;
-                patch) echo "$MAJOR.$MINOR.$((PATCH + 1))" ;;
-              esac
-            }
-
-            if [[ "$CURRENT_BRANCH" == refs/heads/master ]]; then
-              git checkout version/$clean_branch
-              VERSION_ACTUAL_MASTER=$(jq -r .version package.json)
-              NEXT_BASE_VERSION=$(bump_version "$VERSION_ACTUAL_MASTER" "$RELEASE_TYPE")
-              NEXT_VERSION="$NEXT_BASE_VERSION"
-              
-              echo -e "\n🔍 Versiones Detectadas"
-              echo "📌 Anterior versión : $VERSION_ACTUAL_MASTER"
-              echo "🚀 Próxima versión : $NEXT_VERSION"
-            fi
-
-            mkdir -p $(Build.ArtifactStagingDirectory)/
-            touch $(Build.ArtifactStagingDirectory)/version.json
-            echo "{ \"ms\": \"$(Build.Repository.Name)\", \"version\": \"$NEXT_VERSION\" }" > $(Build.ArtifactStagingDirectory)/version.json
-
-            echo "##vso[task.setvariable variable=cleanNEXT_VERSION]$NEXT_VERSION"
-          fi
-        displayName: "🔍 Detect next version"
-        name: SemanticJob
-
-      - script: |
-          raw_branch=$(Build.SourceBranch)
-          clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
-
-          jq --arg version "$(cleanNEXT_VERSION)" '.version = $version' package.json > tmp.json && mv tmp.json package.json
-
-          git config user.name "pipeline"
-          git config user.email "pipelineUX@ux.technology"
-
-          git checkout version/$clean_branch
-          git pull origin version/$clean_branch
-          git add package.json
-          git commit -m "chore($(Build.Repository.Name)): bump version to $(cleanNEXT_VERSION)"
-          git push origin version/$clean_branch
-        displayName: "⚡ Bump Version & Push — $(Build.Repository.Name)"
 
   - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/master') }}:
       - job: "create_publish_versioning"
