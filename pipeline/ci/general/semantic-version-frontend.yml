@@ -361,6 +361,7 @@ jobs:
         deploy:
           steps:
           - checkout: self
+            fetchDepth: 0
             persistCredentials: true
 
           - download: current
@@ -373,8 +374,8 @@ jobs:
               git config user.name "pipeline"
               git config user.email "pipelineUX@ux.technology"
 
-              git checkout version/$clean_branch
-              git pull origin version/$clean_branch
+              git fetch origin version/staging
+              git checkout -B version/staging origin/version/staging
 
               for file in $(Pipeline.Workspace)/versions/*/version.json; do
                 ms=$(jq -r .ms "$file")
