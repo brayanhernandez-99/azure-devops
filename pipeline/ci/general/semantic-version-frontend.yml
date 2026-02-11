@@ -413,12 +413,17 @@ jobs:
                 version=$(jq -r .version "$files")
 
                 echo "🔧 $ms → $version"
+                if [[ "$ms" == "app-administration-vue2" || "$ms" == "app-sellers-vue2" ]]; then
+                  dir="app-legacy"
+                else
+                  dir="apps"
+                fi
 
                 jq --arg version "$version" \
                   '.version = $version' \
-                  "$(file)/$ms/package.json" > tmp.json && mv tmp.json "$(file)/$ms/package.json"
+                  "$dir/$ms/package.json" > tmp.json && mv tmp.json "$dir/$ms/package.json"
 
-                git add "$(file)/$ms/package.json"
+                git add "$dir/$ms/package.json"
               done
 
               git commit -m "chore: bump versions [monorepo]"
