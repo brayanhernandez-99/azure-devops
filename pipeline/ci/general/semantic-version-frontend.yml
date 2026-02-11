@@ -164,24 +164,15 @@ jobs:
 
           BOOTSTRAPPED=false
 
-          for file in $(Pipeline.Workspace)/versions/*/version.json; do
-            ms=$(jq -r .ms "$file")
+          pkg="$(file)/$(msName)/package.json"
 
-            if [[ "$ms" == "app-administration-vue2" || "$ms" == "app-sellers-vue2" ]]; then
-              dir="app-legacy"
-            else
-              dir="apps"
-            fi
+          if [[ ! -f "$pkg" ]]; then
+            echo "🆕 Bootstrap MF: $ms no existe"
 
-            pkg="$dir/$ms/package.json"
-
-            if [[ ! -f "$pkg" ]]; then
-              echo "🆕 Bootstrap MF: $ms no existe"
-
-            else
+          else
               echo "ℹ️ $ms ya existe en version/master"
-            fi
-          done
+          fi
+          
 
         displayName: "📌 Existe MF"
 
@@ -413,17 +404,11 @@ jobs:
 
   #               echo "🔧 $ms → $version"
 
-  #               if [[ "$ms" == "app-administration-vue2" || "$ms" == "app-sellers-vue2" ]]; then
-  #                 dir="app-legacy"
-  #               else
-  #                 dir="apps"
-  #               fi
-
   #               jq --arg version "$version" \
   #                 '.version = $version' \
-  #                 "$dir/$ms/package.json" > tmp.json && mv tmp.json "$dir/$ms/package.json"
+  #                 "$(file)/$ms/package.json" > tmp.json && mv tmp.json "$(file)/$ms/package.json"
 
-  #               git add "$dir/$ms/package.json"
+  #               git add "$(file)/$ms/package.json"
   #             done
 
   #             git commit -m "chore: bump versions [monorepo]"
