@@ -26,7 +26,7 @@ jobs:
               git fetch origin version/$clean_branch
               git checkout -B version/$clean_branch origin/version/$clean_branch
 
-              file=(Pipeline.Workspace)/versions/microservice/version.json
+              file=$(Pipeline.Workspace)/versions/microservice/version.json
 
               version=$(jq -r .version "$file")
               jq --arg version "$version" \
