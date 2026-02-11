@@ -222,7 +222,3 @@ jobs:
               git commit -m "chore: bump versions [monorepo]"
               git push origin version/$clean_branch
             displayName: "⚡ Commit Version & Push"
-            condition: and(succeeded(),
-              ne(variables['Build.SourceBranchName'], 'master'),
-              not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
-              not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
