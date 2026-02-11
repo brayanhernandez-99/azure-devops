@@ -153,6 +153,39 @@ jobs:
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
 
       - script: |
+          git config user.name "pipeline"
+          git config user.email "pipelineUX@ux.technology"
+
+          echo "🔄 Fetch version/master"
+          git fetch origin version/master
+
+          echo "📌 Checkout version/master"
+          git checkout -B version/master origin/version/master
+
+          BOOTSTRAPPED=false
+
+          for file in $(Pipeline.Workspace)/versions/*/version.json; do
+            ms=$(jq -r .ms "$file")
+
+            if [[ "$ms" == "app-administration-vue2" || "$ms" == "app-sellers-vue2" ]]; then
+              dir="app-legacy"
+            else
+              dir="apps"
+            fi
+
+            pkg="$dir/$ms/package.json"
+
+            if [[ ! -f "$pkg" ]]; then
+              echo "🆕 Bootstrap MF: $ms no existe"
+
+            else
+              echo "ℹ️ $ms ya existe en version/master"
+            fi
+          done
+
+        displayName: "📌 Existe MF"
+
+      - script: |
 
           pwd
           ls -ltra
@@ -348,55 +381,55 @@ jobs:
         displayName: "📤 Publish artifact version"
         condition: succeeded()
 
-  - deployment: push_versions
-    displayName: "🔐 Serial Git Push (version/*)"
-    environment: git-version-lock
-    dependsOn: semantic_version_micro_fronted
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-          - checkout: self
-            fetchDepth: 0
-            persistCredentials: true
+  # - deployment: push_versions
+  #   displayName: "🔐 Serial Git Push (version/*)"
+  #   environment: git-version-lock
+  #   dependsOn: semantic_version_micro_fronted
+  #   strategy:
+  #     runOnce:
+  #       deploy:
+  #         steps:
+  #         - checkout: self
+  #           fetchDepth: 0
+  #           persistCredentials: true
 
-          - download: current
-            artifact: versions
-            displayName: "📥 Download Versions"
+  #         - download: current
+  #           artifact: versions
+  #           displayName: "📥 Download Versions"
 
-          - script: |
-              raw_branch=$(Build.SourceBranch)
-              clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
+  #         - script: |
+  #             raw_branch=$(Build.SourceBranch)
+  #             clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
 
-              git config user.name "pipeline"
-              git config user.email "pipelineUX@ux.technology"
+  #             git config user.name "pipeline"
+  #             git config user.email "pipelineUX@ux.technology"
 
-              git fetch origin version/$clean_branch
-              git checkout -B version/$clean_branch origin/version/$clean_branch
+  #             git fetch origin version/$clean_branch
+  #             git checkout -B version/$clean_branch origin/version/$clean_branch
 
-              for file in $(Pipeline.Workspace)/versions/*/version.json; do
-                ms=$(jq -r .ms "$file")
-                version=$(jq -r .version "$file")
+  #             for file in $(Pipeline.Workspace)/versions/*/version.json; do
+  #               ms=$(jq -r .ms "$file")
+  #               version=$(jq -r .version "$file")
 
-                echo "🔧 $ms → $version"
+  #               echo "🔧 $ms → $version"
 
-                if [[ "$ms" == "app-administration-vue2" || "$ms" == "app-sellers-vue2" ]]; then
-                  dir="app-legacy"
-                else
-                  dir="apps"
-                fi
+  #               if [[ "$ms" == "app-administration-vue2" || "$ms" == "app-sellers-vue2" ]]; then
+  #                 dir="app-legacy"
+  #               else
+  #                 dir="apps"
+  #               fi
 
-                jq --arg version "$version" \
-                  '.version = $version' \
-                  "$dir/$ms/package.json" > tmp.json && mv tmp.json "$dir/$ms/package.json"
+  #               jq --arg version "$version" \
+  #                 '.version = $version' \
+  #                 "$dir/$ms/package.json" > tmp.json && mv tmp.json "$dir/$ms/package.json"
 
-                git add "$dir/$ms/package.json"
-              done
+  #               git add "$dir/$ms/package.json"
+  #             done
 
-              git commit -m "chore: bump versions [monorepo]"
-              git push origin version/$clean_branch
-            displayName: "⚡ Commit Version & Push"
-            condition: and(succeeded(),
-              ne(variables['Build.SourceBranchName'], 'master'),
-              not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
-              not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
+  #             git commit -m "chore: bump versions [monorepo]"
+  #             git push origin version/$clean_branch
+  #           displayName: "⚡ Commit Version & Push"
+  #           condition: and(succeeded(),
+  #             ne(variables['Build.SourceBranchName'], 'master'),
+  #             not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
+  #             not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
