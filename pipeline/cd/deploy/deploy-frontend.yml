@@ -38,165 +38,165 @@ jobs:
         displayName: "📚 Read Version"
         condition: succeeded()
 
-      - script: |
-          if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
-            fileselect=app-legacy
-            echo -e "\nℹ️ Ruta de archivo del micro frontend: $fileselect"
-            echo "##vso[task.setvariable variable=file]$fileselect"
-          else
-            fileselect=apps
-            echo -e "\nℹ️ Ruta de archivo del micro frontend: $fileselect"
-            echo "##vso[task.setvariable variable=file]$fileselect"
-          fi
-        displayName: "📂 Select Directory"
-        condition: succeeded()
+      # - script: |
+      #     if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
+      #       fileselect=app-legacy
+      #       echo -e "\nℹ️ Ruta de archivo del micro frontend: $fileselect"
+      #       echo "##vso[task.setvariable variable=file]$fileselect"
+      #     else
+      #       fileselect=apps
+      #       echo -e "\nℹ️ Ruta de archivo del micro frontend: $fileselect"
+      #       echo "##vso[task.setvariable variable=file]$fileselect"
+      #     fi
+      #   displayName: "📂 Select Directory"
+      #   condition: succeeded()
 
-      - task: DownloadPipelineArtifact@2
-        inputs:
-          artifact: dists
-          path: $(Pipeline.Workspace)/downloaded-dists
-        displayName: "📥 Download Dists"
-        condition: succeeded()
+      # - task: DownloadPipelineArtifact@2
+      #   inputs:
+      #     artifact: dists
+      #     path: $(Pipeline.Workspace)/downloaded-dists
+      #   displayName: "📥 Download Dists"
+      #   condition: succeeded()
 
-      - script: |
-          set -e
-          echo -e "\n📦 Cargando al Bucket S3..."
+      # - script: |
+      #     set -e
+      #     echo -e "\n📦 Cargando al Bucket S3..."
 
-          ######## MULTI DEPLOY ##############
-          # CURRENT_BRANCH=$(echo $(Build.SourceBranch))
-          # if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|staging)$ ]]; then
-          #   BASE_PATH="$(Pipeline.Workspace)/downloaded-dists/$environments/$(msName)"
-          # else
-          #   BASE_PATH="$(Pipeline.Workspace)/downloaded-dists/$region/$(msName)"
-          # fi
+      #     ######## MULTI DEPLOY ##############
+      #     # CURRENT_BRANCH=$(echo $(Build.SourceBranch))
+      #     # if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|staging)$ ]]; then
+      #     #   BASE_PATH="$(Pipeline.Workspace)/downloaded-dists/$environments/$(msName)"
+      #     # else
+      #     #   BASE_PATH="$(Pipeline.Workspace)/downloaded-dists/$region/$(msName)"
+      #     # fi
 
-          ###########DEPLOY UNICO#########################
-          BASE_PATH="$(Pipeline.Workspace)/downloaded-dists/$region/$(msName)"
+      #     ###########DEPLOY UNICO#########################
+      #     BASE_PATH="$(Pipeline.Workspace)/downloaded-dists/$region/$(msName)"
 
 
-          echo -e "\n📂 Archivos a cargar: $BASE_PATH"
-          ls -l "$BASE_PATH"
+      #     echo -e "\n📂 Archivos a cargar: $BASE_PATH"
+      #     ls -l "$BASE_PATH"
 
-          if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
-            msName=$(msName)
-            msName=${msName%-vue2}
-          else 
-            msName=$(msName)
-          fi
+      #     if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
+      #       msName=$(msName)
+      #       msName=${msName%-vue2}
+      #     else 
+      #       msName=$(msName)
+      #     fi
 
-          aws s3 cp $BASE_PATH s3://mf-$msName-$(ACCOUNT_ID_INVICTUS)/$(msVersion)/ --recursive
-        displayName: "📤 Upload Bucket S3"
-        condition: succeeded()
-        env:
-          region: ${{ parameters.region }}
-          environments: ${{ parameters.environments }}
-          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
-          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
-          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
+      #     aws s3 cp $BASE_PATH s3://mf-$msName-$(ACCOUNT_ID_INVICTUS)/$(msVersion)/ --recursive
+      #   displayName: "📤 Upload Bucket S3"
+      #   condition: succeeded()
+      #   env:
+      #     region: ${{ parameters.region }}
+      #     environments: ${{ parameters.environments }}
+      #     AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+      #     AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
+      #     AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
 
-      - script: |
-          CLOUDFRONT_VAR_NAME=$(echo "$(msName)" | tr '[:lower:]' '[:upper:]' | tr '-' '_')
-          CLOUDFRONT_VAR_NAME=CLOUDFRONT_ID_$CLOUDFRONT_VAR_NAME
-          CLOUDFRONT_ID="${!CLOUDFRONT_VAR_NAME}"
+      # - script: |
+      #     CLOUDFRONT_VAR_NAME=$(echo "$(msName)" | tr '[:lower:]' '[:upper:]' | tr '-' '_')
+      #     CLOUDFRONT_VAR_NAME=CLOUDFRONT_ID_$CLOUDFRONT_VAR_NAME
+      #     CLOUDFRONT_ID="${!CLOUDFRONT_VAR_NAME}"
 
-          echo -e "\nℹ️ CLOUDFRONT: $(msName)"
-          echo "CLOUDFRONT_ID: $CLOUDFRONT_ID"
-          echo "CLOUDFRONT_VAR_NAME: $CLOUDFRONT_VAR_NAME"
+      #     echo -e "\nℹ️ CLOUDFRONT: $(msName)"
+      #     echo "CLOUDFRONT_ID: $CLOUDFRONT_ID"
+      #     echo "CLOUDFRONT_VAR_NAME: $CLOUDFRONT_VAR_NAME"
 
-          if [[ -z "$CLOUDFRONT_ID" ]] || [[ -z "$CLOUDFRONT_VAR_NAME" ]]; then
-            echo -e "\n##vso[task.logissue type=error]⚠️ CLOUDFRONT_ID o CLOUDFRONT_VAR_NAME no reconocidos"
-            echo -e "##vso[task.logissue type=error]⚠️ CLOUDFRONT_ID: $CLOUDFRONT_ID"
-            echo -e "##vso[task.logissue type=error]⚠️ CLOUDFRONT_VAR_NAME: $CLOUDFRONT_VAR_NAME"
-            exit 99
-          else
-            echo "##vso[task.setvariable variable=CLOUDFRONT_ID]$CLOUDFRONT_ID"
-          fi
-        displayName: "📌 Set CloudFront ID"
-        condition: succeeded()
+      #     if [[ -z "$CLOUDFRONT_ID" ]] || [[ -z "$CLOUDFRONT_VAR_NAME" ]]; then
+      #       echo -e "\n##vso[task.logissue type=error]⚠️ CLOUDFRONT_ID o CLOUDFRONT_VAR_NAME no reconocidos"
+      #       echo -e "##vso[task.logissue type=error]⚠️ CLOUDFRONT_ID: $CLOUDFRONT_ID"
+      #       echo -e "##vso[task.logissue type=error]⚠️ CLOUDFRONT_VAR_NAME: $CLOUDFRONT_VAR_NAME"
+      #       exit 99
+      #     else
+      #       echo "##vso[task.setvariable variable=CLOUDFRONT_ID]$CLOUDFRONT_ID"
+      #     fi
+      #   displayName: "📌 Set CloudFront ID"
+      #   condition: succeeded()
 
-      - script: |
-          set -e
-          echo -e "\nℹ️ Obteniendo CloudFront Distribution para: $(CLOUDFRONT_ID)..."
-          aws cloudfront get-distribution-config --id $(CLOUDFRONT_ID) --region $(AWS_DEFAULT_REGION) > $(CLOUDFRONT_ID).json
+      # - script: |
+      #     set -e
+      #     echo -e "\nℹ️ Obteniendo CloudFront Distribution para: $(CLOUDFRONT_ID)..."
+      #     aws cloudfront get-distribution-config --id $(CLOUDFRONT_ID) --region $(AWS_DEFAULT_REGION) > $(CLOUDFRONT_ID).json
 
-          echo -e "\n📂 Archivo: $(CLOUDFRONT_ID).json"
-          cat $(CLOUDFRONT_ID).json
-        displayName: "📡 Get CloudFront Distribution"
-        condition: succeeded()
-        env:
-          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
-          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
-          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
+      #     echo -e "\n📂 Archivo: $(CLOUDFRONT_ID).json"
+      #     cat $(CLOUDFRONT_ID).json
+      #   displayName: "📡 Get CloudFront Distribution"
+      #   condition: succeeded()
+      #   env:
+      #     AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+      #     AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
+      #     AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
 
-      - script: |
-          set -e
-          echo -e "\nℹ️ Insertando nueva versión en CloudFront Distribution: $(CLOUDFRONT_ID)..."
-          echo -e "\nVersion a actualizar: $(msVersion)"
+      # - script: |
+      #     set -e
+      #     echo -e "\nℹ️ Insertando nueva versión en CloudFront Distribution: $(CLOUDFRONT_ID)..."
+      #     echo -e "\nVersion a actualizar: $(msVersion)"
 
-          jq --arg version "/$(msVersion)" '.DistributionConfig.Origins.Items[0].OriginPath = $version' "$(CLOUDFRONT_ID).json" > "NEW_$(CLOUDFRONT_ID).json"
+      #     jq --arg version "/$(msVersion)" '.DistributionConfig.Origins.Items[0].OriginPath = $version' "$(CLOUDFRONT_ID).json" > "NEW_$(CLOUDFRONT_ID).json"
 
-          echo -e "\n📂 Archivo: NEW_$(CLOUDFRONT_ID).json"
-          cat NEW_$(CLOUDFRONT_ID).json
-        displayName: "🔖 Insert New Version"
-        condition: succeeded()
+      #     echo -e "\n📂 Archivo: NEW_$(CLOUDFRONT_ID).json"
+      #     cat NEW_$(CLOUDFRONT_ID).json
+      #   displayName: "🔖 Insert New Version"
+      #   condition: succeeded()
 
-      - script: |
-          set -e
-          ETAG=$(jq -r '.ETag' $(CLOUDFRONT_ID).json)
-          echo -e "\nℹ️ Actualizando CloudFront Distribution: $(CLOUDFRONT_ID)..."
-          echo "ℹ️ CloudFront ETag: $ETAG"
+      # - script: |
+      #     set -e
+      #     ETAG=$(jq -r '.ETag' $(CLOUDFRONT_ID).json)
+      #     echo -e "\nℹ️ Actualizando CloudFront Distribution: $(CLOUDFRONT_ID)..."
+      #     echo "ℹ️ CloudFront ETag: $ETAG"
 
-          jq '.DistributionConfig' "NEW_$(CLOUDFRONT_ID).json" > "UPDATE_$(CLOUDFRONT_ID).json"
-          echo -e "\n📂 Archivo: UPDATE_$(CLOUDFRONT_ID).json"
-          cat UPDATE_$(CLOUDFRONT_ID).json
+      #     jq '.DistributionConfig' "NEW_$(CLOUDFRONT_ID).json" > "UPDATE_$(CLOUDFRONT_ID).json"
+      #     echo -e "\n📂 Archivo: UPDATE_$(CLOUDFRONT_ID).json"
+      #     cat UPDATE_$(CLOUDFRONT_ID).json
 
-          aws cloudfront update-distribution --id $(CLOUDFRONT_ID) --region $AWS_DEFAULT_REGION --if-match "$ETAG" --distribution-config file://UPDATE_$(CLOUDFRONT_ID).json
-        displayName: "🔄 Update CloudFront Distribution"
-        condition: succeeded()
-        env:
-          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
-          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
-          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
+      #     aws cloudfront update-distribution --id $(CLOUDFRONT_ID) --region $AWS_DEFAULT_REGION --if-match "$ETAG" --distribution-config file://UPDATE_$(CLOUDFRONT_ID).json
+      #   displayName: "🔄 Update CloudFront Distribution"
+      #   condition: succeeded()
+      #   env:
+      #     AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+      #     AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
+      #     AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
 
-      - script: |
-          set -e
-          echo -e "\n⏳ Esperando que CloudFront Distribution $(CLOUDFRONT_ID) se propague..."
-          while true; do
-            STATUS=$(aws cloudfront get-distribution --id $(CLOUDFRONT_ID) --region $AWS_DEFAULT_REGION | jq -r '.Distribution.Status')
-            echo "🔄 Estado actual: $STATUS"
-            if [ "$STATUS" == "Deployed" ]; then
-              echo -e "\n✅ CloudFront Distribution $(CLOUDFRONT_ID) propagada correctamente."
-              break
-            fi
-            sleep 10
-          done
-        displayName: "⏳ Waiting for CloudFront propagation"
-        condition: succeeded()
-        env:
-          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
-          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
-          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
+      # - script: |
+      #     set -e
+      #     echo -e "\n⏳ Esperando que CloudFront Distribution $(CLOUDFRONT_ID) se propague..."
+      #     while true; do
+      #       STATUS=$(aws cloudfront get-distribution --id $(CLOUDFRONT_ID) --region $AWS_DEFAULT_REGION | jq -r '.Distribution.Status')
+      #       echo "🔄 Estado actual: $STATUS"
+      #       if [ "$STATUS" == "Deployed" ]; then
+      #         echo -e "\n✅ CloudFront Distribution $(CLOUDFRONT_ID) propagada correctamente."
+      #         break
+      #       fi
+      #       sleep 10
+      #     done
+      #   displayName: "⏳ Waiting for CloudFront propagation"
+      #   condition: succeeded()
+      #   env:
+      #     AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+      #     AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
+      #     AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
 
-      - script: |
-          set -e
-          echo -e "\n⏳ Esperando que CloudFront Distribution $(CLOUDFRONT_ID) invalide..."
-          RESULT=$(aws cloudfront create-invalidation --distribution-id $(CLOUDFRONT_ID) --paths '/*')
-          INVALIDATION=$(echo "$RESULT" | jq -r '.Invalidation.Id')
+      # - script: |
+      #     set -e
+      #     echo -e "\n⏳ Esperando que CloudFront Distribution $(CLOUDFRONT_ID) invalide..."
+      #     RESULT=$(aws cloudfront create-invalidation --distribution-id $(CLOUDFRONT_ID) --paths '/*')
+      #     INVALIDATION=$(echo "$RESULT" | jq -r '.Invalidation.Id')
 
-          echo -e "\n🆔 ID de invalidación: $INVALIDATION"
-          echo "$RESULT"
-          while true; do
-            STATUS=$(aws cloudfront get-invalidation --distribution-id $(CLOUDFRONT_ID) --id "$INVALIDATION" --region $AWS_DEFAULT_REGION | jq -r '.Invalidation.Status')
-            echo "🔄 Estado actual de la invalidación: $STATUS"
-            if [ "$STATUS" == "Completed" ]; then
-              echo -e "\n✅ Invalidacion $INVALIDATION completada con éxito."
-              break
-            fi
-            sleep 10
-          done
-        displayName: "⏳ Waiting for invalidation Cache"
-        condition: succeeded()
-        env:
-          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
-          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
-          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
+      #     echo -e "\n🆔 ID de invalidación: $INVALIDATION"
+      #     echo "$RESULT"
+      #     while true; do
+      #       STATUS=$(aws cloudfront get-invalidation --distribution-id $(CLOUDFRONT_ID) --id "$INVALIDATION" --region $AWS_DEFAULT_REGION | jq -r '.Invalidation.Status')
+      #       echo "🔄 Estado actual de la invalidación: $STATUS"
+      #       if [ "$STATUS" == "Completed" ]; then
+      #         echo -e "\n✅ Invalidacion $INVALIDATION completada con éxito."
+      #         break
+      #       fi
+      #       sleep 10
+      #     done
+      #   displayName: "⏳ Waiting for invalidation Cache"
+      #   condition: succeeded()
+      #   env:
+      #     AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+      #     AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
+      #     AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
