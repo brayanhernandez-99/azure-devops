@@ -162,8 +162,6 @@ jobs:
           echo "📌 Checkout version/master"
           git checkout -B version/master origin/version/master
 
-          BOOTSTRAPPED=false
-
           pkg="$(System.DefaultWorkingDirectory)/$(file)/$(msName)/package.json"
 
           if [[ ! -f "$pkg" ]]; then
@@ -178,21 +176,15 @@ jobs:
           }
           EOF
             git add "$pkg"
-            BOOTSTRAPPED=true
+            git commit -m "chore: bootstrap new micro-frontends"
+            git push origin version/master
+            echo "ℹ️ Se creó el MF  $(file) en la rama version/master"
 
           else
               echo "ℹ️ $ms ya existe en version/master"
           fi
+        displayName: "🔍 Validate Micro-Frontend Exists in version/master"
 
-          if [[ "$BOOTSTRAPPED" == "true" ]]; then
-            git commit -m "chore: bootstrap new micro-frontends"
-            git push origin version/master
-          else
-            echo "✅ No hay micro-frontends nuevos"
-          fi
-          
-
-        displayName: "📌 Existe MF"
 
       - script: |
 
@@ -390,49 +382,49 @@ jobs:
         displayName: "📤 Publish artifact version"
         condition: succeeded()
 
-  # - deployment: push_versions
-  #   displayName: "🔐 Serial Git Push (version/*)"
-  #   environment: git-version-lock
-  #   dependsOn: semantic_version_micro_fronted
-  #   strategy:
-  #     runOnce:
-  #       deploy:
-  #         steps:
-  #         - checkout: self
-  #           fetchDepth: 0
-  #           persistCredentials: true
+  - deployment: push_versions
+    displayName: "🔐 Serial Git Push (version/*)"
+    environment: git-version-lock
+    dependsOn: semantic_version_micro_fronted
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - checkout: self
+            fetchDepth: 0
+            persistCredentials: true
 
-  #         - download: current
-  #           artifact: versions
-  #           displayName: "📥 Download Versions"
+          - download: current
+            artifact: versions
+            displayName: "📥 Download Versions"
 
-  #         - script: |
-  #             raw_branch=$(Build.SourceBranch)
-  #             clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
+          - script: |
+              raw_branch=$(Build.SourceBranch)
+              clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
 
-  #             git config user.name "pipeline"
-  #             git config user.email "pipelineUX@ux.technology"
+              git config user.name "pipeline"
+              git config user.email "pipelineUX@ux.technology"
 
-  #             git fetch origin version/$clean_branch
-  #             git checkout -B version/$clean_branch origin/version/$clean_branch
+              git fetch origin version/$clean_branch
+              git checkout -B version/$clean_branch origin/version/$clean_branch
 
-  #             for file in $(Pipeline.Workspace)/versions/*/version.json; do
-  #               ms=$(jq -r .ms "$file")
-  #               version=$(jq -r .version "$file")
+              for file in $(Pipeline.Workspace)/versions/*/version.json; do
+                ms=$(jq -r .ms "$file")
+                version=$(jq -r .version "$file")
 
-  #               echo "🔧 $ms → $version"
+                echo "🔧 $ms → $version"
 
-  #               jq --arg version "$version" \
-  #                 '.version = $version' \
-  #                 "$(file)/$ms/package.json" > tmp.json && mv tmp.json "$(file)/$ms/package.json"
+                jq --arg version "$version" \
+                  '.version = $version' \
+                  "$(file)/$ms/package.json" > tmp.json && mv tmp.json "$(file)/$ms/package.json"
 
-  #               git add "$(file)/$ms/package.json"
-  #             done
+                git add "$(file)/$ms/package.json"
+              done
 
-  #             git commit -m "chore: bump versions [monorepo]"
-  #             git push origin version/$clean_branch
-  #           displayName: "⚡ Commit Version & Push"
-  #           condition: and(succeeded(),
-  #             ne(variables['Build.SourceBranchName'], 'master'),
-  #             not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
-  #             not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
+              git commit -m "chore: bump versions [monorepo]"
+              git push origin version/$clean_branch
+            displayName: "⚡ Commit Version & Push"
+            condition: and(succeeded(),
+              ne(variables['Build.SourceBranchName'], 'master'),
+              not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
+              not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
