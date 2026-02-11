@@ -7,8 +7,8 @@ parameters:
     default:
       # - antioquia
       # - cap
-      - tolima
-      # - huila
+      # - tolima
+      - huila
       # - cauca
       # - boyaca
       # - santander
