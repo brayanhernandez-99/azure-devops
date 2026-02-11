@@ -1,14 +1,14 @@
 jobs:
-  - job: "commit_version_frontend"
-    displayName: "⚡commit version frontend"
-    dependsOn: "deploy_micro_frontend"
-    condition: in(dependencies.deploy_micro_frontend.result, 'Succeeded', 'SucceededWithIssues')
-    pool:
-      name: Azure Pipelines
-      vmImage: "ubuntu-22.04"
+  # - job: "commit_version_frontend"
+  #   displayName: "⚡commit version frontend"
+  #   dependsOn: "deploy_micro_frontend"
+  #   condition: in(dependencies.deploy_micro_frontend.result, 'Succeeded', 'SucceededWithIssues')
+  #   pool:
+  #     name: Azure Pipelines
+  #     vmImage: "ubuntu-22.04"
 
-    variables:
-      - template: ../../variables/groups-transversal-variables-frontend.yml
+  #   variables:
+  #     - template: ../../variables/groups-transversal-variables-frontend.yml
 
     # strategy:
     #   matrix:
@@ -179,7 +179,6 @@ jobs:
   - deployment: push_versions
     displayName: "🔐 Serial Git Push (version/*)"
     environment: git-version-lock
-    dependsOn: semantic_version_micro_fronted
     strategy:
       runOnce:
         deploy:
