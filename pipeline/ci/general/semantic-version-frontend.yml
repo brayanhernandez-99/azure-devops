@@ -168,9 +168,29 @@ jobs:
 
           if [[ ! -f "$pkg" ]]; then
             echo "🆕 Bootstrap MF: $ms no existe"
+            cd $(System.DefaultWorkingDirectory)/$(file)
+
+            mkdir -p "$(file)/$(msName)"
+
+            cat > "$pkg" <<EOF
+            {
+              "name": "$ms",
+              "version": "1.0.0"
+            }
+            EOF
+
+            git add "$pkg"
+            BOOTSTRAPPED=true
 
           else
               echo "ℹ️ $ms ya existe en version/master"
+          fi
+
+          if [[ "$BOOTSTRAPPED" == "true" ]]; then
+            git commit -m "chore: bootstrap new micro-frontends"
+            git push origin version/master
+          else
+            echo "✅ No hay micro-frontends nuevos"
           fi
           
 
