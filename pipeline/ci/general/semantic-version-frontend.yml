@@ -350,7 +350,7 @@ jobs:
 
   - deployment: push_versions
     displayName: "🔐 Serial Git Push (version/*)"
-    environment: git-version-lock   # 🔥 ESTE ES EL CANDADO
+    environment: git-version-lock
     dependsOn: semantic_version_micro_fronted
     strategy:
       runOnce:
@@ -362,6 +362,7 @@ jobs:
 
           - download: current
             artifact: versions
+            displayName: "📥 Download Versions"
 
           - script: |
               raw_branch=$(Build.SourceBranch)
@@ -370,8 +371,8 @@ jobs:
               git config user.name "pipeline"
               git config user.email "pipelineUX@ux.technology"
 
-              git fetch origin version/staging
-              git checkout -B version/staging origin/version/staging
+              git fetch origin version/$clean_branch
+              git checkout -B version/$clean_branch origin/version/$clean_branch
 
               for file in $(Pipeline.Workspace)/versions/*/version.json; do
                 ms=$(jq -r .ms "$file")
