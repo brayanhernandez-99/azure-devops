@@ -96,29 +96,29 @@ jobs:
 
 
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds/aws-service-cmk
-          # terragrunt init -reconfigure
-          # terragrunt import aws_kms_key.cmk f09e2fee-32c8-42dc-bee9-9e2b2e3cda78
-          # terragrunt import aws_kms_alias.cmk_alias alias/km-rds
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds/aws-service-cmk
+          terragrunt init -reconfigure
+          terragrunt import aws_kms_key.cmk 6c15f0ec-3579-4f08-81f7-9f3495353e5c
+          terragrunt import aws_kms_alias.cmk_alias alias/km-rds
+          terragrunt plan --all --non-interactive -no-color
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-dynamo-cmk
-          # terragrunt init -reconfigure
-          # terragrunt import aws_kms_key.cmk 048c4a2b-609d-41d5-9b17-a27edb74b418
-          # terragrunt import aws_kms_alias.cmk_alias alias/km-dynamo
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-dynamo-cmk
+          terragrunt init -reconfigure
+          terragrunt import aws_kms_key.cmk beaf4487-ef35-49ce-ad65-a55dec6e85a4
+          terragrunt import aws_kms_alias.cmk_alias alias/km-dynamo
+          terragrunt plan --all --non-interactive -no-color
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-kinesis-cmk
-          # terragrunt init -reconfigure
-          # terragrunt import aws_kms_key.cmk 97ab0fcb-4609-4453-b282-98003c07689a
-          # terragrunt import aws_kms_alias.cmk_alias alias/km-kinesis
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-kinesis-cmk
+          terragrunt init -reconfigure
+          terragrunt import aws_kms_key.cmk 644b4528-b5dc-4d71-8d24-c3cdc30c89ae
+          terragrunt import aws_kms_alias.cmk_alias alias/km-kinesis
+          terragrunt plan --all --non-interactive -no-color
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-secrets-cmk
-          # terragrunt init -reconfigure
-          # terragrunt import aws_kms_key.cmk 72f22d1f-e46e-471d-8e1e-e3231089a997
-          # terragrunt import aws_kms_alias.cmk_alias alias/km-secrets
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-secrets-cmk
+          terragrunt init -reconfigure
+          terragrunt import aws_kms_key.cmk 1dbfba4c-c6f8-43e6-a3a0-5aaecd922478
+          terragrunt import aws_kms_alias.cmk_alias alias/km-secrets
+          terragrunt plan --all --non-interactive -no-color
 
 
 
