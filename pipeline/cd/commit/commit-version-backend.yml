@@ -1,6 +1,7 @@
 jobs:
   - deployment: push_versions
     displayName: "🔐 Serial Git Push (version/*)"
+    dependsOn: "deploy_micro_service"
     condition: in(dependencies.deploy_micro_service.result, 'Succeeded', 'SucceededWithIssues')
     environment: git-version-lock
     strategy:
@@ -37,7 +38,7 @@ jobs:
 
               git commit -m "chore($(Build.Repository.Name)): bump version to $version"
               git push origin version/$clean_branch
-            displayName: "⚡ Commit Version & Push"
+            displayName: "⚡ Commit Version & Push — $(Build.Repository.Name)"
 
 
   - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/master') }}:

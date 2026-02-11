@@ -353,29 +353,6 @@ jobs:
         displayName: "🔍 Detect next version"
         condition: succeeded()
 
-      # - script: |
-      #     raw_branch=$(Build.SourceBranch)
-      #     clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
-
-      #     git config user.name "pipeline"
-      #     git config user.email "pipelineUX@ux.technology"
-
-      #     cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
-      #     echo "🔧 Actualizando versión en $(file)/$(msName)/package.json a $(cleanNEXT_VERSION)"
-      #     jq --arg version "$(cleanNEXT_VERSION)" '.version = $version' package.json > tmp.json && mv tmp.json package.json
-
-      #     git checkout version/$clean_branch
-      #     git pull origin version/$clean_branch
-      #     git add package.json
-      #     git commit -m "chore($(msName)): bump version to $(cleanNEXT_VERSION)"
-      #     git push origin version/$clean_branch
-
-      #   displayName: "⚡ Commit Version & Push — $(msName)"
-      #   condition: and(succeeded(),
-      #     ne(variables['Build.SourceBranchName'], 'master'),
-      #     not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
-      #     not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
-
       - task: PublishBuildArtifacts@1
         inputs:
           PathtoPublish: "$(Build.ArtifactStagingDirectory)"
@@ -384,58 +361,59 @@ jobs:
         displayName: "📤 Publish artifact version"
         condition: succeeded()
 
-  - deployment: push_versions
-    displayName: "🔐 Serial Git Push (version/*)"
-    condition: and(succeeded(),
-      ne(variables['Build.SourceBranchName'], 'master'),
-      not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
-      not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
-    environment: git-version-lock
-    dependsOn: semantic_version_micro_fronted
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-          - checkout: self
-            fetchDepth: 0
-            persistCredentials: true
+  - ${{ if or(eq(variables['Build.SourceBranchName'], 'develop'), eq(variables['Build.SourceBranch'], 'staging')) }}:
+    - deployment: push_versions
+      displayName: "🔐 Serial Git Push (version/*)"
+      condition: and(succeeded(),
+        ne(variables['Build.SourceBranchName'], 'master'),
+        not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
+        not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
+      environment: git-version-lock
+      dependsOn: semantic_version_micro_fronted
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+            - checkout: self
+              fetchDepth: 0
+              persistCredentials: true
 
-          - download: current
-            artifact: versions
-            displayName: "📥 Download Versions"
+            - download: current
+              artifact: versions
+              displayName: "📥 Download Versions"
 
-          - script: |
-              raw_branch=$(Build.SourceBranch)
-              clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
+            - script: |
+                raw_branch=$(Build.SourceBranch)
+                clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
 
-              git config user.name "pipeline"
-              git config user.email "pipelineUX@ux.technology"
+                git config user.name "pipeline"
+                git config user.email "pipelineUX@ux.technology"
 
-              git fetch origin version/$clean_branch
-              git checkout -B version/$clean_branch origin/version/$clean_branch
+                git fetch origin version/$clean_branch
+                git checkout -B version/$clean_branch origin/version/$clean_branch
 
-              for files in $(Pipeline.Workspace)/versions/*/version.json; do
-                ms=$(jq -r .ms "$files")
-                version=$(jq -r .version "$files")
+                for files in $(Pipeline.Workspace)/versions/*/version.json; do
+                  ms=$(jq -r .ms "$files")
+                  version=$(jq -r .version "$files")
 
-                echo "🔧 $ms → $version"
-                if [[ "$ms" == "app-administration-vue2" || "$ms" == "app-sellers-vue2" ]]; then
-                  dir="app-legacy"
-                else
-                  dir="apps"
-                fi
+                  echo "🔧 $ms → $version"
+                  if [[ "$ms" == "app-administration-vue2" || "$ms" == "app-sellers-vue2" ]]; then
+                    dir="app-legacy"
+                  else
+                    dir="apps"
+                  fi
 
-                jq --arg version "$version" \
-                  '.version = $version' \
-                  "$dir/$ms/package.json" > tmp.json && mv tmp.json "$dir/$ms/package.json"
+                  jq --arg version "$version" \
+                    '.version = $version' \
+                    "$dir/$ms/package.json" > tmp.json && mv tmp.json "$dir/$ms/package.json"
 
-                git add "$dir/$ms/package.json"
-              done
+                  git add "$dir/$ms/package.json"
+                done
 
-              git commit -m "chore: bump versions [monorepo]"
-              git push origin version/$clean_branch
-            displayName: "⚡ Commit Version & Push"
-            condition: and(succeeded(),
-              ne(variables['Build.SourceBranchName'], 'master'),
-              not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
-              not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
+                git commit -m "chore: bump versions [monorepo]"
+                git push origin version/$clean_branch
+              displayName: "⚡ Commit Version & Push"
+              condition: and(succeeded(),
+                ne(variables['Build.SourceBranchName'], 'master'),
+                not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
+                not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
