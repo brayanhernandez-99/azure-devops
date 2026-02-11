@@ -408,9 +408,9 @@ jobs:
               git fetch origin version/$clean_branch
               git checkout -B version/$clean_branch origin/version/$clean_branch
 
-              for file in $(Pipeline.Workspace)/versions/*/version.json; do
-                ms=$(jq -r .ms "$file")
-                version=$(jq -r .version "$file")
+              for files in $(Pipeline.Workspace)/versions/*/version.json; do
+                ms=$(jq -r .ms "$files")
+                version=$(jq -r .version "$files")
 
                 echo "🔧 $ms → $version"
 
