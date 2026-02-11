@@ -82,7 +82,6 @@ jobs:
       - script: |
           set -e
 
-
           # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds/aws-service-rds
           # terragrunt plan --all --non-interactive -no-color
 
@@ -92,6 +91,49 @@ jobs:
           # terragrunt import aws_security_group.sg sg-06c7e4963937c6b78
           # terragrunt state list -no-color
           # terragrunt plan --non-interactive -no-color
+
+
+
+
+
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-kinesis-cmk
+          # terragrunt init -reconfigure
+          # terragrunt import aws_kms_key.cmk 1f465158-5279-4150-8d11-2120ec6aaba9
+          # terragrunt import aws_kms_alias.cmk_alias alias/km-kinesis
+          # terragrunt plan --all --non-interactive -no-color
+
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-dynamo-cmk
+          # terragrunt init -reconfigure
+          # terragrunt import aws_kms_key.cmk ac84e3a8-6ed6-4d96-b366-87bdc9daa978
+          # terragrunt import aws_kms_alias.cmk_alias alias/km-dynamo
+          # terragrunt plan --all --non-interactive -no-color
+
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-secrets-cmk
+          # terragrunt init -reconfigure
+          # terragrunt import aws_kms_key.cmk 3237417a-a6ed-4e46-bd92-1526715d83c7
+          # terragrunt import aws_kms_alias.cmk_alias alias/km-secrets
+          # terragrunt plan --all --non-interactive -no-color
+
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds/aws-service-cmk
+          # terragrunt init -reconfigure
+          # terragrunt import aws_kms_key.cmk cfdb5e25-5ecf-47a8-8d85-b4a45497b28e
+          # terragrunt import aws_kms_alias.cmk_alias alias/km-rds
+          # terragrunt plan --all --non-interactive -no-color
+
+
+
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-kinesis-cmk
+          terragrunt plan --all --non-interactive -no-color
+
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-dynamo-cmk
+          terragrunt plan --all --non-interactive -no-color
+
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-secrets-cmk
+          terragrunt plan --all --non-interactive -no-color
+
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds/aws-service-cmk
+          terragrunt plan --all --non-interactive -no-color
+
 
 
 
