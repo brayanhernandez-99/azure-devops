@@ -350,10 +350,6 @@ jobs:
 
   - deployment: push_versions
     displayName: "🔐 Serial Git Push (version/*)"
-    condition: and(succeeded(),
-      ne(variables['Build.SourceBranchName'], 'master'),
-      not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
-      not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
     environment: git-version-lock   # 🔥 ESTE ES EL CANDADO
     dependsOn: semantic_version_micro_fronted
     strategy:
@@ -398,3 +394,8 @@ jobs:
 
               git commit -m "chore: bump versions [monorepo]"
               git push origin version/$clean_branch
+            displayName: "⚡ Commit Version & Push"
+            condition: and(succeeded(),
+              ne(variables['Build.SourceBranchName'], 'master'),
+              not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
+              not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
