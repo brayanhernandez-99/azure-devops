@@ -10,8 +10,8 @@ parameters:
       # - tolima
       # - huila
       # - cauca
-      - boyaca
-      # - santander
+      # - boyaca
+      - santander
       # - putumayo
 
 resources:
