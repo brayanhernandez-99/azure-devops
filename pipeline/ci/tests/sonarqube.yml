@@ -60,7 +60,7 @@ jobs:
 
             echo "Configurando npm..."
             npm config set "//$REPO_DOMAIN_MATRIX/$REPO_PATH_MATRIX/:_authToken" "$token_matrix"
-            npm config set registry "$REPO_URL_MATRIX"
+            npm config set "@matrixtech:registry" "$REPO_URL_MATRIX"
 
 
             REPO_DOMAIN_UX="ux-$ACCOUNT_ID_DEPLOY.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com"
