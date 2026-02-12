@@ -78,12 +78,12 @@ jobs:
             echo -e "\n📁 Generando archivo .npmrc con múltiples registries"
 
             cat <<EOF > ".npmrc"
-            registry=https://$REPO_DOMAIN_UX/$REPO_PATH_UX/
+            # registry=https://$REPO_DOMAIN_UX/$REPO_PATH_UX/
             @matrixtech:registry=https://$REPO_DOMAIN_MATRIX/$REPO_PATH_MATRIX/
             //$REPO_DOMAIN_MATRIX/$REPO_PATH_MATRIX/:_authToken=$token_matrix
 
-            //$REPO_DOMAIN_UX/$REPO_PATH_UX/:_authToken=$token_ux
-            # @ux:registry=https://$REPO_DOMAIN_UX/$REPO_PATH_UX/
+            # //$REPO_DOMAIN_UX/$REPO_PATH_UX/:_authToken=$token_ux
+            # # @ux:registry=https://$REPO_DOMAIN_UX/$REPO_PATH_UX/
             EOF
 
             ls -la .npmrc
