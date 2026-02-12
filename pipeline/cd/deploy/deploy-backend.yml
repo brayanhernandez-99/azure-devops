@@ -151,13 +151,6 @@ jobs:
                 set_cluster_service "msnotifier-cluster" "msnotifier-fg-service"
               fi
               ;;
-            raffle)
-              if [[ ( "$BRANCH_NAME" == "develop" && "$BRANCH_NAME_MULTI" == "develop" ) || ( "$BRANCH_NAME" == "staging" && "$BRANCH_NAME_MULTI" == "staging" ) || "$RED" == "antioquia" ]]; then
-                set_cluster_service "raffles-ms-cluster" "raffles-ms-fg-service"
-              elif [[ "$RED" != "antioquia" && ! ( ( "$BRANCH_NAME" == "develop" && "$BRANCH_NAME_MULTI" == "develop" ) || ( "$BRANCH_NAME" == "staging" && "$BRANCH_NAME_MULTI" == "staging" ) ) ]]; then
-                SERVICES="raffles"
-              fi
-              ;;
           esac
 
           # ⚙️ Casos específicos para BFFs
