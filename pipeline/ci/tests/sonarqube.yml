@@ -78,6 +78,7 @@ jobs:
             echo -e "\n📁 Generando archivo .npmrc con múltiples registries"
 
             cat <<EOF > ".npmrc"
+            registry=https://$REPO_DOMAIN_MATRIX/$REPO_PATH_MATRIX/
             @matrixtech:registry=https://$REPO_DOMAIN_MATRIX/$REPO_PATH_MATRIX/
             //$REPO_DOMAIN_MATRIX/$REPO_PATH_MATRIX/:_authToken=$token_matrix
 
