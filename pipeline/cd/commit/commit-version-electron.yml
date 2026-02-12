@@ -1,6 +1,6 @@
 jobs:
   - deployment: push_versions
-    displayName: "🔐 Serial Git Push (version/*)"
+    displayName: "🔐 serial git push (version/*)"
     dependsOn: "deploy_electron"
     condition: in(dependencies.deploy_electron.result, 'Succeeded', 'SucceededWithIssues')
     environment: git-version-lock
