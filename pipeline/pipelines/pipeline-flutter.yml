@@ -17,7 +17,7 @@ stages:
 
   - ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
       - ${{ each region in parameters.red }}:
-        # - ${{ if ne(region, 'antioquia_new') }}:
+        - ${{ if ne(region, 'antioquia_new') }}:
           - stage: build_flutter_${{ region }}
             displayName: "📦 Build Flutter ${{ region }}"
             dependsOn: semantic_version_flutter
