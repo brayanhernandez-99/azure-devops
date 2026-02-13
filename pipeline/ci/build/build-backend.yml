@@ -150,7 +150,7 @@ jobs:
         inputs:
           command: "build"
           Dockerfile: "$(Build.Repository.Name)/Dockerfile"
-          repository: "$(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/pruebas-$(clean_name_ecr)-$(branch_docker)"
+          repository: "$(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/$(clean_name_ecr)-$(branch_docker)"
           tags: $(version)
       
       - script: |
@@ -160,22 +160,22 @@ jobs:
             image \
             --severity CRITICAL,HIGH \
             --exit-code 1 \
-            $(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/pruebas-$(clean_name_ecr)-$(branch_docker):$(version)
+            $(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/$(clean_name_ecr)-$(branch_docker):$(version)
         displayName: "🛡️ Trivy scan Docker image"
         continueOnError: true
         condition: and(succeeded(),
           ne(variables['Build.SourceBranchName'], 'master'))
 
       - script: |
-          echo -e "\nℹ️ Verificando si existe el repositorio pruebas-$(clean_name_ecr)-$(branch_docker)..."
+          echo -e "\nℹ️ Verificando si existe el repositorio $(clean_name_ecr)-$(branch_docker)..."
           aws ecr describe-repositories \
-            --repository-names pruebas-$(clean_name_ecr)-$(branch_docker) \
+            --repository-names $(clean_name_ecr)-$(branch_docker) \
             --region $AWS_DEFAULT_REGION > /dev/null 2>&1
 
           if [ $? -ne 0 ]; then
             echo "⚠️ Repositorio no existe. Creándolo..."
             aws ecr create-repository \
-              --repository-name pruebas-$(clean_name_ecr)-$(branch_docker) \
+              --repository-name $(clean_name_ecr)-$(branch_docker) \
               --region $AWS_DEFAULT_REGION
           else
             echo "✅ Repositorio ya existe. Continuando..."
@@ -192,5 +192,5 @@ jobs:
         condition: succeeded()
         inputs:
           command: "Push"
-          repository: "$(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/pruebas-$(clean_name_ecr)-$(branch_docker)"
+          repository: "$(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/$(clean_name_ecr)-$(branch_docker)"
           tags: $(version)

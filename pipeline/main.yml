@@ -23,13 +23,13 @@ parameters:
     default:
       - antioquia
       # - antioquia_new
-      # - cap
-      # - tolima
-      # - huila
-      # - cauca
-      # - boyaca
-      # - santander
-      # - putumayo
+      - cap
+      - tolima
+      - huila
+      - cauca
+      - boyaca
+      - santander
+      - putumayo
 
   - name: apps
     type: object

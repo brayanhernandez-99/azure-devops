@@ -26,131 +26,131 @@ jobs:
         displayName: "📥 Download Version"
         condition: succeeded()
 
-      # - script: |
-      #     VERSION_FILE="$(Pipeline.Workspace)/versions-downloaded/versions/electron/version.json"
-      #     if [[ -f "$VERSION_FILE" ]]; then
-      #       VERSION=$(jq -r '.version' $VERSION_FILE)
-      #       echo -e "\n🚀 Versión detectada para $(Build.Repository.Name): $VERSION"
-      #       echo "##vso[task.setvariable variable=version]$VERSION"
-      #     else
-      #       echo -e "\n##vso[task.logissue type=error]⚠️ No se encontro archivo de versión para $(Build.Repository.Name)"
-      #       exit 99
-      #     fi
-      #   displayName: "📚 Read Version"
-      #   condition: succeeded()
+      - script: |
+          VERSION_FILE="$(Pipeline.Workspace)/versions-downloaded/versions/electron/version.json"
+          if [[ -f "$VERSION_FILE" ]]; then
+            VERSION=$(jq -r '.version' $VERSION_FILE)
+            echo -e "\n🚀 Versión detectada para $(Build.Repository.Name): $VERSION"
+            echo "##vso[task.setvariable variable=version]$VERSION"
+          else
+            echo -e "\n##vso[task.logissue type=error]⚠️ No se encontro archivo de versión para $(Build.Repository.Name)"
+            exit 99
+          fi
+        displayName: "📚 Read Version"
+        condition: succeeded()
 
-      # - script: |
-      #     CURRENT_BRANCH="$(Build.SourceBranch)"
-      #     environment="unknown"
+      - script: |
+          CURRENT_BRANCH="$(Build.SourceBranch)"
+          environment="unknown"
 
-      #     case "$CURRENT_BRANCH" in
-      #       refs/heads/feature/*) environment="dev"; ;;
-      #       refs/heads/develop)
-      #         if [[ "$environments" == "develop_new" ]]; then
-      #           environment="dev_new"
-      #         else
-      #           environment="dev"
-      #         fi
-      #         ;;
-      #       refs/heads/staging)
-      #         if [[ "$environments" == "staging_new" ]]; then
-      #           environment="qa_new"
-      #         else
-      #           environment="qa"
-      #         fi
-      #         ;;
-      #       refs/heads/master) 
-      #         case "$region" in
-      #           "antioquia") environment="matrixtech"; ;;
-      #           "cap")       environment="cap"; ;;
-      #           "tolima")    environment="seapto"; ;;
-      #           "huila")     environment="suchance"; ;;
-      #           "cauca")     environment="acertemos"; ;;
-      #           "boyaca")    environment="jer"; ;;
-      #           "santander") environment="laperla"; ;;
-      #           "putumayo")  environment="matrixredes"; ;;
-      #         esac ;;
-      #     esac
+          case "$CURRENT_BRANCH" in
+            refs/heads/feature/*) environment="dev"; ;;
+            refs/heads/develop)
+              if [[ "$environments" == "develop_new" ]]; then
+                environment="dev_new"
+              else
+                environment="dev"
+              fi
+              ;;
+            refs/heads/staging)
+              if [[ "$environments" == "staging_new" ]]; then
+                environment="qa_new"
+              else
+                environment="qa"
+              fi
+              ;;
+            refs/heads/master) 
+              case "$region" in
+                "antioquia") environment="matrixtech"; ;;
+                "cap")       environment="cap"; ;;
+                "tolima")    environment="seapto"; ;;
+                "huila")     environment="suchance"; ;;
+                "cauca")     environment="acertemos"; ;;
+                "boyaca")    environment="jer"; ;;
+                "santander") environment="laperla"; ;;
+                "putumayo")  environment="matrixredes"; ;;
+              esac ;;
+          esac
 
-      #     if [[ "$environment" = "unknown" ]]; then
-      #       echo -e "\n##vso[task.logissue type=error]⚠️ Environment [$environment] no reconocido"
-      #       exit 99
-      #     fi
+          if [[ "$environment" = "unknown" ]]; then
+            echo -e "\n##vso[task.logissue type=error]⚠️ Environment [$environment] no reconocido"
+            exit 99
+          fi
 
-      #     echo "##vso[task.setvariable variable=environment]$environment"
-      #     echo -e "\n✅ Environment asignado exitosamente:"
-      #     echo "Environment: $environment"
+          echo "##vso[task.setvariable variable=environment]$environment"
+          echo -e "\n✅ Environment asignado exitosamente:"
+          echo "Environment: $environment"
 
-      #   displayName: "⚙️ Generate .env"
-      #   condition: succeeded()
-      #   env:
-      #     region: ${{ parameters.region }}
-      #     environments: ${{ parameters.environments }}
+        displayName: "⚙️ Generate .env"
+        condition: succeeded()
+        env:
+          region: ${{ parameters.region }}
+          environments: ${{ parameters.environments }}
 
-      # - script: |
-      #     set -e
-      #     echo -e "\n📦 Cargando al Bucket S3..."
+      - script: |
+          set -e
+          echo -e "\n📦 Cargando al Bucket S3..."
 
-      #     BASE_PATH="$(Pipeline.Workspace)/electron-artifacts/electron/linux/$(environment)"
-      #     echo -e "\n📂 Archivos a cargar: $BASE_PATH"
-      #     ls -l "$BASE_PATH"
-      #     echo ""
+          BASE_PATH="$(Pipeline.Workspace)/electron-artifacts/electron/linux/$(environment)"
+          echo -e "\n📂 Archivos a cargar: $BASE_PATH"
+          ls -l "$BASE_PATH"
+          echo ""
 
-      #     aws s3 cp "$BASE_PATH" "s3://e-remote/invictus-electron/linux/$(environment)" --recursive --acl public-read
+          aws s3 cp "$BASE_PATH" "s3://e-remote/invictus-electron/linux/$(environment)" --recursive --acl public-read
 
-      #     echo -e "\n✅ Archivos subidos exitosamente."
-      #     echo "🔗 APP: InvictusUX-$(version).AppImage"
-      #     echo "🔗 URL: https://e-remote.s3.us-east-1.amazonaws.com/invictus-electron/linux/$(environment)/InvictusUX-$(version).AppImage"
+          echo -e "\n✅ Archivos subidos exitosamente."
+          echo "🔗 APP: InvictusUX-$(version).AppImage"
+          echo "🔗 URL: https://e-remote.s3.us-east-1.amazonaws.com/invictus-electron/linux/$(environment)/InvictusUX-$(version).AppImage"
 
-      #   displayName: "🐧 Upload Bucket S3 Linux"
-      #   condition: succeeded()
-      #   env:
-      #     AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
-      #     AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
-      #     AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
+        displayName: "🐧 Upload Bucket S3 Linux"
+        condition: succeeded()
+        env:
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
+          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
 
-      # - script: |
-      #     set -e
-      #     echo -e "\n📦 Cargando al Bucket S3..."
+      - script: |
+          set -e
+          echo -e "\n📦 Cargando al Bucket S3..."
 
-      #     BASE_PATH="$(Pipeline.Workspace)/electron-artifacts/electron/windows/$(environment)"
-      #     echo -e "\n📂 Archivos a cargar: $BASE_PATH"
-      #     ls -l "$BASE_PATH"
-      #     echo ""
+          BASE_PATH="$(Pipeline.Workspace)/electron-artifacts/electron/windows/$(environment)"
+          echo -e "\n📂 Archivos a cargar: $BASE_PATH"
+          ls -l "$BASE_PATH"
+          echo ""
 
-      #     aws s3 cp "$BASE_PATH" "s3://e-remote/invictus-electron/windows/$(environment)" --recursive --acl public-read
+          aws s3 cp "$BASE_PATH" "s3://e-remote/invictus-electron/windows/$(environment)" --recursive --acl public-read
 
-      #     echo -e "\n✅ Archivos subidos exitosamente."
-      #     echo "🔗 APP: InvictusUX Setup $(version).exe"
-      #     echo "🔗 URL: https://e-remote.s3.us-east-1.amazonaws.com/invictus-electron/windows/$(environment)/InvictusUX+Setup+$(version).exe"
+          echo -e "\n✅ Archivos subidos exitosamente."
+          echo "🔗 APP: InvictusUX Setup $(version).exe"
+          echo "🔗 URL: https://e-remote.s3.us-east-1.amazonaws.com/invictus-electron/windows/$(environment)/InvictusUX+Setup+$(version).exe"
 
-      #   displayName: "🖥️ Upload Bucket S3 Windows"
-      #   condition: succeeded()
-      #   env:
-      #     AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
-      #     AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
-      #     AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
+        displayName: "🖥️ Upload Bucket S3 Windows"
+        condition: succeeded()
+        env:
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
+          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
 
-      # - script: |
-      #     set -e
-      #     echo -e "\n📦 Send Message SQS..."
-      #     echo "📦 Account: $(ACCOUNT_ID_INVICTUS)"
-      #     echo "📦 Version: $(version)"
+      - script: |
+          set -e
+          echo -e "\n📦 Send Message SQS..."
+          echo "📦 Account: $(ACCOUNT_ID_INVICTUS)"
+          echo "📦 Version: $(version)"
 
-      #     aws sqs send-message \
-      #       --queue-url https://sqs.us-east-1.amazonaws.com/$(ACCOUNT_ID_INVICTUS)/DynamicStorage \
-      #       --message-body '{
-      #         "model": {
-      #           "parameterName": "VERSION",
-      #           "parameterDescription": "Parámetro que indica la versión actual del sistema.",
-      #           "parameterOrigin": "GLOBAL_PARAMETER",
-      #           "parameterValue": "$(version)"
-      #         },
-      #         "event": "setParameter"
-      #       }' \
-      #       --delay-seconds 0
-      #   displayName: "📩 Send Message SQS"
-      #   env:
-      #     AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
-      #     AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
-      #     AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
+          aws sqs send-message \
+            --queue-url https://sqs.us-east-1.amazonaws.com/$(ACCOUNT_ID_INVICTUS)/DynamicStorage \
+            --message-body '{
+              "model": {
+                "parameterName": "VERSION",
+                "parameterDescription": "Parámetro que indica la versión actual del sistema.",
+                "parameterOrigin": "GLOBAL_PARAMETER",
+                "parameterValue": "$(version)"
+              },
+              "event": "setParameter"
+            }' \
+            --delay-seconds 0
+        displayName: "📩 Send Message SQS"
+        env:
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
+          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
