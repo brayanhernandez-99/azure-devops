@@ -39,7 +39,6 @@ stages:
   - ${{ if ne(variables['Build.SourceBranchName'], 'master') }}:
       - ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}:
           - ${{ each environments in parameters.environments_new_develop }}:
-            - ${{ if ne(environments, 'develop') }}:
               - stage: build_flutter_${{ environments }}
                 displayName: "📦 Build Flutter ${{ environments }}"
                 dependsOn: semantic_version_flutter
