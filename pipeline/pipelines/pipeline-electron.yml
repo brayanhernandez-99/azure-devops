@@ -17,6 +17,7 @@ stages:
 
   - ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
       - ${{ each region in parameters.red }}:
+        - ${{ if ne(region, 'antioquia_new') }}:
           - stage: build_electron_${{ region }}
             displayName: "📦 Build Electron ${{ region }}"
             dependsOn: semantic_version_electron

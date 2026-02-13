@@ -32,7 +32,11 @@ variables:
     # Master branch → por red
     - ${{ if and(eq(parameters.region, 'antioquia'), eq(variables['Build.SourceBranchName'], 'master')) }}:
         - group: trasversal-aws-master-antioquia
-        - group: variables-flutter-antioquia
+        - group: variables-flutter-master-antioquia
+
+    # - ${{ if and(eq(parameters.region, 'antioquia_new'), eq(variables['Build.SourceBranchName'], 'master')) }}:
+    #     - group: trasversal-aws-antioquia
+    #     - group: variables-flutter-antioquia
 
     - ${{ if and(eq(parameters.region, 'cap'), eq(variables['Build.SourceBranchName'], 'master')) }}:
         - group: trasversal-aws-antioquia-cap

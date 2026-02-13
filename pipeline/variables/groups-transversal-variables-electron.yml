@@ -31,9 +31,12 @@ variables:
 
   # Master branch → por red
   - ${{ if and(eq(parameters.region, 'antioquia'), eq(variables['Build.SourceBranchName'], 'master')) }}:
-    #   - group: trasversal-aws-antioquia #cuenta nueva
-      - group: trasversal-aws-master-antioquia #cuenta vieja
-      - group: variables-electron-antioquia-old
+      - group: trasversal-aws-master-antioquia
+      - group: variables-electron-master-antioquia-old
+
+#   - ${{ if and(eq(parameters.region, 'antioquia_new'), eq(variables['Build.SourceBranchName'], 'master')) }}:
+#       - group: trasversal-aws-antioquia
+#       - group: variables-electron-antioquia-old
 
   - ${{ if and(eq(parameters.region, 'cap'), eq(variables['Build.SourceBranchName'], 'master')) }}:
       - group: trasversal-aws-antioquia-cap
