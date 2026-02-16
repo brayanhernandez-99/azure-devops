@@ -97,9 +97,8 @@ jobs:
           terragrunt init -reconfigure
           terragrunt import aws_db_subnet_group.subnet_group vpc-invictus-develop-db-subnet-group
           terragrunt import aws_rds_cluster.rds invictus-db
-          terragrunt import aws_rds_cluster_instance.rds_cluster_instances[0] invictus-instance-db
-          terragrunt import aws_rds_cluster_instance.rds_cluster_instances[1] invictus-instance-db-reader
-
+          terragrunt import 'aws_rds_cluster_instance.rds_cluster_instances["0"]' invictus-instance-db
+          terragrunt import 'aws_rds_cluster_instance.rds_cluster_instances["1"]' invictus-instance-db-reader
 
 
 
