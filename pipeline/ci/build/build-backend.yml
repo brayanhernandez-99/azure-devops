@@ -189,7 +189,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
 
       - task: Docker@2
-        displayName: "🚀 Push Docker Image $(Build.SourceBranch) -> $(Build.Repository.Name)"
+        displayName: "🚀 Push Docker Image $(Build.SourceBranchName) -> $(Build.Repository.Name)"
         condition: succeeded()
         inputs:
           command: "Push"
