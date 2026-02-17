@@ -62,7 +62,8 @@ jobs:
               packages_changed=$(echo "$changed_files" | grep "^packages/" || true)
 
               if [[ -n "$packages_changed" ]]; then
-                apps=$(find apps app-legacy -mindepth 1 -maxdepth 1 -type d | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u)
+                # apps=$(find apps app-legacy -mindepth 1 -maxdepth 1 -type d | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u)
+                apps="invictus"
               else
                 apps=$(echo "$changed_files" | grep -E "^apps/|^app-legacy/" | cut -d '/' -f1,2 | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u)
               fi
@@ -133,7 +134,8 @@ jobs:
                 packages_changed=$(git diff --name-only HEAD~1 HEAD | grep "^packages/")
 
                 if [[ -n "$packages_changed" ]]; then
-                    apps=$(find apps app-legacy -mindepth 1 -maxdepth 1 -type d | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u)
+                    # apps=$(find apps app-legacy -mindepth 1 -maxdepth 1 -type d | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u)
+                    apps="invictus"
                 else
                     apps=$(git diff --name-only HEAD~1 HEAD | grep -E "^apps/|^app-legacy/" | cut -d '/' -f1,2 | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u)
                 fi

@@ -276,8 +276,8 @@ jobs:
           echo "🔧 Actualizando versión en $(Build.Repository.Name)/package.json a $(cleanNEXT_VERSION)"
           jq --arg version "$(cleanNEXT_VERSION)" '.version = $version' package.json > tmp.json && mv tmp.json package.json
 
-          git checkout version/$clean_branch
-          git pull origin version/$clean_branch
+          git fetch origin version/$clean_branch
+          git checkout -B version/$clean_branch origin/version/$clean_branch
           git add package.json
           git commit -m "chore($(Build.Repository.Name)): bump version to $(cleanNEXT_VERSION)"
           git push origin version/$clean_branch

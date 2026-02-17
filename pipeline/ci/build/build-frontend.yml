@@ -315,51 +315,6 @@ jobs:
       #       ne(variables['Build.SourceBranchName'], 'staging'),
       #       ne(variables['Build.SourceBranchName'], 'master'))
 
-      # - script: |
-      #     echo "🔎 Validando Quality Gate..."
-      #     PROJECT_KEY="$(Build.Repository.Name)"
-
-      #     # Obtener estado del Quality Gate
-      #     status=$(curl -s -u "$SONAR_TOKEN:" "$SONAR_HOST_URL/api/qualitygates/project_status?projectKey=$PROJECT_KEY")
-      #     metrics_response=$(curl -s -u "$SONAR_TOKEN:" "$SONAR_HOST_URL/api/measures/component?component=$PROJECT_KEY&metricKeys=coverage,duplicated_lines_density")
-      #     project_info=$(curl -s -u "$SONAR_TOKEN:" "$SONAR_HOST_URL/api/components/show?component=$PROJECT_KEY")
-
-      #     coverage=$(echo "$metrics_response" | jq -r '.component.measures[] | select(.metric=="coverage") | .value')
-      #     duplication=$(echo "$metrics_response" | jq -r '.component.measures[] | select(.metric=="duplicated_lines_density") | .value')
-      #     status_code=$(echo "$status" | jq -r '.projectStatus.status')
-
-      #     # Obtener Quality Gate Name y Quality Profile Name
-      #     quality_gate=$(echo "$status" | jq -r '.projectStatus.qualityGate.name // "N/A"')
-      #     quality_profile=$(echo "$project_info" | jq -r '.component.qualityProfile // "N/A"')
-      #     language=$(echo "$project_info" | jq -r '.component.language // "N/A"')
-
-      #     echo ""
-      #     echo "🔹 Proyecto:        $PROJECT_KEY"
-      #     echo "🧪 Coverage:        $coverage%"
-      #     echo "📐 Duplicación:     $duplication%"
-      #     echo "🛡️ Quality Gate:    $quality_gate"
-      #     echo "📘 Quality Profile: $quality_profile"
-      #     echo "🈯 Lenguaje Base:   $language"
-      #     echo "📊 Estado:          $status_code"
-      #     echo ""
-
-      #     if [[ "$status_code" == "ERROR" ]]; then
-      #       echo -e "\n##vso[task.logissue type=error]⚠️ El proyecto no cumple con los Qualitys."
-      #       exit 99
-      #     else
-      #       echo -e "\n✅ El proyecto cumple con los Qualitys."
-      #     fi
-      #   displayName: "🛡️ Quality Gate Check: $(Build.Repository.Name)"
-      #   condition: and(succeeded(),
-      #     ne('$(Build.Repository.Name)', 'bff-administration-invictus'),
-      #     ne('$(Build.Repository.Name)', 'bff-sellers-invictus'),
-      #     ne(variables['Build.SourceBranchName'], 'staging'),
-      #     ne(variables['Build.SourceBranchName'], 'master'))
-      #   #continueOnError: true
-      #   env:
-      #     SONAR_TOKEN: $(SONAR_TOKEN)
-      #     SONAR_HOST_URL: $(SONAR_HOST_URL)
-
       # - template: sonarqube/job-sonarqube.yml@sonarqube
       #   parameters:
       #     projectKey: $(Build.Repository.Name)
