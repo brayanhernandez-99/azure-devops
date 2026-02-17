@@ -5,8 +5,8 @@ parameters:
   - name: red
     type: object
     default:
-      # - antioquia
-      # - cap
+      - antioquia
+      - cap
       - tolima
       # - huila
       # - cauca
