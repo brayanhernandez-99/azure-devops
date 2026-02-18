@@ -86,7 +86,7 @@ stages:
   # MicroFronted
   #
   - ${{ if and(eq(parameters.release, 'aws-s3'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), in(variables['Build.SourceBranchName'], 'develop', 'staging', 'master'))) }}:
-      - template: ./pipelines/pipeline-micro-frontend.yml
+      - template: ./pipelines/pipeline-microfrontend.yml
         parameters:
           red: ${{ parameters.red }}
           apps: ${{ parameters.apps }}
@@ -99,7 +99,7 @@ stages:
   # MicroServices
   #
   - ${{ if and(eq(parameters.release, 'aws-ecs'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), in(variables['Build.SourceBranchName'], 'develop', 'staging', 'master'))) }}:
-      - template: ./pipelines/pipeline-micro-services.yml
+      - template: ./pipelines/pipeline-microservices.yml
         parameters:
           red: ${{ parameters.red }}
           release: ${{ parameters.release }}
@@ -143,7 +143,7 @@ stages:
   # MicroFronted - Electron
   #
   - ${{ if and(eq(parameters.release, 'electron'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), in(variables['Build.SourceBranchName'], 'develop', 'staging', 'master'))) }}:
-      - template: ./pipelines/pipeline-micro-frontend-electron.yml
+      - template: ./pipelines/pipeline-microfrontend-electron.yml
         parameters:
           red: ${{ parameters.red }}
           apps: ${{ parameters.apps }}

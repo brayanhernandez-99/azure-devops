@@ -49,9 +49,9 @@ pipelines-templates/
 ├── pipelines/
 │   ├── pipeline-electron.yml
 │   ├── pipeline-flutter.yml
-│   ├── pipeline-micro-frontend.yml
-│   ├── pipeline-micro-frontend-electron.yml
-│   ├── pipeline-micro-services.yml
+│   ├── pipeline-microfrontend.yml
+│   ├── pipeline-microfrontend-electron.yml
+│   ├── pipeline-microservices.yml
 │   └── pipeline-repository-configuration.yml
 └── variables/
     ├── groups-transversal-variables-backend.yml
