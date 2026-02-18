@@ -5,10 +5,10 @@ parameters:
   - name: red
     type: object
     default:
-      - antioquia
-      - cap
-      - tolima
-      # - huila
+      # - antioquia
+      # - cap
+      # - tolima
+      - huila
       # - cauca
       # - boyaca
       # - santander
