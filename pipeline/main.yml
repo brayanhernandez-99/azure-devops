@@ -9,10 +9,10 @@ parameters:
       # - cap
       # - tolima
       # - huila
-      - cauca
-      # - boyaca
-      # - santander
-      # - putumayo
+      # - cauca
+      - boyaca
+      - santander
+      - putumayo
 
 resources:
   repositories:
