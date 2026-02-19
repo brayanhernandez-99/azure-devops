@@ -210,14 +210,14 @@ jobs:
           pnpm run test
         displayName: "🧪 Run Tests for: $(Build.Repository.Name)"
         condition: succeeded()
-        continueOnError: true
+        # continueOnError: true
 
       - script: |
           pnpm run coverage
           ls -la $(System.DefaultWorkingDirectory)/coverage
         displayName: "🔎 Coverage Analysis: $(Build.Repository.Name)"
         condition: succeeded()
-        continueOnError: true
+        # continueOnError: true
 
       - task: SonarQubeAnalyze@7
         displayName: "📡 Run Sonar Analysis"

@@ -279,6 +279,7 @@ jobs:
       # - script: |
       #     pnpm test --filter=...$(msName)
       #   displayName: "🧪 Run Tests for Microservice: $(msName)"
+      # #   continueOnError: true
       #   condition: and(succeeded(),
       #       ne(variables['msName'], 'app-administration-vue2'),
       #       ne(variables['msName'], 'app-sellers-vue2'),
@@ -289,6 +290,7 @@ jobs:
       #     pnpm coverage --filter=...$(msName)
       #     ls -l $(System.DefaultWorkingDirectory)/$(file)/$(msName)/coverage
       #   displayName: "🔎 Coverage Analysis: $(msName)"
+      # #   continueOnError: true
       #   condition: and(succeeded(),
       #       ne(variables['msName'], 'app-administration-vue2'),
       #       ne(variables['msName'], 'app-sellers-vue2'),
