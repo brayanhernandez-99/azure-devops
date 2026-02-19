@@ -85,6 +85,7 @@ jobs:
 
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-vpc
+          terraform state rm aws_db_subnet_group.default
           terragrunt plan --all --non-interactive -no-color
 
 
