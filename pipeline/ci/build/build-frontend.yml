@@ -317,12 +317,12 @@ jobs:
       #   parameters:
       #     projectKey: "microfronted-$(msName)-invictus"
 
-      # - task: PublishBuildArtifacts@1
-      #   inputs:
-      #     PathtoPublish: "$(Build.ArtifactStagingDirectory)/dists"
-      #     ArtifactName: "dists"
-      #     publishLocation: "Container"
-      #   displayName: "📤 Publish Dist Files"
-      #   condition: and(succeeded(),
-      #     not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
-      #     not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
+      - task: PublishBuildArtifacts@1
+        inputs:
+          PathtoPublish: "$(Build.ArtifactStagingDirectory)/dists"
+          ArtifactName: "dists"
+          publishLocation: "Container"
+        displayName: "📤 Publish Dist Files"
+        condition: and(succeeded(),
+          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
+          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
