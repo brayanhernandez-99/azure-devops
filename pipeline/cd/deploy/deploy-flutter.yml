@@ -108,8 +108,7 @@ jobs:
 
           echo -e "\n✅ Archivos subidos exitosamente."
           echo "🔗 APK: $APK_NAME"
-          echo "🔗 URL: https://repository-native.s3.us-east-1.amazonaws.com/app-seller/android/$(environment)/$APK_NAME"
-
+          echo -e "\n##[command]🔗 URL: https://repository-native.s3.us-east-1.amazonaws.com/app-seller/android/$(environment)/$APK_NAME"
         displayName: "📤 Upload Bucket S3"
         condition: succeeded()
         env:

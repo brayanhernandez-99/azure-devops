@@ -1,0 +1,20 @@
+title = "Gitleaks config"
+
+[allowlist]
+description = "Allow test & dummy secrets"
+
+# 🔹 Ignorar rutas de test
+paths = [
+  "tests/.*",
+  ".*__tests__.*",
+  ".*spec.*",
+  ".*fixtures.*"
+]
+
+# 🔹 Ignorar patrones dummy
+regexes = [
+  "(?i)test[_-]?key",
+  "(?i)dummy[_-]?secret",
+  "(?i)fake[_-]?token",
+  "not-a-real"
+]
