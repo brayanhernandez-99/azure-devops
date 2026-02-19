@@ -12,6 +12,10 @@ jobs:
       - checkout: self
         fetchDepth: 0
 
+      - checkout: git://DevOps-templates-UX/pipelines-templates@feature/nextjs
+        fetchDepth: 1
+        persistCredentials: true
+
       # - task: Gitleaks@3
       #   displayName: "🔍 Gitleaks (feature)"
       #   continueOnError: true
@@ -23,7 +27,8 @@ jobs:
             -v $(Build.SourcesDirectory):/repo \
             zricethezav/gitleaks:latest \
             detect \
-            --source=/repo \
+            --source=/repo/$(Build.Repository.Name) \
+            --config=/repo/pipelines-templates/gitleaks.toml \
             --log-opts="origin/master..HEAD" \
             --verbose \
             --redact \
