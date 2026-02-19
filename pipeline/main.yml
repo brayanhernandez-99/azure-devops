@@ -11,8 +11,8 @@ parameters:
       # - huila
       # - cauca
       # - boyaca
-      - santander
-      # - putumayo
+      # - santander
+      - putumayo
 
 resources:
   repositories:
