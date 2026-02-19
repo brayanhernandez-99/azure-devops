@@ -84,8 +84,8 @@ jobs:
 
 
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds/aws-service-rds
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds/aws-service-rds
+          terragrunt plan --all --non-interactive -no-color
 
 
           # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds/aws-service-rds
@@ -93,10 +93,6 @@ jobs:
           # terragrunt import aws_db_subnet_group.subnet_group vpc-invictus-antioquia-db-subnet-group
           # terragrunt import aws_rds_cluster.rds invictus-db
           # terragrunt state list -no-color
-
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/lotteries-games/aws-service-secret-manager-national-chc-secret
-          terragrunt plan --all --non-interactive -no-color
 
 
 
