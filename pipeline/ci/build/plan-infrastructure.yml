@@ -86,6 +86,7 @@ jobs:
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds/aws-service-rds
           terragrunt plan --all --non-interactive -no-color
+          terragrunt apply --all --non-interactive -no-color
 
 
           # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds/aws-service-rds
