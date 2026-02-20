@@ -61,18 +61,25 @@ jobs:
               changed_files=$(git diff --name-only "origin/$TARGET_BRANCH"..."origin/$CURRENT_BRANCH")
               packages_changed=$(echo "$changed_files" | grep "^packages/" || true)
 
+              # if [[ -n "$packages_changed" ]]; then
+              #   # apps=$(find apps app-legacy -mindepth 1 -maxdepth 1 -type d | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u)
+              #   apps="invictus"
+              # else
+              #   apps=$(echo "$changed_files" | grep -E "^apps/|^app-legacy/" | cut -d '/' -f1,2 | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u)
+              # fi
+
+              apps=$(echo "$changed_files" | grep -E "^apps/|^app-legacy/" | cut -d '/' -f1,2 | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u)
+
+              # Si hubo cambios en packages → agregar invictus
               if [[ -n "$packages_changed" ]]; then
-                # apps=$(find apps app-legacy -mindepth 1 -maxdepth 1 -type d | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u)
-                apps="invictus"
-              else
-                apps=$(echo "$changed_files" | grep -E "^apps/|^app-legacy/" | cut -d '/' -f1,2 | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u)
+                apps=$(printf "%s\ninvictus" "$apps" | sort -u)
               fi
 
               if [[ -z "$apps" ]]; then
                 echo -e "\n##vso[task.logissue type=error]⚠️ No se detectaron cambios en apps. Cancelando ejecución del pipeline."
                 exit 99
               fi
-
+              
               echo "🔍 Apps modificadas detectadas:"
               echo "${apps[@]}"
               apps_json=$(printf '%s\n' "${apps[@]}" | jq -R . | jq -s .)
@@ -145,11 +152,7 @@ jobs:
                 #   exit 99
                 # fi
 
-                apps=$(git diff --name-only HEAD~1 HEAD \
-                  | grep -E "^apps/|^app-legacy/" \
-                  | cut -d '/' -f1,2 \
-                  | sed -E 's|^app[-]?legacy/||; s|^apps/||' \
-                  | sort -u)
+                apps=$(echo "$changed_files" | grep -E "^apps/|^app-legacy/" | cut -d '/' -f1,2 | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u)
 
                 # Si hubo cambios en packages → agregar invictus
                 if [[ -n "$packages_changed" ]]; then
