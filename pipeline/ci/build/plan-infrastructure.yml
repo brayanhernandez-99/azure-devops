@@ -84,9 +84,6 @@ jobs:
 
 
 
-<<<<<<< HEAD
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/
-
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/lotteries-games/aws-service-secret-manager-national-chc-secret
           terragrunt plan --all --non-interactive -no-color
@@ -95,14 +92,7 @@ jobs:
           terragrunt plan --all --non-interactive -no-color
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/lotteries-games/aws-service-secret-manager-national-bn3-secret
-=======
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-app-administration
           terragrunt plan --all --non-interactive -no-color
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-app-sellers
->>>>>>> 894f453838acaa614533a49d9769a4936468b298
-          terragrunt plan --all --non-interactive -no-color
-
 
 
           # cd $(Build.SourcesDirectory)
