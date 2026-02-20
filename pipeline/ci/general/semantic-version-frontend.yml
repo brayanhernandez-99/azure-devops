@@ -112,7 +112,7 @@ jobs:
           if echo "$diff" | grep -qE '^\+.*console\.log'; then
             echo -e "\n🧨 Archivos detectados con console.log en el código de la app $(msName) 🧨"
             echo "$console_logs"
-            echo -e "\n##vso[task.logissue type=error]⚠️ Se encontro 'console.log' en los cambios"
+            echo -e "\n##vso[task.logissue type=error]⚠️ Se encontro 'console.log' en los cambios del MF $(msName)..."
             exit 99
           else
             echo -e "\n✅ No se encontraron sentencias 'console.log' en los cambios"
