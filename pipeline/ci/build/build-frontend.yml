@@ -172,7 +172,7 @@ jobs:
           echo -e "\n⚙️ Instalando dependencias node..."
           npm install -g pnpm
           pnpm install
-          pnpm ignored-builds
+          # pnpm ignored-builds
 
           OUTPUT=$(pnpm ls --depth=0 || true)
           if [[ -z "$OUTPUT" ]]; then
