@@ -59,7 +59,36 @@ jobs:
           git fetch origin "$targetBranch"
           diff=$(git --no-pager diff "origin/$targetBranch..origin/$sourceBranch")
 
+          console_logs=$(echo "$diff" | awk '
+            # Captura el archivo actual
+            /^\+\+\+ b\// {
+              file=$0
+              sub(/^\+\+\+ b\//,"",file)
+            }
+
+            # Captura el inicio del hunk: @@ -a,b +c,d @@
+            /^@@/ {
+              match($0, /\+([0-9]+)/, arr)
+              line=arr[1]
+            }
+
+            # Línea agregada
+            /^\+/ && !/^\+\+\+/ {
+              if ($0 ~ /console\.log/) {
+                print file ":" line ":" substr($0, 2)
+              }
+              line++
+            }
+
+            # Línea de contexto
+            /^ / {
+              line++
+            }
+          ')
+
           if echo "$diff" | grep -qE '^\+.*console\.log'; then
+            echo -e "🧨 Archivos detectados con console.log en el código de la app $(msName) 🧨"
+            echo "$console_logs"
             echo -e "\n##vso[task.logissue type=error]⚠️ Se encontro 'console.log' en los cambios"
             exit 99
           else
