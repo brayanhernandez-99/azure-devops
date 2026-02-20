@@ -173,6 +173,10 @@ jobs:
           echo -e "\n⚙️ Instalando dependencias node..."
           npm install -g pnpm
           pnpm install
+
+
+          cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
+          ls -la 
           # pnpm ignored-builds
 
           OUTPUT=$(pnpm ls --depth=0 || true)
