@@ -20,6 +20,19 @@ jobs:
         persistCredentials: true
 
       - script: |
+          if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
+            fileselect=app-legacy
+            echo -e "\nℹ️ Ruta de archivo del micro frontend: $fileselect"
+            echo "##vso[task.setvariable variable=file]$fileselect"
+          else
+            fileselect=apps
+            echo -e "\nℹ️ Ruta de archivo del micro frontend: $fileselect"
+            echo "##vso[task.setvariable variable=file]$fileselect"
+          fi
+        displayName: "📂 Select Directory"
+        condition: succeeded()
+
+      - script: |
           echo -e "\n📌 Verificando si feature está actualizada con master y si hay cambios relevantes..."
           echo "Branch Actual: $(echo $(Build.SourceBranch))"          
           git fetch origin master
@@ -79,19 +92,6 @@ jobs:
         condition: and(succeeded(), or(
           startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'),
           startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
-
-      - script: |
-          if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
-            fileselect=app-legacy
-            echo -e "\nℹ️ Ruta de archivo del micro frontend: $fileselect"
-            echo "##vso[task.setvariable variable=file]$fileselect"
-          else
-            fileselect=apps
-            echo -e "\nℹ️ Ruta de archivo del micro frontend: $fileselect"
-            echo "##vso[task.setvariable variable=file]$fileselect"
-          fi
-        displayName: "📂 Select Directory"
-        condition: succeeded()
 
       - script: |
           REPO_NAME="$(Build.Repository.Name)"          
