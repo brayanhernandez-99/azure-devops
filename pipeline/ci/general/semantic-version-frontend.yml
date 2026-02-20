@@ -61,7 +61,11 @@ jobs:
           echo -e "\n🔎 Verificando que no se hayan agregado nuevas sentencias console.log..."
           echo "Branch actual: $sourceBranch"
           echo "Branch destino: $targetBranch"
-
+          paths=""
+          
+          
+          paths="$paths $(System.DefaultWorkingDirectory)/$(file)/$(msName) -- $paths"
+          
           git fetch origin "$targetBranch"
           diff=$(git --no-pager diff "origin/$targetBranch..origin/$sourceBranch")
 
