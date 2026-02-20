@@ -83,6 +83,8 @@ jobs:
           diff=$(git --no-pager diff "origin/$targetBranch..origin/$sourceBranch")
 
           if echo "$diff" | grep -qE '^\+.*console\.log'; then
+            files_with_console=$(echo "$diff" | grep -B2 -E '^\+.*console\.log' | grep '^+++ b/' | sed 's|^\+\+\+ b/||' | sort -u)
+            echo "$files_with_console"
             echo -e "\n##vso[task.logissue type=error]⚠️ Se encontro 'console.log' en los cambios"
             exit 99
           else
