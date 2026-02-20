@@ -133,16 +133,27 @@ jobs:
                 echo -e "\n🔍 Comparando cambios entre: $CURRENT_BRANCH ... $CURRENT_BRANCH"
                 packages_changed=$(git diff --name-only HEAD~1 HEAD | grep "^packages/")
 
-                if [[ -n "$packages_changed" ]]; then
-                    # apps=$(find apps app-legacy -mindepth 1 -maxdepth 1 -type d | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u)
-                    apps="invictus"
-                else
-                    apps=$(git diff --name-only HEAD~1 HEAD | grep -E "^apps/|^app-legacy/" | cut -d '/' -f1,2 | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u)
-                fi
+                # if [[ -n "$packages_changed" ]]; then
+                #     # apps=$(find apps app-legacy -mindepth 1 -maxdepth 1 -type d | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u)
+                #     apps="invictus"
+                # else
+                #     apps=$(git diff --name-only HEAD~1 HEAD | grep -E "^apps/|^app-legacy/" | cut -d '/' -f1,2 | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u)
+                # fi
 
-                if [[ -z "$apps" ]]; then
-                  echo -e "\n##vso[task.logissue type=error]⚠️ No se detectaron cambios en apps. Cancelando ejecución del pipeline."
-                  exit 99
+                # if [[ -z "$apps" ]]; then
+                #   echo -e "\n##vso[task.logissue type=error]⚠️ No se detectaron cambios en apps. Cancelando ejecución del pipeline."
+                #   exit 99
+                # fi
+
+                apps=$(git diff --name-only HEAD~1 HEAD \
+                  | grep -E "^apps/|^app-legacy/" \
+                  | cut -d '/' -f1,2 \
+                  | sed -E 's|^app[-]?legacy/||; s|^apps/||' \
+                  | sort -u)
+
+                # Si hubo cambios en packages → agregar invictus
+                if [[ -n "$packages_changed" ]]; then
+                  apps=$(printf "%s\ninvictus" "$apps" | sort -u)
                 fi
 
                 echo "🔍 Apps modificadas detectadas:"
