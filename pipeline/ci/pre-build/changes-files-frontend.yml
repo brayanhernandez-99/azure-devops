@@ -70,7 +70,6 @@ jobs:
 
               apps=$(echo "$changed_files" | grep -E "^apps/|^app-legacy/" | cut -d '/' -f1,2 | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u)
 
-              # Si hubo cambios en packages → agregar invictus
               if [[ -n "$packages_changed" ]]; then
                 apps=$(printf "%s\ninvictus" "$apps" | sort -u)
               fi
@@ -154,7 +153,6 @@ jobs:
 
                 apps=$(echo "$changed_files" | grep -E "^apps/|^app-legacy/" | cut -d '/' -f1,2 | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u)
 
-                # Si hubo cambios en packages → agregar invictus
                 if [[ -n "$packages_changed" ]]; then
                   apps=$(printf "%s\ninvictus" "$apps" | sort -u)
                 fi
