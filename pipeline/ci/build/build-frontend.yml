@@ -282,8 +282,8 @@ jobs:
             ne(variables['Build.SourceBranchName'], 'master'))
 
       - script: |
-          # pnpm test --filter=...$(msName)
-          turbo run test --filter=$(msName)
+          pnpm test --filter=...$(msName)
+          # turbo run test --filter=$(msName)
         displayName: "🧪 Run Tests for Microservice: $(msName)"
       #   continueOnError: true
         condition: and(succeeded(),
