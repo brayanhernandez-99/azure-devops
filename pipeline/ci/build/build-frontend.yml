@@ -168,7 +168,8 @@ jobs:
           ls -l $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc
           cat $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc
 
-          cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
+          # cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
+          cd $(System.DefaultWorkingDirectory)
           echo -e "\n⚙️ Instalando dependencias node..."
           npm install -g pnpm
           pnpm install
