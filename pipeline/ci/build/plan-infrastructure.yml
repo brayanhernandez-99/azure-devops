@@ -84,7 +84,17 @@ jobs:
 
 
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/
+
+
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/lotteries-games/aws-service-secret-manager-national-chc-secret
+          terragrunt plan --all --non-interactive -no-color
+
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/lotteries-games/aws-service-secret-manager-national-bn4-secret
+          terragrunt plan --all --non-interactive -no-color
+
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/lotteries-games/aws-service-secret-manager-national-bn3-secret
+          terragrunt plan --all --non-interactive -no-color
 
 
 
