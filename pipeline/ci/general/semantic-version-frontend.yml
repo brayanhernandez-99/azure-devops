@@ -82,7 +82,15 @@ jobs:
           git fetch origin "$targetBranch"
           diff=$(git --no-pager diff "origin/$targetBranch..origin/$sourceBranch" -- $paths)
 
-          console_logs=$(echo "$diff" | grep -nE '^\+.*console\.log')
+          console_logs=$(echo "$diff" | awk '
+            /^\+\+\+ b\// {
+              file=$0
+              sub(/^\+\+\+ b\//,"",file)
+            }
+            /^\+.*console\.log/ {
+              print file ":" $0
+            }
+          ')
 
           if echo "$diff" | grep -qE '^\+.*console\.log'; then
             echo "$console_logs"
