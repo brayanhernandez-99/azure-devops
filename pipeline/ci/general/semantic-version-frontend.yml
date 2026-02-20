@@ -82,10 +82,10 @@ jobs:
           git fetch origin "$targetBranch"
           diff=$(git --no-pager diff "origin/$targetBranch..origin/$sourceBranch" -- $paths)
 
-          files_with_console=$(echo "$diff" | grep -B2 -E '^\+.*console\.log' | grep '^+++ b/' | sed 's|^\+\+\+ b/||' | sort -u)
+          console_logs=$(echo "$diff" | grep -nE '^\+.*console\.log')
 
           if echo "$diff" | grep -qE '^\+.*console\.log'; then
-            echo "$files_with_console"
+            echo "$console_logs"
             echo -e "\n##vso[task.logissue type=error]⚠️ Se encontro 'console.log' en los cambios"
             exit 99
           else
