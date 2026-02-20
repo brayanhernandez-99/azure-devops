@@ -83,12 +83,29 @@ jobs:
           diff=$(git --no-pager diff "origin/$targetBranch..origin/$sourceBranch" -- $paths)
 
           console_logs=$(echo "$diff" | awk '
+            # Captura el archivo actual
             /^\+\+\+ b\// {
               file=$0
               sub(/^\+\+\+ b\//,"",file)
             }
-            /^\+.*console\.log/ {
-              print file ":" $0
+
+            # Captura el inicio del hunk: @@ -a,b +c,d @@
+            /^@@/ {
+              match($0, /\+([0-9]+)/, arr)
+              line=arr[1]
+            }
+
+            # Línea agregada
+            /^\+/ && !/^\+\+\+/ {
+              if ($0 ~ /console\.log/) {
+                print file ":" line ":" substr($0, 2)
+              }
+              line++
+            }
+
+            # Línea de contexto
+            /^ / {
+              line++
             }
           ')
 
