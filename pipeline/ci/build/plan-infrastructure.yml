@@ -84,7 +84,11 @@ jobs:
 
 
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-app-administration
+          terragrunt plan --all --non-interactive -no-color
+
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-app-sellers
+          terragrunt plan --all --non-interactive -no-color
 
 
 
