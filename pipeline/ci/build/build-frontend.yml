@@ -233,91 +233,91 @@ jobs:
           ne(variables['msName'], 'app-administration-vue2'),
           ne(variables['msName'], 'app-sellers-vue2'))
 
-      # - task: JavaToolInstaller@0
-      #   displayName: "🔧 Install JDK 17"
-      #   inputs:
-      #     versionSpec: "17"
-      #     jdkArchitectureOption: "x64"
-      #     jdkSourceOption: "PreInstalled"
-      #   condition: and(succeeded(),
-      #       ne(variables['msName'], 'app-administration-vue2'),
-      #       ne(variables['msName'], 'app-sellers-vue2'),
-      #       ne(variables['Build.SourceBranchName'], 'staging'),
-      #       ne(variables['Build.SourceBranchName'], 'master'))
+      - task: JavaToolInstaller@0
+        displayName: "🔧 Install JDK 17"
+        inputs:
+          versionSpec: "17"
+          jdkArchitectureOption: "x64"
+          jdkSourceOption: "PreInstalled"
+        condition: and(succeeded(),
+            ne(variables['msName'], 'app-administration-vue2'),
+            ne(variables['msName'], 'app-sellers-vue2'),
+            ne(variables['Build.SourceBranchName'], 'staging'),
+            ne(variables['Build.SourceBranchName'], 'master'))
 
-      # - task: SonarQubePrepare@7
-      #   displayName: "⚙️ Prepare SonarQube Analysis"
-      #   inputs:
-      #     SonarQube: "SonarQubeConection"
-      #     scannerMode: "CLI"
-      #     configMode: "manual"
-      #     cliProjectKey: "microfronted-$(msName)-invictus"
-      #     cliProjectName: "microfronted-$(msName)-invictus"
-      #     cliSources: "$(System.DefaultWorkingDirectory)/$(file)/$(msName)"
-      #     extraProperties: |
-      #       sonar.projectVersion=$(msVersion)
-      #       sonar.javascript.lcov.reportPaths=$(System.DefaultWorkingDirectory)/$(file)/$(msName)/coverage/lcov.info
-      #       sonar.exclusions=**/test/**,**/coverage/**,**/.nyc_output/**,**/reports/**,sured-plugin/**,**/reports_bck/**,**/node_modules/**,**/dist/**
-      #   condition: and(succeeded(),
-      #       ne(variables['msName'], 'app-administration-vue2'),
-      #       ne(variables['msName'], 'app-sellers-vue2'),
-      #       ne(variables['Build.SourceBranchName'], 'staging'),
-      #       ne(variables['Build.SourceBranchName'], 'master'))
+      - task: SonarQubePrepare@7
+        displayName: "⚙️ Prepare SonarQube Analysis"
+        inputs:
+          SonarQube: "SonarQubeConection"
+          scannerMode: "CLI"
+          configMode: "manual"
+          cliProjectKey: "pruebas-microfronted-$(msName)-invictus"
+          cliProjectName: "pruebas-microfronted-$(msName)-invictus"
+          cliSources: "$(System.DefaultWorkingDirectory)/$(file)/$(msName)"
+          extraProperties: |
+            sonar.projectVersion=$(msVersion)
+            sonar.javascript.lcov.reportPaths=$(System.DefaultWorkingDirectory)/$(file)/$(msName)/coverage/lcov.info
+            sonar.exclusions=**/test/**,**/coverage/**,**/.nyc_output/**,**/reports/**,sured-plugin/**,**/reports_bck/**,**/node_modules/**,**/dist/**
+        condition: and(succeeded(),
+            ne(variables['msName'], 'app-administration-vue2'),
+            ne(variables['msName'], 'app-sellers-vue2'),
+            ne(variables['Build.SourceBranchName'], 'staging'),
+            ne(variables['Build.SourceBranchName'], 'master'))
 
-      # - script: |
-      #     response=$(echo $SONARQUBE_SCANNER_PARAMS | sed -E 's#"sonar\.branch\.name":"[^"]+",##g')
-      #     json=$(echo "$response" | sed 's/"sonar.token":\*\*\*/"sonar.token":"***"/')
-      #     echo "$json" | jq
-      #     echo "##vso[task.setvariable variable=SONARQUBE_SCANNER_PARAMS]$response"
-      #   displayName: "⚙️ Set Variable — SONARQUBE_SCANNER_PARAMS"
-      #   condition: and(succeeded(),
-      #       ne(variables['msName'], 'app-administration-vue2'),
-      #       ne(variables['msName'], 'app-sellers-vue2'),
-      #       ne(variables['Build.SourceBranchName'], 'staging'),
-      #       ne(variables['Build.SourceBranchName'], 'master'))
+      - script: |
+          response=$(echo $SONARQUBE_SCANNER_PARAMS | sed -E 's#"sonar\.branch\.name":"[^"]+",##g')
+          json=$(echo "$response" | sed 's/"sonar.token":\*\*\*/"sonar.token":"***"/')
+          echo "$json" | jq
+          echo "##vso[task.setvariable variable=SONARQUBE_SCANNER_PARAMS]$response"
+        displayName: "⚙️ Set Variable — SONARQUBE_SCANNER_PARAMS"
+        condition: and(succeeded(),
+            ne(variables['msName'], 'app-administration-vue2'),
+            ne(variables['msName'], 'app-sellers-vue2'),
+            ne(variables['Build.SourceBranchName'], 'staging'),
+            ne(variables['Build.SourceBranchName'], 'master'))
 
-      # - script: |
-      #     pnpm test --filter=...$(msName)
-      #   displayName: "🧪 Run Tests for Microservice: $(msName)"
-      # #   continueOnError: true
-      #   condition: and(succeeded(),
-      #       ne(variables['msName'], 'app-administration-vue2'),
-      #       ne(variables['msName'], 'app-sellers-vue2'),
-      #       ne(variables['Build.SourceBranchName'], 'staging'),
-      #       ne(variables['Build.SourceBranchName'], 'master'))
+      - script: |
+          pnpm test --filter=...$(msName)
+        displayName: "🧪 Run Tests for Microservice: $(msName)"
+      #   continueOnError: true
+        condition: and(succeeded(),
+            ne(variables['msName'], 'app-administration-vue2'),
+            ne(variables['msName'], 'app-sellers-vue2'),
+            ne(variables['Build.SourceBranchName'], 'staging'),
+            ne(variables['Build.SourceBranchName'], 'master'))
 
-      # - script: |
-      #     pnpm coverage --filter=...$(msName)
-      #     ls -l $(System.DefaultWorkingDirectory)/$(file)/$(msName)/coverage
-      #   displayName: "🔎 Coverage Analysis: $(msName)"
-      # #   continueOnError: true
-      #   condition: and(succeeded(),
-      #       ne(variables['msName'], 'app-administration-vue2'),
-      #       ne(variables['msName'], 'app-sellers-vue2'),
-      #       ne(variables['Build.SourceBranchName'], 'staging'),
-      #       ne(variables['Build.SourceBranchName'], 'master'))
+      - script: |
+          pnpm coverage --filter=...$(msName)
+          ls -l $(System.DefaultWorkingDirectory)/$(file)/$(msName)/coverage
+        displayName: "🔎 Coverage Analysis: $(msName)"
+      #   continueOnError: true
+        condition: and(succeeded(),
+            ne(variables['msName'], 'app-administration-vue2'),
+            ne(variables['msName'], 'app-sellers-vue2'),
+            ne(variables['Build.SourceBranchName'], 'staging'),
+            ne(variables['Build.SourceBranchName'], 'master'))
 
-      # - task: SonarQubeAnalyze@7
-      #   displayName: "📡 Run Sonar Analysis"
-      #   condition: and(succeeded(),
-      #       ne(variables['msName'], 'app-administration-vue2'),
-      #       ne(variables['msName'], 'app-sellers-vue2'),
-      #       ne(variables['Build.SourceBranchName'], 'staging'),
-      #       ne(variables['Build.SourceBranchName'], 'master'))
+      - task: SonarQubeAnalyze@7
+        displayName: "📡 Run Sonar Analysis"
+        condition: and(succeeded(),
+            ne(variables['msName'], 'app-administration-vue2'),
+            ne(variables['msName'], 'app-sellers-vue2'),
+            ne(variables['Build.SourceBranchName'], 'staging'),
+            ne(variables['Build.SourceBranchName'], 'master'))
 
-      # - task: SonarQubePublish@7
-      #   inputs:
-      #     pollingTimeoutSec: 400
-      #   displayName: "📤 Publish Static Code Analysis Results"
-      #   condition: and(succeeded(),
-      #       ne(variables['msName'], 'app-administration-vue2'),
-      #       ne(variables['msName'], 'app-sellers-vue2'),
-      #       ne(variables['Build.SourceBranchName'], 'staging'),
-      #       ne(variables['Build.SourceBranchName'], 'master'))
+      - task: SonarQubePublish@7
+        inputs:
+          pollingTimeoutSec: 400
+        displayName: "📤 Publish Static Code Analysis Results"
+        condition: and(succeeded(),
+            ne(variables['msName'], 'app-administration-vue2'),
+            ne(variables['msName'], 'app-sellers-vue2'),
+            ne(variables['Build.SourceBranchName'], 'staging'),
+            ne(variables['Build.SourceBranchName'], 'master'))
 
-      # - template: sonarqube/job-sonarqube.yml@sonarqube
-      #   parameters:
-      #     projectKey: "microfronted-$(msName)-invictus"
+      - template: sonarqube/job-sonarqube.yml@sonarqube
+        parameters:
+          projectKey: "pruebas-microfronted-$(msName)-invictus"
 
       - task: PublishBuildArtifacts@1
         inputs:
