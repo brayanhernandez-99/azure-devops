@@ -20,6 +20,19 @@ jobs:
         persistCredentials: true
 
       - script: |
+          if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
+            fileselect=app-legacy
+            echo -e "\nℹ️ Ruta de archivo del micro frontend: $fileselect"
+            echo "##vso[task.setvariable variable=file]$fileselect"
+          else
+            fileselect=apps
+            echo -e "\nℹ️ Ruta de archivo del micro frontend: $fileselect"
+            echo "##vso[task.setvariable variable=file]$fileselect"
+          fi
+        displayName: "📂 Select Directory"
+        condition: succeeded()
+
+      - script: |
           echo -e "\n📌 Verificando si feature está actualizada con master y si hay cambios relevantes..."
           echo "Branch Actual: $(echo $(Build.SourceBranch))"          
           git fetch origin master
@@ -61,12 +74,45 @@ jobs:
           echo -e "\n🔎 Verificando que no se hayan agregado nuevas sentencias console.log..."
           echo "Branch actual: $sourceBranch"
           echo "Branch destino: $targetBranch"
-
+          paths=""
+          
+          
+          paths="$paths $(System.DefaultWorkingDirectory)/$(file)/$(msName)"
+          
           git fetch origin "$targetBranch"
-          diff=$(git --no-pager diff "origin/$targetBranch..origin/$sourceBranch")
+          diff=$(git --no-pager diff "origin/$targetBranch..origin/$sourceBranch" -- $paths)
+
+          console_logs=$(echo "$diff" | awk '
+            # Captura el archivo actual
+            /^\+\+\+ b\// {
+              file=$0
+              sub(/^\+\+\+ b\//,"",file)
+            }
+
+            # Captura el inicio del hunk: @@ -a,b +c,d @@
+            /^@@/ {
+              match($0, /\+([0-9]+)/, arr)
+              line=arr[1]
+            }
+
+            # Línea agregada
+            /^\+/ && !/^\+\+\+/ {
+              if ($0 ~ /console\.log/) {
+                print file ":" line ":" substr($0, 2)
+              }
+              line++
+            }
+
+            # Línea de contexto
+            /^ / {
+              line++
+            }
+          ')
 
           if echo "$diff" | grep -qE '^\+.*console\.log'; then
-            echo -e "\n##vso[task.logissue type=error]⚠️ Se encontro 'console.log' en los cambios"
+            echo -e "\n🧨 Archivos detectados con console.log en el código de la app $(msName) 🧨"
+            echo "$console_logs"
+            echo -e "\n##vso[task.logissue type=error]⚠️ Se encontro 'console.log' en los cambios del MF $(msName)..."
             exit 99
           else
             echo -e "\n✅ No se encontraron sentencias 'console.log' en los cambios"
@@ -75,19 +121,6 @@ jobs:
         condition: and(succeeded(), or(
           startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'),
           startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
-
-      - script: |
-          if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
-            fileselect=app-legacy
-            echo -e "\nℹ️ Ruta de archivo del micro frontend: $fileselect"
-            echo "##vso[task.setvariable variable=file]$fileselect"
-          else
-            fileselect=apps
-            echo -e "\nℹ️ Ruta de archivo del micro frontend: $fileselect"
-            echo "##vso[task.setvariable variable=file]$fileselect"
-          fi
-        displayName: "📂 Select Directory"
-        condition: succeeded()
 
       - script: |
           REPO_NAME="$(Build.Repository.Name)"          
