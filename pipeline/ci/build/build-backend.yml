@@ -1,6 +1,6 @@
 jobs:
   - job: "build_micro_service"
-    displayName: "🐳 Build Docker Image"
+    displayName: "🐳 build docker image"
     pool:
       name: "Azure Pipelines"
       VmImage: "ubuntu-22.04"
