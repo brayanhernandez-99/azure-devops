@@ -190,44 +190,44 @@ jobs:
         displayName: "⚙️ Install Dependencies"
         condition: succeeded()
 
-      # - script: |
-      #     echo -e "\n📦 Build MicroFrontend..."
+      - script: |
+          echo -e "\n📦 Build MicroFrontend..."
 
-      #     if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
-      #       cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
-      #       pnpm run build
-      #     else
-      #       pnpm run build --filter=...$(msName)
-      #     fi
+          if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
+            cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
+            pnpm run build
+          else
+            pnpm run build --filter=...$(msName)
+          fi
 
-      #     DIST_PATH="$(System.DefaultWorkingDirectory)/$(file)/$(msName)/dist"
+          DIST_PATH="$(System.DefaultWorkingDirectory)/$(file)/$(msName)/dist"
 
-      #     if [[ ! -d "$DIST_PATH" ]] || [[ -z "$(ls -A "$DIST_PATH" 2>/dev/null)" ]]; then
-      #       echo -e "\n##vso[task.logissue type=error]⚠️ Error: No se generó el build o la carpeta dist está vacía." 
-      #       exit 99
-      #     else
-      #       ##################################DEPLOY MULTI AMBIENTE############################
-      #       # CURRENT_BRANCH=$(echo $(Build.SourceBranch))
-      #       # if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|staging)$ ]]; then
-      #       #   mkdir -p "$(Build.ArtifactStagingDirectory)/dists/$environments"
-      #       #   cp -R $DIST_PATH $(Build.ArtifactStagingDirectory)/dists/$environments/$(msName)
-      #       # else
-      #       #   mkdir -p "$(Build.ArtifactStagingDirectory)/dists/$region"
-      #       #   cp -R $DIST_PATH $(Build.ArtifactStagingDirectory)/dists/$region/$(msName)
-      #       # fi
-            
-      #       #########################DEPLOY UNICO AMBIENTE#########################
-      #       mkdir -p "$(Build.ArtifactStagingDirectory)/dists/$region"
-      #       cp -R $DIST_PATH $(Build.ArtifactStagingDirectory)/dists/$region/$(msName)
+          if [[ ! -d "$DIST_PATH" ]] || [[ -z "$(ls -A "$DIST_PATH" 2>/dev/null)" ]]; then
+            echo -e "\n##vso[task.logissue type=error]⚠️ Error: No se generó el build o la carpeta dist está vacía." 
+            exit 99
+          else
+            #       ##################################DEPLOY MULTI AMBIENTE############################
+            #       # CURRENT_BRANCH=$(echo $(Build.SourceBranch))
+            #       # if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|staging)$ ]]; then
+            #       #   mkdir -p "$(Build.ArtifactStagingDirectory)/dists/$environments"
+            #       #   cp -R $DIST_PATH $(Build.ArtifactStagingDirectory)/dists/$environments/$(msName)
+            #       # else
+            #       #   mkdir -p "$(Build.ArtifactStagingDirectory)/dists/$region"
+            #       #   cp -R $DIST_PATH $(Build.ArtifactStagingDirectory)/dists/$region/$(msName)
+            #       # fi
+                  
+            #       #########################DEPLOY UNICO AMBIENTE#########################
+            mkdir -p "$(Build.ArtifactStagingDirectory)/dists/$region"
+            cp -R $DIST_PATH $(Build.ArtifactStagingDirectory)/dists/$region/$(msName)
 
-      #       echo "✅ Build generado correctamente en $DIST_PATH"
-      #       ls -l "$DIST_PATH"
-      #     fi
-      #   displayName: "📦 Build $(msName)"
-      #   condition: succeeded()
-      #   env:
-      #     region: ${{ parameters.region }}
-      #     environments: ${{ parameters.environments }}
+            echo "✅ Build generado correctamente en $DIST_PATH"
+            ls -l "$DIST_PATH"
+          fi
+        displayName: "📦 Build $(msName)"
+        condition: succeeded()
+        env:
+          region: ${{ parameters.region }}
+          environments: ${{ parameters.environments }}
 
       - script: |
           echo "Descomentando app-legacy/*"
@@ -285,7 +285,7 @@ jobs:
           pnpm test --filter=...$(msName)
           # turbo run test --filter=$(msName)
         displayName: "🧪 Run Tests for Microservice: $(msName)"
-      #   continueOnError: true
+        continueOnError: true
         condition: and(succeeded(),
             ne(variables['msName'], 'app-administration-vue2'),
             ne(variables['msName'], 'app-sellers-vue2'),
@@ -296,7 +296,7 @@ jobs:
           pnpm coverage --filter=...$(msName)
           ls -l $(System.DefaultWorkingDirectory)/$(file)/$(msName)/coverage
         displayName: "🔎 Coverage Analysis: $(msName)"
-      #   continueOnError: true
+        continueOnError: true
         condition: and(succeeded(),
             ne(variables['msName'], 'app-administration-vue2'),
             ne(variables['msName'], 'app-sellers-vue2'),
