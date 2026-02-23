@@ -187,7 +187,7 @@ jobs:
             ne(variables['Build.SourceBranchName'], 'master'))
 
       - script: |
-          pnpm test --filter=...$(msName)
+          pnpm test --filter=...$(msName) --runInBand
           # turbo run test --filter=$(msName)
         displayName: "🧪 Run Tests for Microfrontend: $(msName)"
         continueOnError: true
