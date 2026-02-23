@@ -189,7 +189,7 @@ jobs:
       - script: |
           pnpm test --filter=...$(msName)
           # turbo run test --filter=$(msName)
-        displayName: "🧪 Run Tests for Microservice: $(msName)"
+        displayName: "🧪 Run Tests for Microfrontend: $(msName)"
         continueOnError: true
         condition: and(succeeded(),
             ne(variables['msName'], 'app-administration-vue2'),
