@@ -148,15 +148,6 @@ jobs:
         condition: succeeded()
 
       - script: |
-          echo "Comentando app-legacy/*"
-          sed -i '/app-legacy\//s/  -/  # -/' pnpm-workspace.yaml
-          cat pnpm-workspace.yaml
-        displayName: "💬 Comment app-legacy/*"
-        condition: and(succeeded(),
-          ne(variables['msName'], 'app-administration-vue2'),
-          ne(variables['msName'], 'app-sellers-vue2'))
-
-      - script: |
           echo -e "\n📁 Generando archivo .pnpmrc en: $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc"
           cat <<EOF > "$(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc"
           node-linker=hoisted
