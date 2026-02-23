@@ -214,7 +214,7 @@ jobs:
           pnpm run test
         displayName: "🧪 Run Tests for: $(Build.Repository.Name)"
         condition: succeeded()
-        # continueOnError: true
+        continueOnError: true
 
       - script: |
           pnpm run coverage
