@@ -42,7 +42,7 @@ stages:
 
   # #####################################################################
 
-  - ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), eq(variables['Build.SourceBranchName'], 'develop') }}:
+  - ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), eq(variables['Build.SourceBranchName'], 'develop')) }}:
       ##################### DEPLOY UNICO AMBIENTE #########################
       - stage: build_micro_frontend
         displayName: "📦 Build MicroFrontend"
