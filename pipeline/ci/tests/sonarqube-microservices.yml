@@ -12,7 +12,7 @@ jobs:
       - checkout: self
         fetchDepth: 0
         persistCredentials: true
-        
+
       - task: DownloadBuildArtifacts@0
         inputs:
           artifactName: "versions"
@@ -185,8 +185,8 @@ jobs:
           SonarQube: "SonarQubeConection"
           scannerMode: "CLI"
           configMode: "manual"
-          cliProjectKey: "$(Build.Repository.Name)"
-          cliProjectName: "$(Build.Repository.Name)"
+          cliProjectKey: "pruebas-$(Build.Repository.Name)"
+          cliProjectName: "pruebas-$(Build.Repository.Name)"
           cliSources: "$(System.DefaultWorkingDirectory)"
           extraProperties: |
             sonar.projectVersion=$(version)
@@ -235,4 +235,4 @@ jobs:
 
       - template: sonarqube/job-sonarqube.yml@sonarqube
         parameters:
-          projectKey: $(Build.Repository.Name)
+          projectKey: pruebas-$(Build.Repository.Name)
