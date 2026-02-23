@@ -9,6 +9,10 @@ jobs:
       - template: ../../variables/groups-transversal-variables-backend.yml
 
     steps:
+      - checkout: self
+        fetchDepth: 0
+        persistCredentials: true
+        
       - task: DownloadBuildArtifacts@0
         inputs:
           artifactName: "versions"
