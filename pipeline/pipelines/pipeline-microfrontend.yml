@@ -7,6 +7,15 @@ stages:
           apps: ${{ parameters.apps }}
           release: ${{ parameters.release }}
 
+  - ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), eq(variables['Build.SourceBranch'], 'refs/heads/develop')) }}:
+      - stage: scan_micro_frontend
+        displayName: "🛡️ Scan Microfrontend"
+        dependsOn: semantic_version_micro_fronted
+        jobs:
+          - template: ../ci/tests/sonarqube-microfrontend.yml
+            parameters:
+              apps: ${{ parameters.apps }}
+
   #####################################################################
 
   - ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
@@ -33,11 +42,11 @@ stages:
 
   # #####################################################################
 
-  - ${{ if ne(variables['Build.SourceBranchName'], 'master') }}:
+  - ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), eq(variables['Build.SourceBranchName'], 'develop') }}:
       ##################### DEPLOY UNICO AMBIENTE #########################
       - stage: build_micro_frontend
         displayName: "📦 Build MicroFrontend"
-        dependsOn: semantic_version_micro_fronted
+        dependsOn: scan_micro_frontend
         jobs:
           - template: ../ci/build/build-frontend.yml
             parameters:
@@ -53,23 +62,32 @@ stages:
                 parameters:
                   pr_id: ${{ parameters.pr_id }}
 
+  - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
+      - stage: build_micro_frontend
+        displayName: "📦 Build MicroFrontend"
+        dependsOn: semantic_version_micro_fronted
+        jobs:
+          - template: ../ci/build/build-frontend.yml
+            parameters:
+              apps: ${{ parameters.apps }}
+
       ##################### DEPLOY UNICO AMBIENTE #########################
-      - ${{ if in(variables['Build.SourceBranchName'], 'develop', 'staging') }}:
-          - stage: deploy_micro_frontend
-            displayName: "🚀 Deploy MicroFrontend"
-            dependsOn: build_micro_frontend
-            jobs:
-              - template: ../cd/deployment.yml
-                parameters:
-                  apps: ${{ parameters.apps }}
-                  release: ${{ parameters.release }}
+  - ${{ if in(variables['Build.SourceBranchName'], 'develop', 'staging') }}:
+      - stage: deploy_micro_frontend
+        displayName: "🚀 Deploy MicroFrontend"
+        dependsOn: build_micro_frontend
+        jobs:
+          - template: ../cd/deployment.yml
+            parameters:
+              apps: ${{ parameters.apps }}
+              release: ${{ parameters.release }}
 
       ##################### DEPLOY MULTI AMBIENTES #########################
       # - ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}:
       #   - ${{ each environments in parameters.environments_new_develop }}:
       #     - stage: build_micro_frontend_${{ environments }}
       #       displayName: "📦 Build MicroFrontend ${{ environments }}"
-      #       dependsOn: semantic_version_micro_fronted
+      #       dependsOn: scan_micro_frontend
       #       jobs:
       #         - template: ../ci/build/build-frontend.yml
       #           parameters:
