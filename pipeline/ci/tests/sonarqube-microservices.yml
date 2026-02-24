@@ -9,6 +9,10 @@ jobs:
       - template: ../../variables/groups-transversal-variables-backend.yml
 
     steps:
+      - checkout: self
+        fetchDepth: 0
+        persistCredentials: true
+
       - task: DownloadBuildArtifacts@0
         inputs:
           artifactName: "versions"
@@ -210,14 +214,14 @@ jobs:
           pnpm run test
         displayName: "🧪 Run Tests for: $(Build.Repository.Name)"
         condition: succeeded()
-        continueOnError: true
+        # continueOnError: true
 
       - script: |
           pnpm run coverage
           ls -la $(System.DefaultWorkingDirectory)/coverage
         displayName: "🔎 Coverage Analysis: $(Build.Repository.Name)"
         condition: succeeded()
-        continueOnError: true
+        # continueOnError: true
 
       - task: SonarQubeAnalyze@7
         displayName: "📡 Run Sonar Analysis"

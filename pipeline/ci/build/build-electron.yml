@@ -201,7 +201,7 @@ jobs:
       - script: |
           echo -e "\n📦 Build Electron..."
           pnpm run build
-        displayName: "📦 Build Electron"
+        displayName: "📦 Build Electron Linux"
         condition: succeeded()
 
       - script: |
@@ -498,7 +498,7 @@ jobs:
         condition: succeeded()
 
       - task: PowerShell@2
-        displayName: "📦 Build Electron"
+        displayName: "📦 Build Electron Windows"
         inputs:
           targetType: " inline"
           script: |

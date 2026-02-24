@@ -61,18 +61,24 @@ jobs:
               changed_files=$(git diff --name-only "origin/$TARGET_BRANCH"..."origin/$CURRENT_BRANCH")
               packages_changed=$(echo "$changed_files" | grep "^packages/" || true)
 
+              # if [[ -n "$packages_changed" ]]; then
+              #   # apps=$(find apps app-legacy -mindepth 1 -maxdepth 1 -type d | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u)
+              #   apps="invictus"
+              # else
+              #   apps=$(echo "$changed_files" | grep -E "^apps/|^app-legacy/" | cut -d '/' -f1,2 | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u)
+              # fi
+
+              apps=$(echo "$changed_files" | grep -E "^apps/|^app-legacy/" | cut -d '/' -f1,2 | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u)
+
               if [[ -n "$packages_changed" ]]; then
-                # apps=$(find apps app-legacy -mindepth 1 -maxdepth 1 -type d | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u)
-                apps="invictus"
-              else
-                apps=$(echo "$changed_files" | grep -E "^apps/|^app-legacy/" | cut -d '/' -f1,2 | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u)
+                apps=$(printf "%s\ninvictus" "$apps" | sort -u)
               fi
 
               if [[ -z "$apps" ]]; then
                 echo -e "\n##vso[task.logissue type=error]⚠️ No se detectaron cambios en apps. Cancelando ejecución del pipeline."
                 exit 99
               fi
-
+              
               echo "🔍 Apps modificadas detectadas:"
               echo "${apps[@]}"
               apps_json=$(printf '%s\n' "${apps[@]}" | jq -R . | jq -s .)
@@ -133,16 +139,22 @@ jobs:
                 echo -e "\n🔍 Comparando cambios entre: $CURRENT_BRANCH ... $CURRENT_BRANCH"
                 packages_changed=$(git diff --name-only HEAD~1 HEAD | grep "^packages/")
 
-                if [[ -n "$packages_changed" ]]; then
-                    # apps=$(find apps app-legacy -mindepth 1 -maxdepth 1 -type d | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u)
-                    apps="invictus"
-                else
-                    apps=$(git diff --name-only HEAD~1 HEAD | grep -E "^apps/|^app-legacy/" | cut -d '/' -f1,2 | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u)
-                fi
+                # if [[ -n "$packages_changed" ]]; then
+                #     # apps=$(find apps app-legacy -mindepth 1 -maxdepth 1 -type d | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u)
+                #     apps="invictus"
+                # else
+                #     apps=$(git diff --name-only HEAD~1 HEAD | grep -E "^apps/|^app-legacy/" | cut -d '/' -f1,2 | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u)
+                # fi
 
-                if [[ -z "$apps" ]]; then
-                  echo -e "\n##vso[task.logissue type=error]⚠️ No se detectaron cambios en apps. Cancelando ejecución del pipeline."
-                  exit 99
+                # if [[ -z "$apps" ]]; then
+                #   echo -e "\n##vso[task.logissue type=error]⚠️ No se detectaron cambios en apps. Cancelando ejecución del pipeline."
+                #   exit 99
+                # fi
+
+                apps=$(echo "$changed_files" | grep -E "^apps/|^app-legacy/" | cut -d '/' -f1,2 | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u)
+
+                if [[ -n "$packages_changed" ]]; then
+                  apps=$(printf "%s\ninvictus" "$apps" | sort -u)
                 fi
 
                 echo "🔍 Apps modificadas detectadas:"

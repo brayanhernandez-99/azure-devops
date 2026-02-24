@@ -11,7 +11,7 @@ stages:
         displayName: "🛡️ Scan MicroService"
         dependsOn: semantic_version_micro_service
         jobs:
-          - template: ../ci/tests/sonarqube.yml
+          - template: ../ci/tests/sonarqube-microservices.yml
           - template: ../ci/tests/gitleaks.yml
 
   #####################################################################
