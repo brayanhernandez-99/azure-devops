@@ -235,4 +235,4 @@ jobs:
 
       - template: sonarqube/job-sonarqube.yml@sonarqube
         parameters:
-          projectKey: pruebas-$(Build.Repository.Name)
+          projectKey: $(Build.Repository.Name)
