@@ -84,19 +84,8 @@ jobs:
 
 
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-iam-profile/ecs-task-role
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds/aws-service-rds
           terragrunt plan --all --non-interactive -no-color
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/bff-sellers/aws-service-ecs
-          terragrunt plan --all --non-interactive -no-color
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/bff-integration/aws-service-ecs
-          terragrunt plan --all --non-interactive -no-color
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/bff-administration/aws-service-ecs
-          terragrunt plan --all --non-interactive -no-color
-
-          
 
 
 
