@@ -185,8 +185,8 @@ jobs:
           SonarQube: "SonarQubeConection"
           scannerMode: "CLI"
           configMode: "manual"
-          cliProjectKey: "pruebas-$(Build.Repository.Name)"
-          cliProjectName: "pruebas-$(Build.Repository.Name)"
+          cliProjectKey: "$(Build.Repository.Name)"
+          cliProjectName: "$(Build.Repository.Name)"
           cliSources: "$(System.DefaultWorkingDirectory)"
           extraProperties: |
             sonar.projectVersion=$(version)
