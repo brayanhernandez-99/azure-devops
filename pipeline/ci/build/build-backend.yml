@@ -112,28 +112,27 @@ jobs:
 
       - script: |
           REPO_NAME="$(Build.Repository.Name)"
-          CURRENT_BRANCH=$(echo $(Build.SourceBranch))
+          CURRENT_BRANCH="$BUILD_SOURCEBRANCH"
 
           echo -e "\nℹ️ Informacion..."
           echo "Branch: $CURRENT_BRANCH"
           echo "Repositorio: $REPO_NAME"
 
-         
           CLEAN_NAME="${REPO_NAME%-invictus}"   # quita solo el sufijo -invictus
+
+          branch="${CURRENT_BRANCH#refs/heads/}"
           
-
-          if [[ "$CURRENT_BRANCH" == refs/heads/develop ]]; then
-            raw_branch=$(Build.SourceBranch)
-            clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
-          fi
-
-          if [[ "$CURRENT_BRANCH" == refs/heads/staging ]]; then
-            clean_branch=qa
-          fi
-
-          if [[ "$CURRENT_BRANCH" == refs/heads/master ]]; then
-            clean_branch=prd
-          fi
+          case "$branch" in
+            develop)
+              clean_branch="$branch"
+              ;;
+            staging)
+              clean_branch="qa"
+              ;;
+            master)
+              clean_branch="prd"
+              ;;
+          esac
 
           echo -e "\nℹ️ Informacion..."
           echo "Clean Branch: $clean_branch"
