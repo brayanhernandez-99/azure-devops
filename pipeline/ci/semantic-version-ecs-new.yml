@@ -67,7 +67,7 @@ jobs:
             [reports]="microservice-reports-$ENVIRONMENT"
             [security]="microservice-security-$ENVIRONMENT"
             #[scheduler]="microservice-scheduler-$ENVIRONMENT"
-            #[raspa]="microservice-raspa-$ENVIRONMENT"
+            [raspa]="microservice-raspa-$ENVIRONMENT"
             [sellers]="microservice-sellers-$ENVIRONMENT"
             [shopping-cart]="microservice-shopping-cart-$ENVIRONMENT"
             [siga]="microservice-siga-$ENVIRONMENT"
