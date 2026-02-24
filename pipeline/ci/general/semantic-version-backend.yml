@@ -43,6 +43,9 @@ jobs:
               exit 99
             fi
           fi
+
+          CURRENT_BRANCH=$(echo $(Build.SourceBranch.name))
+          echo $CURRENT_BRANCH
         displayName: "🔎 Validate Feature or Hotfix Branch is Up to Date"
         condition: and(succeeded(), or(
           startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'),
