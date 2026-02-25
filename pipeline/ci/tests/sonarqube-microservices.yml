@@ -227,7 +227,7 @@ jobs:
         displayName: "🧪 Publish Test Results"
         inputs:
           testResultsFormat: 'JUnit'
-          testResultsFiles: 'coverage/junit.xml'
+          testResultsFiles: 'coverage/lcov-report'
           failTaskOnFailedTests: true
 
       - task: PublishCodeCoverageResults@2
