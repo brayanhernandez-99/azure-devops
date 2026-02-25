@@ -236,3 +236,10 @@ jobs:
       - template: sonarqube/job-sonarqube.yml@sonarqube
         parameters:
           projectKey: $(Build.Repository.Name)
+        
+      - task: PublishCodeCoverageResults@2
+        displayName: "📊 Publish Code Coverage"
+        inputs:
+          codeCoverageTool: 'Cobertura'
+          summaryFileLocation: '$(System.DefaultWorkingDirectory)/coverage/lcov.info'
+          reportDirectory: '$(System.DefaultWorkingDirectory)/coverage/lcov-report'
