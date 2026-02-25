@@ -223,20 +223,6 @@ jobs:
         condition: succeeded()
         # continueOnError: true
 
-      - task: PublishTestResults@2
-        displayName: "🧪 Publish Test Results"
-        inputs:
-          testResultsFormat: 'JUnit'
-          testResultsFiles: 'coverage/lcov-report'
-          failTaskOnFailedTests: true
-
-      - task: PublishCodeCoverageResults@2
-        displayName: "📊 Publish Code Coverage"
-        inputs:
-          codeCoverageTool: 'Cobertura'
-          summaryFileLocation: '$(System.DefaultWorkingDirectory)/coverage/lcov.info'
-          reportDirectory: '$(System.DefaultWorkingDirectory)/coverage/lcov-report'
-
       - task: SonarQubeAnalyze@7
         displayName: "📡 Run Sonar Analysis"
         condition: succeeded()
