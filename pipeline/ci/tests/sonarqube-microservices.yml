@@ -217,12 +217,51 @@ jobs:
         # continueOnError: true
 
       - script: |
+          set +e
+          mkdir -p reports/junit
+
+          echo "▶ Running Jest (if exists)"
+          pnpm jest \
+            --ci \
+            --reporters=default \
+            --reporters=jest-junit \
+            --outputFile=reports/junit/jest-results.xml || true
+
+          echo "▶ Running Mocha (if exists)"
+          pnpm mocha \
+            --reporter mocha-junit-reporter \
+            --reporter-options mochaFile=reports/junit/mocha-results.xml || true
+
+          echo "📁 JUnit reports generated:"
+          ls -la reports/junit || true
+        displayName: "🧪 Run Tests (Jest + Mocha)"
+
+      - script: |
+          if ls reports/junit/*.xml 1> /dev/null 2>&1; then
+            echo "##vso[task.setvariable variable=HAS_TEST_RESULTS]true"
+            echo "✅ Test results detected"
+          else
+            echo "##vso[task.setvariable variable=HAS_TEST_RESULTS]false"
+            echo "⚠️ No test results detected"
+          fi
+        displayName: "🔍 Detect Test Results"
+
+      - task: PublishTestResults@2
+        displayName: "🧪 Publish Test Results"
+        condition: eq(variables['HAS_TEST_RESULTS'], 'true')
+        inputs:
+          testResultsFormat: 'JUnit'
+          testResultsFiles: 'reports/junit/*.xml'
+          mergeTestResults: true
+          failTaskOnFailedTests: true
+
+      - script: |
           pnpm run coverage
           ls -la $(System.DefaultWorkingDirectory)/coverage
         displayName: "🔎 Coverage Analysis: $(Build.Repository.Name)"
         condition: succeeded()
         # continueOnError: true
-        
+
       - task: PublishCodeCoverageResults@2
         displayName: "📊 Publish Code Coverage"
         inputs:
