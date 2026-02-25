@@ -236,5 +236,22 @@ jobs:
       - template: sonarqube/job-sonarqube.yml@sonarqube
         parameters:
           projectKey: $(Build.Repository.Name)
+      
+      - script: |
+          set -e
+
+          echo "🔍 Checking for outdated npm dependencies..."
+          OUTDATED=$(npx npm-check-updates --jsonUpgraded)
+
+          if [ "$OUTDATED" != "{}" ]; then
+            echo "##vso[task.logissue type=warning]Outdated dependencies detected:"
+            echo "$OUTDATED"
+            echo "##vso[task.complete result=SucceededWithIssues]"
+          else
+            echo "✅ All dependencies are up to date"
+          fi
+        displayName: "🧪 Check outdated npm dependencies"
+        condition: succeeded()
+        # continueOnError: true
         
       
