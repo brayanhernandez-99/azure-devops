@@ -7,12 +7,12 @@ parameters:
     default:
       - antioquia
       - cap
-      # - tolima
-      # - huila
-      # - cauca
-      # - boyaca
-      # - santander
-      # - putumayo
+      - tolima
+      - huila
+      - cauca
+      - boyaca
+      - santander
+      - putumayo
 
 resources:
   repositories:
