@@ -217,6 +217,7 @@ jobs:
         # continueOnError: true
       
       - script: |
+          pnpm add -D mocha-junit-reporter
           pnpm exec mocha \
           --reporter mocha-junit-reporter \
           --reporter-options mochaFile=reports/junit/mocha.xml
