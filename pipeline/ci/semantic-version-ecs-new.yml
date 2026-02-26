@@ -39,7 +39,7 @@ jobs:
             [bff-integration]="bff-integration-$ENVIRONMENT"
             [bff-sellers]="bff-sellers-$ENVIRONMENT"
             [raffles]="microservice-raffle-$ENVIRONMENT"
-            [notifier]="notifier-$ENVIRONMENT"
+            [notifier]="microservice-notifier-$ENVIRONMENT"
             [raspa]="microservice-raspa-$ENVIRONMENT"
             #[scheduler]="microservice-scheduler-$ENVIRONMENT"
 
