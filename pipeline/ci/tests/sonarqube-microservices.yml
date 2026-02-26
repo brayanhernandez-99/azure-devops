@@ -234,7 +234,7 @@ jobs:
           if echo "$TEST_SCRIPT" | grep -Eiq '(^|[[:space:]])jest([[:space:]]|$)'; then
             mkdir -p reports/junit
             mkdir -p reports/coverage
-
+            echo "🧪 Running Jest Test and coverage (CI override)"
             pnpm add -D jest@29.7.0 jest-junit@16.0.0
             export JEST_JUNIT_OUTPUT_DIR=reports/junit
             export JEST_JUNIT_OUTPUT_NAME=test.xml
