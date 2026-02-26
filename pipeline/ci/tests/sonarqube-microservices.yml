@@ -190,7 +190,7 @@ jobs:
           cliSources: "$(System.DefaultWorkingDirectory)"
           extraProperties: |
             sonar.projectVersion=$(version)
-            # sonar.javascript.lcov.reportPaths=$(System.DefaultWorkingDirectory)/coverage/lcov.info
+            sonar.javascript.lcov.reportPaths=$(System.DefaultWorkingDirectory)/coverage/lcov.info
             sonar.exclusions=**/*.java,**/test/**,**/android/**,**/ios/**,**/coverage/**,**/.nyc_output/**,**/reports/**,**/node_modules/**,**/migrations/**,**/config/**,**/Dockerfile,*.cjs
         condition: succeeded()
 
