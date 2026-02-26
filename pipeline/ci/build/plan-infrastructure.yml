@@ -98,7 +98,7 @@ jobs:
           # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/notifier/aws-service-ecs
           # terragrunt plan --all --non-interactive -no-color
 
-          $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-ssm-parameter
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-ssm-parameter
           terragrunt plan --all --non-interactive -no-color
 
 
