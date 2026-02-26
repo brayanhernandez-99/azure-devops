@@ -67,30 +67,78 @@ jobs:
           targetType: "inline"
           script: |
             echo -e "\n🔐 Obteniendo token de AWS CodeArtifact..."
-            token=$(aws codeartifact get-authorization-token \
+            token_matrix=$(aws codeartifact get-authorization-token \
               --domain matrixtech-npm-repository \
               --domain-owner "$ACCOUNT_ID_DEPLOY" \
               --region "$AWS_DEFAULT_REGION" \
               --query authorizationToken \
               --output text)
 
-            REPO_DOMAIN="matrixtech-npm-repository-$ACCOUNT_ID_DEPLOY.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com"
-            REPO_PATH="npm/matrixtech-npm-repository"
-            REPO_URL="https://$REPO_DOMAIN/$REPO_PATH"
+            token_ux=$(aws codeartifact get-authorization-token \
+              --domain ux \
+              --domain-owner "$ACCOUNT_ID_DEPLOY" \
+              --region "$AWS_DEFAULT_REGION" \
+              --query authorizationToken \
+              --output text)
+
+            REPO_DOMAIN_MATRIX="matrixtech-npm-repository-$ACCOUNT_ID_DEPLOY.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com"
+            REPO_PATH_MATRIX="npm/matrixtech-npm-repository"
+            REPO_URL_MATRIX="https://$REPO_DOMAIN_MATRIX/$REPO_PATH_MATRIX"
 
             echo "Configurando npm..."
-            npm config set "//$REPO_DOMAIN/$REPO_PATH/:_authToken" "$token"
-            npm config set registry "$REPO_URL"
+            npm config set "//$REPO_DOMAIN_MATRIX/$REPO_PATH_MATRIX/:_authToken" "$token_matrix"
+            npm config set "@matrixtech:registry" "$REPO_URL_MATRIX"
+
+
+            REPO_DOMAIN_UX="ux-$ACCOUNT_ID_DEPLOY.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com"
+            REPO_PATH_UX="npm/ux"
+            REPO_URL_UX="https://$REPO_DOMAIN_UX/$REPO_PATH_UX"
+
+            echo "Configurando npm..."
+            npm config set "//$REPO_DOMAIN_UX/$REPO_PATH_UX/:_authToken" "$token_ux"
+            npm config set "@ux:registry" "$REPO_URL_UX"
+
 
             echo "Verificando identidad de AWS..."
             aws sts get-caller-identity
 
-            echo -e "\n📁 Generando archivo .npmrc"
+            echo -e "\n📁 Generando archivo .npmrc con múltiples registries"
+
             cat <<EOF > "$(Build.Repository.Name)/.npmrc"
-            //$REPO_DOMAIN/$REPO_PATH/:_authToken=$token
-            registry=$REPO_URL
+            @matrixtech:registry=https://$REPO_DOMAIN_MATRIX/$REPO_PATH_MATRIX/
+            //$REPO_DOMAIN_MATRIX/$REPO_PATH_MATRIX/:_authToken=$token_matrix
+            
+            @ux:registry=https://$REPO_DOMAIN_UX/$REPO_PATH_UX/
+            //$REPO_DOMAIN_UX/$REPO_PATH_UX/:_authToken=$token_ux
             EOF
+
             ls -la $(Build.Repository.Name)/.npmrc
+
+            # echo -e "\n🔐 Obteniendo token de AWS CodeArtifact..."
+            # token=$(aws codeartifact get-authorization-token \
+            #   --domain matrixtech-npm-repository \
+            #   --domain-owner "$ACCOUNT_ID_DEPLOY" \
+            #   --region "$AWS_DEFAULT_REGION" \
+            #   --query authorizationToken \
+            #   --output text)
+
+            # REPO_DOMAIN="matrixtech-npm-repository-$ACCOUNT_ID_DEPLOY.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com"
+            # REPO_PATH="npm/matrixtech-npm-repository"
+            # REPO_URL="https://$REPO_DOMAIN/$REPO_PATH"
+
+            # echo "Configurando npm..."
+            # npm config set "//$REPO_DOMAIN/$REPO_PATH/:_authToken" "$token"
+            # npm config set registry "$REPO_URL"
+
+            # echo "Verificando identidad de AWS..."
+            # aws sts get-caller-identity
+
+            # echo -e "\n📁 Generando archivo .npmrc"
+            # cat <<EOF > "$(Build.Repository.Name)/.npmrc"
+            # //$REPO_DOMAIN/$REPO_PATH/:_authToken=$token
+            # registry=$REPO_URL
+            # EOF
+            # ls -la $(Build.Repository.Name)/.npmrc
         displayName: "🔐 Setup CodeArtifact & npm config"
         condition: succeeded()
         env:
@@ -112,28 +160,27 @@ jobs:
 
       - script: |
           REPO_NAME="$(Build.Repository.Name)"
-          CURRENT_BRANCH=$(echo $(Build.SourceBranch))
+          CURRENT_BRANCH="$BUILD_SOURCEBRANCH"
 
           echo -e "\nℹ️ Informacion..."
           echo "Branch: $CURRENT_BRANCH"
           echo "Repositorio: $REPO_NAME"
 
-         
-          CLEAN_NAME="${REPO_NAME%-invictus}"   # quita solo el sufijo -invictus
+          CLEAN_NAME="${REPO_NAME%-invictus}"
+
+          branch="${CURRENT_BRANCH#refs/heads/}"
           
-
-          if [[ "$CURRENT_BRANCH" == refs/heads/develop ]]; then
-            raw_branch=$(Build.SourceBranch)
-            clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
-          fi
-
-          if [[ "$CURRENT_BRANCH" == refs/heads/staging ]]; then
-            clean_branch=qa
-          fi
-
-          if [[ "$CURRENT_BRANCH" == refs/heads/master ]]; then
-            clean_branch=prd
-          fi
+          case "$branch" in
+            develop)
+              clean_branch="$branch"
+              ;;
+            staging)
+              clean_branch="qa"
+              ;;
+            master)
+              clean_branch="prd"
+              ;;
+          esac
 
           echo -e "\nℹ️ Informacion..."
           echo "Clean Branch: $clean_branch"
@@ -147,7 +194,6 @@ jobs:
       - task: Docker@2
         displayName: "📦 Build Docker Image: $(Build.Repository.Name)"
         condition: succeeded()
-        continueOnError: true
         inputs:
           command: "build"
           Dockerfile: "$(Build.Repository.Name)/Dockerfile"

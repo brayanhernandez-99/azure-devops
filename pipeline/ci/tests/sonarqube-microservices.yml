@@ -43,80 +43,80 @@ jobs:
         inputs:
           targetType: "inline"
           script: |
-            # echo -e "\n🔐 Obteniendo token de AWS CodeArtifact..."
-            # token_matrix=$(aws codeartifact get-authorization-token \
-            #   --domain matrixtech-npm-repository \
-            #   --domain-owner "$ACCOUNT_ID_DEPLOY" \
-            #   --region "$AWS_DEFAULT_REGION" \
-            #   --query authorizationToken \
-            #   --output text)
-
-            # token_ux=$(aws codeartifact get-authorization-token \
-            #   --domain ux \
-            #   --domain-owner "$ACCOUNT_ID_DEPLOY" \
-            #   --region "$AWS_DEFAULT_REGION" \
-            #   --query authorizationToken \
-            #   --output text)
-
-            # REPO_DOMAIN_MATRIX="matrixtech-npm-repository-$ACCOUNT_ID_DEPLOY.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com"
-            # REPO_PATH_MATRIX="npm/matrixtech-npm-repository"
-            # REPO_URL_MATRIX="https://$REPO_DOMAIN_MATRIX/$REPO_PATH_MATRIX"
-
-            # echo "Configurando npm..."
-            # npm config set "//$REPO_DOMAIN_MATRIX/$REPO_PATH_MATRIX/:_authToken" "$token_matrix"
-            # npm config set "@matrixtech:registry" "$REPO_URL_MATRIX"
-
-
-            # REPO_DOMAIN_UX="ux-$ACCOUNT_ID_DEPLOY.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com"
-            # REPO_PATH_UX="npm/ux"
-            # REPO_URL_UX="https://$REPO_DOMAIN_UX/$REPO_PATH_UX"
-
-            # echo "Configurando npm..."
-            # npm config set "//$REPO_DOMAIN_UX/$REPO_PATH_UX/:_authToken" "$token_ux"
-            # npm config set "@ux:registry" "$REPO_URL_UX"
-
-
-            # echo "Verificando identidad de AWS..."
-            # aws sts get-caller-identity
-
-            # echo -e "\n📁 Generando archivo .npmrc con múltiples registries"
-
-            # cat <<EOF > ".npmrc"
-            # @matrixtech:registry=https://$REPO_DOMAIN_MATRIX/$REPO_PATH_MATRIX/
-            # //$REPO_DOMAIN_MATRIX/$REPO_PATH_MATRIX/:_authToken=$token_matrix
-            
-            # @ux:registry=https://$REPO_DOMAIN_UX/$REPO_PATH_UX/
-            # //$REPO_DOMAIN_UX/$REPO_PATH_UX/:_authToken=$token_ux
-            # EOF
-
-            # ls -la .npmrc
-
-
-
             echo -e "\n🔐 Obteniendo token de AWS CodeArtifact..."
-            token=$(aws codeartifact get-authorization-token \
+            token_matrix=$(aws codeartifact get-authorization-token \
               --domain matrixtech-npm-repository \
               --domain-owner "$ACCOUNT_ID_DEPLOY" \
               --region "$AWS_DEFAULT_REGION" \
               --query authorizationToken \
               --output text)
 
-            REPO_DOMAIN="matrixtech-npm-repository-$ACCOUNT_ID_DEPLOY.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com"
-            REPO_PATH="npm/matrixtech-npm-repository"
-            REPO_URL="https://$REPO_DOMAIN/$REPO_PATH"
+            token_ux=$(aws codeartifact get-authorization-token \
+              --domain ux \
+              --domain-owner "$ACCOUNT_ID_DEPLOY" \
+              --region "$AWS_DEFAULT_REGION" \
+              --query authorizationToken \
+              --output text)
+
+            REPO_DOMAIN_MATRIX="matrixtech-npm-repository-$ACCOUNT_ID_DEPLOY.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com"
+            REPO_PATH_MATRIX="npm/matrixtech-npm-repository"
+            REPO_URL_MATRIX="https://$REPO_DOMAIN_MATRIX/$REPO_PATH_MATRIX"
 
             echo "Configurando npm..."
-            npm config set "//$REPO_DOMAIN/$REPO_PATH/:_authToken" "$token"
-            npm config set registry "$REPO_URL"
+            npm config set "//$REPO_DOMAIN_MATRIX/$REPO_PATH_MATRIX/:_authToken" "$token_matrix"
+            npm config set "@matrixtech:registry" "$REPO_URL_MATRIX"
+
+
+            REPO_DOMAIN_UX="ux-$ACCOUNT_ID_DEPLOY.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com"
+            REPO_PATH_UX="npm/ux"
+            REPO_URL_UX="https://$REPO_DOMAIN_UX/$REPO_PATH_UX"
+
+            echo "Configurando npm..."
+            npm config set "//$REPO_DOMAIN_UX/$REPO_PATH_UX/:_authToken" "$token_ux"
+            npm config set "@ux:registry" "$REPO_URL_UX"
+
 
             echo "Verificando identidad de AWS..."
             aws sts get-caller-identity
 
-            echo -e "\n📁 Generando archivo .npmrc"
+            echo -e "\n📁 Generando archivo .npmrc con múltiples registries"
+
             cat <<EOF > ".npmrc"
-            //$REPO_DOMAIN/$REPO_PATH/:_authToken=$token
+            @matrixtech:registry=https://$REPO_DOMAIN_MATRIX/$REPO_PATH_MATRIX/
+            //$REPO_DOMAIN_MATRIX/$REPO_PATH_MATRIX/:_authToken=$token_matrix
+            
+            @ux:registry=https://$REPO_DOMAIN_UX/$REPO_PATH_UX/
+            //$REPO_DOMAIN_UX/$REPO_PATH_UX/:_authToken=$token_ux
             EOF
-            ls -l .npmrc
+
+            ls -la .npmrc
+
+
+
+            # echo -e "\n🔐 Obteniendo token de AWS CodeArtifact..."
+            # token=$(aws codeartifact get-authorization-token \
+            #   --domain matrixtech-npm-repository \
+            #   --domain-owner "$ACCOUNT_ID_DEPLOY" \
+            #   --region "$AWS_DEFAULT_REGION" \
+            #   --query authorizationToken \
+            #   --output text)
+
+            # REPO_DOMAIN="matrixtech-npm-repository-$ACCOUNT_ID_DEPLOY.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com"
+            # REPO_PATH="npm/matrixtech-npm-repository"
+            # REPO_URL="https://$REPO_DOMAIN/$REPO_PATH"
+
+            # echo "Configurando npm..."
+            # npm config set "//$REPO_DOMAIN/$REPO_PATH/:_authToken" "$token"
+            # npm config set registry "$REPO_URL"
+
+            # echo "Verificando identidad de AWS..."
+            # aws sts get-caller-identity
+
+            # echo -e "\n📁 Generando archivo .npmrc"
+            # cat <<EOF > ".npmrc"
+            # //$REPO_DOMAIN/$REPO_PATH/:_authToken=$token
+            # EOF
+            # ls -l .npmrc
         displayName: "🔐 Setup CodeArtifact & npm config"
         condition: succeeded()
         env:
@@ -191,7 +191,7 @@ jobs:
           extraProperties: |
             sonar.projectVersion=$(version)
             sonar.javascript.lcov.reportPaths=$(System.DefaultWorkingDirectory)/coverage/lcov.info
-            sonar.exclusions=**/*.java,**/test/**,**/android/**,**/ios/**,**/coverage/**,**/.nyc_output/**,**/reports/**,**/node_modules/**,**/migrations/**,**/config/**
+            sonar.exclusions=**/*.java,**/test/**,**/android/**,**/ios/**,**/coverage/**,**/.nyc_output/**,**/reports/**,**/node_modules/**,**/migrations/**,**/config/**,**/Dockerfile
         condition: succeeded()
 
       - script: |
@@ -215,6 +215,84 @@ jobs:
         displayName: "🧪 Run Tests for: $(Build.Repository.Name)"
         condition: succeeded()
         # continueOnError: true
+      
+      - script: |
+          PKG="$(System.DefaultWorkingDirectory)/package.json"
+
+          if [[ ! -f "$PKG" ]]; then
+            echo "❌ package.json not found"
+            exit 1
+          fi
+
+          TEST_SCRIPT=$(jq -r '.scripts.test // empty' "$PKG")
+
+          if [[ -z "$TEST_SCRIPT" ]]; then
+            echo "❌ No test script defined in package.json"
+            exit 1
+          fi
+
+          if echo "$TEST_SCRIPT" | grep -Eiq '(^|[[:space:]])jest([[:space:]]|$)'; then
+            mkdir -p reports/junit
+            mkdir -p reports/coverage
+            echo "🧪 Running Jest Test and coverage (CI override)"
+            pnpm add -D jest@29.7.0 jest-junit@16.0.0
+            export JEST_JUNIT_OUTPUT_DIR=reports/junit
+            export JEST_JUNIT_OUTPUT_NAME=test.xml
+            pnpm dlx jest \
+              --ci \
+              --coverage \
+              --coverageDirectory=reports/coverage \
+              --coverageReporters=lcov \
+              --coverageReporters=cobertura \
+              --reporters=default \
+              --reporters=jest-junit \
+
+            echo "📁 Test files:"
+            ls -la reports/junit
+
+            echo "📁 Coverage files:"
+            ls -la reports/coverage
+          fi
+
+          if echo "$TEST_SCRIPT" | grep -Eiq '(^|[[:space:]])mocha([[:space:]]|$)'; then
+            echo "🧪 Running Mocha Test (CI override)"
+            pnpm add -D mocha-junit-reporter
+            pnpm exec mocha \
+            --reporter mocha-junit-reporter \
+            --reporter-options mochaFile=reports/junit/test.xml
+
+            echo "📁 Test files:"
+            ls -la reports/junit
+
+            echo "🧪 Running Mocha coverage (CI override)"
+            pnpm exec nyc \
+              --report-dir reports/coverage \
+              --reporter=lcov \
+              --reporter=cobertura \
+              --reporter=text \
+              mocha
+
+            echo "📁 Coverage files:"
+            ls -la reports/coverage
+          fi
+        displayName: "📈 Run Tests, coverage report"
+        condition: succeeded()
+        # continueOnError: true
+
+      - task: PublishTestResults@2
+        displayName: "📊 Publish Test Results"
+        inputs:
+          testResultsFormat: "JUnit"
+          testResultsFiles: "reports/junit/test.xml"
+          mergeTestResults: true
+          failTaskOnFailedTests: true
+      
+      - task: PublishCodeCoverageResults@2
+        displayName: "📊 Publish Code Coverage"
+        inputs:
+          codeCoverageTool: "Cobertura"
+          summaryFileLocation: "$(System.DefaultWorkingDirectory)/reports/coverage/cobertura-coverage.xml"
+          reportDirectory: "$(System.DefaultWorkingDirectory)/reports/coverage"
 
       - script: |
           pnpm run coverage
@@ -236,3 +314,22 @@ jobs:
       - template: sonarqube/job-sonarqube.yml@sonarqube
         parameters:
           projectKey: $(Build.Repository.Name)
+      
+      - script: |
+          set -e
+
+          echo "🔍 Checking for outdated npm dependencies..."
+          REPORT=$(npx npm-check-updates)
+
+          echo "$REPORT"
+
+          if echo "$REPORT" | grep -q "→"; then
+            echo "❌ Outdated npm dependencies detected. Please update them."
+            # exit 1
+          else
+            echo "✅ All npm dependencies are up to date"
+          fi
+        displayName: "🧪 Check outdated npm dependencies"
+        condition: succeeded()
+        
+      
