@@ -240,6 +240,26 @@ jobs:
         condition: succeeded()
         # continueOnError: true
 
+      - script: |
+          echo "🧪 Running Mocha coverage (CI override)"
+          pnpm exec nyc \
+            --report-dir reports/coverage \
+            --reporter=lcov \
+            --reporter=cobertura \
+            --reporter=text \
+            mocha
+
+          echo "📁 Coverage files:"
+          ls -la reports/coverage
+        displayName: "📈 Run Coverage (Mocha + Cobertura)"
+
+      - task: PublishCodeCoverageResults@2
+        displayName: "📊 Publish Code Coverage"
+        inputs:
+          codeCoverageTool: "Cobertura"
+          summaryFileLocation: "$(System.DefaultWorkingDirectory)/reports/coverage/cobertura-coverage.xml"
+          reportDirectory: "$(System.DefaultWorkingDirectory)/reports/coverage"
+
       - task: SonarQubeAnalyze@7
         displayName: "📡 Run Sonar Analysis"
         condition: succeeded()
