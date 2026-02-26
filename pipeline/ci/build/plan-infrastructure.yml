@@ -83,7 +83,13 @@ jobs:
           set -e
 
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-ftp
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-ftp
+          # terragrunt plan --all --non-interactive -no-color
+
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/lotteries-games/aws-service-secret-manager-pcn
+          terragrunt plan --all --non-interactive -no-color
+
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/lotteries-games/aws-service-secret-manager-pmn
           terragrunt plan --all --non-interactive -no-color
 
 
