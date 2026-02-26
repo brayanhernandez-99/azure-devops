@@ -97,6 +97,12 @@ jobs:
           terragrunt plan --all --non-interactive -no-color
           terragrunt apply --all --non-interactive -no-color
 
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/trino
+          terragrunt plan --all --non-interactive -no-color
+          terragrunt destroy --all --non-interactive -no-color
+
 
 
           # cd $(Build.SourcesDirectory)
