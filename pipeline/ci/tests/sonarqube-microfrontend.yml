@@ -190,16 +190,16 @@ jobs:
             ne(variables['Build.SourceBranchName'], 'staging'),
             ne(variables['Build.SourceBranchName'], 'master'))
 
-      - script: |
-          pnpm test --filter=...$(msName) -- --maxWorkers=1
-          # turbo run test --filter=$(msName)
-        displayName: "🧪 Run Tests for Microfrontend: $(msName)"
-        continueOnError: true
-        condition: and(succeeded(),
-            ne(variables['msName'], 'app-administration-vue2'),
-            ne(variables['msName'], 'app-sellers-vue2'),
-            ne(variables['Build.SourceBranchName'], 'staging'),
-            ne(variables['Build.SourceBranchName'], 'master'))
+      # - script: |
+      #     pnpm test --filter=...$(msName) -- --maxWorkers=1
+      #     # turbo run test --filter=$(msName)
+      #   displayName: "🧪 Run Tests for Microfrontend: $(msName)"
+      #   continueOnError: true
+      #   condition: and(succeeded(),
+      #       ne(variables['msName'], 'app-administration-vue2'),
+      #       ne(variables['msName'], 'app-sellers-vue2'),
+      #       ne(variables['Build.SourceBranchName'], 'staging'),
+      #       ne(variables['Build.SourceBranchName'], 'master'))
 
       - script: |
           pnpm coverage --filter=...$(msName)
