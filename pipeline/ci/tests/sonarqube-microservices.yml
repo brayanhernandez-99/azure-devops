@@ -217,21 +217,82 @@ jobs:
         # continueOnError: true
       
       - script: |
-          pnpm add -D mocha-junit-reporter
-          pnpm exec mocha \
-          --reporter mocha-junit-reporter \
-          --reporter-options mochaFile=reports/junit/mocha.xml
-        displayName: "🧪 Run Tests report"
+          PKG="$(System.DefaultWorkingDirectory)/package.json"
+
+          if [[ ! -f "$PKG" ]]; then
+            echo "❌ package.json not found"
+            exit 1
+          fi
+
+          TEST_SCRIPT=$(jq -r '.scripts.test // empty' "$PKG")
+
+          if [[ -z "$TEST_SCRIPT" ]]; then
+            echo "❌ No test script defined in package.json"
+            exit 1
+          fi
+
+          if echo "$TEST_SCRIPT" | grep -Eiq '(^|[[:space:]])jest([[:space:]]|$)'; then
+            mkdir -p reports/junit
+            mkdir -p reports/coverage
+
+            pnpm add -D jest@29.7.0 jest-junit@16.0.0
+            export JEST_JUNIT_OUTPUT_DIR=reports/junit
+            export JEST_JUNIT_OUTPUT_NAME=test.xml
+            pnpm dlx jest \
+              --ci \
+              --coverage \
+              --coverageDirectory=reports/coverage \
+              --coverageReporters=lcov \
+              --coverageReporters=cobertura \
+              --reporters=default \
+              --reporters=jest-junit \
+
+            echo "📁 Test files:"
+            ls -la reports/junit
+
+            echo "📁 Coverage files:"
+            ls -la reports/coverage
+          fi
+
+          if echo "$TEST_SCRIPT" | grep -Eiq '(^|[[:space:]])mocha([[:space:]]|$)'; then
+            echo "🧪 Running Mocha Test (CI override)"
+            pnpm add -D mocha-junit-reporter
+            pnpm exec mocha \
+            --reporter mocha-junit-reporter \
+            --reporter-options mochaFile=reports/junit/test.xml
+
+            echo "📁 Test files:"
+            ls -la reports/junit
+
+            echo "🧪 Running Mocha coverage (CI override)"
+            pnpm exec nyc \
+              --report-dir reports/coverage \
+              --reporter=lcov \
+              --reporter=cobertura \
+              --reporter=text \
+              mocha
+
+            echo "📁 Coverage files:"
+            ls -la reports/coverage
+          fi
+        displayName: "📈 Run Tests, coverage report"
         condition: succeeded()
         # continueOnError: true
 
       - task: PublishTestResults@2
-        displayName: "📊 Publish Mocha Test Results"
+        displayName: "📊 Publish Test Results"
         inputs:
           testResultsFormat: "JUnit"
-          testResultsFiles: "reports/junit/mocha.xml"
+          testResultsFiles: "reports/junit/test.xml"
           mergeTestResults: true
           failTaskOnFailedTests: true
+      
+      - task: PublishCodeCoverageResults@2
+        displayName: "📊 Publish Code Coverage"
+        inputs:
+          codeCoverageTool: "Cobertura"
+          summaryFileLocation: "$(System.DefaultWorkingDirectory)/reports/coverage/cobertura-coverage.xml"
+          reportDirectory: "$(System.DefaultWorkingDirectory)/reports/coverage"
 
       - script: |
           pnpm run coverage
@@ -239,26 +300,6 @@ jobs:
         displayName: "🔎 Coverage Analysis: $(Build.Repository.Name)"
         condition: succeeded()
         # continueOnError: true
-
-      - script: |
-          echo "🧪 Running Mocha coverage (CI override)"
-          pnpm exec nyc \
-            --report-dir reports/coverage \
-            --reporter=lcov \
-            --reporter=cobertura \
-            --reporter=text \
-            mocha
-
-          echo "📁 Coverage files:"
-          ls -la reports/coverage
-        displayName: "📈 Run Coverage (Mocha + Cobertura)"
-
-      - task: PublishCodeCoverageResults@2
-        displayName: "📊 Publish Code Coverage"
-        inputs:
-          codeCoverageTool: "Cobertura"
-          summaryFileLocation: "$(System.DefaultWorkingDirectory)/reports/coverage/cobertura-coverage.xml"
-          reportDirectory: "$(System.DefaultWorkingDirectory)/reports/coverage"
 
       - task: SonarQubeAnalyze@7
         displayName: "📡 Run Sonar Analysis"
