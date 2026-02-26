@@ -85,33 +85,28 @@ jobs:
 
 
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges/aws-service-ssm-parameter-conexred
-          terragrunt plan --all --non-interactive -no-color
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges/aws-service-ssm-parameter-bemovil
-          terragrunt plan --all --non-interactive -no-color
-
-
-
-
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/bff-administration/aws-service-ecs
-          # terragrunt plan --all --non-interactive -no-color
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/bff-integration/aws-service-ecs
-          # terragrunt plan --all --non-interactive -no-color
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/bff-sellers/aws-service-ecs
-          # terragrunt plan --all --non-interactive -no-color
-
-
-          # cd $(Build.SourcesDirectory)
-          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
-
-
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/raffles/aws-service-ecs
-          # terragrunt plan --all --non-interactive -no-color
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/notifier/aws-service-ecs
-          # terragrunt plan --all --non-interactive -no-color
           # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges/aws-service-ssm-parameter-conexred
           # terragrunt plan --all --non-interactive -no-color
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges/aws-service-ssm-parameter-bemovil
+          # terragrunt plan --all --non-interactive -no-color
 
+
+
+
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/bff-administration/aws-service-ecs
+          terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/bff-integration/aws-service-ecs
+          terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/bff-sellers/aws-service-ecs
+          terragrunt plan --all --non-interactive -no-color
+
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/raffles/aws-service-ecs
+          terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/notifier/aws-service-ecs
+          terragrunt plan --all --non-interactive -no-color
 
 
           # cd $(Build.SourcesDirectory)
