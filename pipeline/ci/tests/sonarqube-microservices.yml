@@ -277,7 +277,6 @@ jobs:
           fi
         displayName: "📈 Run Tests, coverage report"
         condition: succeeded()
-        # continueOnError: true
 
       - task: PublishTestResults@2
         displayName: "📊 Publish Test Results"
