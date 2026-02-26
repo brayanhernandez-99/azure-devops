@@ -6,7 +6,7 @@ parameters:
     type: object
     default:
       - antioquia
-      # - cap
+      - cap
       # - tolima
       # - huila
       # - cauca
