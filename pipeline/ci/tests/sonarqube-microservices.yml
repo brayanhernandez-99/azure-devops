@@ -215,6 +215,22 @@ jobs:
         displayName: "🧪 Run Tests for: $(Build.Repository.Name)"
         condition: succeeded()
         # continueOnError: true
+      
+      - script: |
+          pnpm exec mocha \
+          --reporter mocha-junit-reporter \
+          --reporter-options mochaFile=reports/junit/mocha.xml
+        displayName: "🧪 Run Tests report"
+        condition: succeeded()
+        # continueOnError: true
+
+      - task: PublishTestResults@2
+        displayName: "📊 Publish Mocha Test Results"
+        inputs:
+          testResultsFormat: "JUnit"
+          testResultsFiles: "reports/junit/mocha.xml"
+          mergeTestResults: true
+          failTaskOnFailedTests: true
 
       - script: |
           pnpm run coverage
