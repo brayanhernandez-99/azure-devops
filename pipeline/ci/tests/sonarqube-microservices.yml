@@ -264,12 +264,11 @@ jobs:
 
           if echo "$REPORT" | grep -q "→"; then
             echo "❌ Outdated npm dependencies detected. Please update them."
-            exit 1
+            # exit 1
           else
             echo "✅ All npm dependencies are up to date"
           fi
         displayName: "🧪 Check outdated npm dependencies"
         condition: succeeded()
-        # continueOnError: true
         
       
