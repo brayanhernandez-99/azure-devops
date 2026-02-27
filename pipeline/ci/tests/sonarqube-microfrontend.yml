@@ -73,7 +73,7 @@ jobs:
             echo -e "\n📁 Files:"
             ls -la $(Build.Repository.Name)/$(file)/$(msName)
 
-            cat vitest.config.mts
+            cat $(Build.Repository.Name)/$(file)/$(msName)/vitest.config.mts
         displayName: "🔍 Replace vitest.config"
         condition: and(succeeded(),
           ne(variables['msName'], 'app-administration-vue2'),
