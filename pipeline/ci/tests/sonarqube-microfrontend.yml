@@ -227,7 +227,7 @@ jobs:
       - script: |
           cd $(Build.Repository.Name)
           pnpm coverage --filter=...$(msName)
-          ls -l $(Build.Repository.Name)/$(file)/$(msName)/coverage
+          ls -l "$(file)/$(msName)/coverage"
         displayName: "🔎 Coverage Analysis: $(msName)"
         continueOnError: true
         condition: and(succeeded(),
