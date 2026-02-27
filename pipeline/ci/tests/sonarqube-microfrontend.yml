@@ -223,6 +223,7 @@ jobs:
       #       ne(variables['Build.SourceBranchName'], 'master'))
 
       - script: |
+          cd $(Build.Repository.Name)
           pnpm coverage --filter=...$(msName)
           ls -l $(Build.Repository.Name)/$(file)/$(msName)/coverage
         displayName: "🔎 Coverage Analysis: $(msName)"
