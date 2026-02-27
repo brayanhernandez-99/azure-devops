@@ -64,11 +64,11 @@ jobs:
         condition: succeeded()
       
       - script: |
-            cd $(Build.Repository.Name)/$(Build.Repository.Name)/$(file)/$(msName)
+            cd $(Build.Repository.Name)/$(file)/$(msName)
             rm vitest.config.mts
           
             echo -e "\n⚠️ Copiando archivo vitest.config.mts templates..."
-            cp pipelines-templates/pipeline/config/vitest.config.mts $(Build.Repository.Name)/$(Build.Repository.Name)/$(file)/$(msName)
+            cp pipelines-templates/pipeline/config/vitest.config.mts $(Build.Repository.Name)/$(file)/$(msName)
 
             echo -e "\n✅ vitest.config.mts copiado exitosamente."
             echo -e "\n📁 Files:"
