@@ -20,6 +20,10 @@ jobs:
       - checkout: self
         fetchDepth: 0
         persistCredentials: true
+      
+      - checkout: git://DevOps-templates-UX/pipelines-templates@electron
+        fetchDepth: 1
+        persistCredentials: true
         
       - task: DownloadBuildArtifacts@0
         inputs:
@@ -58,6 +62,21 @@ jobs:
           fi
         displayName: "📂 Select Directory"
         condition: succeeded()
+      
+      - script: |
+            cd $(Build.Repository.Name)/$(Build.Repository.Name)/$(file)/$(msName)
+            rm vitest.config.mts
+          
+            echo -e "\n⚠️ Copiando archivo vitest.config.mts templates..."
+            cp pipelines-templates/pipeline/config/vitest.config.mts $(Build.Repository.Name)/$(Build.Repository.Name)/$(file)/$(msName)
+
+            echo -e "\n✅ vitest.config.mts copiado exitosamente."
+            echo -e "\n📁 Files:"
+            ls -la $(Build.Repository.Name)/$(file)/$(msName)
+
+            cat vitest.config.mts
+        displayName: "🔍 Replace vitest.config"
+        condition: succeeded()
 
       - task: Bash@3
         name: AuthCodeArtifact
@@ -83,7 +102,7 @@ jobs:
             echo "Verificando identidad de AWS..."
             aws sts get-caller-identity
 
-            npmrcPath="$(file)/$(msName)/.npmrc"
+            npmrcPath="$(Build.Repository.Name)/$(file)/$(msName)/.npmrc"
             echo -e "\n📁 Generando archivo .npmrc en: $npmrcPath"
             cat <<EOF > "$npmrcPath"
             //$REPO_DOMAIN/$REPO_PATH/:_authToken=$token
@@ -106,6 +125,7 @@ jobs:
 
       - script: |
           echo "Comentando app-legacy/*"
+          cd $(Build.Repository.Name)
           sed -i '/app-legacy\//s/  -/  # -/' pnpm-workspace.yaml
           cat pnpm-workspace.yaml
         displayName: "💬 Comment app-legacy/*"
