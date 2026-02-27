@@ -64,7 +64,9 @@ jobs:
         condition: succeeded()
       
       - script: |
+
             rm "$(Build.Repository.Name)/$(file)/$(msName)/vitest.config.mts"
+            echo -e "\n✅ Elimnación archivo vitest.config.mts ..."
           
             echo -e "\n⚠️ Copiando archivo vitest.config.mts templates..."
             cp pipelines-templates/pipeline/config/vitest.config.mts $(Build.Repository.Name)/$(file)/$(msName)
@@ -73,6 +75,7 @@ jobs:
             echo -e "\n📁 Files:"
             ls -la $(Build.Repository.Name)/$(file)/$(msName)
 
+            echo -e "\n✅ Archivo vitest.config.mts"
             cat $(Build.Repository.Name)/$(file)/$(msName)/vitest.config.mts
         displayName: "🔍 Replace vitest.config"
         condition: and(succeeded(),
@@ -177,10 +180,8 @@ jobs:
           jdkArchitectureOption: "x64"
           jdkSourceOption: "PreInstalled"
         condition: and(succeeded(),
-            ne(variables['msName'], 'app-administration-vue2'),
-            ne(variables['msName'], 'app-sellers-vue2'),
-            ne(variables['Build.SourceBranchName'], 'staging'),
-            ne(variables['Build.SourceBranchName'], 'master'))
+          ne(variables['msName'], 'app-administration-vue2'),
+          ne(variables['msName'], 'app-sellers-vue2'))
 
       - task: SonarQubePrepare@7
         displayName: "⚙️ Prepare SonarQube Analysis"
@@ -196,10 +197,8 @@ jobs:
             sonar.javascript.lcov.reportPaths=$(Build.Repository.Name)/$(file)/$(msName)/coverage/lcov.info
             sonar.exclusions=**/test/**,**/coverage/**,**/.nyc_output/**,**/reports/**,sured-plugin/**,**/reports_bck/**,**/node_modules/**,**/dist/**,*.cjs,*mts,src/main.ts
         condition: and(succeeded(),
-            ne(variables['msName'], 'app-administration-vue2'),
-            ne(variables['msName'], 'app-sellers-vue2'),
-            ne(variables['Build.SourceBranchName'], 'staging'),
-            ne(variables['Build.SourceBranchName'], 'master'))
+          ne(variables['msName'], 'app-administration-vue2'),
+          ne(variables['msName'], 'app-sellers-vue2'))
 
       - script: |
           response=$(echo $SONARQUBE_SCANNER_PARAMS | sed -E 's#"sonar\.branch\.name":"[^"]+",##g')
@@ -208,21 +207,17 @@ jobs:
           echo "##vso[task.setvariable variable=SONARQUBE_SCANNER_PARAMS]$response"
         displayName: "⚙️ Set Variable — SONARQUBE_SCANNER_PARAMS"
         condition: and(succeeded(),
-            ne(variables['msName'], 'app-administration-vue2'),
-            ne(variables['msName'], 'app-sellers-vue2'),
-            ne(variables['Build.SourceBranchName'], 'staging'),
-            ne(variables['Build.SourceBranchName'], 'master'))
+          ne(variables['msName'], 'app-administration-vue2'),
+          ne(variables['msName'], 'app-sellers-vue2'))
 
       # - script: |
+      #     cd $(Build.Repository.Name)
       #     pnpm test --filter=...$(msName) -- --maxWorkers=1
-      #     # turbo run test --filter=$(msName)
       #   displayName: "🧪 Run Tests for Microfrontend: $(msName)"
       #   continueOnError: true
       #   condition: and(succeeded(),
-      #       ne(variables['msName'], 'app-administration-vue2'),
-      #       ne(variables['msName'], 'app-sellers-vue2'),
-      #       ne(variables['Build.SourceBranchName'], 'staging'),
-      #       ne(variables['Build.SourceBranchName'], 'master'))
+      #     ne(variables['msName'], 'app-administration-vue2'),
+      #     ne(variables['msName'], 'app-sellers-vue2'))
 
       - script: |
           cd $(Build.Repository.Name)
@@ -231,28 +226,22 @@ jobs:
         displayName: "🔎 Coverage Analysis: $(msName)"
         continueOnError: true
         condition: and(succeeded(),
-            ne(variables['msName'], 'app-administration-vue2'),
-            ne(variables['msName'], 'app-sellers-vue2'),
-            ne(variables['Build.SourceBranchName'], 'staging'),
-            ne(variables['Build.SourceBranchName'], 'master'))
+          ne(variables['msName'], 'app-administration-vue2'),
+          ne(variables['msName'], 'app-sellers-vue2'))
 
       - task: SonarQubeAnalyze@7
         displayName: "📡 Run Sonar Analysis"
         condition: and(succeeded(),
-            ne(variables['msName'], 'app-administration-vue2'),
-            ne(variables['msName'], 'app-sellers-vue2'),
-            ne(variables['Build.SourceBranchName'], 'staging'),
-            ne(variables['Build.SourceBranchName'], 'master'))
+          ne(variables['msName'], 'app-administration-vue2'),
+          ne(variables['msName'], 'app-sellers-vue2'))
 
       - task: SonarQubePublish@7
         inputs:
           pollingTimeoutSec: 400
         displayName: "📤 Publish Static Code Analysis Results"
         condition: and(succeeded(),
-            ne(variables['msName'], 'app-administration-vue2'),
-            ne(variables['msName'], 'app-sellers-vue2'),
-            ne(variables['Build.SourceBranchName'], 'staging'),
-            ne(variables['Build.SourceBranchName'], 'master'))
+          ne(variables['msName'], 'app-administration-vue2'),
+          ne(variables['msName'], 'app-sellers-vue2'))
 
       - template: sonarqube/job-sonarqube.yml@sonarqube
         parameters:
