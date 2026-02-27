@@ -66,6 +66,8 @@ jobs:
       - script: |
             cd $(Build.Repository.Name)/$(file)/$(msName)
             rm vitest.config.mts
+
+            ls -la
           
             echo -e "\n⚠️ Copiando archivo vitest.config.mts templates..."
             cp pipelines-templates/pipeline/config/vitest.config.mts $(Build.Repository.Name)/$(file)/$(msName)
