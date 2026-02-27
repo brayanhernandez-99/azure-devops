@@ -76,7 +76,9 @@ jobs:
 
             cat vitest.config.mts
         displayName: "🔍 Replace vitest.config"
-        condition: succeeded()
+        condition: and(succeeded(),
+          ne(variables['msName'], 'app-administration-vue2'),
+          ne(variables['msName'], 'app-sellers-vue2'))
 
       - task: Bash@3
         name: AuthCodeArtifact
