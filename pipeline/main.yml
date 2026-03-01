@@ -5,14 +5,14 @@ parameters:
   - name: red
     type: object
     default:
-      # - antioquia
+      - antioquia
       - cap
-      # - tolima
-      # - huila
-      # - cauca
-      # - boyaca
-      # - santander
-      # - putumayo
+      - tolima
+      - huila
+      - cauca
+      - boyaca
+      - santander
+      - putumayo
 
 resources:
   repositories:
