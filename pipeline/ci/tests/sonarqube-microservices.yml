@@ -185,8 +185,8 @@ jobs:
           SonarQube: "SonarQubeConection"
           scannerMode: "CLI"
           configMode: "manual"
-          cliProjectKey: "pruebas-$(Build.Repository.Name)"
-          cliProjectName: "pruebas-$(Build.Repository.Name)"
+          cliProjectKey: "$(Build.Repository.Name)"
+          cliProjectName: "$(Build.Repository.Name)"
           cliSources: "$(System.DefaultWorkingDirectory)"
           extraProperties: |
             sonar.projectVersion=$(version)
@@ -210,11 +210,11 @@ jobs:
         displayName: "⚙️ Set Variable — SONARQUBE_SCANNER_PARAMS"
         condition: and( eq(variables['Build.Reason'], 'PullRequest'), or(startsWith(variables['System.PullRequest.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['System.PullRequest.SourceBranch'], 'refs/heads/hotfix/')))
 
-      # - script: |
-      #     pnpm run test
-      #   displayName: "🧪 Run Tests for: $(Build.Repository.Name)"
-      #   condition: succeeded()
-      #   # continueOnError: true
+      - script: |
+          pnpm run test
+        displayName: "🧪 Run Tests for: $(Build.Repository.Name)"
+        condition: succeeded()
+        continueOnError: true
       
       # - script: |
       #     PKG="$(System.DefaultWorkingDirectory)/package.json"
@@ -312,7 +312,7 @@ jobs:
 
       - template: sonarqube/job-sonarqube.yml@sonarqube
         parameters:
-          projectKey: pruebas-$(Build.Repository.Name)
+          projectKey: $(Build.Repository.Name)
       
       - script: |
           set -e
