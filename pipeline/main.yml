@@ -77,7 +77,7 @@ stages:
   #
   # MicroFronted Pre-Build
   #
-  - ${{ if and( contains('PullRequest,IndividualCI', variables['Build.Reason']), eq(variables['Build.Repository.Name'], 'Pruebas-apps-microfrontend-azure')) }}:
+  - ${{ if and( contains('PullRequest,IndividualCI', variables['Build.Reason']), eq(variables['Build.Repository.Name'], 'apps-microfrontend-invictus')) }}:
       - template: ./pipelines/pipeline-pre-build.yml
         parameters:
           release: ${{ parameters.release }}
@@ -92,8 +92,8 @@ stages:
           apps: ${{ parameters.apps }}
           pr_id: ${{ parameters.pr_id }}
           release: ${{ parameters.release }}
-          # environments_new_develop: ${{ parameters.environments_new_develop }}
-          # environments_new_staging: ${{ parameters.environments_new_staging }}
+          environments_new_develop: ${{ parameters.environments_new_develop }}
+          environments_new_staging: ${{ parameters.environments_new_staging }}
 
   #
   # MicroServices

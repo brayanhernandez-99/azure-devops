@@ -9,7 +9,7 @@ jobs:
       - template: ../../variables/groups-transversal-variables-frontend.yml
         parameters:
           region: ${{ parameters.region }}
-          # environments: ${{ parameters.environments }}
+          environments: ${{ parameters.environments }}
 
     strategy:
       matrix:
@@ -62,17 +62,12 @@ jobs:
           set -e
           echo -e "\n📦 Cargando al Bucket S3..."
 
-          ######## MULTI DEPLOY ##############
-          # CURRENT_BRANCH=$(echo $(Build.SourceBranch))
-          # if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|staging)$ ]]; then
-          #   BASE_PATH="$(Pipeline.Workspace)/downloaded-dists/$environments/$(msName)"
-          # else
-          #   BASE_PATH="$(Pipeline.Workspace)/downloaded-dists/$region/$(msName)"
-          # fi
-
-          ###########DEPLOY UNICO#########################
-          BASE_PATH="$(Pipeline.Workspace)/downloaded-dists/$region/$(msName)"
-
+          CURRENT_BRANCH=$(echo $(Build.SourceBranch))
+          if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|staging)$ ]]; then
+            BASE_PATH="$(Pipeline.Workspace)/downloaded-dists/$environments/$(msName)"
+          else
+            BASE_PATH="$(Pipeline.Workspace)/downloaded-dists/$region/$(msName)"
+          fi
 
           echo -e "\n📂 Archivos a cargar: $BASE_PATH"
           ls -l "$BASE_PATH"

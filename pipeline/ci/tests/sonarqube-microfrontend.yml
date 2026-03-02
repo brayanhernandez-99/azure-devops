@@ -20,6 +20,10 @@ jobs:
       - checkout: self
         fetchDepth: 0
         persistCredentials: true
+      
+      - checkout: git://DevOps-templates-UX/pipelines-templates
+        fetchDepth: 1
+        persistCredentials: true
         
       - task: DownloadBuildArtifacts@0
         inputs:
@@ -58,6 +62,25 @@ jobs:
           fi
         displayName: "📂 Select Directory"
         condition: succeeded()
+      
+      - script: |
+
+            rm "$(Build.Repository.Name)/$(file)/$(msName)/vitest.config.mts"
+            echo -e "\n✅ Elimnación archivo vitest.config.mts ..."
+          
+            echo -e "\n⚠️ Copiando archivo vitest.config.mts templates..."
+            cp pipelines-templates/pipeline/config/vitest.config.mts $(Build.Repository.Name)/$(file)/$(msName)
+
+            echo -e "\n✅ vitest.config.mts copiado exitosamente."
+            echo -e "\n📁 Files:"
+            ls -la $(Build.Repository.Name)/$(file)/$(msName)
+
+            echo -e "\n✅ Archivo vitest.config.mts"
+            cat $(Build.Repository.Name)/$(file)/$(msName)/vitest.config.mts
+        displayName: "🔍 Replace vitest.config"
+        condition: and(succeeded(),
+          ne(variables['msName'], 'app-administration-vue2'),
+          ne(variables['msName'], 'app-sellers-vue2'))
 
       - task: Bash@3
         name: AuthCodeArtifact
@@ -83,7 +106,7 @@ jobs:
             echo "Verificando identidad de AWS..."
             aws sts get-caller-identity
 
-            npmrcPath="$(file)/$(msName)/.npmrc"
+            npmrcPath="$(Build.Repository.Name)/$(file)/$(msName)/.npmrc"
             echo -e "\n📁 Generando archivo .npmrc en: $npmrcPath"
             cat <<EOF > "$npmrcPath"
             //$REPO_DOMAIN/$REPO_PATH/:_authToken=$token
@@ -106,6 +129,7 @@ jobs:
 
       - script: |
           echo "Comentando app-legacy/*"
+          cd $(Build.Repository.Name)
           sed -i '/app-legacy\//s/  -/  # -/' pnpm-workspace.yaml
           cat pnpm-workspace.yaml
         displayName: "💬 Comment app-legacy/*"
@@ -114,25 +138,25 @@ jobs:
           ne(variables['msName'], 'app-sellers-vue2'))
 
       - script: |
-          echo -e "\n📁 Generando archivo .pnpmrc en: $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc"
-          cat <<EOF > "$(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc"
+          echo -e "\n📁 Generando archivo .pnpmrc en: $(Build.Repository.Name)/$(file)/$(msName)/.pnpmrc"
+          cat <<EOF > "$(Build.Repository.Name)/$(file)/$(msName)/.pnpmrc"
           node-linker=hoisted
           shamefully-hoist=true
           ignore-scripts=false
           allow-build-script=true
           strict-peer-dependencies=false
           EOF
-          ls -l $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc
-          cat $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc
+          ls -l $(Build.Repository.Name)/$(file)/$(msName)/.pnpmrc
+          cat $(Build.Repository.Name)/$(file)/$(msName)/.pnpmrc
 
           # cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
-          cd $(System.DefaultWorkingDirectory)
+          cd $(Build.Repository.Name)
           echo -e "\n⚙️ Instalando dependencias node..."
           npm install -g pnpm
           pnpm install
 
 
-          cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
+          cd $(Build.Repository.Name)/$(file)/$(msName)
           ls -la 
           # pnpm ignored-builds
 
@@ -145,7 +169,9 @@ jobs:
             echo "$OUTPUT"
           fi
         displayName: "⚙️ Install Dependencies"
-        condition: succeeded()
+        condition: and(succeeded(),
+          ne(variables['msName'], 'app-administration-vue2'),
+          ne(variables['msName'], 'app-sellers-vue2'))
 
       - task: JavaToolInstaller@0
         displayName: "🔧 Install JDK 17"
@@ -154,10 +180,8 @@ jobs:
           jdkArchitectureOption: "x64"
           jdkSourceOption: "PreInstalled"
         condition: and(succeeded(),
-            ne(variables['msName'], 'app-administration-vue2'),
-            ne(variables['msName'], 'app-sellers-vue2'),
-            ne(variables['Build.SourceBranchName'], 'staging'),
-            ne(variables['Build.SourceBranchName'], 'master'))
+          ne(variables['msName'], 'app-administration-vue2'),
+          ne(variables['msName'], 'app-sellers-vue2'))
 
       - task: SonarQubePrepare@7
         displayName: "⚙️ Prepare SonarQube Analysis"
@@ -165,18 +189,16 @@ jobs:
           SonarQube: "SonarQubeConection"
           scannerMode: "CLI"
           configMode: "manual"
-          cliProjectKey: "pruebas-microfronted-$(msName)-invictus"
-          cliProjectName: "pruebas-microfronted-$(msName)-invictus"
-          cliSources: "$(System.DefaultWorkingDirectory)/$(file)/$(msName)"
+          cliProjectKey: "microfronted-$(msName)-invictus"
+          cliProjectName: "microfronted-$(msName)-invictus"
+          cliSources: "$(Build.Repository.Name)/$(file)/$(msName)"
           extraProperties: |
             sonar.projectVersion=$(msVersion)
-            sonar.javascript.lcov.reportPaths=$(System.DefaultWorkingDirectory)/$(file)/$(msName)/coverage/lcov.info
-            sonar.exclusions=**/test/**,**/coverage/**,**/.nyc_output/**,**/reports/**,sured-plugin/**,**/reports_bck/**,**/node_modules/**,**/dist/**
+            sonar.javascript.lcov.reportPaths=$(Build.Repository.Name)/$(file)/$(msName)/coverage/lcov.info
+            sonar.exclusions=**/test/**,**/coverage/**,**/.nyc_output/**,**/reports/**,sured-plugin/**,**/reports_bck/**,**/node_modules/**,**/dist/**,*.cjs,*mts,src/main.ts
         condition: and(succeeded(),
-            ne(variables['msName'], 'app-administration-vue2'),
-            ne(variables['msName'], 'app-sellers-vue2'),
-            ne(variables['Build.SourceBranchName'], 'staging'),
-            ne(variables['Build.SourceBranchName'], 'master'))
+          ne(variables['msName'], 'app-administration-vue2'),
+          ne(variables['msName'], 'app-sellers-vue2'))
 
       - script: |
           response=$(echo $SONARQUBE_SCANNER_PARAMS | sed -E 's#"sonar\.branch\.name":"[^"]+",##g')
@@ -185,51 +207,42 @@ jobs:
           echo "##vso[task.setvariable variable=SONARQUBE_SCANNER_PARAMS]$response"
         displayName: "⚙️ Set Variable — SONARQUBE_SCANNER_PARAMS"
         condition: and(succeeded(),
-            ne(variables['msName'], 'app-administration-vue2'),
-            ne(variables['msName'], 'app-sellers-vue2'),
-            ne(variables['Build.SourceBranchName'], 'staging'),
-            ne(variables['Build.SourceBranchName'], 'master'))
+          ne(variables['msName'], 'app-administration-vue2'),
+          ne(variables['msName'], 'app-sellers-vue2'))
+
+      # - script: |
+      #     cd $(Build.Repository.Name)
+      #     pnpm test --filter=...$(msName) -- --maxWorkers=1
+      #   displayName: "🧪 Run Tests for Microfrontend: $(msName)"
+      #   continueOnError: true
+      #   condition: and(succeeded(),
+      #     ne(variables['msName'], 'app-administration-vue2'),
+      #     ne(variables['msName'], 'app-sellers-vue2'))
 
       - script: |
-          pnpm test --filter=...$(msName) -- --maxWorkers=1
-          # turbo run test --filter=$(msName)
-        displayName: "🧪 Run Tests for Microfrontend: $(msName)"
-        continueOnError: true
-        condition: and(succeeded(),
-            ne(variables['msName'], 'app-administration-vue2'),
-            ne(variables['msName'], 'app-sellers-vue2'),
-            ne(variables['Build.SourceBranchName'], 'staging'),
-            ne(variables['Build.SourceBranchName'], 'master'))
-
-      - script: |
+          cd $(Build.Repository.Name)
           pnpm coverage --filter=...$(msName)
-          ls -l $(System.DefaultWorkingDirectory)/$(file)/$(msName)/coverage
+          ls -l "$(file)/$(msName)/coverage"
         displayName: "🔎 Coverage Analysis: $(msName)"
         continueOnError: true
         condition: and(succeeded(),
-            ne(variables['msName'], 'app-administration-vue2'),
-            ne(variables['msName'], 'app-sellers-vue2'),
-            ne(variables['Build.SourceBranchName'], 'staging'),
-            ne(variables['Build.SourceBranchName'], 'master'))
+          ne(variables['msName'], 'app-administration-vue2'),
+          ne(variables['msName'], 'app-sellers-vue2'))
 
       - task: SonarQubeAnalyze@7
         displayName: "📡 Run Sonar Analysis"
         condition: and(succeeded(),
-            ne(variables['msName'], 'app-administration-vue2'),
-            ne(variables['msName'], 'app-sellers-vue2'),
-            ne(variables['Build.SourceBranchName'], 'staging'),
-            ne(variables['Build.SourceBranchName'], 'master'))
+          ne(variables['msName'], 'app-administration-vue2'),
+          ne(variables['msName'], 'app-sellers-vue2'))
 
       - task: SonarQubePublish@7
         inputs:
           pollingTimeoutSec: 400
         displayName: "📤 Publish Static Code Analysis Results"
         condition: and(succeeded(),
-            ne(variables['msName'], 'app-administration-vue2'),
-            ne(variables['msName'], 'app-sellers-vue2'),
-            ne(variables['Build.SourceBranchName'], 'staging'),
-            ne(variables['Build.SourceBranchName'], 'master'))
+          ne(variables['msName'], 'app-administration-vue2'),
+          ne(variables['msName'], 'app-sellers-vue2'))
 
       - template: sonarqube/job-sonarqube.yml@sonarqube
         parameters:
-          projectKey: "pruebas-microfronted-$(msName)-invictus"
+          projectKey: "microfronted-$(msName)-invictus"
