@@ -21,7 +21,7 @@ jobs:
         fetchDepth: 0
         persistCredentials: true
       
-      - checkout: git://DevOps-templates-UX/pipelines-templates@feature/electron
+      - checkout: git://DevOps-templates-UX/pipelines-templates
         fetchDepth: 1
         persistCredentials: true
         
@@ -189,8 +189,8 @@ jobs:
           SonarQube: "SonarQubeConection"
           scannerMode: "CLI"
           configMode: "manual"
-          cliProjectKey: "pruebas-microfronted-$(msName)-invictus"
-          cliProjectName: "pruebas-microfronted-$(msName)-invictus"
+          cliProjectKey: "microfronted-$(msName)-invictus"
+          cliProjectName: "microfronted-$(msName)-invictus"
           cliSources: "$(Build.Repository.Name)/$(file)/$(msName)"
           extraProperties: |
             sonar.projectVersion=$(msVersion)
@@ -243,6 +243,6 @@ jobs:
           ne(variables['msName'], 'app-administration-vue2'),
           ne(variables['msName'], 'app-sellers-vue2'))
 
-      # - template: sonarqube/job-sonarqube.yml@sonarqube
-      #   parameters:
-      #     projectKey: "pruebas-microfronted-$(msName)-invictus"
+      - template: sonarqube/job-sonarqube.yml@sonarqube
+        parameters:
+          projectKey: "microfronted-$(msName)-invictus"
