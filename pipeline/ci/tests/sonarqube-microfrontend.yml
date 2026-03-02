@@ -243,6 +243,6 @@ jobs:
           ne(variables['msName'], 'app-administration-vue2'),
           ne(variables['msName'], 'app-sellers-vue2'))
 
-      - template: sonarqube/job-sonarqube.yml@sonarqube
-        parameters:
-          projectKey: "pruebas-microfronted-$(msName)-invictus"
+      # - template: sonarqube/job-sonarqube.yml@sonarqube
+      #   parameters:
+      #     projectKey: "pruebas-microfronted-$(msName)-invictus"
