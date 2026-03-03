@@ -330,5 +330,34 @@ jobs:
           fi
         displayName: "🧪 Check outdated npm dependencies"
         condition: succeeded()
+
+
+      - script: |
+            payload=$(cat <<EOF
+            {
+              "@type": "MessageCard",
+              "@context": "http://schema.org/extensions",
+              "summary": "Deployment successful",
+              "themeColor": "00FF00",
+              "title": "✅ Deployment exitoso",
+              "sections": [
+                {
+                  "facts": [
+                    { "name": "Pipeline", "value": "$(Build.DefinitionName)" },
+                    { "name": "Branch", "value": "$(Build.SourceBranchName)" },
+                    { "name": "Environment", "value": "PROD" },
+                    { "name": "Build", "value": "$(Build.BuildNumber)" }
+                  ],
+                  "markdown": true
+                }
+              ]
+            }
+            EOF
+            )
+
+            curl -H "Content-Type: application/json" \
+                 -d "$payload" \
+                 $(URL_WEBHOOK_TEAMS)
+        displayName: "Post message to Teams"
         
       
