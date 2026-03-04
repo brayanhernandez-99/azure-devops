@@ -77,6 +77,14 @@ jobs:
 
             echo -e "\n✅ Archivo vitest.config.mts"
             cat $(Build.Repository.Name)/$(file)/$(msName)/vitest.config.mts
+
+
+            FILE="$(Build.Repository.Name)/$(file)/$(msName)/vitest.config.ts"
+
+            if [ -f "$FILE" ]; then
+              rm "$FILE"
+              echo "❌ Eliminando el archivo vitest.config.ts"
+            fi
         displayName: "🔍 Replace vitest.config"
         condition: and(succeeded(),
           ne(variables['msName'], 'app-administration-vue2'),
@@ -194,6 +202,7 @@ jobs:
           cliSources: "$(Build.Repository.Name)/$(file)/$(msName)"
           extraProperties: |
             sonar.projectVersion=$(msVersion)
+            sonar.projectTags=invictus
             sonar.javascript.lcov.reportPaths=$(Build.Repository.Name)/$(file)/$(msName)/coverage/lcov.info
             sonar.exclusions=**/test/**,**/coverage/**,**/.nyc_output/**,**/reports/**,sured-plugin/**,**/reports_bck/**,**/node_modules/**,**/dist/**,*.cjs,*mts,**/main.ts,**/config/**,**/config.*,**/**.config.*
         condition: and(succeeded(),
