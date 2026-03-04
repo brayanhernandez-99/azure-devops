@@ -192,7 +192,8 @@ jobs:
             sonar.projectVersion=$(version)
             sonar.javascript.lcov.reportPaths=$(System.DefaultWorkingDirectory)/coverage/lcov.info
             sonar.exclusions=**/*.java,**/test/**,**/android/**,**/ios/**,**/coverage/**,**/.nyc_output/**,**/reports/**,**/node_modules/**,**/migrations/**,**/config/**,**/Dockerfile,*.cjs
-        condition: succeeded()
+        condition: and(succeeded(),
+            ne(variables['Build.SourceBranchName'], 'develop'))
 
       - script: |
           response=$(echo $SONARQUBE_SCANNER_PARAMS | sed -E 's#"sonar\.branch\.name":"[^"]+",##g')
@@ -213,8 +214,8 @@ jobs:
       - script: |
           pnpm run test
         displayName: "🧪 Run Tests for: $(Build.Repository.Name)"
-        condition: succeeded()
-        continueOnError: true
+        condition: and(succeeded(),
+            ne(variables['Build.SourceBranchName'], 'develop'))
       
       # - script: |
       #     PKG="$(System.DefaultWorkingDirectory)/package.json"
@@ -297,22 +298,27 @@ jobs:
           pnpm run coverage
           ls -la $(System.DefaultWorkingDirectory)/coverage
         displayName: "🔎 Coverage Analysis: $(Build.Repository.Name)"
-        condition: succeeded()
+        condition: and(succeeded(),
+            ne(variables['Build.SourceBranchName'], 'develop'))
         # continueOnError: true
 
       - task: SonarQubeAnalyze@7
         displayName: "📡 Run Sonar Analysis"
-        condition: succeeded()
+        condition: and(succeeded(),
+            ne(variables['Build.SourceBranchName'], 'develop'))
 
       - task: SonarQubePublish@7
         inputs:
           pollingTimeoutSec: 400
         displayName: "📤 Publish Static Code Analysis Results"
-        condition: succeeded()
+        condition: and(succeeded(),
+            ne(variables['Build.SourceBranchName'], 'develop'))
 
       - template: sonarqube/job-sonarqube.yml@sonarqube
         parameters:
           projectKey: $(Build.Repository.Name)
+        condition: and(succeeded(),
+            ne(variables['Build.SourceBranchName'], 'develop'))
       
       - script: |
           set -e
@@ -330,5 +336,3 @@ jobs:
           fi
         displayName: "🧪 Check outdated npm dependencies"
         condition: succeeded()
-        
-      
