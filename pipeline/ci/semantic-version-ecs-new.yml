@@ -35,10 +35,10 @@ jobs:
           fi
 
           declare -A SERVICES=(
-            [bff-administration]="bff-administration-$ENVIRONMENT"
-            [bff-integration]="bff-integration-$ENVIRONMENT"
-            [bff-sellers]="bff-sellers-$ENVIRONMENT"
-            [raffles]="microservice-raffle-$ENVIRONMENT"
+            [bff-administration]="microservice-bff-administration-$ENVIRONMENT"
+            [bff-integration]="microservice-bff-integration-$ENVIRONMENT"
+            [bff-sellers]="microservice-bff-sellers-$ENVIRONMENT"
+            [raffles]="microservice-raffles-$ENVIRONMENT"
             [notifier]="microservice-notifier-$ENVIRONMENT"
             [raspa]="microservice-raspa-$ENVIRONMENT"
             #[scheduler]="microservice-scheduler-$ENVIRONMENT"
