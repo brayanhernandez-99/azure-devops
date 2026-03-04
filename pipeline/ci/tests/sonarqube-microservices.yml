@@ -317,8 +317,6 @@ jobs:
       - template: sonarqube/job-sonarqube.yml@sonarqube
         parameters:
           projectKey: $(Build.Repository.Name)
-        condition: and(succeeded(),
-            ne(variables['Build.SourceBranchName'], 'develop'))
       
       - script: |
           set -e

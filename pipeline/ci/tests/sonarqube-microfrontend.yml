@@ -200,7 +200,7 @@ jobs:
           ne(variables['msName'], 'app-administration-vue2'),
           ne(variables['msName'], 'app-sellers-vue2'),
           ne(variables['Build.SourceBranchName'], 'develop'))
-          
+
       - script: |
           response=$(echo $SONARQUBE_SCANNER_PARAMS | sed -E 's#"sonar\.branch\.name":"[^"]+",##g')
           json=$(echo "$response" | sed 's/"sonar.token":\*\*\*/"sonar.token":"***"/')
@@ -250,5 +250,3 @@ jobs:
       - template: sonarqube/job-sonarqube.yml@sonarqube
         parameters:
           projectKey: "microfronted-$(msName)-invictus"
-        condition: and(succeeded(),
-            ne(variables['Build.SourceBranchName'], 'develop'))
