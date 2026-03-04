@@ -179,20 +179,21 @@ jobs:
           jdkSourceOption: "PreInstalled"
         condition: succeeded()
 
-      # - task: SonarQubePrepare@7
-      #   displayName: "⚙️ Prepare SonarQube Analysis"
-      #   inputs:
-      #     SonarQube: "SonarQubeConection"
-      #     scannerMode: "CLI"
-      #     configMode: "manual"
-      #     cliProjectKey: "$(Build.Repository.Name)"
-      #     cliProjectName: "$(Build.Repository.Name)"
-      #     cliSources: "$(System.DefaultWorkingDirectory)"
-      #     extraProperties: |
-      #       sonar.projectVersion=$(version)
-      #       sonar.javascript.lcov.reportPaths=$(System.DefaultWorkingDirectory)/coverage/lcov.info
-      #       sonar.exclusions=**/*.java,**/test/**,**/android/**,**/ios/**,**/coverage/**,**/.nyc_output/**,**/reports/**,**/node_modules/**,**/migrations/**,**/config/**,**/Dockerfile,*.cjs
-      #   condition: succeeded()
+      - task: SonarQubePrepare@7
+        displayName: "⚙️ Prepare SonarQube Analysis"
+        inputs:
+          SonarQube: "SonarQubeConection"
+          scannerMode: "CLI"
+          configMode: "manual"
+          cliProjectKey: "$(Build.Repository.Name)"
+          cliProjectName: "$(Build.Repository.Name)"
+          cliSources: "$(System.DefaultWorkingDirectory)"
+          extraProperties: |
+            sonar.projectVersion=$(version)
+            sonar.javascript.lcov.reportPaths=$(System.DefaultWorkingDirectory)/coverage/lcov.info
+            sonar.exclusions=**/*.java,**/test/**,**/android/**,**/ios/**,**/coverage/**,**/.nyc_output/**,**/reports/**,**/node_modules/**,**/migrations/**,**/config/**,**/Dockerfile,*.cjs
+        condition: and(succeeded(),
+            ne(variables['Build.SourceBranchName'], 'develop'))
 
       - script: |
           response=$(echo $SONARQUBE_SCANNER_PARAMS | sed -E 's#"sonar\.branch\.name":"[^"]+",##g')
@@ -297,65 +298,41 @@ jobs:
           pnpm run coverage
           ls -la $(System.DefaultWorkingDirectory)/coverage
         displayName: "🔎 Coverage Analysis: $(Build.Repository.Name)"
-        condition: succeeded()
+        condition: and(succeeded(),
+            ne(variables['Build.SourceBranchName'], 'develop'))
         # continueOnError: true
 
-      # - task: SonarQubeAnalyze@7
-      #   displayName: "📡 Run Sonar Analysis"
-      #   condition: succeeded()
+      - task: SonarQubeAnalyze@7
+        displayName: "📡 Run Sonar Analysis"
+        condition: and(succeeded(),
+            ne(variables['Build.SourceBranchName'], 'develop'))
 
-      # - task: SonarQubePublish@7
-      #   inputs:
-      #     pollingTimeoutSec: 400
-      #   displayName: "📤 Publish Static Code Analysis Results"
-      #   condition: succeeded()
+      - task: SonarQubePublish@7
+        inputs:
+          pollingTimeoutSec: 400
+        displayName: "📤 Publish Static Code Analysis Results"
+        condition: and(succeeded(),
+            ne(variables['Build.SourceBranchName'], 'develop'))
 
-      # - template: sonarqube/job-sonarqube.yml@sonarqube
-      #   parameters:
-      #     projectKey: $(Build.Repository.Name)
+      - template: sonarqube/job-sonarqube.yml@sonarqube
+        parameters:
+          projectKey: $(Build.Repository.Name)
+        condition: and(succeeded(),
+            ne(variables['Build.SourceBranchName'], 'develop'))
       
-      # - script: |
-      #     set -e
-
-      #     echo "🔍 Checking for outdated npm dependencies..."
-      #     REPORT=$(npx npm-check-updates)
-
-      #     echo "$REPORT"
-
-      #     if echo "$REPORT" | grep -q "→"; then
-      #       echo "❌ Outdated npm dependencies detected. Please update them."
-      #       # exit 1
-      #     else
-      #       echo "✅ All npm dependencies are up to date"
-      #     fi
-      #   displayName: "🧪 Check outdated npm dependencies"
-      #   condition: succeeded()
-
-
       - script: |
-            payload=$(cat <<EOF
-            {
-              "@type": "MessageCard",
-              "@context": "http://schema.org/extensions",
-              "summary": "Deployment successful",
-              "themeColor": "00FF00",
-              "title": "✅ Deployment exitoso",
-              "sections": [
-                {
-                  "facts": [
-                    { "name": "Pipeline", "value": "$(Build.DefinitionName)" },
-                    { "name": "Branch", "value": "$(Build.SourceBranchName)" },
-                    { "name": "Environment", "value": "PROD" },
-                    { "name": "Build", "value": "$(Build.BuildNumber)" }
-                  ],
-                  "markdown": true
-                }
-              ]
-            }
-            EOF
-            )
+          set -e
 
-            curl -H "Content-Type: application/json" \
-                 -d "$payload" \
-                 $(URL_WEBHOOK_TEAMS)
-        displayName: "Post message to Teams"
+          echo "🔍 Checking for outdated npm dependencies..."
+          REPORT=$(npx npm-check-updates)
+
+          echo "$REPORT"
+
+          if echo "$REPORT" | grep -q "→"; then
+            echo "❌ Outdated npm dependencies detected. Please update them."
+            # exit 1
+          else
+            echo "✅ All npm dependencies are up to date"
+          fi
+        displayName: "🧪 Check outdated npm dependencies"
+        condition: succeeded()
