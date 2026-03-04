@@ -77,6 +77,14 @@ jobs:
 
             echo -e "\n✅ Archivo vitest.config.mts"
             cat $(Build.Repository.Name)/$(file)/$(msName)/vitest.config.mts
+
+
+            FILE="$(Build.Repository.Name)/$(file)/$(msName)/vitest.config.ts"
+
+            if [ -f "$FILE" ]; then
+              rm "$FILE"
+              echo "❌ Eliminando el archivo vitest.config.ts"
+            fi
         displayName: "🔍 Replace vitest.config"
         condition: and(succeeded(),
           ne(variables['msName'], 'app-administration-vue2'),
