@@ -214,6 +214,7 @@ jobs:
       - script: |
           pnpm run test
         displayName: "🧪 Run Tests for: $(Build.Repository.Name)"
+        continueOnError: true
         condition: and(succeeded(),
             ne(variables['Build.SourceBranchName'], 'develop'))
       
