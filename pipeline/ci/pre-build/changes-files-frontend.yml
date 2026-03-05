@@ -151,7 +151,7 @@ jobs:
                 #   exit 99
                 # fi
 
-                apps=$(echo "$changed_files" | grep -E "^apps/|^app-legacy/" | cut -d '/' -f1,2 | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u)
+                apps=$(git diff --name-only HEAD~1 HEAD | grep -E "^apps/|^app-legacy/" | cut -d '/' -f1,2 | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u)
 
                 if [[ -n "$packages_changed" ]]; then
                   apps=$(printf "%s\ninvictus" "$apps" | sort -u)
