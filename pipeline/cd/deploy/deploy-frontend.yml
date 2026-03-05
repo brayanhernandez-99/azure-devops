@@ -225,6 +225,7 @@ jobs:
                 {
                   "facts": [
                     { "name": "Pipeline", "value": "$(Build.DefinitionName)" },
+                    { "name": "Microfrontend", "value": "$(msName)" },
                     { "name": "Branch", "value": "$BRANCH_DEPLOY" },
                     { "name": "Build", "value": "$(Build.BuildNumber)" },
                     { "name": "Merged by", "value": "$(Build.RequestedFor)" },
