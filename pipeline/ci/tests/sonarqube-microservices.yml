@@ -191,6 +191,7 @@ jobs:
           extraProperties: |
             sonar.projectVersion=$(version)
             sonar.projectTags=invictus
+            sonar.newCode.referenceBranch=master
             sonar.javascript.lcov.reportPaths=$(System.DefaultWorkingDirectory)/coverage/lcov.info
             sonar.exclusions=**/*.java,**/test/**,**/android/**,**/ios/**,**/coverage/**,**/.nyc_output/**,**/reports/**,**/node_modules/**,**/migrations/**,**/config/**,**/Dockerfile,*.cjs
         condition: and(succeeded(),
