@@ -179,6 +179,67 @@ jobs:
           jdkSourceOption: "PreInstalled"
         condition: succeeded()
 
+      - script: |
+          SONAR_URL="$SONAR_HOST_URL"
+          TOKEN="$SONAR_TOKEN"
+          PROJECT_KEY="$(Build.Repository.Name)"
+
+          PAGE=1
+          PAGE_SIZE=100
+
+          echo "Obteniendo análisis del proyecto '$PROJECT_KEY'..."
+
+          while true; do
+            RESPONSE=$(curl -s -H "Authorization: Basic $TOKEN" \
+              "$SONAR_URL/api/project_analyses/search?project=$PROJECT_KEY&p=$PAGE&ps=$PAGE_SIZE")
+
+            # Validar JSON
+            if ! echo "$RESPONSE" | jq . >/dev/null 2>&1; then
+              echo "❌ Error de autenticación o URL incorrecta"
+              echo "$RESPONSE"
+              exit 1
+            fi
+
+            # Número de análisis en esta página y total
+            COUNT=$(echo "$RESPONSE" | jq '.analyses | length // 0')
+            TOTAL=$(echo "$RESPONSE" | jq '.paging.total // 0')
+
+            # Si no hay análisis en esta página, salimos del bucle
+            [ "$COUNT" -eq 0 ] && break
+
+            echo "Encontrados $COUNT análisis en esta página (total reportado: $TOTAL)."
+
+            # Listar todos los análisis (sin conservar ninguno a propósito)
+            echo "$RESPONSE" | jq -r '.analyses[] | "  KEY=\(.key) DATE=\(.date)"'
+            echo "--------------------------------------"
+
+            # Borrar cada análisis de esta página
+            for ANALYSIS_KEY in $(echo "$RESPONSE" | jq -r '.analyses[]?.key'); do
+              echo "Borrando análisis $ANALYSIS_KEY..."
+              DELETE_RESPONSE=$(curl -s -X POST -H "Authorization: Basic $TOKEN" \
+                "$SONAR_URL/api/project_analyses/delete?analysis=$ANALYSIS_KEY")
+
+              # Si la respuesta está vacía, asumimos 204 No Content (ok)
+              if [ -z "$DELETE_RESPONSE" ]; then
+                echo "→ Eliminado correctamente."
+              elif echo "$DELETE_RESPONSE" | grep -q "The last analysis"; then
+                echo "→ Este es el último análisis del proyecto, SonarQube no permite borrarlo. Lo omito y continúo."
+              else
+                echo "→ Respuesta del servidor: $DELETE_RESPONSE"
+              fi
+
+              echo "--------------------------------------"
+            done
+
+            # Paginación: si ya hemos cubierto todo, salimos
+            [ $((PAGE * PAGE_SIZE)) -ge "$TOTAL" ] && break
+            PAGE=$((PAGE + 1))
+          done
+
+          echo "Proceso finalizado."
+        displayName: "📝 Delete before execution"
+        condition: succeeded()
+
       - task: SonarQubePrepare@7
         displayName: "⚙️ Prepare SonarQube Analysis"
         inputs:
