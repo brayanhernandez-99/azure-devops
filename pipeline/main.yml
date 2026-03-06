@@ -148,3 +148,11 @@ stages:
           red: ${{ parameters.red }}
           apps: ${{ parameters.apps }}
           release: ${{ parameters.release }}
+
+  #
+  # artifacts
+  #
+  - ${{ if and(eq(parameters.release, 'electron'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), in(variables['Build.SourceBranchName'], 'develop', 'staging', 'master'))) }}:
+      - template: ./pipelines/pipeline-artifacts.yml
+        parameters:
+          release: ${{ parameters.release }}
