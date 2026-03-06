@@ -179,55 +179,55 @@ jobs:
           jdkSourceOption: "PreInstalled"
         condition: succeeded()
 
-      - script: |
-          SONAR_URL="$SONAR_HOST_URL"
-          TOKEN="$SONAR_TOKEN"
-          PROJECT_KEY="$(Build.Repository.Name)"
+      # - script: |
+      #     SONAR_URL="$SONAR_HOST_URL"
+      #     TOKEN="$SONAR_TOKEN"
+      #     PROJECT_KEY="$(Build.Repository.Name)"
 
-          echo "Obteniendo análisis del proyecto '$PROJECT_KEY'..."
+      #     echo "Obteniendo análisis del proyecto '$PROJECT_KEY'..."
 
-          RESPONSE=$(curl -s -u "$TOKEN:" \
-            "$SONAR_URL/api/project_analyses/search?project=$PROJECT_KEY&ps=100")
+      #     RESPONSE=$(curl -s -u "$TOKEN:" \
+      #       "$SONAR_URL/api/project_analyses/search?project=$PROJECT_KEY&ps=100")
 
-          if ! echo "$RESPONSE" | jq . >/dev/null 2>&1; then
-            echo "❌ Error consultando SonarQube"
-            echo "$RESPONSE"
-            exit 1
-          fi
+      #     if ! echo "$RESPONSE" | jq . >/dev/null 2>&1; then
+      #       echo "❌ Error consultando SonarQube"
+      #       echo "$RESPONSE"
+      #       exit 1
+      #     fi
 
-          echo "Listado de análisis:"
-          echo "$RESPONSE" | jq -r '.analyses[] | "KEY=\(.key) DATE=\(.date)"'
+      #     echo "Listado de análisis:"
+      #     echo "$RESPONSE" | jq -r '.analyses[] | "KEY=\(.key) DATE=\(.date)"'
 
-          echo "--------------------------------------"
+      #     echo "--------------------------------------"
 
-          INDEX=0
+      #     INDEX=0
 
-          for ANALYSIS_KEY in $(echo "$RESPONSE" | jq -r '.analyses[].key'); do
-            INDEX=$((INDEX+1))
+      #     for ANALYSIS_KEY in $(echo "$RESPONSE" | jq -r '.analyses[].key'); do
+      #       INDEX=$((INDEX+1))
 
-            if [ "$INDEX" -le 2 ]; then
-              echo "✅ Manteniendo análisis: $ANALYSIS_KEY"
-              continue
-            fi
+      #       if [ "$INDEX" -le 2 ]; then
+      #         echo "✅ Manteniendo análisis: $ANALYSIS_KEY"
+      #         continue
+      #       fi
 
-            echo "🗑️ Borrando análisis $ANALYSIS_KEY..."
+      #       echo "🗑️ Borrando análisis $ANALYSIS_KEY..."
 
-            DELETE_RESPONSE=$(curl -s -X POST -u "$TOKEN:" \
-              "$SONAR_URL/api/project_analyses/delete?analysis=$ANALYSIS_KEY")
+      #       DELETE_RESPONSE=$(curl -s -X POST -u "$TOKEN:" \
+      #         "$SONAR_URL/api/project_analyses/delete?analysis=$ANALYSIS_KEY")
 
-            if [ -z "$DELETE_RESPONSE" ]; then
-              echo "→ Eliminado correctamente"
-            else
-              echo "→ Respuesta: $DELETE_RESPONSE"
-            fi
+      #       if [ -z "$DELETE_RESPONSE" ]; then
+      #         echo "→ Eliminado correctamente"
+      #       else
+      #         echo "→ Respuesta: $DELETE_RESPONSE"
+      #       fi
 
-            echo "--------------------------------------"
-          done
-        displayName: "📝 Delete before execution"
-        env:
-          SONAR_TOKEN: $(SONAR_TOKEN)
-          SONAR_HOST_URL: $(SONAR_HOST_URL)
-        condition: succeeded()
+      #       echo "--------------------------------------"
+      #     done
+      #   displayName: "📝 Delete before execution"
+      #   env:
+      #     SONAR_TOKEN: $(SONAR_TOKEN)
+      #     SONAR_HOST_URL: $(SONAR_HOST_URL)
+      #   condition: succeeded()
 
       - task: SonarQubePrepare@7
         displayName: "⚙️ Prepare SonarQube Analysis"
