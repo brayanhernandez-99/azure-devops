@@ -83,9 +83,7 @@ jobs:
           set -e
 
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges/aws-service-ssm-parameter-bemovil
-          terragrunt plan --all --non-interactive -no-color
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges/aws-service-ssm-parameter-conexred
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/sellers/aws-service-ecs
           terragrunt plan --all --non-interactive -no-color
 
 
