@@ -249,4 +249,6 @@ jobs:
         inputs:
           command: "Push"
           repository: "$(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/$(clean_name_ecr)-$(branch_docker)"
-          tags: $(version)
+          tags: |
+            $(version)
+            latest
