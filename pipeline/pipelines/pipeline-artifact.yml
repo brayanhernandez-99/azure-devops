@@ -1,14 +1,22 @@
 stages:
-  - stage: semantic_version_electron
-    displayName: "🏷️ Semantic Version Electron"
+  - stage: semantic_version_artifact
+    displayName: "🏷️ Semantic Version Artifact"
     jobs:
       - template: ../ci/semantic-version-integration.yml
         parameters:
           release: ${{ parameters.release }}
 
-  - ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')) }}:
-      - stage: build_electron
-        displayName: "📦 Build Electron"
-        dependsOn: semantic_version_electron
-        jobs:
-          - template: ../ci/build/build-electron.yml
+  - stage: build_artifact
+    displayName: "📦 Build Artifact"
+    dependsOn: semantic_version_artifact
+    jobs:
+      - template: ../ci/build/build-artifact.yml
+
+  - ${{ if in(variables['Build.SourceBranchName'], 'develop', 'staging', 'master') }}:
+    - stage: deploy_artifact
+      displayName: "📦 Deploy Artifact"
+      dependsOn: build_artifact
+      jobs:
+        - template: ../cd/deployment.yml
+          parameters:
+            release: ${{ parameters.release }}

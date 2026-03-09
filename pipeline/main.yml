@@ -150,9 +150,9 @@ stages:
           release: ${{ parameters.release }}
 
   #
-  # artifacts
+  # artifact
   #
-  - ${{ if and(eq(parameters.release, 'electron'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), in(variables['Build.SourceBranchName'], 'develop', 'staging', 'master'))) }}:
-      - template: ./pipelines/pipeline-artifacts.yml
+  - ${{ if and(eq(parameters.release, 'artifact'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), in(variables['Build.SourceBranchName'], 'develop', 'staging', 'master'))) }}:
+      - template: ./pipelines/pipeline-artifact.yml
         parameters:
           release: ${{ parameters.release }}

@@ -1,0 +1,16 @@
+jobs:
+  - job: deploy_artifact
+    displayName: "🚀 deploy artifact"
+    pool:
+      name: "Azure Pipelines"
+      VmImage: ubuntu-22.04
+
+    steps:
+      - script: |
+          echo -e "\nℹ️ Original msName: $(Build.Repository.Name)"
+          cleanName=$(echo "$(Build.Repository.Name)" | sed -E 's/^microservice-//; s/-invictus$//')
+
+          echo -e "\nℹ️ Nombre limpio: $cleanName"
+          echo "##vso[task.setvariable variable=cleanMsName]$cleanName"
+        displayName: "🌐 Deploying $(Build.Repository.Name)"
+        condition: succeeded()

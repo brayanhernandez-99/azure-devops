@@ -86,3 +86,9 @@ jobs:
         parameters:
           region: ${{ parameters.region }}
           environments: ${{ parameters.environments }}
+
+  #####################################################################
+
+  - ${{ if eq(parameters.release, 'artifact') }}:
+      - template: ./deploy/deploy-artifact.yml
+        

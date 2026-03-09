@@ -35,3 +35,8 @@ jobs:
 
   - ${{ if eq(parameters.release, 'electron') }}:
       - template: ./general/semantic-version-electron-new.yml
+
+ #####################################################################
+
+  - ${{ if eq(parameters.release, 'artifact') }}:
+      - template: ./general/semantic-version-artifact.yml
