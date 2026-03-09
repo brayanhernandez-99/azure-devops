@@ -179,7 +179,8 @@ jobs:
         displayName: "⚙️ Install Dependencies"
         condition: and(succeeded(),
           ne(variables['msName'], 'app-administration-vue2'),
-          ne(variables['msName'], 'app-sellers-vue2'))
+          ne(variables['msName'], 'app-sellers-vue2'),
+          ne(variables['Build.SourceBranchName'], 'develop'))
 
       - task: JavaToolInstaller@0
         displayName: "🔧 Install JDK 17"
