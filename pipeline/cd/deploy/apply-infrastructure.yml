@@ -90,7 +90,7 @@ jobs:
           cd $(Build.SourcesDirectory)
           find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/invictus/reports
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/reports
           terragrunt plan --all --non-interactive -no-color
           terragrunt destroy --all --non-interactive -no-color
 
