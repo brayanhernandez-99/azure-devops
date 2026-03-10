@@ -39,14 +39,14 @@ jobs:
           VERSION=$(node -p "require('./package.json').version")
           BRANCH="${CURRENT_BRANCH#refs/heads/}"
 
-            case "$BRANCH" in
-              staging)
-                VIEW="prerelease"
-                ;;
-              master)
-                VIEW="release"
-                ;;
-            esac
+          case "$BRANCH" in
+            staging)
+              VIEW="prerelease"
+              ;;
+            master)
+              VIEW="release"
+              ;;
+          esac
 
           echo "Package: $PACKAGE"
           echo "Version: $VERSION"
