@@ -45,10 +45,10 @@ jobs:
 
           case "$BRANCH" in
             staging)
-              VIEW="prerelease"
+              VIEW="Prerelease"
               ;;
             master)
-              VIEW="release"
+              VIEW="Release"
               ;;
           esac
 
