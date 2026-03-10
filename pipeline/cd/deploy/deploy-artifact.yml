@@ -66,7 +66,7 @@ jobs:
 
           curl -i -X PATCH \
             -H "Content-Type: application/json" \
-            -H "Authorization: Bearer $SYSTEM_ACCESSTOKEN" \
+            -H "Authorization: Bearer $AZURE_DEVOPS_CLI_PAT" \
             -d "{
                   \"views\": {
                     \"op\": \"add\",
@@ -79,12 +79,12 @@ jobs:
           echo "Checking views..."
 
           curl -s \
-            -H "Authorization: Bearer $SYSTEM_ACCESSTOKEN" \
+            -H "Authorization: Bearer $AZURE_DEVOPS_CLI_PAT" \
             "https://pkgs.dev.azure.com/ux-technology/Invictus/_apis/packaging/feeds/shared-npm-libraries/npm/packages/${ENCODED_PACKAGE}/versions/${VERSION}?api-version=7.1-preview.1" \
             | jq '.views'
 
         displayName: "Promote npm package"
         condition: and(succeeded(), ne(variables['Build.SourceBranchName'], 'develop'))
         env:
-          # AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
-          SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+          AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
+          # SYSTEM_ACCESSTOKEN: $(System.AccessToken)
