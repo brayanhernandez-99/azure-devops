@@ -30,6 +30,5 @@ jobs:
 
       - script: |
           cd $(Pipeline.Workspace)/npm-package
-          ls -la
-          npm publish *.tgz
+          npm publish *.tgz --registry https://pkgs.dev.azure.com/ux-technology/Invictus/_packaging/shared-npm-libraries/npm/registry/
         displayName: "Publish to Azure Artifacts"
