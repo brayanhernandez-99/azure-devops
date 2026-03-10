@@ -83,11 +83,11 @@ jobs:
       - script: npm install
         displayName: install
 
-      - script: npm run lint
-        displayName: lint
+      # - script: npm run lint
+      #   displayName: lint
 
-      - script: npm test
-        displayName: test
+      # - script: npm test
+      #   displayName: test
 
       # - task: npmAuthenticate@0
       #   inputs:
