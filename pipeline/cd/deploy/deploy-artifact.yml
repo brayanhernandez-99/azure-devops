@@ -15,12 +15,12 @@ jobs:
           versionSpec: "18.x"
 
       - script: |
-          cat <<EOF > .npmrc
+          cat <<EOF > $(Pipeline.Workspace)/npm-package/.npmrc
           registry=https://pkgs.dev.azure.com/ux-technology/Invictus/_packaging/shared-npm-libraries/npm/registry/
           always-auth=true
           EOF
 
-          cat .npmrc
+          cat $(Pipeline.Workspace)/npm-package/.npmrc
         displayName: "🔐 Configure npm registry"
 
       # AUTENTICACIÓN AZURE ARTIFACTS
