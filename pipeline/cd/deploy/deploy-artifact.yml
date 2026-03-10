@@ -37,6 +37,7 @@ jobs:
       - script: |
           PACKAGE=$(node -p "require('./package.json').name")
           VERSION=$(node -p "require('./package.json').version")
+          CURRENT_BRANCH="$BUILD_SOURCEBRANCH"
           BRANCH="${CURRENT_BRANCH#refs/heads/}"
 
           case "$BRANCH" in
