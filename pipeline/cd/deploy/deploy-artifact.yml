@@ -38,6 +38,8 @@ jobs:
           PACKAGE=$(node -p "require('./package.json').name")
           VERSION=$(node -p "require('./package.json').version")
 
+          ENCODED_PACKAGE=$(printf '%s' "$PACKAGE" | jq -sRr @uri)
+
           CURRENT_BRANCH="$BUILD_SOURCEBRANCH"
           BRANCH="${CURRENT_BRANCH#refs/heads/}"
 
@@ -51,6 +53,7 @@ jobs:
           esac
 
           echo "Package: $PACKAGE"
+          echo "Encoded package: $ENCODED_PACKAGE"
           echo "Version: $VERSION"
           echo "View: $VIEW"
 
@@ -64,7 +67,14 @@ jobs:
                     \"value\": \"${VIEW}\"
                   }
                 ]" \
-            "https://pkgs.dev.azure.com/ux-technology/Invictus/_apis/packaging/feeds/shared-npm-libraries/npm/packages/${PACKAGE}/versions/${VERSION}?api-version=7.1-preview.1"
+            "https://pkgs.dev.azure.com/ux-technology/Invictus/_apis/packaging/feeds/shared-npm-libraries/npm/packages/${ENCODED_PACKAGE}/versions/${VERSION}?api-version=7.1-preview.1"
+
+          echo "Checking views..."
+
+          curl -s \
+            -H "Authorization: Bearer $SYSTEM_ACCESSTOKEN" \
+            "https://pkgs.dev.azure.com/ux-technology/Invictus/_apis/packaging/feeds/shared-npm-libraries/npm/packages/${ENCODED_PACKAGE}/versions/${VERSION}?api-version=7.1-preview.1" \
+            | jq '.views'
 
         displayName: "Promote npm package"
         condition: and(succeeded(), ne(variables['Build.SourceBranchName'], 'develop'))
