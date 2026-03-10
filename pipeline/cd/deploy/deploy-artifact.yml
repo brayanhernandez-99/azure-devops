@@ -39,7 +39,7 @@ jobs:
           VERSION=$(node -p "require('./package.json').version")
           BRANCH="${CURRENT_BRANCH#refs/heads/}"
 
-            case "$branch" in
+            case "$BRANCH" in
               staging)
                 VIEW="prerelease"
                 ;;
