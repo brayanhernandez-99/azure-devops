@@ -88,34 +88,42 @@ jobs:
           terragrunt plan --all --non-interactive -no-color
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/conciliation
           terragrunt plan --all --non-interactive -no-color
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/lotteries-games
-          terragrunt plan --all --non-interactive -no-color
-
           cd $(Build.SourcesDirectory)
           find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
+
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/lotteries-games
+          terragrunt plan --all --non-interactive -no-color
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/metabase
           terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+
+
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/papelery
           terragrunt plan --all --non-interactive -no-color
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/sellers
           terragrunt plan --all --non-interactive -no-color
-
           cd $(Build.SourcesDirectory)
           find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/transaction-astro
           terragrunt plan --all --non-interactive -no-color
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/transaction-lotteries-games
           terragrunt plan --all --non-interactive -no-color
-
           cd $(Build.SourcesDirectory)
           find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/hierarchies
           terragrunt plan --all --non-interactive -no-color
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/payment-voucher
           terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+
+
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/products
           terragrunt plan --all --non-interactive -no-color
 
