@@ -62,17 +62,17 @@ jobs:
 
           echo "Promoting package..."
 
-          # curl -i -X PATCH \
-          #   -H "Content-Type: application/json" \
-          #   -H "Authorization: Bearer $AZURE_DEVOPS_CLI_PAT" \
-          #   -d "{
-          #         \"views\": {
-          #           \"op\": \"add\",
-          #           \"path\": \"/views/-\",
-          #           \"value\": \"${VIEW}\"
-          #         }
-          #       }" \
-          #   "https://pkgs.dev.azure.com/ux-technology/Invictus/_apis/packaging/feeds/shared-npm-libraries/packages/${ENCODED_PACKAGE}/versions/${VERSION}?api-version=7.1-preview.1"
+          curl -i -X PATCH \
+          -H "Content-Type: application/json" \
+          -H "Authorization: Bearer $AZURE_DEVOPS_CLI_PAT" \
+          -d "{
+                \"views\": {
+                  \"op\": \"add\",
+                  \"path\": \"/views/-\",
+                  \"value\": \"Prerelease\"
+            }
+          }" \
+          "https://feeds.dev.azure.com/ux-technology/Invictus/_apis/packaging/feeds/shared-npm-libraries/packages/844d48ab-366e-4b4c-802f-59874eb03259/versions/7.1.1?api-version=7.1-preview.1"
 
           # echo "Checking views..."
 
@@ -82,10 +82,10 @@ jobs:
           #   | jq '.views'
 
 
-          curl -s \
-          -H "Authorization: Bearer $AZURE_DEVOPS_CLI_PAT" \
-          "https://feeds.dev.azure.com/ux-technology/Invictus/_apis/packaging/feeds/shared-npm-libraries/packages?api-version=7.1-preview.1" \
-          | jq
+          # curl -s \
+          # -H "Authorization: Bearer $AZURE_DEVOPS_CLI_PAT" \
+          # "https://feeds.dev.azure.com/ux-technology/Invictus/_apis/packaging/feeds/shared-npm-libraries/packages?api-version=7.1-preview.1" \
+          # | jq
 
         displayName: "Promote npm package"
         condition: and(succeeded(), ne(variables['Build.SourceBranchName'], 'develop'))
