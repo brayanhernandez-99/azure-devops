@@ -32,3 +32,38 @@ jobs:
           cd $(Pipeline.Workspace)/npm-package
           npm publish *.tgz --registry https://pkgs.dev.azure.com/ux-technology/Invictus/_packaging/shared-npm-libraries/npm/registry/
         displayName: "Publish to Azure Artifacts"
+        condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'develop'))
+
+      - script: |
+          PACKAGE=$(node -p "require('./package.json').name")
+          VERSION=$(node -p "require('./package.json').version")
+          BRANCH="${CURRENT_BRANCH#refs/heads/}"
+
+            case "$branch" in
+              staging)
+                VIEW="prerelease"
+                ;;
+              master)
+                VIEW="release"
+                ;;
+            esac
+
+          echo "Package: $PACKAGE"
+          echo "Version: $VERSION"
+          echo "View: $VIEW"
+
+          curl -X PATCH \
+          -H "Content-Type: application/json" \
+          -H "Authorization: Bearer $(System.AccessToken)" \
+          -d "{
+                \"views\": {
+                  \"op\": \"add\",
+                  \"path\": \"/views/-\",
+                  \"value\": \"${VIEW}\"
+                }
+              }" \
+          "https://pkgs.dev.azure.com/ux-technology/Invictus/_apis/packaging/feeds/shared-npm-libraries/npm/packages/${PACKAGE}/versions/${VERSION}?api-version=7.1-preview.1"
+        displayName: "Promote npm package to release"
+        condition: and(succeeded(), ne(variables['Build.SourceBranchName'], 'develop'))
+        env:
+          SYSTEM_ACCESSTOKEN: $(System.AccessToken)
