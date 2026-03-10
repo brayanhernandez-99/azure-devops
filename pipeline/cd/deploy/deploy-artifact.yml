@@ -26,7 +26,7 @@ jobs:
       # AUTENTICACIÓN AZURE ARTIFACTS
       - task: npmAuthenticate@0
         inputs:
-          workingFile: .npmrc
+          workingFile: $(Pipeline.Workspace)/npm-package/.npmrc
 
       - script: |
           cd $(Pipeline.Workspace)/npm-package
