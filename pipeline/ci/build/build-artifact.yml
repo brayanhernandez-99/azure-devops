@@ -64,7 +64,7 @@ jobs:
 
             echo -e "\n📁 Generando archivo .npmrc con múltiples registries"
 
-            cat <<EOF > "$(Build.Repository.Name)/.npmrc"
+            cat <<EOF > ".npmrc"
             @matrixtech:registry=https://$REPO_DOMAIN_MATRIX/$REPO_PATH_MATRIX/
             //$REPO_DOMAIN_MATRIX/$REPO_PATH_MATRIX/:_authToken=$token_matrix
             
@@ -72,7 +72,7 @@ jobs:
             //$REPO_DOMAIN_UX/$REPO_PATH_UX/:_authToken=$token_ux
             EOF
 
-            ls -la $(Build.Repository.Name)/.npmrc
+            ls -la .npmrc
         displayName: "🔐 Setup CodeArtifact & npm config"
         condition: succeeded()
         env:
