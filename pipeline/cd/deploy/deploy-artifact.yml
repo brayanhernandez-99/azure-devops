@@ -52,11 +52,6 @@ jobs:
               ;;
           esac
 
-          curl -s \
-            -H "Authorization: Bearer $SYSTEM_ACCESSTOKEN" \
-            "https://feeds.dev.azure.com/ux-technology/Invictus/_apis/packaging/feeds?api-version=7.1-preview.1" \
-            | jq
-
           echo "Package: $PACKAGE"
           echo "Encoded package: $ENCODED_PACKAGE"
           echo "Version: $VERSION"
