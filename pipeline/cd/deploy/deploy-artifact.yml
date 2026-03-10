@@ -47,10 +47,10 @@ jobs:
           BRANCH="${CURRENT_BRANCH#refs/heads/}"
 
           case "$BRANCH" in
-            staging)
+            master)
               VIEW="Prerelease"
               ;;
-            master)
+            staging)
               VIEW="Release"
               ;;
           esac
@@ -64,42 +64,18 @@ jobs:
 
           ENCODED_PAT=$(echo -n ":$AZURE_DEVOPS_CLI_PAT" | base64 | tr -d '\n')
 
-          curl -X PATCH "https://pkgs.dev.azure.com/ux-technology/Invictus/_apis/packaging/feeds/d6d5b34f-00f2-46f3-bb1b-d51320ccf7bd/npm/%40matrixtech%2Ffw-pruebas-template/versions/7.1.1?api-version=7.2-preview.1" \
+          curl -X PATCH "https://pkgs.dev.azure.com/ux-technology/Invictus/_apis/packaging/feeds/d6d5b34f-00f2-46f3-bb1b-d51320ccf7bd/npm/$ENCODED_PACKAGE/versions/$VERSION?api-version=7.2-preview.1" \
           -H "Content-Type: application/json" \
           -H "Authorization: Basic $ENCODED_PAT" \
           -d '{
               "views":  {
                             "path":  "/views/-",
                             "op":  "add",
-                            "value":  "Prerelease"
+                            "value":  "$VIEW"
                         }
               }'
-
-
-
-
-
-          # curl -X PATCH \
-          # -H "Content-Type: application/json-patch+json" \
-          # -H "Authorization: Bearer $AZURE_DEVOPS_CLI_PAT" \
-          # -d '[
-          #   {
-          #     "op": "add",
-          #     "path": "/views/-",
-          #     "value": "Prerelease"
-          #   }
-          # ]' \
-          # "https://pkgs.dev.azure.com/ux-technology/Invictus/_apis/packaging/feeds/shared-npm-libraries/packages/844d48ab-366e-4b4c-802f-59874eb03259/versions/$VERSION?api-version=7.1-preview.1"
-
-
-
-          # curl -s \
-          # -H "Authorization: Bearer $AZURE_DEVOPS_CLI_PAT" \
-          # "https://feeds.dev.azure.com/ux-technology/Invictus/_apis/packaging/feeds/shared-npm-libraries/packages?api-version=7.1-preview.1" \
-          # | jq
 
         displayName: "Promote npm package"
         condition: and(succeeded(), ne(variables['Build.SourceBranchName'], 'develop'))
         env:
           AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
-          # SYSTEM_ACCESSTOKEN: $(System.AccessToken)
