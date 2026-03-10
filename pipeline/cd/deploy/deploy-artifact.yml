@@ -69,13 +69,13 @@ jobs:
                     \"value\": \"${VIEW}\"
                   }
                 }" \
-            "https://pkgs.dev.azure.com/ux-technology/Invictus/_apis/packaging/feeds/shared-npm-libraries/npm/packages/${ENCODED_PACKAGE}/versions/${VERSION}?api-version=7.1-preview.1"
+            "https://pkgs.dev.azure.com/ux-technology/Invictus/_apis/packaging/feeds/shared-npm-libraries/packages/${ENCODED_PACKAGE}/versions/${VERSION}?api-version=7.1-preview.1"
 
           echo "Checking views..."
 
           curl -s \
             -H "Authorization: Bearer $AZURE_DEVOPS_CLI_PAT" \
-            "https://pkgs.dev.azure.com/ux-technology/Invictus/_apis/packaging/feeds/shared-npm-libraries/npm/packages/${ENCODED_PACKAGE}/versions/${VERSION}?api-version=7.1-preview.1" \
+            "https://pkgs.dev.azure.com/ux-technology/Invictus/_apis/packaging/feeds/shared-npm-libraries/packages/${ENCODED_PACKAGE}/versions/${VERSION}?api-version=7.1-preview.1" \
             | jq '.views'
 
         displayName: "Promote npm package"
