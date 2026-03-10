@@ -89,7 +89,9 @@ jobs:
       # - script: npm test
       #   displayName: test
 
-      - script: npm pack
+      - script: |
+          rm -f .npmrc
+          npm pack
         displayName: "Create npm package"
 
       - task: PublishPipelineArtifact@1
