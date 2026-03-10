@@ -62,17 +62,19 @@ jobs:
 
           echo "Promoting package..."
 
-          curl -i -X PATCH \
-          -H "Content-Type: application/json" \
+          ENCODED_PAT=$(echo -n ":$AZURE_DEVOPS_CLI_PAT" | base64 | tr -d '\n')
+
+          curl -X PATCH \
+          -H "Content-Type: application/json-patch+json" \
           -H "Authorization: Bearer $AZURE_DEVOPS_CLI_PAT" \
-          -d "{
-                \"views\": {
-                  \"op\": \"add\",
-                  \"path\": \"/views/-\",
-                  \"value\": \"Prerelease\"
+          -d '[
+            {
+              "op": "add",
+              "path": "/views/-",
+              "value": "Prerelease"
             }
-          }" \
-          "https://feeds.dev.azure.com/ux-technology/Invictus/_apis/packaging/feeds/shared-npm-libraries/packages/844d48ab-366e-4b4c-802f-59874eb03259/versions/7.1.1?api-version=7.1-preview.1"
+          ]' \
+          "https://pkgs.dev.azure.com/ux-technology/Invictus/_apis/packaging/feeds/shared-npm-libraries/packages/844d48ab-366e-4b4c-802f-59874eb03259/versions/$VERSION?api-version=7.1-preview.1"
 
           # echo "Checking views..."
 
