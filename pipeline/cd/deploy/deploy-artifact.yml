@@ -71,7 +71,7 @@ jobs:
               "views":  {
                             "path":  "/views/-",
                             "op":  "add",
-                            "value":  "$VIEW"
+                            "value":  \"$VIEW\"
                         }
               }'
 
