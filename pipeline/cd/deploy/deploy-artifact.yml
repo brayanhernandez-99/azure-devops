@@ -47,10 +47,10 @@ jobs:
           BRANCH="${CURRENT_BRANCH#refs/heads/}"
 
           case "$BRANCH" in
-            master)
+            staging)
               VIEW="Prerelease"
               ;;
-            staging)
+            master)
               VIEW="Release"
               ;;
           esac
@@ -67,13 +67,13 @@ jobs:
           curl -X PATCH "https://pkgs.dev.azure.com/ux-technology/Invictus/_apis/packaging/feeds/d6d5b34f-00f2-46f3-bb1b-d51320ccf7bd/npm/$ENCODED_PACKAGE/versions/$VERSION?api-version=7.2-preview.1" \
           -H "Content-Type: application/json" \
           -H "Authorization: Basic $ENCODED_PAT" \
-          -d "[
-            {
-              \"op\": \"add\",
-              \"path\": \"/views/-\",
-              \"value\": \"$VIEW\"
-            }
-          ]"
+          -d '{
+              "views":  {
+                            "path":  "/views/-",
+                            "op":  "add",
+                            "value":  "Prerelease"
+                        }
+              }'
 
         displayName: "Promote npm package"
         condition: and(succeeded(), ne(variables['Build.SourceBranchName'], 'develop'))
