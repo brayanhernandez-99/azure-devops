@@ -89,9 +89,11 @@ jobs:
       # - script: npm test
       #   displayName: test
 
-      # - task: npmAuthenticate@0
-      #   inputs:
-      #     workingFile: .npmrc
+      - script: npm pack
+        displayName: "Create npm package"
 
-      # - script: npm publish
-      #   displayName: publish
+      - task: PublishPipelineArtifact@1
+        displayName: "Publish build artifact"
+        inputs:
+          targetPath: "$(System.DefaultWorkingDirectory)"
+          artifact: "npm-package"

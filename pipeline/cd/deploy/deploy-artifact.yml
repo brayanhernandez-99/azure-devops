@@ -6,11 +6,27 @@ jobs:
       VmImage: ubuntu-22.04
 
     steps:
-      - script: |
-          echo -e "\nℹ️ Original msName: $(Build.Repository.Name)"
-          cleanName=$(echo "$(Build.Repository.Name)" | sed -E 's/^microservice-//; s/-invictus$//')
+      - download: current
+        artifact: npm-package
 
-          echo -e "\nℹ️ Nombre limpio: $cleanName"
-          echo "##vso[task.setvariable variable=cleanMsName]$cleanName"
-        displayName: "🌐 Deploying $(Build.Repository.Name)"
-        condition: succeeded()
+      - task: NodeTool@0
+        displayName: "Install Node"
+        inputs:
+          versionSpec: "18.x"
+
+      - script: |
+          registry=https://pkgs.dev.azure.com/ux-technology/Invictus/_packaging/shared-npm-libraries/npm/registry/ 
+                        
+          always-auth=true
+        displayName: "autenticate npm"
+
+      # AUTENTICACIÓN AZURE ARTIFACTS
+      - task: npmAuthenticate@0
+        inputs:
+          workingFile: .npmrc
+
+      - script: |
+          cd $(Pipeline.Workspace)/npm-package
+          ls -la
+          npm publish *.tgz
+        displayName: "Publish to Azure Artifacts"
