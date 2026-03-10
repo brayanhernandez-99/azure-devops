@@ -71,7 +71,7 @@ jobs:
               "views":  {
                             "path":  "/views/-",
                             "op":  "add",
-                            "value":  "Prerelease"
+                            "value":  "Release"
                         }
               }')
           
