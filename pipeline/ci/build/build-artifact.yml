@@ -21,7 +21,7 @@ jobs:
           versionSpec: "$(nodeVersion)"
         condition: succeeded()
 
-      - script: npm ci
+      - script: npm install
         displayName: install
 
       - script: npm run lint
