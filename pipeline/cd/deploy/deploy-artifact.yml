@@ -57,17 +57,11 @@ jobs:
           echo "Version: $VERSION"
           echo "View: $VIEW"
 
-          curl -X PATCH \
-            -H "Content-Type: application/json-patch+json" \
+          echo "Promoting package..."
+
+          curl -i -X POST \
             -H "Authorization: Bearer $SYSTEM_ACCESSTOKEN" \
-            -d "[
-                  {
-                    \"op\": \"add\",
-                    \"path\": \"/views/-\",
-                    \"value\": \"${VIEW}\"
-                  }
-                ]" \
-            "https://pkgs.dev.azure.com/ux-technology/Invictus/_apis/packaging/feeds/shared-npm-libraries/npm/packages/${ENCODED_PACKAGE}/versions/${VERSION}?api-version=7.1-preview.1"
+            "https://pkgs.dev.azure.com/ux-technology/Invictus/_apis/packaging/feeds/shared-npm-libraries/npm/packages/${ENCODED_PACKAGE}/versions/${VERSION}/views/${VIEW}?api-version=7.1-preview.1"
 
           echo "Checking views..."
 
