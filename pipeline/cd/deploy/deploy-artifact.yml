@@ -15,10 +15,13 @@ jobs:
           versionSpec: "18.x"
 
       - script: |
-          registry=https://pkgs.dev.azure.com/ux-technology/Invictus/_packaging/shared-npm-libraries/npm/registry/ 
-                        
+          cat <<EOF > .npmrc
+          registry=https://pkgs.dev.azure.com/ux-technology/Invictus/_packaging/shared-npm-libraries/npm/registry/
           always-auth=true
-        displayName: "autenticate npm"
+          EOF
+
+          cat .npmrc
+        displayName: "🔐 Configure npm registry"
 
       # AUTENTICACIÓN AZURE ARTIFACTS
       - task: npmAuthenticate@0
