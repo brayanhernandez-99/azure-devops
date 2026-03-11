@@ -11,5 +11,36 @@ jobs:
         persistCredentials: true
 
       - script: |
-          ls -la
+          echo -e "\n📌 Verificando si feature está actualizada con master y si hay cambios relevantes..."
+          echo "Branch Actual: $(echo $(Build.SourceBranch))" 
+          git fetch origin master
+
+          # Encuentra el punto de bifurcación (base común)
+          MERGE_BASE=$(git merge-base HEAD origin/master)
+
+          # Verifica si la rama está actualizada
+          if [ "$MERGE_BASE" = "$(git rev-parse origin/master)" ]; then
+            echo -e "\n✅ La rama feature está actualizada con master."
+          else
+            echo -e "\n⚠️ La rama feature NO contiene todos los commits de master. Verificando cambios relevantes en master..."
+
+            # Obtén los archivos cambiados en master desde el punto de bifurcación
+            CHANGED_FILES=$(git diff --name-only "$MERGE_BASE".."origin/master")
+
+            echo "🔍 Archivos nuevos en master desde el punto de bifurcación:"
+            echo "$CHANGED_FILES"
+
+            # Filtrar cambios relevantes (ignorar carpeta pipeline/)
+            RELEVANT_CHANGES=$(echo "$CHANGED_FILES" | grep -vE '^pipeline/')
+
+            if [[ -z "$RELEVANT_CHANGES" ]]; then
+              echo -e "\nℹ️ Solo hay cambios en archivos ignorados (pipeline/). Continuando..."
+            else
+              echo -e "\n##vso[task.logissue type=error]❌ Cambios relevantes detectados en master y no están integrados. Debes actualizar tu rama."
+              exit 99
+            fi
+          fi
         displayName: "🔎 Validate Feature or Hotfix Branch is Up to Date"
+        condition: and(succeeded(), or(
+          startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'),
+          startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
