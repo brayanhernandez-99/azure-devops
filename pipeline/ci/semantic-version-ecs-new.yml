@@ -53,7 +53,6 @@ jobs:
             [legacy]="microservice-legacy-$ENVIRONMENT"
             [lotteries]="microservice-lotteries-$ENVIRONMENT"
             [lotteries-games]="microservice-lotteries-games-$ENVIRONMENT"
-            [metabase]="microservice-metabase-$ENVIRONMENT"
             [millonario]="microservice-millonario-$ENVIRONMENT"
             [money-control]="microservice-money-control-$ENVIRONMENT"
             [notifications]="microservice-notifications-$ENVIRONMENT"
