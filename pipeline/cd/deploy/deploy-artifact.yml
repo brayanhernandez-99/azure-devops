@@ -26,10 +26,12 @@ jobs:
 
           cat $(Pipeline.Workspace)/npm-package/.npmrc
         displayName: "🔐 Configure npm registry"
+        condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'develop'))
 
       - task: npmAuthenticate@0
         inputs:
           workingFile: $(Pipeline.Workspace)/npm-package/.npmrc
+        condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'develop'))
 
       - script: |
           cd $(Pipeline.Workspace)/npm-package
