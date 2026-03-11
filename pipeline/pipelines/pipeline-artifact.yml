@@ -5,7 +5,7 @@ stages:
       - template: ../ci/semantic-version-integration.yml
         parameters:
           release: ${{ parameters.release }}
-          
+
   - ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), eq(variables['Build.SourceBranchName'], 'develop')) }}:
     - stage: build_artifact
       displayName: "📦 Build Artifact"
@@ -16,7 +16,12 @@ stages:
   - ${{ if in(variables['Build.SourceBranchName'], 'develop', 'staging', 'master') }}:
     - stage: deploy_artifact
       displayName: "📦 Deploy Artifact"
-      dependsOn: build_artifact
+      
+      ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}:
+        dependsOn: build_artifact
+      ${{ if in(variables['Build.SourceBranchName'], 'staging', 'master') }}:
+      dependsOn: semantic_version_artifact
+
       jobs:
         - template: ../cd/deployment.yml
           parameters:
