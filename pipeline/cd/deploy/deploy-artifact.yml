@@ -26,7 +26,6 @@ jobs:
           cat $(Pipeline.Workspace)/npm-package/.npmrc
         displayName: "🔐 Configure npm registry"
 
-      # AUTENTICACIÓN AZURE ARTIFACTS
       - task: npmAuthenticate@0
         inputs:
           workingFile: $(Pipeline.Workspace)/npm-package/.npmrc
@@ -47,10 +46,10 @@ jobs:
           BRANCH="${CURRENT_BRANCH#refs/heads/}"
 
           case "$BRANCH" in
-            master)
+            staging)
               VIEW="Prerelease"
               ;;
-            staging)
+            master)
               VIEW="Release"
               ;;
           esac
