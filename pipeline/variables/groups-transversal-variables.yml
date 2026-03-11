@@ -8,7 +8,7 @@ variables:
       - group: trasversal-aws-staging
 
   - ${{ if and(eq(parameters.release, 'ecs-new'), eq(variables['Build.SourceBranchName'], 'master')) }}:
-      - group: trasversal-aws-antioquia
+      - group: trasversal-aws-tolima
 
   - ${{ if and(eq(parameters.release, 'ecs-old'), eq(variables['Build.SourceBranchName'], 'develop')) }}:
       - group: trasversal-aws-developer
