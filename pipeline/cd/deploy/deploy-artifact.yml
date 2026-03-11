@@ -11,6 +11,7 @@ jobs:
     steps:
       - download: current
         artifact: npm-package
+        condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'develop'))
 
       - task: NodeTool@0
         displayName: "Install Node"
