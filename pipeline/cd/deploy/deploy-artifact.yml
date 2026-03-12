@@ -40,6 +40,16 @@ jobs:
         condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'develop'))
 
       - script: |
+          FEED_ID=$(curl -s -u :$AZURE_DEVOPS_PAT \
+          "https://feeds.dev.azure.com/ux-technology/Invictus/_apis/packaging/feeds?api-version=7.1-preview.1" \
+          | jq -r '.value[] | select(.name=="librerias-internas-pruebas") | .id')
+
+          echo "Feed ID: $FEED_ID"
+        displayName: "feed ID"
+        env:
+          AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
+
+      - script: |
           PACKAGE=$(node -p "require('./package.json').name")
           VERSION=$(node -p "require('./package.json').version")
 

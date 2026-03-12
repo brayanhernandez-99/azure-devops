@@ -44,3 +44,11 @@ jobs:
         condition: and(succeeded(), or(
           startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'),
           startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
+
+      - script: |
+         ls -la
+          
+        displayName: "semantic version artifact"
+        condition: and(succeeded(), or(
+          startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'),
+          startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
