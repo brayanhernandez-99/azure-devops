@@ -44,6 +44,8 @@ jobs:
           "https://feeds.dev.azure.com/ux-technology/Invictus/_apis/packaging/feeds?api-version=7.1-preview.1" \
           | jq -r '.value[] | select(.name=="librerias-internas-pruebas") | .id')
 
+          echo "##vso[task.setvariable variable=FEED_ID]$FEED_ID"
+
           echo "Feed ID: $FEED_ID"
         displayName: "feed ID"
         env:
@@ -76,7 +78,7 @@ jobs:
 
           ENCODED_PAT=$(echo -n ":$AZURE_DEVOPS_CLI_PAT" | base64 | tr -d '\n')
 
-          RESPONSE=$(curl -v -X PATCH "https://pkgs.dev.azure.com/ux-technology/Invictus/_apis/packaging/feeds/d6d5b34f-00f2-46f3-bb1b-d51320ccf7bd/npm/$ENCODED_PACKAGE/versions/$VERSION?api-version=7.2-preview.1" \
+          RESPONSE=$(curl -v -X PATCH "https://pkgs.dev.azure.com/ux-technology/Invictus/_apis/packaging/feeds/$(FEED_ID)/npm/$ENCODED_PACKAGE/versions/$VERSION?api-version=7.2-preview.1" \
           -H "Content-Type: application/json" \
           -H "Authorization: Basic $ENCODED_PAT" \
           -d "{
