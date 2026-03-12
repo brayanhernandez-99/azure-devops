@@ -125,10 +125,10 @@ jobs:
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
 
       - task: NodeTool@0
-        displayName: "🔧 Install Nodejs $(nodeVersion)"
+        displayName: "🔧 Install Nodejs $(nodeVersionNew)"
         inputs:
           versionSource: "spec"
-          versionSpec: "$(nodeVersion)"
+          versionSpec: "$(nodeVersionNew)"
         condition: succeeded()
 
       - script: |
