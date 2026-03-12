@@ -48,16 +48,7 @@ jobs:
           echo -e "\nℹ️ Verificando existencia de: $DOCKERFILE_PATH"
 
           if [[ -f "$DOCKERFILE_PATH" ]]; then
-            echo -e "\n⚠️ Ya existe el Dockerfile en $DOCKERFILE_PATH, eliminándolo..."
-            rm -f "$DOCKERFILE_PATH"
-
-            echo -e "\n📁 Files:"
-            ls -la $(Build.Repository.Name)
-
-            echo -e "\n✅ Copiando DockerFile."
-            cp pipelines-templates/pipeline/docker/Dockerfile $(Build.Repository.Name)/Dockerfile
-
-            echo -e "\n✅ Dockerfile copiado exitosamente."
+            echo -e "\n✅ Ya existe el Dockerfile en $DOCKERFILE_PATH"
             echo -e "\n📁 Files:"
             ls -la $(Build.Repository.Name)
           else
