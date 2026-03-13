@@ -99,7 +99,9 @@ jobs:
 
       - script: |
 
-          LIBRARY="@matrixtech/fw-core"
+          LIBRARY=$(node -p "require('./package.json').name")
+
+          echo "Searching for changes in repositories that consume $LIBRARY..."
 
           REPOS=$(curl -s -u :$AZURE_DEVOPS_PAT \
           "https://almsearch.dev.azure.com/ux-technology/Invictus/_apis/search/codesearchresults?api-version=7.1-preview.1" \
