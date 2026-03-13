@@ -20,7 +20,7 @@ jobs:
 
       - script: |
           cat <<EOF > $(Pipeline.Workspace)/npm-package/.npmrc
-          registry=https://pkgs.dev.azure.com/ux-technology/Invictus/_packaging/shared-npm-libraries/npm/registry/
+          registry=https://pkgs.dev.azure.com/ux-technology/Invictus/_packaging/$(FEED_INTER_LIBRARIES)/npm/registry/
           always-auth=true
           EOF
 
@@ -35,7 +35,7 @@ jobs:
 
       - script: |
           cd $(Pipeline.Workspace)/npm-package
-          npm publish *.tgz --registry https://pkgs.dev.azure.com/ux-technology/Invictus/_packaging/shared-npm-libraries/npm/registry/
+          npm publish *.tgz --registry https://pkgs.dev.azure.com/ux-technology/Invictus/_packaging/$(FEED_INTER_LIBRARIES)/npm/registry/
         displayName: "Publish to Azure Artifacts"
         condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'develop'))
 
@@ -47,7 +47,7 @@ jobs:
           echo "##vso[task.setvariable variable=FEED_ID]$FEED_ID"
 
           echo "Feed ID: $FEED_ID"
-        displayName: "feed ID"
+        displayName: "Feed ID"
         env:
           AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
 
@@ -96,3 +96,33 @@ jobs:
         condition: and(succeeded(), ne(variables['Build.SourceBranchName'], 'develop'))
         env:
           AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
+
+      - script: |
+          if [[ "$BRANCH" != "develop" ]]; then
+
+        displayName: "Promote npm package"
+        env:
+          AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
+
+      - script: |
+
+          LIBRARY="@matrixtech/fw-core"
+
+          echo "Searching repos using $LIBRARY"
+
+          REPOS=$(curl -s -u :$AZURE_DEVOPS_PAT \
+          "https://almsearch.dev.azure.com/ux-technology/Invictus/_apis/search/codesearchresults?api-version=7.1-preview.1" \
+          -H "Content-Type: application/json" \
+          -d "{
+            \"searchText\": \"\\\"$LIBRARY\\\"\",
+            \"\$top\": 1000,
+            \"filters\": {
+              \"Path\": [\"package.json\"]
+            }
+          }" | jq -r '.results[].repository.name' | sort -u)
+
+          echo "Repos afectados:"
+          echo "$REPOS"
+        displayName: "Find affected repositories"
+        env:
+          AZURE_DEVOPS_PAT: $(PAT-AZ)
