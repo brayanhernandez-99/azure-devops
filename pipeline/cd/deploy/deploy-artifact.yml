@@ -42,7 +42,7 @@ jobs:
       - script: |
           FEED_ID=$(curl -s -u :$AZURE_DEVOPS_CLI_PAT \
           "https://feeds.dev.azure.com/ux-technology/Invictus/_apis/packaging/feeds?api-version=7.1-preview.1" \
-          | jq -r '.value[] | select(.name==$(FEED_INTER_LIBRARIES)) | .id')
+          | jq -r '.value[] | select(.name=="$(FEED_INTER_LIBRARIES)") | .id')
 
           echo "##vso[task.setvariable variable=FEED_ID]$FEED_ID"
 
