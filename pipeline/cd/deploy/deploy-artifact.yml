@@ -98,13 +98,6 @@ jobs:
           AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
 
       - script: |
-          if [[ "$BRANCH" != "develop" ]]; then
-
-        displayName: "Promote npm package"
-        env:
-          AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
-
-      - script: |
 
           LIBRARY="@matrixtech/fw-core"
 
