@@ -124,6 +124,36 @@ jobs:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
 
+      - script: |
+          CURRENT_BRANCH="$BUILD_SOURCEBRANCH"
+          branch="${CURRENT_BRANCH#refs/heads/}"
+          
+          case "$branch" in
+            develop)
+              view="local"
+              ;;
+            staging)
+              view="Prerelease"
+              ;;
+            master)
+              view="Release"
+              ;;
+          esac
+
+
+          cat <<EOF > ".npmrc"
+          registry=https://pkgs.dev.azure.com/ux-technology/Invictus/_packaging/$(FEED_INTER_LIBRARIES)@${VIEW}/npm/registry/
+          always-auth=true
+          EOF
+
+          cat .npmrc
+        displayName: "🔐 Configure npm registry"
+
+      - task: npmAuthenticate@0
+        displayName: "🔐 Authenticate with npm registry"
+        inputs:
+          workingFile: .npmrc
+
       - task: NodeTool@0
         displayName: "🔧 Install Nodejs $(nodeVersion)"
         inputs:
