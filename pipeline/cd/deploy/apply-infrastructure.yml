@@ -22,15 +22,15 @@ jobs:
         condition: succeeded()
 
       - script: |
-          echo "📥 Descargando Terragrunt $(terragruntVersion)..."
-          curl -L "https://github.com/gruntwork-io/terragrunt/releases/download/v$(terragruntVersion)/terragrunt_linux_amd64" -o terragrunt
+          echo "📥 Descargando Terragrunt 0.84.1..."
+          curl -L "https://github.com/gruntwork-io/terragrunt/releases/download/v0.84.1/terragrunt_linux_amd64" -o terragrunt
 
           chmod +x terragrunt
           sudo mv terragrunt /usr/local/bin/terragrunt
 
           echo "🚀 Terragrunt instalado:"
           terragrunt --version
-        displayName: "🛠️ Instalando Terragrunt $(terragruntVersion)"
+        displayName: "🛠️ Instalando Terragrunt 0.84.1"
         condition: succeeded()
         env:
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
@@ -38,8 +38,8 @@ jobs:
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
 
       - script: |
-          echo "📥 Descargando Terraform $(terraformVersion)..."
-          curl -L "https://releases.hashicorp.com/terraform/$(terraformVersion)/terraform_$(terraformVersion)_linux_amd64.zip" -o terraform.zip
+          echo "📥 Descargando Terraform 1.12.0..."
+          curl -L "https://releases.hashicorp.com/terraform/1.12.0/terraform_1.12.0_linux_amd64.zip" -o terraform.zip
 
           unzip terraform.zip
           chmod +x terraform
@@ -47,7 +47,7 @@ jobs:
 
           echo "🚀 Terraform instalado:"
           terraform --version
-        displayName: "🛠️ Instalando Terraform $(terraformVersion)"
+        displayName: "🛠️ Instalando Terraform 1.12.0"
         condition: succeeded()
         env:
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
