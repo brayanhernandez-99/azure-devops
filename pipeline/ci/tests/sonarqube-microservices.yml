@@ -146,6 +146,7 @@ jobs:
           echo "Using view: $VIEW"
 
           cat <<EOF > .npmrc
+          registry=https://registry.npmjs.org/
           registry=https://pkgs.dev.azure.com/ux-technology/Invictus/_packaging/$(FEED_INTER_LIBRARIES)@${VIEW}/npm/registry/
           always-auth=true
           EOF
