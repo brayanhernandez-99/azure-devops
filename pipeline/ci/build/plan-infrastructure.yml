@@ -23,17 +23,12 @@ jobs:
 
       - script: |
           echo "📥 Descargando Terragrunt $(terragruntVersion)..."
-          aws s3 cp "s3://infrastructure-as-code-invictus/terragrunt/terragrunt-$(terragruntVersion)" "terragrunt"
-
-          if [ ! -s terragrunt ]; then
-            echo "##vso[task.logissue type=error]⚠️ Error: No se pudo descargar terragrunt $(terragruntVersion)"
-            exit 99
-          fi
+          curl -L "https://github.com/gruntwork-io/terragrunt/releases/download/v$(terragruntVersion)/terragrunt_linux_amd64" -o terragrunt
 
           chmod +x terragrunt
           sudo mv terragrunt /usr/local/bin/terragrunt
 
-          echo -e "\n🚀 Terragrunt instalado correctamente:"
+          echo "🚀 Terragrunt instalado:"
           terragrunt --version
         displayName: "🛠️ Instalando Terragrunt $(terragruntVersion)"
         condition: succeeded()
@@ -43,18 +38,14 @@ jobs:
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
 
       - script: |
-          echo "📥 Descargando Terraform..."
-          aws s3 cp "s3://infrastructure-as-code-invictus/terraform/terraform-$(terraformVersion)" "terraform"
+          echo "📥 Descargando Terraform $(terraformVersion)..."
+          curl -L "https://releases.hashicorp.com/terraform/$(terraformVersion)/terraform_$(terraformVersion)_linux_amd64.zip" -o terraform.zip
 
-          if [ ! -s terraform ]; then
-            echo "##vso[task.logissue type=error]⚠️ Error: No se pudo descargar terraform $(terraformVersion)"
-            exit 99
-          fi
-
+          unzip terraform.zip
           chmod +x terraform
           sudo mv terraform /usr/local/bin/terraform
 
-          echo -e "\n🚀 Terraform instalado correctamente:"
+          echo "🚀 Terraform instalado:"
           terraform --version
         displayName: "🛠️ Instalando Terraform $(terraformVersion)"
         condition: succeeded()
