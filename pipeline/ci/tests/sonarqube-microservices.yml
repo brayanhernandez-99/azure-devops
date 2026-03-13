@@ -142,7 +142,7 @@ jobs:
 
 
           cat <<EOF > ".npmrc"
-          registry=https://pkgs.dev.azure.com/ux-technology/Invictus/_packaging/$(FEED_INTER_LIBRARIES)@${view}/npm/registry/
+          registry=https://pkgs.dev.azure.com/ux-technology/Invictus/_packaging/$(FEED_INTER_LIBRARIES)@$view/npm/registry/
           always-auth=true
           EOF
 
