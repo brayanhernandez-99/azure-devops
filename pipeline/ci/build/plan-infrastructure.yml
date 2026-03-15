@@ -74,7 +74,7 @@ jobs:
           set -e
 
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/metabase/aws-service-ecs
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds/aws-service-rds
           terragrunt plan --all --non-interactive -no-color
 
 
