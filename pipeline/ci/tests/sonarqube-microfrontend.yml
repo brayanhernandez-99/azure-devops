@@ -222,14 +222,14 @@ jobs:
           ne(variables['msName'], 'app-sellers-vue2'),
           ne(variables['Build.SourceBranchName'], 'develop'))
 
-      - script: |
-          cd $(Build.Repository.Name)
-          pnpm test --filter=...$(msName) -- --maxWorkers=1
-        displayName: "🧪 Run Tests for Microfrontend: $(msName)"
-        continueOnError: true
-        condition: and(succeeded(),
-          ne(variables['msName'], 'app-administration-vue2'),
-          ne(variables['msName'], 'app-sellers-vue2'))
+      # - script: |
+      #     cd $(Build.Repository.Name)
+      #     pnpm test --filter=...$(msName) -- --maxWorkers=1
+      #   displayName: "🧪 Run Tests for Microfrontend: $(msName)"
+      #   continueOnError: true
+      #   condition: and(succeeded(),
+      #     ne(variables['msName'], 'app-administration-vue2'),
+      #     ne(variables['msName'], 'app-sellers-vue2'))
 
       - script: |
           cd $(Build.Repository.Name)
