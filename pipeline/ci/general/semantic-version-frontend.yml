@@ -390,7 +390,7 @@ jobs:
         displayName: "📤 Publish artifact version"
         condition: succeeded()
 
-  - ${{ if or(eq(variables['Build.SourceBranchName'], 'develop'), eq(variables['Build.SourceBranch'], 'staging')) }}:
+  - ${{ if or(eq(variables['Build.SourceBranchName'], 'develop'), eq(variables['Build.SourceBranchName'], 'staging')) }}:
     - deployment: push_versions
       displayName: "🔐 serial git push (version/*)"
       environment: git-version-lock
