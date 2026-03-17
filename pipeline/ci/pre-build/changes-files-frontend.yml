@@ -12,6 +12,7 @@ jobs:
       - checkout: self
         fetchDepth: 0
         persistCredentials: true
+        fetchTags: false
 
       - script: |
           echo "🔍 Validando ejecucion..."
@@ -57,16 +58,14 @@ jobs:
               git checkout $clean_branch
               git reset --hard HEAD
 
-              echo -e "\n🔍 Comparando cambios entre: $CURRENT_BRANCH ... $TARGET_BRANCH"
-              changed_files=$(git diff --name-only "origin/$TARGET_BRANCH"..."origin/$CURRENT_BRANCH")
-              packages_changed=$(echo "$changed_files" | grep "^packages/" || true)
+              git fetch origin $TARGET_BRANCH
 
-              # if [[ -n "$packages_changed" ]]; then
-              #   # apps=$(find apps app-legacy -mindepth 1 -maxdepth 1 -type d | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u)
-              #   apps="invictus"
-              # else
-              #   apps=$(echo "$changed_files" | grep -E "^apps/|^app-legacy/" | cut -d '/' -f1,2 | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u)
-              # fi
+              BASE=$(git merge-base HEAD origin/$TARGET_BRANCH)
+
+              echo "📌 Merge base detectado: $BASE"
+
+              changed_files=$(git diff --name-only $BASE HEAD)
+              packages_changed=$(echo "$changed_files" | grep "^packages/" || true)
 
               apps=$(echo "$changed_files" | grep -E "^apps/|^app-legacy/" | cut -d '/' -f1,2 | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u)
 
@@ -86,7 +85,7 @@ jobs:
               if [[ "$SOURCE_BRANCH" == feature/* || "$SOURCE_BRANCH" == hotfix/* ]]; then
                 echo -e "\n🔗 Creando ejecucion pipeline"
                 pipeline_output=$(az pipelines run \
-                  --name "apps-microfrontend-invictus" \
+                  --name "$(Build.Repository.Name)" \
                   --branch "$CURRENT_BRANCH" \
                   --parameters pr_id="$(System.PullRequest.PullRequestId)" apps="$apps_json" \
                   --output json)
@@ -139,22 +138,15 @@ jobs:
                 echo -e "\n🔍 Comparando cambios entre: $CURRENT_BRANCH ... $CURRENT_BRANCH"
                 packages_changed=$(git diff --name-only HEAD~1 HEAD | grep "^packages/")
 
-                # if [[ -n "$packages_changed" ]]; then
-                #     # apps=$(find apps app-legacy -mindepth 1 -maxdepth 1 -type d | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u)
-                #     apps="invictus"
-                # else
-                #     apps=$(git diff --name-only HEAD~1 HEAD | grep -E "^apps/|^app-legacy/" | cut -d '/' -f1,2 | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u)
-                # fi
-
-                # if [[ -z "$apps" ]]; then
-                #   echo -e "\n##vso[task.logissue type=error]⚠️ No se detectaron cambios en apps. Cancelando ejecución del pipeline."
-                #   exit 99
-                # fi
-
                 apps=$(git diff --name-only HEAD~1 HEAD | grep -E "^apps/|^app-legacy/" | cut -d '/' -f1,2 | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u)
 
                 if [[ -n "$packages_changed" ]]; then
                   apps=$(printf "%s\ninvictus" "$apps" | sort -u)
+                fi
+
+                if [[ -z "$apps" ]]; then
+                  echo -e "\n##vso[task.logissue type=error]⚠️ No se detectaron cambios en apps. Cancelando ejecución del pipeline."
+                  exit 99
                 fi
 
                 echo "🔍 Apps modificadas detectadas:"
@@ -163,7 +155,7 @@ jobs:
 
                 echo -e "\n🔗 Creando ejecucion pipeline"
                 pipeline_output=$(az pipelines run \
-                  --name "apps-microfrontend-invictus" \
+                  --name "$(Build.Repository.Name)" \
                   --branch "$CURRENT_BRANCH" \
                   --parameters pr_id="0" apps="$apps_json" \
                   --output json)

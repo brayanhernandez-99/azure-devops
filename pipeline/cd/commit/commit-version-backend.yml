@@ -11,6 +11,7 @@ jobs:
           - checkout: self
             fetchDepth: 0
             persistCredentials: true
+            fetchTags: false
 
           - download: current
             artifact: versions
