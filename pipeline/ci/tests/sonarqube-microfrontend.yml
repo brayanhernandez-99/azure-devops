@@ -231,33 +231,33 @@ jobs:
       #     ne(variables['msName'], 'app-administration-vue2'),
       #     ne(variables['msName'], 'app-sellers-vue2'))
 
-      - script: |
-          cd $(Build.Repository.Name)
-          pnpm coverage --filter=...$(msName)
-          ls -l "$(file)/$(msName)/coverage"
-        displayName: "🔎 Coverage Analysis: $(msName)"
-        continueOnError: true
-        condition: and(succeeded(),
-          ne(variables['msName'], 'app-administration-vue2'),
-          ne(variables['msName'], 'app-sellers-vue2'),
-          ne(variables['Build.SourceBranchName'], 'develop'))
+      # - script: |
+      #     cd $(Build.Repository.Name)
+      #     pnpm coverage --filter=...$(msName)
+      #     ls -l "$(file)/$(msName)/coverage"
+      #   displayName: "🔎 Coverage Analysis: $(msName)"
+      #   continueOnError: true
+      #   condition: and(succeeded(),
+      #     ne(variables['msName'], 'app-administration-vue2'),
+      #     ne(variables['msName'], 'app-sellers-vue2'),
+      #     ne(variables['Build.SourceBranchName'], 'develop'))
 
-      - task: SonarQubeAnalyze@7
-        displayName: "📡 Run Sonar Analysis"
-        condition: and(succeeded(),
-          ne(variables['msName'], 'app-administration-vue2'),
-          ne(variables['msName'], 'app-sellers-vue2'),
-          ne(variables['Build.SourceBranchName'], 'develop'))
+      # - task: SonarQubeAnalyze@7
+      #   displayName: "📡 Run Sonar Analysis"
+      #   condition: and(succeeded(),
+      #     ne(variables['msName'], 'app-administration-vue2'),
+      #     ne(variables['msName'], 'app-sellers-vue2'),
+      #     ne(variables['Build.SourceBranchName'], 'develop'))
 
-      - task: SonarQubePublish@7
-        inputs:
-          pollingTimeoutSec: 400
-        displayName: "📤 Publish Static Code Analysis Results"
-        condition: and(succeeded(),
-          ne(variables['msName'], 'app-administration-vue2'),
-          ne(variables['msName'], 'app-sellers-vue2'),
-          ne(variables['Build.SourceBranchName'], 'develop'))
+      # - task: SonarQubePublish@7
+      #   inputs:
+      #     pollingTimeoutSec: 400
+      #   displayName: "📤 Publish Static Code Analysis Results"
+      #   condition: and(succeeded(),
+      #     ne(variables['msName'], 'app-administration-vue2'),
+      #     ne(variables['msName'], 'app-sellers-vue2'),
+      #     ne(variables['Build.SourceBranchName'], 'develop'))
 
-      - template: sonarqube/job-sonarqube.yml@sonarqube
-        parameters:
-          projectKey: "microfronted-$(msName)-invictus"
+      # - template: sonarqube/job-sonarqube.yml@sonarqube
+      #   parameters:
+      #     projectKey: "microfronted-$(msName)-invictus"
