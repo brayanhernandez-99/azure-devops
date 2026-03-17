@@ -18,6 +18,7 @@ jobs:
       - checkout: self
         fetchDepth: 0
         persistCredentials: true
+        fetchTags: false
 
       - script: |
           if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
