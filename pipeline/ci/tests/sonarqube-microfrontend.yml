@@ -135,15 +135,15 @@ jobs:
           versionSpec: "$(nodeVersion)"
         condition: succeeded()
 
-      - script: |
-          echo "Comentando app-legacy/*"
-          cd $(Build.Repository.Name)
-          sed -i '/app-legacy\//s/  -/  # -/' pnpm-workspace.yaml
-          cat pnpm-workspace.yaml
-        displayName: "💬 Comment app-legacy/*"
-        condition: and(succeeded(),
-          ne(variables['msName'], 'app-administration-vue2'),
-          ne(variables['msName'], 'app-sellers-vue2'))
+      # - script: |
+      #     echo "Comentando app-legacy/*"
+      #     cd $(Build.Repository.Name)
+      #     sed -i '/app-legacy\//s/  -/  # -/' pnpm-workspace.yaml
+      #     cat pnpm-workspace.yaml
+      #   displayName: "💬 Comment app-legacy/*"
+      #   condition: and(succeeded(),
+      #     ne(variables['msName'], 'app-administration-vue2'),
+      #     ne(variables['msName'], 'app-sellers-vue2'))
 
       - script: |
           echo -e "\n📁 Generando archivo .pnpmrc en: $(Build.Repository.Name)/$(file)/$(msName)/.pnpmrc"
