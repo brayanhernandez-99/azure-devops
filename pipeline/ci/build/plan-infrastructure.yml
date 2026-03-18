@@ -74,10 +74,10 @@ jobs:
           set -e
 
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-download
+          terragrunt plan --all --non-interactive -no-color
 
-          mysql --version
+          #mysql --version
 
 
           # cd $(Build.SourcesDirectory)
