@@ -9,6 +9,10 @@ jobs:
       - template: ../../variables/groups-transversal-variables-backend.yml
 
     steps:
+      - checkout: self
+        fetchDepth: 1
+        persistCredentials: true
+        
       - checkout: git://DevOps-templates-UX/pipelines-templates
         fetchDepth: 1
         persistCredentials: true
