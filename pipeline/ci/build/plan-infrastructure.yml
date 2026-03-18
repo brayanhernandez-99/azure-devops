@@ -73,6 +73,28 @@ jobs:
       - script: |
           set -e
 
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/transaction-astro/aws-service-sqs
+          terragrunt apply --all --non-interactive -no-color
+
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/transaction-astro/aws-service-sqs-dlq
+          terragrunt apply --all --non-interactive -no-color
+
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/transaction-lotteries-games/aws-service-sqs
+          terragrunt apply --all --non-interactive -no-color
+
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/transaction-lotteries-games/aws-service-sqs-dlq
+          terragrunt apply --all --non-interactive -no-color
+
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/transaction-recharges/aws-service-sqs
+          terragrunt apply --all --non-interactive -no-color
+
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/transaction-recharges/aws-service-sqs-dlq
+          terragrunt apply --all --non-interactive -no-color
+
+
+
+
+
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/astro/aws-service-ecs
           terragrunt plan --all --non-interactive -no-color
