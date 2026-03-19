@@ -73,20 +73,12 @@ jobs:
       - script: |
           set -e
 
-<<<<<<< HEAD
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/astro/aws-service-ecs
-=======
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds/aws-service-random-password
-          terragrunt plan --all --non-interactive -no-color          
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds/aws-service-rds
->>>>>>> 696c77dba2c0c6daa9ea9ac95f5b908a0fc767b1
           terragrunt plan --all --non-interactive -no-color
 
           # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/awards/aws-service-ecs
           # terragrunt plan --all --non-interactive -no-color
 
-<<<<<<< HEAD
           # cd $(Build.SourcesDirectory)
           # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
@@ -313,17 +305,6 @@ jobs:
           # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
           
 
-=======
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/astro/aws-service-random-password
-          terragrunt plan --all --non-interactive -no-color
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/astro/aws-service-rds-permissions
-          terragrunt plan --all --non-interactive -no-color
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/astro/aws-service-secret-manager
-          terragrunt plan --all --non-interactive -no-color
-
->>>>>>> 696c77dba2c0c6daa9ea9ac95f5b908a0fc767b1
 
           # cd $(Build.SourcesDirectory)
           # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
