@@ -334,7 +334,7 @@ jobs:
           git commit -m "chore($(Build.Repository.Name)): bump version to $(cleanNEXT_VERSION)"
           git push origin version/$clean_branch
 
-          echo "##vso[build.updatebuildnumber]$cleanNEXT_VERSION"
+          echo "##vso[build.updatebuildnumber]$(cleanNEXT_VERSION)"
         displayName: "⚡ Commit Version & Push — $(Build.Repository.Name)"
         condition: and(succeeded(),
           ne(variables['Build.SourceBranchName'], 'master'),
