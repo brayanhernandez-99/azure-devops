@@ -448,9 +448,7 @@ jobs:
               containerName=$(jq -r '.containerDefinitions[0].name' "$INPUT")
 
               envmicroname=$(echo "$containerName" \
-                | sed -E 's/-ms$//' \
-                | tr '[:lower:]' '[:upper:]' \
-                | tr '-' '_')
+               | sed -E 's/^transaction.*/TRANSACTION/')
 
               echo "MS_NAME=$envmicroname"
 
