@@ -117,3 +117,54 @@ jobs:
         displayName: "Find affected repositories"
         env:
           AZURE_DEVOPS_PAT: $(PAT-AZ)
+
+      - script: |
+          ORG="ux-technology"
+          PROJECT="Invictus"
+          FEED_ID="d6d5b34f-00f2-46f3-bb1b-d51320ccf7bd"
+          VIEW="Prerelease"
+
+          ENCODED_PAT=$(echo -n ":$AZURE_DEVOPS_CLI_PAT" | base64 | tr -d '\n')
+
+          echo "Getting packages..."
+
+          PACKAGES=$(curl -s \
+            -H "Authorization: Basic $ENCODED_PAT" \
+            "https://feeds.dev.azure.com/$ORG/$PROJECT/_apis/packaging/feeds/$FEED_ID/packages?protocolType=npm&api-version=7.1-preview.1" \
+            | jq -r '.value[].name')
+
+          for PACKAGE in $PACKAGES
+          do
+            echo "Processing package: $PACKAGE"
+
+            ENCODED_PACKAGE=$(printf '%s' "$PACKAGE" | jq -sRr @uri)
+
+            VERSIONS=$(curl -s \
+              -H "Authorization: Basic $ENCODED_PAT" \
+              "https://feeds.dev.azure.com/$ORG/$PROJECT/_apis/packaging/feeds/$FEED_ID/npm/packages/$ENCODED_PACKAGE/versions?api-version=7.1-preview.1" \
+              | jq -r '.value[].version')
+
+            for VERSION in $VERSIONS
+            do
+              echo "  Promoting $PACKAGE@$VERSION to $VIEW"
+
+              curl -s -X PATCH \
+                -H "Authorization: Basic $ENCODED_PAT" \
+                -H "Content-Type: application/json" \
+                "https://pkgs.dev.azure.com/$ORG/$PROJECT/_apis/packaging/feeds/$FEED_ID/npm/$ENCODED_PACKAGE/versions/$VERSION?api-version=7.2-preview.1" \
+                -d "{
+                  \"views\": {
+                    \"op\": \"add\",
+                    \"path\": \"/views/-\",
+                    \"value\": \"$VIEW\"
+                  }
+                }" > /dev/null
+            done
+          done
+
+          echo "Done 🚀"
+
+        displayName: "Promote npm package"
+        condition: and(succeeded(), ne(variables['Build.SourceBranchName'], 'develop'))
+        env:
+          AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
