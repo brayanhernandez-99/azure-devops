@@ -142,8 +142,8 @@ jobs:
               -H "Authorization: Basic $ENCODED_PAT" \
               "$URL")
 
-            echo "$RESPONSE" | jq -c '.value[]' | while read pkg
-            do
+            # 🔥 FIX: sin pipe
+            while read pkg; do
               PACKAGE=$(echo "$pkg" | jq -r '.name')
               echo "📦 Package: $PACKAGE"
 
@@ -151,7 +151,6 @@ jobs:
 
               VERSION_TOKEN=""
 
-              # 🔁 PAGINACIÓN DE VERSIONES
               while : ; do
 
                 if [ -z "$VERSION_TOKEN" ]; then
@@ -164,9 +163,11 @@ jobs:
                   -H "Authorization: Basic $ENCODED_PAT" \
                   "$VERSION_URL")
 
-                echo "$VERSIONS_RESPONSE" | jq -c '.value[]?' | while read ver
-                do
+                # 🔥 FIX: sin pipe
+                while read ver; do
                   VERSION=$(echo "$ver" | jq -r '.version')
+
+                  echo "  🔍 Found version: $VERSION"
 
                   HAS_VIEW=$(echo "$ver" | jq -r '.views[]?.name' | grep -w "$VIEW")
 
@@ -197,7 +198,7 @@ jobs:
                     echo "  ✅ Promoted"
                   fi
 
-                done
+                done < <(echo "$VERSIONS_RESPONSE" | jq -c '.value[]?')
 
                 VERSION_TOKEN=$(grep -i x-ms-continuationtoken headers_ver.txt | awk '{print $2}' | tr -d '\r')
 
@@ -207,7 +208,7 @@ jobs:
 
               done
 
-            done
+            done < <(echo "$RESPONSE" | jq -c '.value[]')
 
             CONTINUATION_TOKEN=$(grep -i x-ms-continuationtoken headers_pkg.txt | awk '{print $2}' | tr -d '\r')
 
