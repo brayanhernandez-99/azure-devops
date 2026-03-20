@@ -122,7 +122,7 @@ jobs:
           ORG="ux-technology"
           PROJECT="Invictus"
           FEED_ID="7b1af43c-e82e-4ce5-95cb-b02c749c668c"
-          VIEW="Prerelease"
+          VIEW="Release"
 
           ENCODED_PAT=$(echo -n ":$AZURE_DEVOPS_CLI_PAT" | base64 | tr -d '\n')
 
