@@ -126,7 +126,7 @@ jobs:
           ORG="ux-technology"
           PROJECT="12c50c8c-87d3-485c-8176-eb25f6b918f5"
           FEED_ID="7b1af43c-e82e-4ce5-95cb-b02c749c668c"
-          VIEW="Release"
+          VIEW="Prerelease"
 
           ENCODED_PAT=$(echo -n ":$AZURE_DEVOPS_CLI_PAT" | base64 | tr -d '\n')
 
@@ -191,7 +191,7 @@ jobs:
                 STATUS=$(echo "$RESPONSE_PATCH" | grep HTTP_STATUS | cut -d':' -f2)
 
                 if [ "$STATUS" != "200" ]; then
-                  echo "  ❌ Error promoting $PACKAGE@$VERSION (HTTP $STATUS)"
+                  echo "  ✅  promoting $PACKAGE@$VERSION (HTTP $STATUS)"
                 else
                   echo "  ✅ Promoted"
                 fi
