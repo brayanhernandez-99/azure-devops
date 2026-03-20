@@ -138,7 +138,7 @@ jobs:
               URL="https://feeds.dev.azure.com/$ORG/$PROJECT/_apis/packaging/feeds/$FEED_ID/packages?protocolType=npm&continuationToken=$CONTINUATION_TOKEN&api-version=7.1-preview.1"
             fi
 
-            RESPONSE=$(curl -s -D headers.txt \
+            RESPONSE=$(curl -s -D headers_pkg.txt \
               -H "Authorization: Basic $ENCODED_PAT" \
               "$URL")
 
@@ -149,52 +149,67 @@ jobs:
 
               ENCODED_PACKAGE=$(printf '%s' "$PACKAGE" | jq -sRr @uri)
 
-              # 🔥 AQUÍ está el cambio clave: traer TODAS las versiones
-              VERSIONS_RESPONSE=$(curl -s \
-                -H "Authorization: Basic $ENCODED_PAT" \
-                "https://feeds.dev.azure.com/$ORG/$PROJECT/_apis/packaging/feeds/$FEED_ID/npm/packages/$ENCODED_PACKAGE/versions?api-version=7.1-preview.1")
+              VERSION_TOKEN=""
 
-              echo "$VERSIONS_RESPONSE" | jq -c '.value[]?' | while read ver
-              do
-                VERSION=$(echo "$ver" | jq -r '.version')
+              # 🔁 PAGINACIÓN DE VERSIONES
+              while : ; do
 
-                # 🧠 evitar reprocesar
-                HAS_VIEW=$(echo "$ver" | jq -r '.views[]?.name' | grep -w "$VIEW")
-
-                if [ -n "$HAS_VIEW" ]; then
-                  echo "  ⏭ $PACKAGE@$VERSION ya está en $VIEW"
-                  continue
+                if [ -z "$VERSION_TOKEN" ]; then
+                  VERSION_URL="https://feeds.dev.azure.com/$ORG/$PROJECT/_apis/packaging/feeds/$FEED_ID/npm/packages/$ENCODED_PACKAGE/versions?api-version=7.1-preview.1"
+                else
+                  VERSION_URL="https://feeds.dev.azure.com/$ORG/$PROJECT/_apis/packaging/feeds/$FEED_ID/npm/packages/$ENCODED_PACKAGE/versions?continuationToken=$VERSION_TOKEN&api-version=7.1-preview.1"
                 fi
 
-                echo "  🔄 Promoting $PACKAGE@$VERSION → $VIEW"
-
-                RESPONSE_PATCH=$(curl -s -w "\nHTTP_STATUS:%{http_code}" -X PATCH \
+                VERSIONS_RESPONSE=$(curl -s -D headers_ver.txt \
                   -H "Authorization: Basic $ENCODED_PAT" \
-                  -H "Content-Type: application/json" \
-                  "https://pkgs.dev.azure.com/$ORG/$PROJECT/_apis/packaging/feeds/$FEED_ID/npm/$ENCODED_PACKAGE/versions/$VERSION?api-version=7.2-preview.1" \
-                  -d "{
-                    \"views\": {
-                      \"op\": \"add\",
-                      \"path\": \"/views/-\",
-                      \"value\": \"$VIEW\"
-                    }
-                  }")
+                  "$VERSION_URL")
 
-                STATUS=$(echo "$RESPONSE_PATCH" | grep HTTP_STATUS | cut -d':' -f2)
-                BODY=$(echo "$RESPONSE_PATCH" | sed '/HTTP_STATUS/d')
+                echo "$VERSIONS_RESPONSE" | jq -c '.value[]?' | while read ver
+                do
+                  VERSION=$(echo "$ver" | jq -r '.version')
 
-                if [ "$STATUS" != "200" ]; then
-                  echo "  ❌ Error promoting $PACKAGE@$VERSION (HTTP $STATUS)"
-                  echo "  📡 $BODY"
-                else
-                  echo "  ✅ Promoted"
+                  HAS_VIEW=$(echo "$ver" | jq -r '.views[]?.name' | grep -w "$VIEW")
+
+                  if [ -n "$HAS_VIEW" ]; then
+                    echo "  ⏭ $PACKAGE@$VERSION ya está en $VIEW"
+                    continue
+                  fi
+
+                  echo "  🔄 Promoting $PACKAGE@$VERSION → $VIEW"
+
+                  RESPONSE_PATCH=$(curl -s -w "\nHTTP_STATUS:%{http_code}" -X PATCH \
+                    -H "Authorization: Basic $ENCODED_PAT" \
+                    -H "Content-Type: application/json" \
+                    "https://pkgs.dev.azure.com/$ORG/$PROJECT/_apis/packaging/feeds/$FEED_ID/npm/$ENCODED_PACKAGE/versions/$VERSION?api-version=7.2-preview.1" \
+                    -d "{
+                      \"views\": {
+                        \"op\": \"add\",
+                        \"path\": \"/views/-\",
+                        \"value\": \"$VIEW\"
+                      }
+                    }")
+
+                  STATUS=$(echo "$RESPONSE_PATCH" | grep HTTP_STATUS | cut -d':' -f2)
+
+                  if [ "$STATUS" != "200" ]; then
+                    echo "  ❌ Error promoting $PACKAGE@$VERSION (HTTP $STATUS)"
+                  else
+                    echo "  ✅ Promoted"
+                  fi
+
+                done
+
+                VERSION_TOKEN=$(grep -i x-ms-continuationtoken headers_ver.txt | awk '{print $2}' | tr -d '\r')
+
+                if [ -z "$VERSION_TOKEN" ]; then
+                  break
                 fi
 
               done
 
             done
 
-            CONTINUATION_TOKEN=$(grep -i x-ms-continuationtoken headers.txt | awk '{print $2}' | tr -d '\r')
+            CONTINUATION_TOKEN=$(grep -i x-ms-continuationtoken headers_pkg.txt | awk '{print $2}' | tr -d '\r')
 
             if [ -z "$CONTINUATION_TOKEN" ]; then
               break
