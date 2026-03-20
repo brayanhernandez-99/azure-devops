@@ -122,7 +122,7 @@ jobs:
           ORG="ux-technology"
           PROJECT="Invictus"
           FEED_ID="7b1af43c-e82e-4ce5-95cb-b02c749c668c"
-          VIEW="Release"   # 👈 cambia aquí (Local / Prerelease / Release)
+          VIEW="Release"   # Local | Prerelease | Release
 
           ENCODED_PAT=$(echo -n ":$AZURE_DEVOPS_CLI_PAT" | base64 | tr -d '\n')
 
@@ -142,7 +142,6 @@ jobs:
               -H "Authorization: Basic $ENCODED_PAT" \
               "$URL")
 
-            # 🔁 recorrer packages
             echo "$RESPONSE" | jq -c '.value[]' | while read pkg
             do
               PACKAGE=$(echo "$pkg" | jq -r '.name')
@@ -150,7 +149,6 @@ jobs:
 
               ENCODED_PACKAGE=$(printf '%s' "$PACKAGE" | jq -sRr @uri)
 
-              # 🔁 recorrer versiones (SIN segunda API)
               echo "$pkg" | jq -c '.versions[]?' | while read ver
               do
                 VERSION=$(echo "$ver" | jq -r '.version')
@@ -165,23 +163,24 @@ jobs:
 
                 echo "  🔄 Promoting $PACKAGE@$VERSION → $VIEW"
 
-                RESPONSE_PATCH=$(curl -s -X PATCH \
-                -H "Authorization: Basic $ENCODED_PAT" \
-                -H "Content-Type: application/json" \
-                "https://pkgs.dev.azure.com/$ORG/$PROJECT/_apis/packaging/feeds/$FEED_ID/npm/$ENCODED_PACKAGE/versions/$VERSION?api-version=7.2-preview.1" \
-                -d "{
-                  \"views\": {
-                    \"op\": \"add\",
-                    \"path\": \"/views/-\",
-                    \"value\": \"$VIEW\"
-                  }
-                }")
+                RESPONSE_PATCH=$(curl -s -w "\nHTTP_STATUS:%{http_code}" -X PATCH \
+                  -H "Authorization: Basic $ENCODED_PAT" \
+                  -H "Content-Type: application/json" \
+                  "https://pkgs.dev.azure.com/$ORG/$PROJECT/_apis/packaging/feeds/$FEED_ID/npm/$ENCODED_PACKAGE/versions/$VERSION?api-version=7.2-preview.1" \
+                  -d "{
+                    \"views\": {
+                      \"op\": \"add\",
+                      \"path\": \"/views/-\",
+                      \"value\": \"$VIEW\"
+                    }
+                  }")
 
                 STATUS=$(echo "$RESPONSE_PATCH" | grep HTTP_STATUS | cut -d':' -f2)
+                BODY=$(echo "$RESPONSE_PATCH" | sed '/HTTP_STATUS/d')
 
                 if [ "$STATUS" != "200" ]; then
-                  echo "  ❌ Error promoting $PACKAGE@$VERSION"
-                  echo "$RESPONSE_PATCH"
+                  echo "  ❌ Error promoting $PACKAGE@$VERSION (HTTP $STATUS)"
+                  echo "  📡 Response: $BODY"
                 else
                   echo "  ✅ Promoted"
                 fi
