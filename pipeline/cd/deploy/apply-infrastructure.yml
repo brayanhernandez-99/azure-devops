@@ -74,6 +74,15 @@ jobs:
           set -e
 
 
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/reports
+          terragrunt plan --all --non-interactive -no-color
+          terragrunt destroy --all --non-interactive -no-color
+
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/shopping-cart
+          terragrunt plan --all --non-interactive -no-color
+          terragrunt destroy --all --non-interactive -no-color
+
+
           # cd $(Build.SourcesDirectory)
           # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
         displayName: "🚀 Apply Infrastructure"
