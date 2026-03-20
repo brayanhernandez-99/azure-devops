@@ -73,24 +73,21 @@ jobs:
       - script: |
           set -e
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/collected/aws-service-secret-manager-credintegralsecret
+
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds/aws-service-rds
           terragrunt plan --all --non-interactive -no-color
-          
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds/aws-service-rds
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
-          # cd $(Build.SourcesDirectory)
-          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/astro/aws-service-random-password
+          terragrunt plan --all --non-interactive -no-color
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/astro/aws-service-random-password
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/astro/aws-service-secret-manager
+          terragrunt plan --all --non-interactive -no-color
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/astro/aws-service-secret-manager
-          # terragrunt plan --all --non-interactive -no-color
-
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/astro/aws-service-rds-permissions
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/astro/aws-service-rds-permissions
+          terragrunt plan --all --non-interactive -no-color
 
 
           # cd $(Build.SourcesDirectory)
