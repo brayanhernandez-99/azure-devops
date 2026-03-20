@@ -136,10 +136,9 @@ jobs:
 
           RESPONSE=$(curl -s \
             -H "Authorization: Basic $ENCODED_PAT" \
-            "https://feeds.dev.azure.com/$ORG/$PROJECT/_apis/packaging/feeds/$FEED_ID/npm/packages/$ENCODED_PACKAGE/versions?api-version=7.1-preview.1")
+            "https://pkgs.dev.azure.com/$ORG/$PROJECT/_apis/packaging/feeds/$FEED_ID/npm/packages/$ENCODED_PACKAGE/versions?api-version=7.1-preview.1")
 
-          echo "📡 RAW RESPONSE:"
-          echo "$RESPONSE" | jq .
+          echo "$RESPONSE"
           # ORG="ux-technology"
           # PROJECT="Invictus"
           # FEED_ID="7b1af43c-e82e-4ce5-95cb-b02c749c668c"
