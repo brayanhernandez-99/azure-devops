@@ -85,11 +85,11 @@ jobs:
           terragrunt plan --all --non-interactive -no-color
           terragrunt apply --all --non-interactive -no-color
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/astro/aws-service-rds-permissions
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/astro/aws-service-secret-manager
           terragrunt plan --all --non-interactive -no-color
           terragrunt apply --all --non-interactive -no-color
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/astro/aws-service-secret-manager
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/astro/aws-service-rds-permissions
           terragrunt plan --all --non-interactive -no-color
           terragrunt apply --all --non-interactive -no-color
 
