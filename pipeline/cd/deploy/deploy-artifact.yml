@@ -131,12 +131,22 @@ jobs:
           ENCODED_PAT=$(echo -n ":$AZURE_DEVOPS_CLI_PAT" | base64 | tr -d '\n')
           ENCODED_PACKAGE=$(printf '%s' "$PACKAGE" | jq -sRr @uri)
 
+          PACKAGE_ID=$(curl -s \
+            -H "Authorization: Basic $ENCODED_PAT" \
+            "https://feeds.dev.azure.com/$ORG/$PROJECT/_apis/packaging/feeds/$FEED_ID/packages?protocolType=npm&api-version=7.1-preview.1" \
+            | jq -r --arg NAME "$PACKAGE" '.value[] | select(.name==$NAME) | .id')
+
+          echo "Package ID: $PACKAGE_ID"
+
+          
+
           echo "📦 Testing package: $PACKAGE"
           echo "🔗 Encoded: $ENCODED_PACKAGE"
 
           RESPONSE=$(curl -s \
             -H "Authorization: Basic $ENCODED_PAT" \
-            "https://pkgs.dev.azure.com/$ORG/$PROJECT/_apis/packaging/feeds/$FEED_ID/npm/packages/$ENCODED_PACKAGE/versions?api-version=7.1-preview.1")
+            "https://feeds.dev.azure.com/$ORG/$PROJECT/_apis/packaging/feeds/$FEED_ID/packages/$PACKAGE_ID/versions?api-version=7.1-preview.1" \
+            | jq .)
 
           echo "$RESPONSE"
           # ORG="ux-technology"
