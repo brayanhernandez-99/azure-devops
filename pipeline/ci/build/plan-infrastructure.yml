@@ -73,21 +73,23 @@ jobs:
       - script: |
           set -e
 
-          echo ""
-          echo "nc -zv invictus-db.cluster-c8pmc6q84bw0.us-east-1.rds.amazonaws.com 3306"
-          echo ""
-          nc -zv invictus-db.cluster-c8pmc6q84bw0.us-east-1.rds.amazonaws.com 3306
+          # echo ""
+          # echo "nc -zv invictus-db.cluster-c8pmc6q84bw0.us-east-1.rds.amazonaws.com 3306"
+          # echo ""
+          # nc -zv invictus-db.cluster-c8pmc6q84bw0.us-east-1.rds.amazonaws.com 3306
 
 
 
-          echo ""
-          echo "telnet invictus-db.cluster-c8pmc6q84bw0.us-east-1.rds.amazonaws.com 3306"
-          echo ""
-          telnet invictus-db.cluster-c8pmc6q84bw0.us-east-1.rds.amazonaws.com 3306
+          # echo ""
+          # echo "telnet invictus-db.cluster-c8pmc6q84bw0.us-east-1.rds.amazonaws.com 3306"
+          # echo ""
+          # telnet invictus-db.cluster-c8pmc6q84bw0.us-east-1.rds.amazonaws.com 3306
 
 
 
 
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/payments/aws-service-sqs
+          terragrunt plan --all --non-interactive -no-color
 
           # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds/aws-service-rds
           # terragrunt plan --all --non-interactive -no-color
