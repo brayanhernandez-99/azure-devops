@@ -121,73 +121,73 @@ jobs:
       - script: |
           ORG="ux-technology"
           PROJECT="Invictus"
-          FEED_ID="d6d5b34f-00f2-46f3-bb1b-d51320ccf7bd"
+          FEED_ID="7b1af43c-e82e-4ce5-95cb-b02c749c668c"
           VIEW="Prerelease"
 
           ENCODED_PAT=$(echo -n ":$AZURE_DEVOPS_CLI_PAT" | base64 | tr -d '\n')
 
-          RESPONSE=$(curl -s -H "Authorization: Basic $ENCODED_PAT" \
-          "https://feeds.dev.azure.com/ux-technology/Invictus/_apis/packaging/feeds/$FEED_ID/packages?api-version=7.1-preview.1")
+          # RESPONSE=$(curl -s -H "Authorization: Basic $ENCODED_PAT" \
+          # "https://feeds.dev.azure.com/ux-technology/Invictus/_apis/packaging/feeds/$FEED_ID/packages?api-version=7.1-preview.1")
 
-          echo "RAW RESPONSE:"
-          echo "$RESPONSE"
-          # CONTINUATION_TOKEN=""
+          # echo "RAW RESPONSE:"
+          # echo "$RESPONSE"
+          CONTINUATION_TOKEN=""
 
-          # echo "🚀 Starting mass promotion to view: $VIEW"
+          echo "🚀 Starting mass promotion to view: $VIEW"
 
-          # while : ; do
+          while : ; do
 
-          #   if [ -z "$CONTINUATION_TOKEN" ]; then
-          #     URL="https://feeds.dev.azure.com/$ORG/$PROJECT/_apis/packaging/feeds/$FEED_ID/packages?protocolType=npm&api-version=7.1-preview.1"
-          #   else
-          #     URL="https://feeds.dev.azure.com/$ORG/$PROJECT/_apis/packaging/feeds/$FEED_ID/packages?protocolType=npm&continuationToken=$CONTINUATION_TOKEN&api-version=7.1-preview.1"
-          #   fi
+            if [ -z "$CONTINUATION_TOKEN" ]; then
+              URL="https://feeds.dev.azure.com/$ORG/$PROJECT/_apis/packaging/feeds/$FEED_ID/packages?protocolType=npm&api-version=7.1-preview.1"
+            else
+              URL="https://feeds.dev.azure.com/$ORG/$PROJECT/_apis/packaging/feeds/$FEED_ID/packages?protocolType=npm&continuationToken=$CONTINUATION_TOKEN&api-version=7.1-preview.1"
+            fi
 
-          #   RESPONSE=$(curl -s -D headers.txt \
-          #     -H "Authorization: Basic $ENCODED_PAT" \
-          #     "$URL")
+            RESPONSE=$(curl -s -D headers.txt \
+              -H "Authorization: Basic $ENCODED_PAT" \
+              "$URL")
 
-          #   PACKAGES=$(echo "$RESPONSE" | jq -r '.value[].name')
+            PACKAGES=$(echo "$RESPONSE" | jq -r '.value[].name')
 
-          #   for PACKAGE in $PACKAGES
-          #   do
-          #     echo "📦 Package: $PACKAGE"
+            for PACKAGE in $PACKAGES
+            do
+              echo "📦 Package: $PACKAGE"
 
-          #     ENCODED_PACKAGE=$(printf '%s' "$PACKAGE" | jq -sRr @uri)
+              ENCODED_PACKAGE=$(printf '%s' "$PACKAGE" | jq -sRr @uri)
 
-          #     VERSIONS=$(curl -s \
-          #       -H "Authorization: Basic $ENCODED_PAT" \
-          #       "https://feeds.dev.azure.com/$ORG/$PROJECT/_apis/packaging/feeds/$FEED_ID/npm/packages/$ENCODED_PACKAGE/versions?api-version=7.1-preview.1" \
-          #       | jq -r '.value[].version')
+              VERSIONS=$(curl -s \
+                -H "Authorization: Basic $ENCODED_PAT" \
+                "https://feeds.dev.azure.com/$ORG/$PROJECT/_apis/packaging/feeds/$FEED_ID/npm/packages/$ENCODED_PACKAGE/versions?api-version=7.1-preview.1" \
+                | jq -r '.value[].version')
 
-          #     for VERSION in $VERSIONS
-          #     do
-          #       echo "  🔄 Promoting $PACKAGE@$VERSION → $VIEW"
+              for VERSION in $VERSIONS
+              do
+                echo "  🔄 Promoting $PACKAGE@$VERSION → $VIEW"
 
-          #       curl -s -X PATCH \
-          #         -H "Authorization: Basic $ENCODED_PAT" \
-          #         -H "Content-Type: application/json" \
-          #         "https://pkgs.dev.azure.com/$ORG/$PROJECT/_apis/packaging/feeds/$FEED_ID/npm/$ENCODED_PACKAGE/versions/$VERSION?api-version=7.2-preview.1" \
-          #         -d "{
-          #           \"views\": {
-          #             \"op\": \"add\",
-          #             \"path\": \"/views/-\",
-          #             \"value\": \"$VIEW\"
-          #           }
-          #         }" > /dev/null
-          #     done
+                curl -s -X PATCH \
+                  -H "Authorization: Basic $ENCODED_PAT" \
+                  -H "Content-Type: application/json" \
+                  "https://pkgs.dev.azure.com/$ORG/$PROJECT/_apis/packaging/feeds/$FEED_ID/npm/$ENCODED_PACKAGE/versions/$VERSION?api-version=7.2-preview.1" \
+                  -d "{
+                    \"views\": {
+                      \"op\": \"add\",
+                      \"path\": \"/views/-\",
+                      \"value\": \"$VIEW\"
+                    }
+                  }" > /dev/null
+              done
 
-          #   done
+            done
 
-          #   CONTINUATION_TOKEN=$(grep -i x-ms-continuationtoken headers.txt | awk '{print $2}' | tr -d '\r')
+            CONTINUATION_TOKEN=$(grep -i x-ms-continuationtoken headers.txt | awk '{print $2}' | tr -d '\r')
 
-          #   if [ -z "$CONTINUATION_TOKEN" ]; then
-          #     break
-          #   fi
+            if [ -z "$CONTINUATION_TOKEN" ]; then
+              break
+            fi
 
-          # done
+          done
 
-          # echo "✅ Done 🚀"
+          echo "✅ Done 🚀"
 
         displayName: "Promote npm package"
         condition: and(succeeded(), ne(variables['Build.SourceBranchName'], 'develop'))
