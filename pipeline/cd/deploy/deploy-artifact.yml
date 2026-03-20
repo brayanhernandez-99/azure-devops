@@ -165,17 +165,17 @@ jobs:
 
                 echo "  🔄 Promoting $PACKAGE@$VERSION → $VIEW"
 
-                RESPONSE_PATCH=$(curl -s -w "\nHTTP_STATUS:%{http_code}" -X PATCH \
-                  -H "Authorization: Basic $ENCODED_PAT" \
-                  -H "Content-Type: application/json-patch+json" \
-                  "https://pkgs.dev.azure.com/$ORG/$PROJECT/_apis/packaging/feeds/$FEED_ID/npm/$ENCODED_PACKAGE/versions/$VERSION?api-version=7.2-preview.1" \
-                  -d "[
-                    {
-                      \"op\": \"add\",
-                      \"path\": \"/views/-\",
-                      \"value\": \"$VIEW\"
-                    }
-                  ]")
+                RESPONSE_PATCH=$(curl -s -X PATCH \
+                -H "Authorization: Basic $ENCODED_PAT" \
+                -H "Content-Type: application/json" \
+                "https://pkgs.dev.azure.com/$ORG/$PROJECT/_apis/packaging/feeds/$FEED_ID/npm/$ENCODED_PACKAGE/versions/$VERSION?api-version=7.2-preview.1" \
+                -d "{
+                  \"views\": {
+                    \"op\": \"add\",
+                    \"path\": \"/views/-\",
+                    \"value\": \"$VIEW\"
+                  }
+                }")
 
                 STATUS=$(echo "$RESPONSE_PATCH" | grep HTTP_STATUS | cut -d':' -f2)
 
