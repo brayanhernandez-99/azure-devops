@@ -124,7 +124,7 @@ jobs:
 
 
           ORG="ux-technology"
-          PROJECT="Invictus"   # o usa el GUID si quieres probar
+          PROJECT="12c50c8c-87d3-485c-8176-eb25f6b918f5"
           FEED_ID="7b1af43c-e82e-4ce5-95cb-b02c749c668c"
           PACKAGE="@matrixtech/fw-core"
 
