@@ -118,99 +118,96 @@ jobs:
         env:
           AZURE_DEVOPS_PAT: $(PAT-AZ)
 
-      - script: |
+      # - script: |
 
+      #     ORG="ux-technology"
+      #     PROJECT="12c50c8c-87d3-485c-8176-eb25f6b918f5"
+      #     FEED_ID="7b1af43c-e82e-4ce5-95cb-b02c749c668c"
+      #     VIEW="Prerelease"
 
+      #     ENCODED_PAT=$(echo -n ":$AZURE_DEVOPS_CLI_PAT" | base64 | tr -d '\n')
 
+      #     CONTINUATION_TOKEN=""
 
-          ORG="ux-technology"
-          PROJECT="12c50c8c-87d3-485c-8176-eb25f6b918f5"
-          FEED_ID="7b1af43c-e82e-4ce5-95cb-b02c749c668c"
-          VIEW="Prerelease"
+      #     echo "🚀 Starting mass promotion to view: $VIEW"
 
-          ENCODED_PAT=$(echo -n ":$AZURE_DEVOPS_CLI_PAT" | base64 | tr -d '\n')
+      #     while : ; do
 
-          CONTINUATION_TOKEN=""
+      #       if [ -z "$CONTINUATION_TOKEN" ]; then
+      #         URL="https://feeds.dev.azure.com/$ORG/$PROJECT/_apis/packaging/feeds/$FEED_ID/packages?protocolType=npm&api-version=7.1-preview.1"
+      #       else
+      #         URL="https://feeds.dev.azure.com/$ORG/$PROJECT/_apis/packaging/feeds/$FEED_ID/packages?protocolType=npm&continuationToken=$CONTINUATION_TOKEN&api-version=7.1-preview.1"
+      #       fi
 
-          echo "🚀 Starting mass promotion to view: $VIEW"
+      #       RESPONSE=$(curl -s -D headers_pkg.txt \
+      #         -H "Authorization: Basic $ENCODED_PAT" \
+      #         "$URL")
 
-          while : ; do
+      #       while read pkg; do
+      #         PACKAGE=$(echo "$pkg" | jq -r '.name')
+      #         PACKAGE_ID=$(echo "$pkg" | jq -r '.id')
 
-            if [ -z "$CONTINUATION_TOKEN" ]; then
-              URL="https://feeds.dev.azure.com/$ORG/$PROJECT/_apis/packaging/feeds/$FEED_ID/packages?protocolType=npm&api-version=7.1-preview.1"
-            else
-              URL="https://feeds.dev.azure.com/$ORG/$PROJECT/_apis/packaging/feeds/$FEED_ID/packages?protocolType=npm&continuationToken=$CONTINUATION_TOKEN&api-version=7.1-preview.1"
-            fi
+      #         echo "📦 Package: $PACKAGE"
 
-            RESPONSE=$(curl -s -D headers_pkg.txt \
-              -H "Authorization: Basic $ENCODED_PAT" \
-              "$URL")
+      #         # 🔥 traer TODAS las versiones usando PACKAGE_ID
+      #         VERSIONS_RESPONSE=$(curl -s \
+      #           -H "Authorization: Basic $ENCODED_PAT" \
+      #           "https://feeds.dev.azure.com/$ORG/$PROJECT/_apis/packaging/feeds/$FEED_ID/packages/$PACKAGE_ID/versions?api-version=7.1-preview.1")
 
-            while read pkg; do
-              PACKAGE=$(echo "$pkg" | jq -r '.name')
-              PACKAGE_ID=$(echo "$pkg" | jq -r '.id')
+      #         while read VERSION; do
 
-              echo "📦 Package: $PACKAGE"
+      #           # 🔎 validar si ya tiene el view
+      #           HAS_VIEW=$(echo "$VERSIONS_RESPONSE" | jq -r \
+      #             --arg VERSION "$VERSION" \
+      #             --arg VIEW "$VIEW" \
+      #             '.value[]
+      #             | select(.version==$VERSION)
+      #             | .views[]?.name' | grep -w "$VIEW")
 
-              # 🔥 traer TODAS las versiones usando PACKAGE_ID
-              VERSIONS_RESPONSE=$(curl -s \
-                -H "Authorization: Basic $ENCODED_PAT" \
-                "https://feeds.dev.azure.com/$ORG/$PROJECT/_apis/packaging/feeds/$FEED_ID/packages/$PACKAGE_ID/versions?api-version=7.1-preview.1")
+      #           if [ -n "$HAS_VIEW" ]; then
+      #             echo "  ⏭ $PACKAGE@$VERSION ya está en $VIEW"
+      #             continue
+      #           fi
 
-              while read VERSION; do
+      #           echo "  🔄 Promoting $PACKAGE@$VERSION → $VIEW"
 
-                # 🔎 validar si ya tiene el view
-                HAS_VIEW=$(echo "$VERSIONS_RESPONSE" | jq -r \
-                  --arg VERSION "$VERSION" \
-                  --arg VIEW "$VIEW" \
-                  '.value[]
-                  | select(.version==$VERSION)
-                  | .views[]?.name' | grep -w "$VIEW")
+      #           ENCODED_PACKAGE=$(printf '%s' "$PACKAGE" | jq -sRr @uri)
 
-                if [ -n "$HAS_VIEW" ]; then
-                  echo "  ⏭ $PACKAGE@$VERSION ya está en $VIEW"
-                  continue
-                fi
+      #           RESPONSE_PATCH=$(curl -s -w "\nHTTP_STATUS:%{http_code}" -X PATCH \
+      #             -H "Authorization: Basic $ENCODED_PAT" \
+      #             -H "Content-Type: application/json" \
+      #             "https://pkgs.dev.azure.com/$ORG/$PROJECT/_apis/packaging/feeds/$FEED_ID/npm/$ENCODED_PACKAGE/versions/$VERSION?api-version=7.2-preview.1" \
+      #             -d "{
+      #               \"views\": {
+      #                 \"op\": \"add\",
+      #                 \"path\": \"/views/-\",
+      #                 \"value\": \"$VIEW\"
+      #               }
+      #             }")
 
-                echo "  🔄 Promoting $PACKAGE@$VERSION → $VIEW"
+      #           STATUS=$(echo "$RESPONSE_PATCH" | grep HTTP_STATUS | cut -d':' -f2)
 
-                ENCODED_PACKAGE=$(printf '%s' "$PACKAGE" | jq -sRr @uri)
+      #           if [ "$STATUS" != "200" ]; then
+      #             echo "  ✅  promoting $PACKAGE@$VERSION (HTTP $STATUS)"
+      #           else
+      #             echo "  ✅ Promoted"
+      #           fi
 
-                RESPONSE_PATCH=$(curl -s -w "\nHTTP_STATUS:%{http_code}" -X PATCH \
-                  -H "Authorization: Basic $ENCODED_PAT" \
-                  -H "Content-Type: application/json" \
-                  "https://pkgs.dev.azure.com/$ORG/$PROJECT/_apis/packaging/feeds/$FEED_ID/npm/$ENCODED_PACKAGE/versions/$VERSION?api-version=7.2-preview.1" \
-                  -d "{
-                    \"views\": {
-                      \"op\": \"add\",
-                      \"path\": \"/views/-\",
-                      \"value\": \"$VIEW\"
-                    }
-                  }")
+      #         done < <(echo "$VERSIONS_RESPONSE" | jq -r '.value[].version')
 
-                STATUS=$(echo "$RESPONSE_PATCH" | grep HTTP_STATUS | cut -d':' -f2)
+      #       done < <(echo "$RESPONSE" | jq -c '.value[]')
 
-                if [ "$STATUS" != "200" ]; then
-                  echo "  ✅  promoting $PACKAGE@$VERSION (HTTP $STATUS)"
-                else
-                  echo "  ✅ Promoted"
-                fi
+      #       CONTINUATION_TOKEN=$(grep -i x-ms-continuationtoken headers_pkg.txt | awk '{print $2}' | tr -d '\r')
 
-              done < <(echo "$VERSIONS_RESPONSE" | jq -r '.value[].version')
+      #       if [ -z "$CONTINUATION_TOKEN" ]; then
+      #         break
+      #       fi
 
-            done < <(echo "$RESPONSE" | jq -c '.value[]')
+      #     done
 
-            CONTINUATION_TOKEN=$(grep -i x-ms-continuationtoken headers_pkg.txt | awk '{print $2}' | tr -d '\r')
+      #     echo "✅ Done 🚀"
 
-            if [ -z "$CONTINUATION_TOKEN" ]; then
-              break
-            fi
-
-          done
-
-          echo "✅ Done 🚀"
-
-        displayName: "Promote npm package"
-        condition: and(succeeded(), ne(variables['Build.SourceBranchName'], 'develop'))
-        env:
-          AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
+      #   displayName: "Promote npm package all"
+      #   condition: and(succeeded(), ne(variables['Build.SourceBranchName'], 'develop'))
+      #   env:
+      #     AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
