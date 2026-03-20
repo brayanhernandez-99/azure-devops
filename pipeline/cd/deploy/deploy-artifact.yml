@@ -126,9 +126,11 @@ jobs:
 
           ENCODED_PAT=$(echo -n ":$AZURE_DEVOPS_CLI_PAT" | base64 | tr -d '\n')
 
-          curl -s -u :$AZURE_DEVOPS_PAT \
-          "https://feeds.dev.azure.com/ux-technology/Invictus/_apis/packaging/feeds?api-version=7.1-preview.1" \
-          | jq -r '.value[] | "\(.name) → \(.id)"'
+          RESPONSE=$(curl -s -H "Authorization: Basic $ENCODED_PAT" \
+          "https://feeds.dev.azure.com/ux-technology/Invictus/_apis/packaging/feeds/$FEED_ID/packages?api-version=7.1-preview.1")
+
+          echo "RAW RESPONSE:"
+          echo "$RESPONSE"
           # CONTINUATION_TOKEN=""
 
           # echo "🚀 Starting mass promotion to view: $VIEW"
