@@ -87,7 +87,7 @@ jobs:
             }
           ')
 
-          if echo "$diff" | grep -qE '^\+.*\bconsole\.'; then8
+          if echo "$diff" | grep -qE '^\+.*\bconsole\.'; then
             echo -e "$\n🧨 Archivos detectados con console.* en el código 🧨"
             echo "$console_logs"
             echo -e "\n##vso[task.logissue type=error]⚠️ Se encontro 'console.*' en los cambios"
