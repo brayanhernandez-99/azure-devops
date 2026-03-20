@@ -161,43 +161,50 @@ jobs:
 
 
 
-            # for PACKAGE in $PACKAGES
-            # do
-            #   echo "📦 Package: $PACKAGE"
+            for PACKAGE in $PACKAGES
+            do
+              echo "📦 Package: $PACKAGE"
 
-            #   ENCODED_PACKAGE=$(printf '%s' "$PACKAGE" | jq -sRr @uri)
+              ENCODED_PACKAGE=$(printf '%s' "$PACKAGE" | jq -sRr @uri)
 
-            #   VERSIONS=$(curl -s \
-            #     -H "Authorization: Basic $ENCODED_PAT" \
-            #     "https://feeds.dev.azure.com/$ORG/$PROJECT/_apis/packaging/feeds/$FEED_ID/npm/packages/$ENCODED_PACKAGE/versions?api-version=7.1-preview.1" \
-            #     | jq -r '.value[].version')
+              RESPONSE=$(curl -s \
+                -H "Authorization: Basic $ENCODED_PAT" \
+                "https://feeds.dev.azure.com/$ORG/$PROJECT/_apis/packaging/feeds/$FEED_ID/npm/packages/$ENCODED_PACKAGE/versions?api-version=7.1-preview.1")
 
-            #   for VERSION in $VERSIONS
-            #   do
-            #     echo "  🔄 Promoting $PACKAGE@$VERSION → $VIEW"
+              echo "🔍 RAW VERSIONS RESPONSE:"
+              echo "$RESPONSE" | jq .
 
-            #     RESPONSE=$(curl -v -X PATCH "https://pkgs.dev.azure.com/ux-technology/Invictus/_apis/packaging/feeds/$(FEED_ID)/npm/$ENCODED_PACKAGE/versions/$VERSION?api-version=7.2-preview.1" \
-            #     -H "Content-Type: application/json" \
-            #     -H "Authorization: Basic $ENCODED_PAT" \
-            #     -d "{
-            #         \"views\": {
-            #           \"path\": \"/views/-\",
-            #           \"op\": \"add\",
-            #           \"value\": \"$VIEW\"
-            #         }
-            #       }")
+              VERSIONS=$(echo "$RESPONSE" | jq -r '.value[]?.version')
+
+              echo "📌 Versions found:"
+              echo "$VERSIONS"
+
+              # for VERSION in $VERSIONS
+              # do
+              #   echo "  🔄 Promoting $PACKAGE@$VERSION → $VIEW"
+
+              #   RESPONSE=$(curl -v -X PATCH "https://pkgs.dev.azure.com/ux-technology/Invictus/_apis/packaging/feeds/$(FEED_ID)/npm/$ENCODED_PACKAGE/versions/$VERSION?api-version=7.2-preview.1" \
+              #   -H "Content-Type: application/json" \
+              #   -H "Authorization: Basic $ENCODED_PAT" \
+              #   -d "{
+              #       \"views\": {
+              #         \"path\": \"/views/-\",
+              #         \"op\": \"add\",
+              #         \"value\": \"$VIEW\"
+              #       }
+              #     }")
                 
-            #     echo "Respuesta de la API:"
-            #     echo "$RESPONSE"
-            #   done
+              #   echo "Respuesta de la API:"
+              #   echo "$RESPONSE"
+              # done
 
-            # done
+            done
 
-            # CONTINUATION_TOKEN=$(grep -i x-ms-continuationtoken headers.txt | awk '{print $2}' | tr -d '\r')
+            CONTINUATION_TOKEN=$(grep -i x-ms-continuationtoken headers.txt | awk '{print $2}' | tr -d '\r')
 
-            # if [ -z "$CONTINUATION_TOKEN" ]; then
-            #   break
-            # fi
+            if [ -z "$CONTINUATION_TOKEN" ]; then
+              break
+            fi
 
           done
 
