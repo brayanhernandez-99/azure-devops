@@ -210,6 +210,7 @@ jobs:
           tree -a "$(Build.SourcesDirectory)/release"
 
           BASE_PATH="$(Build.SourcesDirectory)/release/$(environment)/$(version)"
+          BASE_PATH="$(Build.SourcesDirectory)/release/$(version)/$(environment)"
           APP_DIR="$BASE_PATH/app"
           mkdir -p $APP_DIR
           all_found=true
