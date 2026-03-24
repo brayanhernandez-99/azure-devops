@@ -206,6 +206,9 @@ jobs:
 
       - script: |
           echo -e "\n📝 Validando build electron..."
+
+          tree -a "$(Build.SourcesDirectory)/release"
+
           BASE_PATH="$(Build.SourcesDirectory)/release/$(environment)/$(version)"
           APP_DIR="$BASE_PATH/app"
           mkdir -p $APP_DIR
@@ -512,6 +515,9 @@ jobs:
           targetType: " inline"
           script: |
             Write-Host "📝 Validando build electron..."
+
+            tree "$(Build.SourcesDirectory)\release" /F /A
+
             $BASE_PATH = "$(Build.SourcesDirectory)\release\$($env:environment)\$($env:version)"
             $APP_DIR="$BASE_PATH\app"
             New-Item -ItemType Directory -Path $APP_DIR -Force | Out-Null
