@@ -366,6 +366,7 @@ jobs:
 
           BRANCH_NAME="$BUILD_SOURCEBRANCHNAME"
           BRANCH_NAME_MULTI=$environments
+          RED="${red:-}"
 
           if [[ ( "$BRANCH_NAME" == "develop" && "$BRANCH_NAME_MULTI" == "develop" ) || ( "$BRANCH_NAME" == "staging" && "$BRANCH_NAME_MULTI" == "staging" ) || "$RED" == "antioquia" ]]; then
             repoName="$(Build.Repository.Name)"
@@ -442,6 +443,7 @@ jobs:
 
             BRANCH_NAME="$BUILD_SOURCEBRANCHNAME"
             BRANCH_NAME_MULTI=$environments
+            RED="${red:-}"
 
             if [[ ( "$BRANCH_NAME" == "develop" && "$BRANCH_NAME_MULTI" == "develop" ) || ( "$BRANCH_NAME" == "staging" && "$BRANCH_NAME_MULTI" == "staging" ) || "$RED" == "antioquia" ]]; then
               newTag="$(version)"
@@ -468,6 +470,7 @@ jobs:
               ' "$INPUT" > "$OUTPUT"
 
             else
+              newTag="$(version)"
               jq --arg newTag "$newTag" '
                 .containerDefinitions |= map(
                   .image |= (split(":")[0] + ":" + $newTag)
