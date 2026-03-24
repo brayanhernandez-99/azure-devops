@@ -10,6 +10,7 @@ jobs:
       - template: ../../variables/groups-transversal-variables-iac.yml
         parameters:
           region: ${{ parameters.region }}
+          environments: ${{ parameters.environments }}
 
     steps:
       - script: |

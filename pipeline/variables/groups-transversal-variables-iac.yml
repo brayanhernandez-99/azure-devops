@@ -13,13 +13,23 @@ variables:
     - group: ftp-infrastructure-develop
 
   - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
-    - group: trasversal-aws-staging
-    - group: infrastructure-staging
-    - group: cloudfront-infrastructure-staging
-    - group: parameters-infrastructure-staging
-    - group: secrets-infrastructure-staging
-    - group: autoscaling-infrastructure-staging
-    - group: ftp-infrastructure-staging
+
+    - ${{ if eq(parameters.environments, 'staging') }}:
+      - group: trasversal-aws-qa
+      - group: infrastructure-qa
+      - group: cloudfront-infrastructure-qa
+      - group: parameters-infrastructure-qa
+      - group: secrets-infrastructure-qa
+      - group: autoscaling-infrastructure-staging
+
+    - ${{ if eq(parameters.environments, 'staging_new') }}:
+      - group: trasversal-aws-staging
+      - group: infrastructure-staging
+      - group: cloudfront-infrastructure-staging
+      - group: parameters-infrastructure-staging
+      - group: secrets-infrastructure-staging
+      - group: autoscaling-infrastructure-staging
+      - group: ftp-infrastructure-staging
 
   # Master branch → por región
   - ${{ if and(eq(parameters.region, 'antioquia'), eq(variables['Build.SourceBranchName'], 'master')) }}:

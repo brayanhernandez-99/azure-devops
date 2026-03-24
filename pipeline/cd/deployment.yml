@@ -23,3 +23,4 @@ jobs:
       - template: ./deploy/apply-infrastructure.yml
         parameters:
           region: ${{ parameters.region }}
+          environments: ${{ parameters.environments }}

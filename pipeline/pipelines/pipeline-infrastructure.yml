@@ -28,18 +28,37 @@ stages:
 
   #####################################################################
 
-  - ${{ if ne(variables['Build.SourceBranchName'], 'master') }}:
-      - stage: plan_infrastructure
-        displayName: "🧩 Plan Infrastructure"
+  - ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}:
+    - stage: plan_infrastructure
+      displayName: "🧩 Plan Infrastructure"
+      dependsOn: scan_infrastructure
+      jobs:
+        - template: ../ci/build/plan-infrastructure.yml
+
+    - stage: apply_infrastructure
+      displayName: "🚀 Apply Infrastructure"
+      dependsOn: plan_infrastructure
+      jobs:
+        - template: ../cd/deployment.yml
+          parameters:
+            release: ${{ parameters.release }}
+  
+  - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
+    - ${{ each environments in parameters.environments_new_staging }}:
+      - stage: plan_infrastructure_${{ environments }}
+        displayName: "🧩 Plan Infrastructure ${{ environments }}"
         dependsOn: scan_infrastructure
         jobs:
           - template: ../ci/build/plan-infrastructure.yml
+            parameters:
+              environments: ${{ environments }}
 
-      - ${{ if in(variables['Build.SourceBranchName'], 'develop', 'staging') }}:
-          - stage: apply_infrastructure
-            displayName: "🚀 Apply Infrastructure"
-            dependsOn: plan_infrastructure
-            jobs:
-              - template: ../cd/deployment.yml
-                parameters:
-                  release: ${{ parameters.release }}
+      - stage: apply_infrastructure_${{ environments }}
+        displayName: "🚀 Apply Infrastructure ${{ environments }}"
+        dependsOn: plan_infrastructure_${{ environments }}
+        jobs:
+          - template: ../cd/deployment.yml
+            parameters:
+              release: ${{ parameters.release }}
+              environments: ${{ environments }}
+
