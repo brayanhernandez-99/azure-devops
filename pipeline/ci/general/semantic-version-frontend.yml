@@ -72,51 +72,45 @@ jobs:
           sourceBranch="${BUILD_SOURCEBRANCH/refs\/heads\//}"
           targetBranch="master"
 
-          echo -e "\n🔎 Verificando que no se hayan agregado nuevas sentencias console.* ..."
+          echo -e "\n🔎 Verificando que no se hayan agregado nuevas sentencias console.log..."
           echo "Branch actual: $sourceBranch"
           echo "Branch destino: $targetBranch"
-          paths=""
-          
-          
-          paths="$paths $(System.DefaultWorkingDirectory)/$(file)/$(msName)"
-          
+
+          paths="$(file)/$(msName)"
+
           git fetch origin "$targetBranch"
           diff=$(git --no-pager diff "origin/$targetBranch..origin/$sourceBranch" -- $paths)
 
-          console_logs=$(echo "$diff" | awk '
-            # Captura el archivo actual
+          pattern='console[.]'
+
+          console_logs=$(echo "$diff" | awk -v pat="$pattern" '
             /^\+\+\+ b\// {
               file=$0
               sub(/^\+\+\+ b\//,"",file)
             }
-
-            # Captura el inicio del hunk: @@ -a,b +c,d @@
             /^@@/ {
-              match($0, /\+([0-9]+)/, arr)
-              line=arr[1]
+              if (match($0, /\+([0-9]+)/, arr)) {
+                line=arr[1]
+              } else {
+                line=0
+              }
             }
-
-            # Línea agregada
             /^\+/ && !/^\+\+\+/ {
-              if ($0 ~ /\bconsole\./) 
+              if ($0 ~ pat) {
                 print file ":" line ":" substr($0, 2)
               }
               line++
             }
-
-            # Línea de contexto
-            /^ / {
-              line++
-            }
+            /^ / { line++ }
           ')
 
-          if echo "$diff" | grep -qE '^\+.*\bconsole\.'; then
-            echo -e "\n🧨 Archivos detectados con console.* en el código de la app $(msName) 🧨"
+          if echo "$diff" | grep -qE '^\+.*console\.'; then
+            echo -e "\n🧨 Archivos detectados con console.log en el código de la app $(msName) 🧨"
             echo "$console_logs"
-            echo -e "\n##vso[task.logissue type=error]⚠️ Se encontro 'console.*' en los cambios del MF $(msName)..."
+            echo -e "\n##vso[task.logissue type=error]⚠️ Se encontro 'console.log' en los cambios del MF $(msName)..."
             exit 99
           else
-            echo -e "\n✅ No se encontraron sentencias 'console.*' en los cambios"
+            echo -e "\n✅ No se encontraron sentencias 'console.log' en los cambios"
           fi
         displayName: "🔍 Validate for 'console.*' in changes"
         condition: and(succeeded(), or(
@@ -220,7 +214,6 @@ jobs:
             fi
           done
         displayName: "🔍 Validate Micro-Frontend Exists in version/master"
-
 
       - script: |
           cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
@@ -391,51 +384,51 @@ jobs:
         condition: succeeded()
 
   - ${{ if or(eq(variables['Build.SourceBranchName'], 'develop'), eq(variables['Build.SourceBranchName'], 'staging')) }}:
-    - deployment: push_versions
-      displayName: "🔐 serial git push (version/*)"
-      environment: git-version-lock
-      dependsOn: semantic_version_micro_fronted
-      strategy:
-        runOnce:
-          deploy:
-            steps:
-            - checkout: self
-              fetchDepth: 0
-              persistCredentials: true
-              fetchTags: false
+      - deployment: push_versions
+        displayName: "🔐 serial git push (version/*)"
+        environment: git-version-lock
+        dependsOn: semantic_version_micro_fronted
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                  fetchDepth: 0
+                  persistCredentials: true
+                  fetchTags: false
 
-            - download: current
-              artifact: versions
-              displayName: "📥 Download Versions"
+                - download: current
+                  artifact: versions
+                  displayName: "📥 Download Versions"
 
-            - script: |
-                raw_branch=$(Build.SourceBranch)
-                clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
+                - script: |
+                    raw_branch=$(Build.SourceBranch)
+                    clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
 
-                git config user.name "pipeline"
-                git config user.email "pipelineUX@ux.technology"
+                    git config user.name "pipeline"
+                    git config user.email "pipelineUX@ux.technology"
 
-                git fetch origin version/$clean_branch
-                git checkout -B version/$clean_branch origin/version/$clean_branch
+                    git fetch origin version/$clean_branch
+                    git checkout -B version/$clean_branch origin/version/$clean_branch
 
-                for files in $(Pipeline.Workspace)/versions/*/version.json; do
-                  ms=$(jq -r .ms "$files")
-                  version=$(jq -r .version "$files")
+                    for files in $(Pipeline.Workspace)/versions/*/version.json; do
+                      ms=$(jq -r .ms "$files")
+                      version=$(jq -r .version "$files")
 
-                  echo "🔧 $ms → $version"
-                  if [[ "$ms" == "app-administration-vue2" || "$ms" == "app-sellers-vue2" ]]; then
-                    dir="app-legacy"
-                  else
-                    dir="apps"
-                  fi
+                      echo "🔧 $ms → $version"
+                      if [[ "$ms" == "app-administration-vue2" || "$ms" == "app-sellers-vue2" ]]; then
+                        dir="app-legacy"
+                      else
+                        dir="apps"
+                      fi
 
-                  jq --arg version "$version" \
-                    '.version = $version' \
-                    "$dir/$ms/package.json" > tmp.json && mv tmp.json "$dir/$ms/package.json"
+                      jq --arg version "$version" \
+                        '.version = $version' \
+                        "$dir/$ms/package.json" > tmp.json && mv tmp.json "$dir/$ms/package.json"
 
-                  git add "$dir/$ms/package.json"
-                done
+                      git add "$dir/$ms/package.json"
+                    done
 
-                git commit -m "chore: bump versions [monorepo]"
-                git push origin version/$clean_branch
-              displayName: "⚡ Commit Version & Push"
+                    git commit -m "chore: bump versions [monorepo]"
+                    git push origin version/$clean_branch
+                  displayName: "⚡ Commit Version & Push"
