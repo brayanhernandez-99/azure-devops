@@ -14,12 +14,12 @@ variables:
 
   - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
 
-    - ${{ if eq(parameters.environments, 'staging') }}:
-      - group: trasversal-aws-qa
-      - group: infrastructure-qa
-      - group: cloudfront-infrastructure-qa
-      - group: parameters-infrastructure-qa
-      - group: secrets-infrastructure-qa
+    - ${{ if eq(parameters.environments, 'staging_nacional') }}:
+      - group: trasversal-aws-staging-nacional
+      - group: infrastructure-staging-nacional
+      - group: cloudfront-infrastructure-staging-nacional
+      - group: parameters-infrastructure-staging-nacional
+      - group: secrets-infrastructure-staging-nacional
       - group: autoscaling-infrastructure-staging
 
     - ${{ if eq(parameters.environments, 'staging_new') }}:
