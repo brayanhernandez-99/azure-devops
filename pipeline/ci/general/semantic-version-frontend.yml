@@ -75,7 +75,6 @@ jobs:
           echo -e "\n🔎 Verificando que no se hayan agregado nuevas sentencias console.log..."
           echo "Branch actual: $sourceBranch"
           echo "Branch destino: $targetBranch"
-<<<<<<< HEAD
           
           
           paths="$(file)/$(msName)"
@@ -86,23 +85,10 @@ jobs:
           pattern='\bconsole\.'
 
           console_logs=$(echo "$diff" | awk -v pat="$pattern" '
-=======
-
-          paths=""
-          paths="$paths $(System.DefaultWorkingDirectory)/$(file)/$(msName)"
-          git fetch origin "$targetBranch" "$sourceBranch"
-
-          diff=$(git --no-pager diff "origin/$targetBranch...origin/$sourceBranch" -- $paths)
-          console_logs=$(echo "$diff" | tr -d '\r' | awk '
->>>>>>> a4b22571439fda2caa41d34343949149420c3a98
             /^\+\+\+ b\// {
               file=$0
               sub(/^\+\+\+ b\//,"",file)
             }
-<<<<<<< HEAD
-=======
-
->>>>>>> a4b22571439fda2caa41d34343949149420c3a98
             /^@@/ {
               if (match($0, /\+([0-9]+)/, arr)) {
                 line=arr[1]
@@ -110,24 +96,13 @@ jobs:
                 line=0
               }
             }
-<<<<<<< HEAD
-=======
-
->>>>>>> a4b22571439fda2caa41d34343949149420c3a98
             /^\+/ && !/^\+\+\+/ {
               if ($0 ~ pat) {
                 print file ":" line ":" substr($0, 2)
               }
               line++
             }
-<<<<<<< HEAD
             /^ / { line++ }
-=======
-
-            /^ / {
-              line++
-            }
->>>>>>> a4b22571439fda2caa41d34343949149420c3a98
           ')
 
           if echo "$diff" | grep -qE "^\+.*$pattern"; then
