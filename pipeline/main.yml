@@ -5,7 +5,7 @@ parameters:
   - name: environments_new_staging
     type: object
     default:
-      - staging
+      # - staging
       - staging_new
 
   - name: red
