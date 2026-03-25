@@ -13,7 +13,7 @@ parameters:
     default:
       - antioquia
       - cap
-      # - tolima
+      - tolima
       - huila
       - cauca
       - boyaca
