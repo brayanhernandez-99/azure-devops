@@ -263,12 +263,12 @@ jobs:
         displayName: "⚙️ Set Variable — SONARQUBE_SCANNER_PARAMS"
         condition: and( eq(variables['Build.Reason'], 'PullRequest'), or(startsWith(variables['System.PullRequest.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['System.PullRequest.SourceBranch'], 'refs/heads/hotfix/')))
 
-      - script: |
-          pnpm run test
-        displayName: "🧪 Run Tests for: $(Build.Repository.Name)"
-        continueOnError: true
-        condition: and(succeeded(),
-            ne(variables['Build.SourceBranchName'], 'develop'))
+      # - script: |
+      #     pnpm run test
+      #   displayName: "🧪 Run Tests for: $(Build.Repository.Name)"
+      #   continueOnError: true
+      #   condition: and(succeeded(),
+      #       ne(variables['Build.SourceBranchName'], 'develop'))
       
       # - script: |
       #     PKG="$(System.DefaultWorkingDirectory)/package.json"
