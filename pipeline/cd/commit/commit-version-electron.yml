@@ -11,6 +11,7 @@ jobs:
           - checkout: self
             fetchDepth: 0
             persistCredentials: true
+            fetchTags: false
 
           - download: current
             artifact: versions
@@ -37,5 +38,6 @@ jobs:
               git add package.json
               git commit -m "chore($(Build.Repository.Name)): bump version to $cleanNEXT_VERSION"
               git push origin version/$clean_branch
+              echo "##vso[build.updatebuildnumber]$cleanNEXT_VERSION"
             displayName: "⚡ Commit Version & Push — $(Build.Repository.Name)"
 

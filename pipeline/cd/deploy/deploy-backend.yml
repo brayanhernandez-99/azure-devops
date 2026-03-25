@@ -360,19 +360,63 @@ jobs:
       #     AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
 
       # - script: |
-      #     newTag="$(version)"
+      #     export AWS_ACCESS_KEY_ID
+      #     export AWS_SECRET_ACCESS_KEY
+      #     export AWS_REGION
 
-      #     jq --arg newTag "$newTag" '
-      #       .containerDefinitions |= map(
-      #         .image |= (split(":")[0] + ":" + $newTag)
-      #       )
-      #     ' taskdef.json > new-taskdef-$(cleanMsName).json
+      #     BRANCH_NAME="$BUILD_SOURCEBRANCHNAME"
+      #     BRANCH_NAME_MULTI=$environments
+      #     RED="${red:-}"
 
-      #     echo -e "\nℹ️ Imagen actualizada con nuevo tag: $newTag"
-      #     cat new-taskdef-$(cleanMsName).json
+      #     if [[ ( "$BRANCH_NAME" == "develop" && "$BRANCH_NAME_MULTI" == "develop" ) || ( "$BRANCH_NAME" == "staging" && "$BRANCH_NAME_MULTI" == "staging" ) || "$RED" == "antioquia" ]]; then
+      #       repoName="$(Build.Repository.Name)"
+      #       newTag="$(version)"
+
+      #       envmicroname=$(echo "$repoName" \
+      #       | sed -E 's/^microservice-//; s/-invictus$//' \
+      #       | tr '[:lower:]' '[:upper:]' \
+      #       | tr '-' '_')
+
+      #       echo "MS_NAME=$envmicroname"
+
+      #       jq --arg newTag "$newTag" --arg envmicroname "$envmicroname" '
+      #         .containerDefinitions |= map(
+      #           .image |= (split(":")[0] + ":" + $newTag)
+      #           |
+      #           if (.environment // [] | any(.name == "MICROSERVICE")) then
+      #             .
+      #           else
+      #             .environment = (
+      #               (.environment // [])
+      #               + [{"name": "MICROSERVICE", "value": $envmicroname}]
+      #             )
+      #           end
+      #         )
+      #       ' taskdef.json > new-taskdef-$(cleanMsName).json
+      #       echo -e "\nℹ️ Imagen actualizada con nuevo tag: $newTag"
+      #       cat new-taskdef-$(cleanMsName).json
+      #     else
+      #       newTag="$(version)"
+
+      #       jq --arg newTag "$newTag" '
+      #         .containerDefinitions |= map(
+      #           .image |= (split(":")[0] + ":" + $newTag)
+      #         )
+      #       ' taskdef.json > new-taskdef-$(cleanMsName).json
+
+      #       echo -e "\nℹ️ Imagen actualizada con nuevo tag: $newTag"
+      #       cat new-taskdef-$(cleanMsName).json
+      #     fi
+          
       #   displayName: "📝 Update image tag in task definition"
       #   condition: and(succeeded(),
       #     ne(variables['cleanMsName'], 'transaction'))
+      #   env:
+      #     red: ${{ parameters.region }}
+      #     environments: ${{ parameters.environments }}
+      #     AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+      #     AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
+      #     AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
 
       # - script: |
       #     echo -e "\n📝 Actualizando TAG de las 4 task definitions..."
@@ -393,19 +437,59 @@ jobs:
       #         echo "❌ No existe $INPUT — no se puede actualizar."
       #         exit 98
       #       fi
+      #       export AWS_ACCESS_KEY_ID
+      #       export AWS_SECRET_ACCESS_KEY
+      #       export AWS_REGION
 
-      #       jq --arg newTag "$newTag" '
-      #         .containerDefinitions |= map(
-      #           .image |= (split(":")[0] + ":" + $newTag)
-      #         )
-      #       ' "$INPUT" > "$OUTPUT"
+      #       BRANCH_NAME="$BUILD_SOURCEBRANCHNAME"
+      #       BRANCH_NAME_MULTI=$environments
+      #       RED="${red:-}"
 
-      #       echo "✅ Imagen actualizada en $OUTPUT"
+      #       if [[ ( "$BRANCH_NAME" == "develop" && "$BRANCH_NAME_MULTI" == "develop" ) || ( "$BRANCH_NAME" == "staging" && "$BRANCH_NAME_MULTI" == "staging" ) || "$RED" == "antioquia" ]]; then
+      #         newTag="$(version)"
+      #         containerName=$(jq -r '.containerDefinitions[0].name' "$INPUT")
+
+      #         envmicroname=$(echo "$containerName" \
+      #          | sed -E 's/^transaction.*/TRANSACTION/')
+
+      #         echo "MS_NAME=$envmicroname"
+
+      #         jq --arg newTag "$newTag" --arg envmicroname "$envmicroname" '
+      #           .containerDefinitions |= map(
+      #             .image |= (split(":")[0] + ":" + $newTag)
+      #             |
+      #             if (.environment // [] | any(.name == "MICROSERVICE")) then
+      #               .
+      #             else
+      #               .environment = (
+      #                 (.environment // [])
+      #                 + [{"name": "MICROSERVICE", "value": $envmicroname}]
+      #               )
+      #             end
+      #           )
+      #         ' "$INPUT" > "$OUTPUT"
+
+      #       else
+      #         newTag="$(version)"
+      #         jq --arg newTag "$newTag" '
+      #           .containerDefinitions |= map(
+      #             .image |= (split(":")[0] + ":" + $newTag)
+      #           )
+      #         ' "$INPUT" > "$OUTPUT"
+
+      #         echo "✅ Imagen actualizada en $OUTPUT"
+      #       fi
       #       cat "$OUTPUT"
       #     done
       #   displayName: "📝 Update image tag in ALL task definitions"
       #   condition: and(succeeded(),
       #     eq(variables['cleanMsName'], 'transaction'))
+      #   env:
+      #     red: ${{ parameters.region }}
+      #     environments: ${{ parameters.environments }}
+      #     AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+      #     AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
+      #     AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
 
       # - script: |
       #     jq '{

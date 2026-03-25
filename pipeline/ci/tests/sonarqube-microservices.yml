@@ -10,7 +10,7 @@ jobs:
 
     steps:
       - checkout: self
-        fetchDepth: 0
+        fetchDepth: 1
         persistCredentials: true
 
       - task: DownloadBuildArtifacts@0
@@ -163,10 +163,10 @@ jobs:
           workingFile: .npmrc
 
       - task: NodeTool@0
-        displayName: "🔧 Install Nodejs $(nodeVersion)"
+        displayName: "🔧 Install Nodejs $(nodeVersionNew)"
         inputs:
           versionSource: "spec"
-          versionSpec: "$(nodeVersion)"
+          versionSpec: "$(nodeVersionNew)"
         condition: succeeded()
 
       - script: |

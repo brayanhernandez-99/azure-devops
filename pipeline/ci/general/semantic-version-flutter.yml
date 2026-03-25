@@ -12,6 +12,7 @@ jobs:
       - checkout: self
         fetchDepth: 0
         persistCredentials: true
+        fetchTags: false
 
       - script: |
           echo -e "\n📌 Verificando si feature está actualizada con master y si hay cambios relevantes..."
@@ -52,7 +53,7 @@ jobs:
           sourceBranch="${BUILD_SOURCEBRANCH/refs\/heads\//}"
           targetBranch="master"
 
-          echo -e "\n🔎 Verificando que no se hayan agregado nuevas sentencias console.log..."
+          echo -e "\n🔎 Verificando que no se hayan agregado nuevas sentencias console.* ..."
           echo "Branch actual: $sourceBranch"
           echo "Branch destino: $targetBranch"
 
@@ -74,7 +75,7 @@ jobs:
 
             # Línea agregada
             /^\+/ && !/^\+\+\+/ {
-              if ($0 ~ /console\.log/) {
+              if ($0 ~ /\bconsole\./) {
                 print file ":" line ":" substr($0, 2)
               }
               line++
@@ -86,15 +87,15 @@ jobs:
             }
           ')
 
-          if echo "$diff" | grep -qE '^\+.*console\.log'; then
-            echo -e "\n🧨 Archivos detectados con console.log en el código 🧨"
+          if echo "$diff" | grep -qE '^\+.*\bconsole\.'; then
+            echo -e "\n🧨 Archivos detectados con console.* en el código 🧨"
             echo "$console_logs"
-            echo -e "\n##vso[task.logissue type=error]⚠️ Se encontro 'console.log' en los cambios"
+            echo -e "\n##vso[task.logissue type=error]⚠️ Se encontro 'console.*' en los cambios"
             exit 99
           else
-            echo -e "\n✅ No se encontraron sentencias 'console.log' en los cambios"
+            echo -e "\n✅ No se encontraron sentencias 'console.*' en los cambios"
           fi
-        displayName: "🔍 Validate for 'console.log' in changes"
+        displayName: "🔍 Validate for 'console.*' in changes"
         condition: and(succeeded(), or(
           startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'),
           startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
@@ -392,7 +393,7 @@ jobs:
           git add env.json pubspec.yaml
           git commit -m "chore Flutter: bump version to $(cleanNEXT_VERSION)"
           git push origin version/$clean_branch
-
+          echo "##vso[build.updatebuildnumber]$(cleanNEXT_VERSION)"
         displayName: "⚡ Commit Version & Push — $(Build.Repository.Name)"
         condition: and(succeeded(),
           ne(variables['Build.SourceBranchName'], 'master'),

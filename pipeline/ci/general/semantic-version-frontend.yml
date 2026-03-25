@@ -18,6 +18,7 @@ jobs:
       - checkout: self
         fetchDepth: 0
         persistCredentials: true
+        fetchTags: false
 
       - script: |
           if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
@@ -71,7 +72,7 @@ jobs:
           sourceBranch="${BUILD_SOURCEBRANCH/refs\/heads\//}"
           targetBranch="master"
 
-          echo -e "\n🔎 Verificando que no se hayan agregado nuevas sentencias console.log..."
+          echo -e "\n🔎 Verificando que no se hayan agregado nuevas sentencias console.* ..."
           echo "Branch actual: $sourceBranch"
           echo "Branch destino: $targetBranch"
           paths=""
@@ -97,7 +98,7 @@ jobs:
 
             # Línea agregada
             /^\+/ && !/^\+\+\+/ {
-              if ($0 ~ /console\.log/) {
+              if ($0 ~ /\bconsole\./) {
                 print file ":" line ":" substr($0, 2)
               }
               line++
@@ -109,15 +110,15 @@ jobs:
             }
           ')
 
-          if echo "$diff" | grep -qE '^\+.*console\.log'; then
-            echo -e "\n🧨 Archivos detectados con console.log en el código de la app $(msName) 🧨"
+          if echo "$diff" | grep -qE '^\+.*\bconsole\.'; then
+            echo -e "\n🧨 Archivos detectados con console.* en el código de la app $(msName) 🧨"
             echo "$console_logs"
-            echo -e "\n##vso[task.logissue type=error]⚠️ Se encontro 'console.log' en los cambios del MF $(msName)..."
+            echo -e "\n##vso[task.logissue type=error]⚠️ Se encontro 'console.*' en los cambios del MF $(msName)..."
             exit 99
           else
-            echo -e "\n✅ No se encontraron sentencias 'console.log' en los cambios"
+            echo -e "\n✅ No se encontraron sentencias 'console.*' en los cambios"
           fi
-        displayName: "🔍 Validate for 'console.log' in changes"
+        displayName: "🔍 Validate for 'console.*' in changes"
         condition: and(succeeded(), or(
           startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'),
           startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
@@ -389,7 +390,7 @@ jobs:
         displayName: "📤 Publish artifact version"
         condition: succeeded()
 
-  - ${{ if or(eq(variables['Build.SourceBranchName'], 'develop'), eq(variables['Build.SourceBranch'], 'staging')) }}:
+  - ${{ if or(eq(variables['Build.SourceBranchName'], 'develop'), eq(variables['Build.SourceBranchName'], 'staging')) }}:
     - deployment: push_versions
       displayName: "🔐 serial git push (version/*)"
       environment: git-version-lock
@@ -401,6 +402,7 @@ jobs:
             - checkout: self
               fetchDepth: 0
               persistCredentials: true
+              fetchTags: false
 
             - download: current
               artifact: versions
