@@ -82,7 +82,7 @@ jobs:
           git fetch origin "$targetBranch"
           diff=$(git --no-pager diff "origin/$targetBranch..origin/$sourceBranch" -- $paths)
 
-          pattern='\bconsole\.'
+          pattern='console[.]'
 
           console_logs=$(echo "$diff" | awk -v pat="$pattern" '
             /^\+\+\+ b\// {
@@ -105,7 +105,7 @@ jobs:
             /^ / { line++ }
           ')
 
-          if echo "$diff" | grep -qE "^\+.*$pattern"; then
+          if echo "$diff" | grep -qE '^\+.*console\.'; then
             echo -e "\n🧨 Archivos detectados con console.log en el código de la app $(msName) 🧨"
             echo "$console_logs"
             echo -e "\n##vso[task.logissue type=error]⚠️ Se encontro 'console.log' en los cambios del MF $(msName)..."
