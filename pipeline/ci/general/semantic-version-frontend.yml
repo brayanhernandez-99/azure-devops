@@ -78,25 +78,23 @@ jobs:
 
           paths=""
           paths="$paths $(System.DefaultWorkingDirectory)/$(file)/$(msName)"
-          
-          #git fetch origin "$targetBranch"
           git fetch origin "$targetBranch" "$sourceBranch"
 
           diff=$(git --no-pager diff "origin/$targetBranch...origin/$sourceBranch" -- $paths)
-          console_logs=$(echo "$diff" | awk '
-            # Captura el archivo actual
+          console_logs=$(echo "$diff" | tr -d '\r' | awk '
             /^\+\+\+ b\// {
               file=$0
               sub(/^\+\+\+ b\//,"",file)
             }
 
-            # Captura el inicio del hunk: @@ -a,b +c,d @@
             /^@@/ {
-              match($0, /\+([0-9]+)/, arr)
-              line=arr[1]
+              if (match($0, /\+([0-9]+)/, arr)) {
+                line=arr[1]
+              } else {
+                line=0
+              }
             }
 
-            # Línea agregada
             /^\+/ && !/^\+\+\+/ {
               if ($0 ~ /\bconsole\./) {
                 print file ":" line ":" substr($0, 2)
@@ -104,7 +102,6 @@ jobs:
               line++
             }
 
-            # Línea de contexto
             /^ / {
               line++
             }
