@@ -98,7 +98,7 @@ jobs:
 
             # Línea agregada
             /^\+/ && !/^\+\+\+/ {
-              if ($0 ~ /\bconsole\./) 
+              if ($0 ~ /\bconsole\./) {
                 print file ":" line ":" substr($0, 2)
               }
               line++
