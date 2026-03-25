@@ -75,6 +75,7 @@ jobs:
           set -e
 
 
+
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/awards/aws-service-iam-scheduler-rol
           terragrunt plan --all --non-interactive -no-color
 
@@ -83,9 +84,6 @@ jobs:
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/bff-integration/aws-service-iam-profile
           terragrunt plan --all --non-interactive -no-color
-
-          cd $(Build.SourcesDirectory)
-          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/bff-sellers/aws-service-iam-profile
           terragrunt plan --all --non-interactive -no-color
@@ -96,9 +94,6 @@ jobs:
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/conciliation/aws-service-iam-scheduler-rol
           terragrunt plan --all --non-interactive -no-color
 
-          cd $(Build.SourcesDirectory)
-          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
-
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/lotteries-games/aws-service-iam-scheduler-rol
           terragrunt plan --all --non-interactive -no-color
 
@@ -108,14 +103,8 @@ jobs:
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/payments/aws-service-iam-scheduler-rol
           terragrunt plan --all --non-interactive -no-color
 
-          cd $(Build.SourcesDirectory)
-          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
-
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/promotional/aws-service-iam-scheduler-rol
           terragrunt plan --all --non-interactive -no-color
-
-          cd $(Build.SourcesDirectory)
-          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/generic-services/aws-service-iam-scheduler-rol
           terragrunt plan --all --non-interactive -no-color
@@ -123,14 +112,18 @@ jobs:
           cd $(Build.SourcesDirectory)
           find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/event-bridge-role
           terragrunt plan --all --non-interactive -no-color
-
-          cd $(Build.SourcesDirectory)
-          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-iam-profile
           terragrunt plan --all --non-interactive -no-color
+
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-iam-profile/deploy-app-invictus-role
+          # terragrunt plan --all --non-interactive -no-color
+
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-iam-profile/ecs-task-role
+          # terragrunt plan --all --non-interactive -no-color
+
 
 
           # cd $(Build.SourcesDirectory)
