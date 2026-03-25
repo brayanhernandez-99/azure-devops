@@ -99,17 +99,9 @@ jobs:
                 environment="qa"
               fi
             ;;
-            refs/heads/master) 
-              case "$region" in
-                "antioquia") environment="gana"; ;;
-                "cap")       environment="cap"; ;;
-                "tolima")    environment="tolima"; ;;
-                "huila")     environment="suchance"; ;;
-                "cauca")     environment="acertemos"; ;;
-                "boyaca")    environment="jer"; ;;
-                "santander") environment="laperla"; ;;
-                "putumayo")  environment="matrixredes"; ;;
-              esac ;;
+            refs/heads/master)
+              environment = "$region"
+            ;;
           esac
 
           if [[ "$environment" = "unknown" ]]; then
