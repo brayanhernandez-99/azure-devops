@@ -16,7 +16,7 @@ jobs:
 
   #####################################################################
 
-  - ${{ if eq(parameters.release, 'exe') }}:
+  - ${{ if eq(parameters.release, 'app') }}:
       - template: ./general/semantic-version-electron.yml
 
   #####################################################################

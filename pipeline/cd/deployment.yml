@@ -56,7 +56,7 @@ jobs:
 
   #####################################################################
 
-  - ${{ if eq(parameters.release, 'exe') }}:
+  - ${{ if eq(parameters.release, 'app') }}:
       - template: ./deploy/deploy-electron.yml
         parameters:
           region: ${{ parameters.region }}

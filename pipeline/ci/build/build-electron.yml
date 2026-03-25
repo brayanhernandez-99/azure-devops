@@ -81,27 +81,29 @@ jobs:
           CURRENT_BRANCH="$(Build.SourceBranch)"
           environment="unknown"
 
-          case "$CURRENT_BRANCH" in
-            refs/heads/feature/*) environment="dev"; ;;
+          case "$CURRENT_BRANCH" in 
+            refs/heads/feature/*) 
+              environment="develop"; 
+            ;;
             refs/heads/develop)
               if [[ "$environments" == "develop_new" ]]; then
                 environment="dev_new"
               else
                 environment="dev"
               fi
-              ;;
+            ;;
             refs/heads/staging)
               if [[ "$environments" == "staging_new" ]]; then
                 environment="qa_new"
               else
                 environment="qa"
               fi
-              ;;
+            ;;
             refs/heads/master) 
               case "$region" in
-                "antioquia") environment="matrixtech"; ;;
+                "antioquia") environment="gana"; ;;
                 "cap")       environment="cap"; ;;
-                "tolima")    environment="seapto"; ;;
+                "tolima")    environment="tolima"; ;;
                 "huila")     environment="suchance"; ;;
                 "cauca")     environment="acertemos"; ;;
                 "boyaca")    environment="jer"; ;;
@@ -116,10 +118,9 @@ jobs:
           fi
 
           cat <<EOF > .env
-          DOMAIN_ADMIN="${BASE_URL_ELECTRON_ADMIN}"
-          DOMAIN_SELLER="${BASE_URL_ELECTRON_SELLERS}"
+          VITE_DOMAIN="${VITE_DOMAIN}"
+          URL_APP="${URL_APP}"
           TARGET="linux"
-          TARGET_ENVIRONMENT="$environment"
           EOF
 
           echo "##vso[task.setvariable variable=environment]$environment"
@@ -129,7 +130,6 @@ jobs:
         displayName: "⚙️ Generate .env"
         condition: succeeded()
         env:
-          region: ${{ parameters.region }}
           environments: ${{ parameters.environments }}
 
       - task: UsePythonVersion@0
@@ -206,11 +206,7 @@ jobs:
 
       - script: |
           echo -e "\n📝 Validando build electron..."
-
-          tree -a "$(Build.SourcesDirectory)/release"
-
-          BASE_PATH="$(Build.SourcesDirectory)/release/$(environment)/$(version)"
-          BASE_PATH="$(Build.SourcesDirectory)/release/$(version)/$(environment)"
+          BASE_PATH="$(Build.SourcesDirectory)/release/$(version)/linux"
           APP_DIR="$BASE_PATH/app"
           mkdir -p $APP_DIR
           all_found=true
@@ -241,8 +237,8 @@ jobs:
             echo -e "\n##vso[task.logissue type=error]⚠️ Error: archivos requeridos no encontrados."
             exit 99
           else
-            mkdir -p "$(Build.ArtifactStagingDirectory)/electron-artifacts/linux/$(environment)"
-            cp -R $APP_DIR/* "$(Build.ArtifactStagingDirectory)/electron-artifacts/linux/$(environment)/"
+            mkdir -p "$(Build.ArtifactStagingDirectory)/release/linux/$(environment)"
+            cp -R $APP_DIR/* "$(Build.ArtifactStagingDirectory)/release/linux/$(environment)/"
 
             echo -e "\n📂 Directorio: $APP_DIR"
             ls -l $APP_DIR
@@ -252,7 +248,7 @@ jobs:
 
       - task: PublishBuildArtifacts@1
         inputs:
-          PathtoPublish: "$(Build.ArtifactStagingDirectory)/electron-artifacts"
+          PathtoPublish: "$(Build.ArtifactStagingDirectory)/release"
           ArtifactName: "electron"
           publishLocation: "Container"
         displayName: "📤 Publish artifact electron"
@@ -295,10 +291,10 @@ jobs:
             if (Test-Path $versionFile) {
               $json = Get-Content $versionFile | ConvertFrom-Json
               $version = $json.version
-              Write-Host "`n🚀 Versión detectada para .exe: $version"
+              Write-Host "`n🚀 Versión detectada para app: $version"
               Write-Host "##vso[task.setvariable variable=version]$version"
             } else {
-              Write-Output "`n##vso[task.logissue type=error]⚠️ No se encontro archivo de versión para .exe"
+              Write-Output "`n##vso[task.logissue type=error]⚠️ No se encontro archivo de versión para app"
               exit 99
             }
         condition: succeeded()
@@ -551,9 +547,9 @@ jobs:
               Write-Output "`n##vso[task.logissue type=error]⚠️ Error: archivos requeridos no encontrados."
               exit 99
             } else {
-              New-Item -ItemType Directory -Path "$(Build.ArtifactStagingDirectory)\electron-artifacts" | Out-Null
-              New-Item -ItemType Directory -Path "$(Build.ArtifactStagingDirectory)\electron-artifacts\windows\$($env:environment)" | Out-Null
-              Copy-Item -Path "$APP_DIR\*" -Destination "$(Build.ArtifactStagingDirectory)\electron-artifacts\windows\$($env:environment)" -Recurse -Force
+              New-Item -ItemType Directory -Path "$(Build.ArtifactStagingDirectory)\release" | Out-Null
+              New-Item -ItemType Directory -Path "$(Build.ArtifactStagingDirectory)\release\windows\$($env:environment)" | Out-Null
+              Copy-Item -Path "$APP_DIR\*" -Destination "$(Build.ArtifactStagingDirectory)\release\windows\$($env:environment)" -Recurse -Force
 
               Write-Host "`n📂 Directorio: $APP_DIR"
               Get-ChildItem "$APP_DIR" | Select-Object Mode, LastWriteTime, Length, Name | Format-Table
@@ -562,7 +558,7 @@ jobs:
 
       - task: PublishBuildArtifacts@1
         inputs:
-          PathtoPublish: "$(Build.ArtifactStagingDirectory)/electron-artifacts"
+          PathtoPublish: "$(Build.ArtifactStagingDirectory)/release"
           ArtifactName: "electron"
           publishLocation: "Container"
         displayName: "📤 Publish Artifacts Electron"
