@@ -74,6 +74,21 @@ jobs:
       - script: |
           set -e
 
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/astro/aws-service-ecs
+          terragrunt plan --all --non-interactive -no-color
+          terragrunt apply --all --non-interactive -no-color
+
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/awards/aws-service-ecs
+          terragrunt plan --all --non-interactive -no-color
+          terragrunt apply --all --non-interactive -no-color
+
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/bff-administration/aws-service-ecs
+          terragrunt plan --all --non-interactive -no-color
+          terragrunt apply --all --non-interactive -no-color
+
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/bff-integration/aws-service-ecs
           terragrunt plan --all --non-interactive -no-color
