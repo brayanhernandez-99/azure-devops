@@ -9,9 +9,21 @@ jobs:
       - template: ../../variables/groups-transversal-variables-backend.yml
 
     steps:
-      - download: current
-        artifact: npm-package
+      - task: DownloadPipelineArtifact@2
+        inputs:
+          artifact: "app"
+          path: "$(Pipeline.Workspace)"
         condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'develop'))
+      
+      - script: |
+            echo "📦 Extracting..."
+
+            mkdir extracted
+            tar -xzf $(Pipeline.Workspace)/app/app.tar.gz -C extracted
+
+            ls -la extracted
+        displayName: extract
+
 
       - task: NodeTool@0
         displayName: "Install Node"

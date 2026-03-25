@@ -90,11 +90,37 @@ jobs:
 
       - script: |
           rm -f .npmrc
-          npm pack
+          HAS_BUILD=$(node -p "require('./package.json').scripts?.build ? 'yes' : 'no'")
+
+          if [ "$HAS_BUILD" = "yes" ]; then
+            echo "🏗 Running build..."
+            npm run build
+          else
+            echo "⚠️ No build script"
+          fi
         displayName: "Create npm package"
 
+      - script: |
+          echo "📦 Packaging..."
+
+          mkdir -p artifact
+
+          if [ -d "dist" ]; then
+            echo "📦 Using dist/"
+            tar -czf artifact/app.tar.gz dist/
+          else
+            echo "📦 Using full project"
+            tar -czf artifact/app.tar.gz \
+              --exclude=node_modules \
+              --exclude=.git \
+              --exclude=artifact \
+              .
+          fi
+
+          ls -la artifact
+        displayName: package
+
       - task: PublishPipelineArtifact@1
-        displayName: "Publish build artifact"
         inputs:
-          targetPath: "$(System.DefaultWorkingDirectory)"
-          artifact: "npm-package"
+          targetPath: "artifact"
+          artifact: "app"
