@@ -72,51 +72,43 @@ jobs:
           sourceBranch="${BUILD_SOURCEBRANCH/refs\/heads\//}"
           targetBranch="master"
 
-          echo -e "\n🔎 Verificando que no se hayan agregado nuevas sentencias console.* ..."
+          echo -e "\n🔎 Verificando que no se hayan agregado nuevas sentencias console.log..."
           echo "Branch actual: $sourceBranch"
           echo "Branch destino: $targetBranch"
-
-          paths=""
-          paths="$paths $(System.DefaultWorkingDirectory)/$(file)/$(msName)"
           
-          #git fetch origin "$targetBranch"
-          git fetch origin "$targetBranch" "$sourceBranch"
+          
+          paths="$(file)/$(msName)"
+          
+          git fetch origin "$targetBranch"
+          diff=$(git --no-pager diff "origin/$targetBranch..origin/$sourceBranch" -- $paths)
 
-          diff=$(git --no-pager diff "origin/$targetBranch...origin/$sourceBranch" -- $paths)
-          console_logs=$(echo "$diff" | awk '
-            # Captura el archivo actual
+          pattern='\bconsole\.'
+
+          console_logs=$(echo "$diff" | awk -v pat="$pattern" '
             /^\+\+\+ b\// {
               file=$0
               sub(/^\+\+\+ b\//,"",file)
             }
-
-            # Captura el inicio del hunk: @@ -a,b +c,d @@
             /^@@/ {
               match($0, /\+([0-9]+)/, arr)
               line=arr[1]
             }
-
-            # Línea agregada
             /^\+/ && !/^\+\+\+/ {
-              if ($0 ~ /\bconsole\./) {
+              if ($0 ~ pat) {
                 print file ":" line ":" substr($0, 2)
               }
               line++
             }
-
-            # Línea de contexto
-            /^ / {
-              line++
-            }
+            /^ / { line++ }
           ')
 
-          if echo "$diff" | grep -qE '^\+.*\bconsole\.'; then
-            echo -e "\n🧨 Archivos detectados con console.* en el código de la app $(msName) 🧨"
+          if echo "$diff" | grep -qE "^\+.*$pattern"; then
+            echo -e "\n🧨 Archivos detectados con console.log en el código de la app $(msName) 🧨"
             echo "$console_logs"
-            echo -e "\n##vso[task.logissue type=error]⚠️ Se encontro 'console.*' en los cambios del MF $(msName)..."
+            echo -e "\n##vso[task.logissue type=error]⚠️ Se encontro 'console.log' en los cambios del MF $(msName)..."
             exit 99
           else
-            echo -e "\n✅ No se encontraron sentencias 'console.*' en los cambios"
+            echo -e "\n✅ No se encontraron sentencias 'console.log' en los cambios"
           fi
         displayName: "🔍 Validate for 'console.*' in changes"
         condition: and(succeeded(), or(
