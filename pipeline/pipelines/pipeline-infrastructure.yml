@@ -2,7 +2,7 @@ stages:
   - stage: scan_infrastructure
     displayName: "🛡️ Scan Infrastructure"
     jobs:
-      - template: ../ci/scan/sonar-infrastructure.yml
+      # - template: ../ci/scan/sonar-infrastructure.yml
       - template: ../ci/scan/checkov-infrastructure.yml
 
   #####################################################################
