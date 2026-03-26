@@ -53,6 +53,13 @@ jobs:
               TARGET_BRANCH=$(echo "$(System.PullRequest.TargetBranch)" | sed 's#refs/heads/##')
               CURRENT_BRANCH=$SOURCE_BRANCH
 
+              echo -e "\n🔍 Validando nombre de la rama: $CURRENT_BRANCH"
+              if [[ ! "$CURRENT_BRANCH" =~ ^(feature\/[a-zA-Z0-9._-]+|hotfix\/[a-zA-Z0-9._-]+|develop|staging|master)$ ]]; then
+                echo -e "\n##vso[task.logissue type=error]⚠️ Error: la rama '$CURRENT_BRANCH' no cumple con el nombramiento."
+                echo "##vso[task.logissue type=error] Usa: feature/*, hotfix/*, develop, staging o master"
+                exit 99
+              fi
+
               cd $(Build.SourcesDirectory)
               clean_branch=$(echo "$(System.PullRequest.SourceBranch)" | sed 's#refs/heads/##')
               git checkout $clean_branch
@@ -135,7 +142,14 @@ jobs:
                 git checkout $CURRENT_BRANCH
                 git reset --hard HEAD
 
-                echo -e "\n🔍 Comparando cambios entre: $CURRENT_BRANCH ... $CURRENT_BRANCH"
+                echo -e "\n🔍 Validando nombre de la rama: $CURRENT_BRANCH"
+                if [[ ! "$CURRENT_BRANCH" =~ ^(feature\/[a-zA-Z0-9._-]+|hotfix\/[a-zA-Z0-9._-]+|develop|staging|master)$ ]]; then
+                  echo -e "\n##vso[task.logissue type=error]⚠️ Error: la rama '$CURRENT_BRANCH' no cumple con el nombramiento."
+                  echo "##vso[task.logissue type=error] Usa: feature/*, hotfix/*, develop, staging o master"
+                  exit 99
+                fi
+
+                echo "🔍 Comparando cambios entre: $CURRENT_BRANCH ... $CURRENT_BRANCH"
                 packages_changed=$(git diff --name-only HEAD~1 HEAD | grep "^packages/")
 
                 apps=$(git diff --name-only HEAD~1 HEAD | grep -E "^apps/|^app-legacy/" | cut -d '/' -f1,2 | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u)
