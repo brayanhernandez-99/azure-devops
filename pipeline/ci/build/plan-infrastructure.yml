@@ -125,7 +125,7 @@ jobs:
           # # terragrunt plan --all --non-interactive -no-color
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-vpc
-          terragrunt destroy --all --non-interactive -no-color
+          terragrunt plan --all --non-interactive -no-color
 
 
 
