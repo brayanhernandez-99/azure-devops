@@ -80,8 +80,6 @@ jobs:
           terragrunt apply -all --non-interactive -no-color
 
           cd $(Build.SourcesDirectory)
-          terragrunt plan --all --non-interactive -no-color
-          terragrunt apply -all --non-interactive -no-color
           find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3/s3-app-sellers
@@ -89,8 +87,6 @@ jobs:
           terragrunt apply -all --non-interactive -no-color
 
           cd $(Build.SourcesDirectory)
-          terragrunt plan --all --non-interactive -no-color
-          terragrunt apply -all --non-interactive -no-color
           find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3/s3-astro
@@ -98,8 +94,6 @@ jobs:
           terragrunt apply -all --non-interactive -no-color
 
           cd $(Build.SourcesDirectory)
-          terragrunt plan --all --non-interactive -no-color
-          terragrunt apply -all --non-interactive -no-color
           find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3/s3-awards
@@ -107,8 +101,6 @@ jobs:
           terragrunt apply -all --non-interactive -no-color
 
           cd $(Build.SourcesDirectory)
-          terragrunt plan --all --non-interactive -no-color
-          terragrunt apply -all --non-interactive -no-color
           find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3/s3-betplay
@@ -116,8 +108,6 @@ jobs:
           terragrunt apply -all --non-interactive -no-color
 
           cd $(Build.SourcesDirectory)
-          terragrunt plan --all --non-interactive -no-color
-          terragrunt apply -all --non-interactive -no-color
           find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3/s3-biometrics
@@ -125,8 +115,6 @@ jobs:
           terragrunt apply -all --non-interactive -no-color
 
           cd $(Build.SourcesDirectory)
-          terragrunt plan --all --non-interactive -no-color
-          terragrunt apply -all --non-interactive -no-color
           find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3/s3-cashier
@@ -134,8 +122,6 @@ jobs:
           terragrunt apply -all --non-interactive -no-color
 
           cd $(Build.SourcesDirectory)
-          terragrunt plan --all --non-interactive -no-color
-          terragrunt apply -all --non-interactive -no-color
           find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3/s3-chance
@@ -143,8 +129,6 @@ jobs:
           terragrunt apply -all --non-interactive -no-color
 
           cd $(Build.SourcesDirectory)
-          terragrunt plan --all --non-interactive -no-color
-          terragrunt apply -all --non-interactive -no-color
           find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3/s3-commissions
@@ -152,8 +136,6 @@ jobs:
           terragrunt apply -all --non-interactive -no-color
 
           cd $(Build.SourcesDirectory)
-          terragrunt plan --all --non-interactive -no-color
-          terragrunt apply -all --non-interactive -no-color
           find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3/s3-conciliation
@@ -161,8 +143,6 @@ jobs:
           terragrunt apply -all --non-interactive -no-color
 
           cd $(Build.SourcesDirectory)
-          terragrunt plan --all --non-interactive -no-color
-          terragrunt apply -all --non-interactive -no-color
           find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3/s3-dashboard
@@ -170,8 +150,6 @@ jobs:
           terragrunt apply -all --non-interactive -no-color
 
           cd $(Build.SourcesDirectory)
-          terragrunt plan --all --non-interactive -no-color
-          terragrunt apply -all --non-interactive -no-color
           find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3/s3-dynamic-storage
@@ -179,8 +157,6 @@ jobs:
           terragrunt apply -all --non-interactive -no-color
 
           cd $(Build.SourcesDirectory)
-          terragrunt plan --all --non-interactive -no-color
-          terragrunt apply -all --non-interactive -no-color
           find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3/s3-external
@@ -188,8 +164,6 @@ jobs:
           terragrunt apply -all --non-interactive -no-color
 
           cd $(Build.SourcesDirectory)
-          terragrunt plan --all --non-interactive -no-color
-          terragrunt apply -all --non-interactive -no-color
           find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3/s3-external-wager
@@ -197,8 +171,6 @@ jobs:
           terragrunt apply -all --non-interactive -no-color
 
           cd $(Build.SourcesDirectory)
-          terragrunt plan --all --non-interactive -no-color
-          terragrunt apply -all --non-interactive -no-color
           find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3/s3-generic
@@ -206,8 +178,6 @@ jobs:
           terragrunt apply -all --non-interactive -no-color
 
           cd $(Build.SourcesDirectory)
-          terragrunt plan --all --non-interactive -no-color
-          terragrunt apply -all --non-interactive -no-color
           find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3/s3-hierarchies
@@ -215,8 +185,6 @@ jobs:
           terragrunt apply -all --non-interactive -no-color
 
           cd $(Build.SourcesDirectory)
-          terragrunt plan --all --non-interactive -no-color
-          terragrunt apply -all --non-interactive -no-color
           find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3/s3-invictus
@@ -224,8 +192,6 @@ jobs:
           terragrunt apply -all --non-interactive -no-color
 
           cd $(Build.SourcesDirectory)
-          terragrunt plan --all --non-interactive -no-color
-          terragrunt apply -all --non-interactive -no-color
           find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3/s3-login
@@ -233,8 +199,6 @@ jobs:
           terragrunt apply -all --non-interactive -no-color
 
           cd $(Build.SourcesDirectory)
-          terragrunt plan --all --non-interactive -no-color
-          terragrunt apply -all --non-interactive -no-color
           find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3/s3-lotteries
@@ -242,8 +206,6 @@ jobs:
           terragrunt apply -all --non-interactive -no-color
 
           cd $(Build.SourcesDirectory)
-          terragrunt plan --all --non-interactive -no-color
-          terragrunt apply -all --non-interactive -no-color
           find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3/s3-millonario
@@ -251,8 +213,6 @@ jobs:
           terragrunt apply -all --non-interactive -no-color
 
           cd $(Build.SourcesDirectory)
-          terragrunt plan --all --non-interactive -no-color
-          terragrunt apply -all --non-interactive -no-color
           find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3/s3-money-control
@@ -260,8 +220,6 @@ jobs:
           terragrunt apply -all --non-interactive -no-color
 
           cd $(Build.SourcesDirectory)
-          terragrunt plan --all --non-interactive -no-color
-          terragrunt apply -all --non-interactive -no-color
           find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3/s3-notifications
@@ -269,8 +227,6 @@ jobs:
           terragrunt apply -all --non-interactive -no-color
 
           cd $(Build.SourcesDirectory)
-          terragrunt plan --all --non-interactive -no-color
-          terragrunt apply -all --non-interactive -no-color
           find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3/s3-papelery
@@ -278,8 +234,6 @@ jobs:
           terragrunt apply -all --non-interactive -no-color
 
           cd $(Build.SourcesDirectory)
-          terragrunt plan --all --non-interactive -no-color
-          terragrunt apply -all --non-interactive -no-color
           find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3/s3-promotional
@@ -287,8 +241,6 @@ jobs:
           terragrunt apply -all --non-interactive -no-color
 
           cd $(Build.SourcesDirectory)
-          terragrunt plan --all --non-interactive -no-color
-          terragrunt apply -all --non-interactive -no-color
           find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3/s3-raffles
@@ -296,8 +248,6 @@ jobs:
           terragrunt apply -all --non-interactive -no-color
 
           cd $(Build.SourcesDirectory)
-          terragrunt plan --all --non-interactive -no-color
-          terragrunt apply -all --non-interactive -no-color
           find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3/s3-raspa
@@ -305,8 +255,6 @@ jobs:
           terragrunt apply -all --non-interactive -no-color
 
           cd $(Build.SourcesDirectory)
-          terragrunt plan --all --non-interactive -no-color
-          terragrunt apply -all --non-interactive -no-color
           find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3/s3-recharges
@@ -314,13 +262,17 @@ jobs:
           terragrunt apply -all --non-interactive -no-color
 
           cd $(Build.SourcesDirectory)
-          terragrunt plan --all --non-interactive -no-color
-          terragrunt apply -all --non-interactive -no-color
           find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3/s3-users
           terragrunt plan --all --non-interactive -no-color
           terragrunt apply -all --non-interactive -no-color
+
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+
+
+
 
 
 
