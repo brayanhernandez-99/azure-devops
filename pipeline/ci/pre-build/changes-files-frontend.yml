@@ -92,7 +92,7 @@ jobs:
                 echo "$pipeline_output" | jq
 
                 run_id=$(echo "$pipeline_output" | jq -r '.id')              
-                echo -e "\n##[command]🌐 Build Results URL: https://dev.azure.com/ux-technology/Invictus/_build/results?buildId=$run_id"
+                echo -e "\n##[command]🌐 Build Results: https://dev.azure.com/ux-technology/Invictus/_build/results?buildId=$run_id"
               fi
 
               #
