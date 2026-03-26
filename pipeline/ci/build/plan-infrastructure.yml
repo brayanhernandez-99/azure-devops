@@ -74,190 +74,185 @@ jobs:
       - script: |
           set -e
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront-function
+
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-app-administration
           terragrunt plan --all --non-interactive -no-color
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-custom-cache-policy
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-app-sellers
           terragrunt plan --all --non-interactive -no-color
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-app-administration
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
-          # cd $(Build.SourcesDirectory)
-          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-astro
+          terragrunt plan --all --non-interactive -no-color
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-app-sellers
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
-          # cd $(Build.SourcesDirectory)
-          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-awards
+          terragrunt plan --all --non-interactive -no-color
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-astro
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
-          # cd $(Build.SourcesDirectory)
-          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-betplay
+          terragrunt plan --all --non-interactive -no-color
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-awards
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
-          # cd $(Build.SourcesDirectory)
-          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-biometrics
+          terragrunt plan --all --non-interactive -no-color
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-betplay
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
-          # cd $(Build.SourcesDirectory)
-          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-cashier
+          terragrunt plan --all --non-interactive -no-color
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-biometrics
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
-          # cd $(Build.SourcesDirectory)
-          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-chance
+          terragrunt plan --all --non-interactive -no-color
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-cashier
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
-          # cd $(Build.SourcesDirectory)
-          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-commissions
+          terragrunt plan --all --non-interactive -no-color
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-chance
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
-          # cd $(Build.SourcesDirectory)
-          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-conciliation
+          terragrunt plan --all --non-interactive -no-color
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-commissions
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
-          # cd $(Build.SourcesDirectory)
-          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-credits
+          terragrunt plan --all --non-interactive -no-color
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-conciliation
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
-          # cd $(Build.SourcesDirectory)
-          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-dashboard
+          terragrunt plan --all --non-interactive -no-color
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-credits
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
-          # cd $(Build.SourcesDirectory)
-          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-download
+          terragrunt plan --all --non-interactive -no-color
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-dashboard
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
-          # cd $(Build.SourcesDirectory)
-          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-dynamic-storage
+          terragrunt plan --all --non-interactive -no-color
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-download
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
-          # cd $(Build.SourcesDirectory)
-          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-external
+          terragrunt plan --all --non-interactive -no-color
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-dynamic-storage
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
-          # cd $(Build.SourcesDirectory)
-          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-external-wager
+          terragrunt plan --all --non-interactive -no-color
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-external
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
-          # cd $(Build.SourcesDirectory)
-          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-generic
+          terragrunt plan --all --non-interactive -no-color
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-external-wager
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
-          # cd $(Build.SourcesDirectory)
-          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-hierarchies
+          terragrunt plan --all --non-interactive -no-color
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-generic
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
-          # cd $(Build.SourcesDirectory)
-          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-invictus
+          terragrunt plan --all --non-interactive -no-color
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-hierarchies
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
-          # cd $(Build.SourcesDirectory)
-          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-login
+          terragrunt plan --all --non-interactive -no-color
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-invictus
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
-          # cd $(Build.SourcesDirectory)
-          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-lotteries
+          terragrunt plan --all --non-interactive -no-color
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-login
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
-          # cd $(Build.SourcesDirectory)
-          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-millonario
+          terragrunt plan --all --non-interactive -no-color
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-lotteries
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
-          # cd $(Build.SourcesDirectory)
-          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-money-control
+          terragrunt plan --all --non-interactive -no-color
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-millonario
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
-          # cd $(Build.SourcesDirectory)
-          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-notifications
+          terragrunt plan --all --non-interactive -no-color
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-money-control
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
-          # cd $(Build.SourcesDirectory)
-          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-papelery
+          terragrunt plan --all --non-interactive -no-color
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-notifications
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
-          # cd $(Build.SourcesDirectory)
-          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-promotional
+          terragrunt plan --all --non-interactive -no-color
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-papelery
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
-          # cd $(Build.SourcesDirectory)
-          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-raffles
+          terragrunt plan --all --non-interactive -no-color
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-promotional
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
-          # cd $(Build.SourcesDirectory)
-          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-raspa
+          terragrunt plan --all --non-interactive -no-color
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-raffles
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
-          # cd $(Build.SourcesDirectory)
-          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-recharges
+          terragrunt plan --all --non-interactive -no-color
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-raspa
-          # terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".tegrunt-cache" -exec rm -rf {}
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-users
+          terragrunt plan --all --non-interactive -no-color
 
-          # cd $(Build.SourcesDirectory)
-          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
-
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-recharges
-          # terragrunt plan --all --non-interactive -no-color
-
-          # cd $(Build.SourcesDirectory)
-          # find . -type d -name ".tegrunt-cache" -exec rm -rf {}
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-users
-          # terragrunt plan --all --non-interactive -no-color
-
-          # cd $(Build.SourcesDirectory)
-          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
 
 
