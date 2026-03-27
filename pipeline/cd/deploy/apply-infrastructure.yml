@@ -76,117 +76,117 @@ jobs:
           
       
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges/aws-service-random-password
-          terragrunt plan --all --non-interactive -no-color
-          terragrunt apply -all --non-interactive -no-color
-
-          cd $(Build.SourcesDirectory)
-          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges/aws-service-s3
-          terragrunt plan --all --non-interactive -no-color
-          terragrunt apply -all --non-interactive -no-color
-
-          cd $(Build.SourcesDirectory)
-          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges/aws-service-secret-manager
-          terragrunt plan --all --non-interactive -no-color
-          terragrunt apply -all --non-interactive -no-color
-
-          cd $(Build.SourcesDirectory)
-          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges/aws-service-secret-manager-bemovil
-          terragrunt plan --all --non-interactive -no-color
-          terragrunt apply -all --non-interactive -no-color
-
-          cd $(Build.SourcesDirectory)
-          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges/aws-service-secret-manager-cashin
-          terragrunt plan --all --non-interactive -no-color
-          terragrunt apply -all --non-interactive -no-color
-
-          cd $(Build.SourcesDirectory)
-          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges/aws-service-secret-manager-conexred
-          terragrunt plan --all --non-interactive -no-color
-          terragrunt apply -all --non-interactive -no-color
-
-          cd $(Build.SourcesDirectory)
-          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges/aws-service-secret-manager-conexred-pines
-          terragrunt plan --all --non-interactive -no-color
-          terragrunt apply -all --non-interactive -no-color
-
-          cd $(Build.SourcesDirectory)
-          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges/aws-service-secret-manager-flypass
-          terragrunt plan --all --non-interactive -no-color
-          terragrunt apply -all --non-interactive -no-color
-
-          cd $(Build.SourcesDirectory)
-          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges/aws-service-secret-manager-pay
-          terragrunt plan --all --non-interactive -no-color
-          terragrunt apply -all --non-interactive -no-color
-
-          cd $(Build.SourcesDirectory)
-          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges/aws-service-secret-manager-recaudos
-          terragrunt plan --all --non-interactive -no-color
-          terragrunt apply -all --non-interactive -no-color
-
-          cd $(Build.SourcesDirectory)
-          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges/aws-service-secret-manager-tigo
-          terragrunt plan --all --non-interactive -no-color
-          terragrunt apply -all --non-interactive -no-color
-
-          cd $(Build.SourcesDirectory)
-          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges/aws-service-sqs
-          terragrunt plan --all --non-interactive -no-color
-          terragrunt apply -all --non-interactive -no-color
-
-          cd $(Build.SourcesDirectory)
-          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges/aws-service-ecs
-          terragrunt plan --all --non-interactive -no-color
-          terragrunt apply -all --non-interactive -no-color
-
-          cd $(Build.SourcesDirectory)
-          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges/aws-service-ssm-parameter
-          terragrunt plan --all --non-interactive -no-color
-          terragrunt apply -all --non-interactive -no-color
-
-          cd $(Build.SourcesDirectory)
-          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges/aws-service-ssm-parameter-bemovil
-          terragrunt plan --all --non-interactive -no-color
-          terragrunt apply -all --non-interactive -no-color
-
-          cd $(Build.SourcesDirectory)
-          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
-
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges/aws-service-ssm-parameter-conexred
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges/aws-service-random-password
           # terragrunt plan --all --non-interactive -no-color
           # terragrunt apply -all --non-interactive -no-color
 
           # cd $(Build.SourcesDirectory)
           # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges/aws-service-s3
+          # terragrunt plan --all --non-interactive -no-color
+          # terragrunt apply -all --non-interactive -no-color
+
+          # cd $(Build.SourcesDirectory)
+          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges/aws-service-secret-manager
+          # terragrunt plan --all --non-interactive -no-color
+          # terragrunt apply -all --non-interactive -no-color
+
+          # cd $(Build.SourcesDirectory)
+          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges/aws-service-secret-manager-bemovil
+          # terragrunt plan --all --non-interactive -no-color
+          # terragrunt apply -all --non-interactive -no-color
+
+          # cd $(Build.SourcesDirectory)
+          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges/aws-service-secret-manager-cashin
+          # terragrunt plan --all --non-interactive -no-color
+          # terragrunt apply -all --non-interactive -no-color
+
+          # cd $(Build.SourcesDirectory)
+          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges/aws-service-secret-manager-conexred
+          # terragrunt plan --all --non-interactive -no-color
+          # terragrunt apply -all --non-interactive -no-color
+
+          # cd $(Build.SourcesDirectory)
+          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges/aws-service-secret-manager-conexred-pines
+          # terragrunt plan --all --non-interactive -no-color
+          # terragrunt apply -all --non-interactive -no-color
+
+          # cd $(Build.SourcesDirectory)
+          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges/aws-service-secret-manager-flypass
+          # terragrunt plan --all --non-interactive -no-color
+          # terragrunt apply -all --non-interactive -no-color
+
+          # cd $(Build.SourcesDirectory)
+          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges/aws-service-secret-manager-pay
+          # terragrunt plan --all --non-interactive -no-color
+          # terragrunt apply -all --non-interactive -no-color
+
+          # cd $(Build.SourcesDirectory)
+          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges/aws-service-secret-manager-recaudos
+          # terragrunt plan --all --non-interactive -no-color
+          # terragrunt apply -all --non-interactive -no-color
+
+          # cd $(Build.SourcesDirectory)
+          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges/aws-service-secret-manager-tigo
+          # terragrunt plan --all --non-interactive -no-color
+          # terragrunt apply -all --non-interactive -no-color
+
+          # cd $(Build.SourcesDirectory)
+          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges/aws-service-sqs
+          # terragrunt plan --all --non-interactive -no-color
+          # terragrunt apply -all --non-interactive -no-color
+
+          # cd $(Build.SourcesDirectory)
+          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges/aws-service-ecs
+          # terragrunt plan --all --non-interactive -no-color
+          # terragrunt apply -all --non-interactive -no-color
+
+          # cd $(Build.SourcesDirectory)
+          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges/aws-service-ssm-parameter
+          # terragrunt plan --all --non-interactive -no-color
+          # terragrunt apply -all --non-interactive -no-color
+
+          # cd $(Build.SourcesDirectory)
+          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges/aws-service-ssm-parameter-bemovil
+          # terragrunt plan --all --non-interactive -no-color
+          # terragrunt apply -all --non-interactive -no-color
+
+          # cd $(Build.SourcesDirectory)
+          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges/aws-service-ssm-parameter-conexred
+          terragrunt plan --all --non-interactive -no-color
+          terragrunt apply -all --non-interactive -no-color
+
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
 
 
