@@ -11,17 +11,17 @@ resources:
 
 stages:
   #
-  # DEPLOY VERSION ECS ACCOUNTS NEWS
+  # UPDATE VERSION ECS ACCOUNTS
   #
-  - ${{ if and(eq(parameters.release, 'ecs-new'), in(variables['Build.SourceBranchName'], 'develop', 'staging', 'master')) }}:
-      - template: pipelines/pipeline-version-ecs-new.yml
+  - ${{ if and(eq(parameters.release, 'update'), in(variables['Build.SourceBranchName'], 'develop', 'staging', 'master')) }}:
+      - template: pipelines/pipeline-update-ecs.yml
         parameters:
           release: ${{ parameters.release }}
 
   #
-  # DEPLOY VERSION ECS ACCOUNTS OLDS
+  # RELOAD MICROSERVICE ECS ACCOUNTS
   #
-  - ${{ if and(eq(parameters.release, 'ecs-old'), in(variables['Build.SourceBranchName'], 'develop', 'staging')) }}:
-      - template: pipelines/pipeline-version-ecs-old.yml
+  - ${{ if and(eq(parameters.release, 'reload'), in(variables['Build.SourceBranchName'], 'develop', 'staging')) }}:
+      - template: pipelines/pipeline-reload-ecs.yml
         parameters:
           release: ${{ parameters.release }}

@@ -1,0 +1,66 @@
+jobs:
+  - job: deploy_microservices
+    displayName: "🚀 deploy microservices"
+    pool:
+      name: "Azure Pipelines"
+      VmImage: ubuntu-22.04
+
+    variables:
+      - template: ../../variables/groups-transversal-variables.yml
+        parameters:
+          release: ${{ parameters.release }}
+
+    steps:
+      - task: DownloadBuildArtifacts@0
+        inputs:
+          artifactName: "versions"
+          downloadPath: "$(Pipeline.Workspace)/versions-downloaded"
+        displayName: "📥 Download Version"
+        condition: succeeded()
+
+      - script: |
+          set -e
+
+          cp $(Pipeline.Workspace)/versions-downloaded/versions/microservices/version.json $(System.DefaultWorkingDirectory)/services.json
+          export CLUSTER="invictus"
+          echo "✅ Versiones ECS:"
+
+          SERVICES_JSON=$(cat services.json)
+          jq . "services.json"
+          echo ""
+
+          for SERVICE in $(echo "$SERVICES_JSON" | jq -r 'keys[]'); do
+            FULL_IMAGE=$(echo "$SERVICES_JSON" | jq -r --arg svc "$SERVICE" '.[$svc]')
+
+            # Obtener la task definition actual del ECS service
+            TASK_DEF_ARN=$(aws ecs describe-services --cluster "$CLUSTER" --services "$SERVICE" --query "services[0].taskDefinition" --output text)
+            echo -e "\n📄 Cluster: $CLUSTER"
+            echo "📄 Servicio: $SERVICE"
+            echo "📄 Task Definition actual: $TASK_DEF_ARN"
+
+            # Obtener la definición completa de la task definition
+            TASKDEF_JSON=$(aws ecs describe-task-definition --task-definition "$TASK_DEF_ARN" --query "taskDefinition" --output json)
+
+            # Limpiar campos innecesarios para registrar nueva task definition
+            TASKDEF_CLEAN=$(echo "$TASKDEF_JSON" | jq 'del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .registeredBy)')
+
+            # Obtener el nombre real del contenedor principal (primer contenedor o por patrón)
+            CONTAINER_NAME=$(echo "$TASKDEF_JSON" | jq -r '.containerDefinitions[0].name')
+
+            # Registrar la nueva task definition reemplazando solo la imagen del contenedor correcto
+            NEW_TASKDEF=$(echo "$TASKDEF_CLEAN" | jq -c --arg img "$FULL_IMAGE" --arg container "$CONTAINER_NAME" '.containerDefinitions |= map(if .name == $container then .image = $img else . end)')
+
+            # Registrar y actualizar el ECS service
+            NEW_TASKDEF_ARN=$(aws ecs register-task-definition --cli-input-json "$NEW_TASKDEF" --query "taskDefinition.taskDefinitionArn" --output text)
+            UPDATED_TASK_DEF=$(aws ecs update-service --cluster "$CLUSTER" --service "$SERVICE" --task-definition "$NEW_TASKDEF_ARN" --force-new-deployment --query "service.taskDefinition" --output text)
+
+            echo "🚀 ECS Service Actualizado:"
+            echo -e "Task Image: \t\t $FULL_IMAGE"
+            echo -e "Task Definition: \t $UPDATED_TASK_DEF"
+            echo "------------------------------------------------------------"
+          done
+        displayName: "🚀 Actualizando Taks Definition"
+        env:
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
+          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)

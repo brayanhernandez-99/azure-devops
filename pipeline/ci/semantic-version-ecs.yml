@@ -26,17 +26,57 @@ jobs:
           case "$CURRENT_BRANCH" in
             refs/heads/develop)   ENVIRONMENT="develop"; ;;
             refs/heads/staging)   ENVIRONMENT="qa"; ;;
+            refs/heads/master)    ENVIRONMENT="prd"; ;;
           esac
 
           if [[ "$ENVIRONMENT" == "unknown" ]]; then
-            echo -e "\n##vso[task.logissue type=error]⚠️ Error: ENVIRONMENT [$ENVIRONMENT] no reconocido debe ser develop o staging"
+            echo -e "\n##vso[task.logissue type=error]⚠️ Error: ENVIRONMENT [$ENVIRONMENT] no reconocido."
             exit 99
           fi
 
           declare -A SERVICES=(
+            #[scheduler]="microservice-scheduler-$ENVIRONMENT"
+
+            [astro]="microservice-astro-$ENVIRONMENT"
+            [awards]="microservice-awards-$ENVIRONMENT"
+            [bff-administration]="microservice-bff-administration-$ENVIRONMENT"
+            [bff-integration]="microservice-bff-integration-$ENVIRONMENT"
+            [bff-sellers]="microservice-bff-sellers-$ENVIRONMENT"
+            [biometrics]="microservice-biometrics-$ENVIRONMENT"
+            [collected]="microservice-collected-$ENVIRONMENT"
+            [conciliation]="microservice-conciliation-$ENVIRONMENT"
+            [dynamic-storage]="microservice-dynamic-storage-$ENVIRONMENT"
+            [external-wager]="microservice-external-wager-$ENVIRONMENT"
+            [generic-services]="microservice-generic-services-$ENVIRONMENT"
+            [hierarchies]="microservice-hierarchies-$ENVIRONMENT"
+            [legacy]="microservice-legacy-$ENVIRONMENT"
+            [lotteries]="microservice-lotteries-$ENVIRONMENT"
+            [lotteries-games]="microservice-lotteries-games-$ENVIRONMENT"
+            [millonario]="microservice-millonario-$ENVIRONMENT"
+            [money-control]="microservice-money-control-$ENVIRONMENT"
+            [notifications]="microservice-notifications-$ENVIRONMENT"
+            [notifier]="microservice-notifier-$ENVIRONMENT"
+            [online-games]="microservice-online-games-$ENVIRONMENT"
+            [papelery]="microservice-papelery-$ENVIRONMENT"
+            [payment-voucher]="microservice-payment-voucher-$ENVIRONMENT"
+            [payments]="microservice-payments-$ENVIRONMENT"
+            [products]="microservice-products-$ENVIRONMENT"
+            [promotional]="microservice-promotional-$ENVIRONMENT"
+            [raffles]="microservice-raffles-$ENVIRONMENT"
+            [raspa]="microservice-raspa-$ENVIRONMENT"
+            [recharges]="microservice-recharges-$ENVIRONMENT"
+            [remittances]="microservice-remittances-$ENVIRONMENT"
+            [reports]="microservice-reports-$ENVIRONMENT"
+            [security]="microservice-security-$ENVIRONMENT"
+            [sellers]="microservice-sellers-$ENVIRONMENT"
+            [shopping-cart]="microservice-shopping-cart-$ENVIRONMENT"
+            [siga]="microservice-siga-$ENVIRONMENT"
+            [transaction]="microservice-transaction-$ENVIRONMENT"
             [transaction-astro]="microservice-transaction-$ENVIRONMENT"
-            [transaction-lg]="microservice-transaction-$ENVIRONMENT"
+            [transaction-lotteries-games]="microservice-transaction-$ENVIRONMENT"
+            [transaction-notifier]="microservice-transaction-notifier-$ENVIRONMENT"
             [transaction-recharges]="microservice-transaction-$ENVIRONMENT"
+            [wiretransfer]="microservice-wiretransfer-$ENVIRONMENT"
           )
 
           for SERVICE in "${!SERVICES[@]}"; do
@@ -64,17 +104,6 @@ jobs:
                 done | sed '$s/,$//')"'
           }')
           echo "$SERVICES_JSON" > services.json
-
-          jq 'with_entries(
-            if (.key | startswith("bff-")) then
-              {key: (.key + "-fg-service"), value: .value}
-            elif (.key | startswith("notifier")) then
-              {key: ("ms" + .key + "-fg-service"), value: .value}
-            else
-              {key: (.key + "-ms-fg-service"), value: .value}
-            end
-          )' services.json > services-modified.json
-          mv services-modified.json services.json
 
           mkdir -p $(Build.ArtifactStagingDirectory)/microservices
           cp services.json $(Build.ArtifactStagingDirectory)/microservices/version.json
