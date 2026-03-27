@@ -29,6 +29,10 @@ variables:
         - group: trasversal-aws-staging
         - group: variables-electron-staging
 
+      - ${{ if eq(parameters.environments, 'staging_nacional') }}:
+        - group: trasversal-aws-staging-nacional
+        - group: variables-electron-staging-nacional
+
   # Master branch → por red
   - ${{ if and(eq(parameters.region, 'antioquia'), eq(variables['Build.SourceBranchName'], 'master')) }}:
       - group: trasversal-aws-master-antioquia
