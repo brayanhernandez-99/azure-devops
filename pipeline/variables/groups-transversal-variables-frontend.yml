@@ -5,23 +5,6 @@ variables:
   - group: trasversal-microfrontend-vue2-old
   - group: trasversal-microfrontend-old
 
-  ########################################DEPLOY UNICO AMBIENTE#####################################
-  # Develop - Feature - Hotfix branch
-#   - ${{ if or(eq(variables['Build.SourceBranchName'], 'develop'), startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')) }}:
-#       - group: trasversal-aws-develop
-#       - group: variables-cloudfront-develop
-#       - group: variables-microfrontend-vue2-develop-old
-#       - group: variables-microfrontend-develop-old
-
-#   # Staging branch
-#   - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
-#       - group: trasversal-aws-staging
-#       - group: variables-cloudfront-staging
-#       - group: variables-microfrontend-vue2-staging-old
-#       - group: variables-microfrontend-staging-old
-
-
-  ######################DEPLOY MULTI AMBIENTES#########################
   - ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')) }}:
       - group: trasversal-aws-develop
       - group: variables-cloudfront-develop
@@ -53,6 +36,12 @@ variables:
             - group: variables-cloudfront-staging
             - group: variables-microfrontend-vue2-staging-old
             - group: variables-microfrontend-staging-old
+
+      - ${{ if eq(parameters.environments, 'staging_nacional') }}:
+            - group: trasversal-aws-staging-nacional
+            - group: variables-cloudfront-staging-nacional
+            - group: variables-microfrontend-vue2-staging-nacional-old
+            - group: variables-microfrontend-staging-nacional-old
 
   # Master branch → por red
   - ${{ if and(eq(parameters.region, 'antioquia'), eq(variables['Build.SourceBranchName'], 'master')) }}:
