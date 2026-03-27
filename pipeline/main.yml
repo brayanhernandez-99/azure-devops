@@ -17,6 +17,7 @@ parameters:
     default:
       - staging
       - staging_new
+      - staging_nacional
 
   - name: red
     type: object
