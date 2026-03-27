@@ -55,6 +55,8 @@ jobs:
             refs/heads/staging)
               if [[ "$environments" == "staging_new" ]]; then
                 environment="qa_new"
+              elif [[ "$environments" == "staging_nacional" ]]; then
+                environment="qa_nacional"
               else
                 environment="qa"
               fi
