@@ -74,11 +74,17 @@ jobs:
       - script: |
           set -e
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3/s3-credits
+
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/bff-sellers/aws-service-secret-manager-secret-jwt
           terragrunt plan --all --non-interactive -no-color
 
-          cd $(Build.SourcesDirectory)
-          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+
+
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3/s3-credits
+          # terragrunt plan --all --non-interactive -no-color
+
+          # cd $(Build.SourcesDirectory)
+          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
 
           # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-app-administration
