@@ -5,6 +5,7 @@ stages:
       - template: ../ci/semantic-version-ecs.yml
         parameters:
           release: ${{ parameters.release }}
+          services: ${{ parameters.services }}
 
   #####################################################################
 
@@ -15,3 +16,4 @@ stages:
       - template: ../cd/deployment.yml
         parameters:
           release: ${{ parameters.release }}
+          services: ${{ parameters.services }}
