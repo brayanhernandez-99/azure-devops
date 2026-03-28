@@ -103,11 +103,11 @@ jobs:
 
 
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/notifications/aws-service-sqs
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/scheduler
           terragrunt plan --all --non-interactive -no-color
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/trino
-          terragrunt plan --all --non-interactive -no-color
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/trino
+          # terragrunt plan --all --non-interactive -no-color
 
 
 
