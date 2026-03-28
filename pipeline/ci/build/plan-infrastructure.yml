@@ -101,6 +101,11 @@ jobs:
 
 
 
+
+
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/notifications/aws-service-sqs
+          terragrunt plan --all --non-interactive -no-color
+
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/trino
           terragrunt plan --all --non-interactive -no-color
 
