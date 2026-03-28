@@ -75,23 +75,11 @@ jobs:
           set -e
 
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/bff-administration
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/trino
           # terragrunt plan --all --non-interactive -no-color
 
-          # cd $(Build.SourcesDirectory)
-          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
-
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/bff-sellers
-          # terragrunt plan --all --non-interactive -no-color
-
-
-
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3/s3-credits
-          # terragrunt plan --all --non-interactive -no-color
-
-          # cd $(Build.SourcesDirectory)
-          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
-
+          cd $(Build.SourcesDirectory)
+          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
           # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/bff-integration
           # terragrunt plan --all --non-interactive -no-color
@@ -100,7 +88,7 @@ jobs:
           # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
 
-
+          
 
 
           # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/biometrics
