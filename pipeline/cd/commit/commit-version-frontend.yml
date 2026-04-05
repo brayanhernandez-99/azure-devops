@@ -8,43 +8,43 @@ jobs:
       runOnce:
         deploy:
           steps:
-          - checkout: self
-            fetchDepth: 0
-            persistCredentials: true
-            fetchTags: false
+            - checkout: self
+              fetchDepth: 0
+              persistCredentials: true
+              fetchTags: false
 
-          - download: current
-            artifact: versions
-            displayName: "📥 Download Versions"
+            - download: current
+              artifact: versions
+              displayName: "📥 Download Versions"
 
-          - script: |
-              raw_branch=$(Build.SourceBranch)
-              clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
+            - script: |
+                raw_branch=$(Build.SourceBranch)
+                clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
 
-              git config user.name "pipeline"
-              git config user.email "pipelineUX@ux.technology"
+                git config user.name "pipeline"
+                git config user.email "pipelineUX@ux.technology"
 
-              git fetch origin version/$clean_branch
-              git checkout -B version/$clean_branch origin/version/$clean_branch
+                git fetch origin version/$clean_branch
+                git checkout -B version/$clean_branch origin/version/$clean_branch
 
-              for files in $(Pipeline.Workspace)/versions/*/version.json; do
-                ms=$(jq -r .ms "$files")
-                version=$(jq -r .version "$files")
+                for files in $(Pipeline.Workspace)/versions/*/version.json; do
+                  ms=$(jq -r .ms "$files")
+                  version=$(jq -r .version "$files")
 
-                echo "🔧 $ms → $version"
-                if [[ "$ms" == "app-administration-vue2" || "$ms" == "app-sellers-vue2" ]]; then
-                  dir="app-legacy"
-                else
-                  dir="apps"
-                fi
+                  echo "🔧 $ms → $version"
+                  if [[ "$ms" == "app-administration-vue2" || "$ms" == "app-sellers-vue2" ]]; then
+                    dir="app-legacy"
+                  else
+                    dir="apps"
+                  fi
 
-                jq --arg version "$version" \
-                  '.version = $version' \
-                  "$dir/$ms/package.json" > tmp.json && mv tmp.json "$dir/$ms/package.json"
+                  jq --arg version "$version" \
+                    '.version = $version' \
+                    "$dir/$ms/package.json" > tmp.json && mv tmp.json "$dir/$ms/package.json"
 
-                git add "$dir/$ms/package.json"
-              done
+                  git add "$dir/$ms/package.json"
+                done
 
-              git commit -m "chore: bump versions [monorepo]"
-              git push origin version/$clean_branch
-            displayName: "⚡ Commit Version & Push"
+                git commit -m "chore: bump versions [monorepo]"
+                git push origin version/$clean_branch
+              displayName: "⚡ Commit Version & Push"

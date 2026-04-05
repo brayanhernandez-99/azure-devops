@@ -84,7 +84,7 @@ jobs:
             cat <<EOF > ".npmrc"
             @matrixtech:registry=https://$REPO_DOMAIN_MATRIX/$REPO_PATH_MATRIX/
             //$REPO_DOMAIN_MATRIX/$REPO_PATH_MATRIX/:_authToken=$token_matrix
-            
+
             @ux:registry=https://$REPO_DOMAIN_UX/$REPO_PATH_UX/
             //$REPO_DOMAIN_UX/$REPO_PATH_UX/:_authToken=$token_ux
             EOF
@@ -199,7 +199,6 @@ jobs:
           echo "$RESPONSE" | jq -r '.analyses[] | "KEY=\(.key) DATE=\(.date)"'
 
           echo "--------------------------------------"
-
           INDEX=0
 
           for ANALYSIS_KEY in $(echo "$RESPONSE" | jq -r '.analyses[].key'); do
@@ -211,7 +210,6 @@ jobs:
             fi
 
             echo "🗑️ Borrando análisis $ANALYSIS_KEY..."
-
             DELETE_RESPONSE=$(curl -s -X POST -u "$TOKEN:" \
               "$SONAR_URL/api/project_analyses/delete?analysis=$ANALYSIS_KEY")
 
@@ -245,7 +243,7 @@ jobs:
             sonar.javascript.lcov.reportPaths=$(System.DefaultWorkingDirectory)/coverage/lcov.info
             sonar.exclusions=**/*.java,**/test/**,**/android/**,**/ios/**,**/coverage/**,**/.nyc_output/**,**/reports/**,**/node_modules/**,**/migrations/**,**/config/**,**/Dockerfile,*.cjs,**/*.spec.ts
         condition: and(succeeded(),
-            ne(variables['Build.SourceBranchName'], 'develop'))
+          ne(variables['Build.SourceBranchName'], 'develop'))
 
       - script: |
           response=$(echo $SONARQUBE_SCANNER_PARAMS | sed -E 's#"sonar\.branch\.name":"[^"]+",##g')
@@ -268,23 +266,19 @@ jobs:
         displayName: "🧪 Run Tests for: $(Build.Repository.Name)"
         continueOnError: true
         condition: and(succeeded(),
-            ne(variables['Build.SourceBranchName'], 'develop'))
-      
+          ne(variables['Build.SourceBranchName'], 'develop'))
+
       # - script: |
       #     PKG="$(System.DefaultWorkingDirectory)/package.json"
-
       #     if [[ ! -f "$PKG" ]]; then
       #       echo "❌ package.json not found"
       #       exit 1
       #     fi
-
       #     TEST_SCRIPT=$(jq -r '.scripts.test // empty' "$PKG")
-
       #     if [[ -z "$TEST_SCRIPT" ]]; then
       #       echo "❌ No test script defined in package.json"
       #       exit 1
       #     fi
-
       #     if echo "$TEST_SCRIPT" | grep -Eiq '(^|[[:space:]])jest([[:space:]]|$)'; then
       #       mkdir -p reports/junit
       #       mkdir -p reports/coverage
@@ -300,24 +294,19 @@ jobs:
       #         --coverageReporters=cobertura \
       #         --reporters=default \
       #         --reporters=jest-junit \
-
       #       echo "📁 Test files:"
       #       ls -la reports/junit
-
       #       echo "📁 Coverage files:"
       #       ls -la reports/coverage
       #     fi
-
       #     if echo "$TEST_SCRIPT" | grep -Eiq '(^|[[:space:]])mocha([[:space:]]|$)'; then
       #       echo "🧪 Running Mocha Test (CI override)"
       #       pnpm add -D mocha-junit-reporter
       #       pnpm exec mocha \
       #       --reporter mocha-junit-reporter \
       #       --reporter-options mochaFile=reports/junit/test.xml
-
       #       echo "📁 Test files:"
       #       ls -la reports/junit
-
       #       echo "🧪 Running Mocha coverage (CI override)"
       #       pnpm exec nyc \
       #         --report-dir reports/coverage \
@@ -325,13 +314,12 @@ jobs:
       #         --reporter=cobertura \
       #         --reporter=text \
       #         mocha
-
       #       echo "📁 Coverage files:"
       #       ls -la reports/coverage
       #     fi
       #   displayName: "📈 Run Tests, coverage report"
       #   condition: succeeded()
-
+      
       # - task: PublishTestResults@2
       #   displayName: "📊 Publish Test Results"
       #   inputs:
@@ -346,39 +334,37 @@ jobs:
       #     codeCoverageTool: "Cobertura"
       #     summaryFileLocation: "$(System.DefaultWorkingDirectory)/reports/coverage/cobertura-coverage.xml"
       #     reportDirectory: "$(System.DefaultWorkingDirectory)/reports/coverage"
-
+      
       - script: |
           pnpm run coverage
           ls -la $(System.DefaultWorkingDirectory)/coverage
         displayName: "🔎 Coverage Analysis: $(Build.Repository.Name)"
         condition: and(succeeded(),
-            ne(variables['Build.SourceBranchName'], 'develop'))
+          ne(variables['Build.SourceBranchName'], 'develop'))
         # continueOnError: true
 
       - task: SonarQubeAnalyze@7
         displayName: "📡 Run Sonar Analysis"
         condition: and(succeeded(),
-            ne(variables['Build.SourceBranchName'], 'develop'))
+          ne(variables['Build.SourceBranchName'], 'develop'))
 
       - task: SonarQubePublish@7
         inputs:
           pollingTimeoutSec: 400
         displayName: "📤 Publish Static Code Analysis Results"
         condition: and(succeeded(),
-            ne(variables['Build.SourceBranchName'], 'develop'))
+          ne(variables['Build.SourceBranchName'], 'develop'))
 
       - template: sonarqube/job-sonarqube.yml@sonarqube
         parameters:
           projectKey: $(Build.Repository.Name)
-      
+
       - script: |
           set -e
-
           echo "🔍 Checking for outdated npm dependencies..."
           REPORT=$(npx npm-check-updates)
 
           echo "$REPORT"
-
           if echo "$REPORT" | grep -q "→"; then
             echo "❌ Outdated npm dependencies detected. Please update them."
             # exit 1

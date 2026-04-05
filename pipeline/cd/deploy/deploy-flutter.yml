@@ -141,51 +141,51 @@ jobs:
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
-          
+
       - script: |
-            DEPLOY_TIME=$(date -d "$BUILD_FINISHTIME -5 hours" "+%Y-%m-%d %H:%M UTC")
-            BRANCH_NAME_MULTI=$environments
-            BRANCH_NAME="$BUILD_SOURCEBRANCHNAME"
+          DEPLOY_TIME=$(date -d "$BUILD_FINISHTIME -5 hours" "+%Y-%m-%d %H:%M UTC")
+          BRANCH_NAME_MULTI=$environments
+          BRANCH_NAME="$BUILD_SOURCEBRANCHNAME"
 
-            if [[ "$BRANCH_NAME" == "master" ]]; then
-              BRANCH_DEPLOY="${red:-red}"
+          if [[ "$BRANCH_NAME" == "master" ]]; then
+            BRANCH_DEPLOY="${red:-red}"
 
-            elif [[ "$BRANCH_NAME" == "develop" && "$BRANCH_NAME_MULTI" == "develop" ]]; then
-              BRANCH_DEPLOY="develop"
+          elif [[ "$BRANCH_NAME" == "develop" && "$BRANCH_NAME_MULTI" == "develop" ]]; then
+            BRANCH_DEPLOY="develop"
 
-            elif [[ "$BRANCH_NAME" == "staging" && "$BRANCH_NAME_MULTI" == "staging" ]]; then
-              BRANCH_DEPLOY="staging"
+          elif [[ "$BRANCH_NAME" == "staging" && "$BRANCH_NAME_MULTI" == "staging" ]]; then
+            BRANCH_DEPLOY="staging"
 
-            else
-              BRANCH_DEPLOY="$BRANCH_NAME_MULTI"
-            fi
-            
-            payload=$(cat <<EOF
-            {
-              "@type": "MessageCard",
-              "@context": "http://schema.org/extensions",
-              "summary": "Deployment successful",
-              "themeColor": "00FF00",
-              "title": "✅ Deployment exitoso $(Build.SourceBranchName)",
-              "sections": [
-                {
-                  "facts": [
-                    { "name": "Pipeline", "value": "$(Build.DefinitionName)" },
-                    { "name": "Branch", "value": "$BRANCH_DEPLOY" },
-                    { "name": "Build", "value": "$(Build.BuildNumber)" },
-                    { "name": "Merged by", "value": "$(Build.RequestedFor)" },
-                    { "name": "Deploy time", "value": "$DEPLOY_TIME" }
-                  ],
-                  "markdown": true
-                }
-              ]
-            }
-            EOF
-            )
+          else
+            BRANCH_DEPLOY="$BRANCH_NAME_MULTI"
+          fi
 
-            curl -H "Content-Type: application/json" \
-                 -d "$payload" \
-                 $(URL_WEBHOOK_TEAMS)
+          payload=$(cat <<EOF
+          {
+            "@type": "MessageCard",
+            "@context": "http://schema.org/extensions",
+            "summary": "Deployment successful",
+            "themeColor": "00FF00",
+            "title": "✅ Deployment exitoso $(Build.SourceBranchName)",
+            "sections": [
+              {
+                "facts": [
+                  { "name": "Pipeline", "value": "$(Build.DefinitionName)" },
+                  { "name": "Branch", "value": "$BRANCH_DEPLOY" },
+                  { "name": "Build", "value": "$(Build.BuildNumber)" },
+                  { "name": "Merged by", "value": "$(Build.RequestedFor)" },
+                  { "name": "Deploy time", "value": "$DEPLOY_TIME" }
+                ],
+                "markdown": true
+              }
+            ]
+          }
+          EOF
+          )
+
+          curl -H "Content-Type: application/json" \
+               -d "$payload" \
+               $(URL_WEBHOOK_TEAMS)
         displayName: "📢 Post message to Teams"
         env:
           red: ${{ parameters.region }}

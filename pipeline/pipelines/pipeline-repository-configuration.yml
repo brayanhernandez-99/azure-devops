@@ -37,15 +37,14 @@ stages:
           - template: ../ci/build/build-repository-configuration.yml
 
       - ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}:
-          - ${{ each environments in parameters.environments_new_develop }}:
-              - stage: deploy_repository_configuration_${{ environments }}
-                displayName: "🚀 Deploy Repository Configuration ${{ environments }}"
-                dependsOn: build_repository_configuration
-                jobs:
-                  - template: ../cd/deployment.yml
-                    parameters:
-                      release: ${{ parameters.release }}
-                      environments: ${{ environments }}
+          - stage: deploy_repository_configuration_develop
+            displayName: "🚀 Deploy Repository Configuration develop"
+            dependsOn: build_repository_configuration
+            jobs:
+              - template: ../cd/deployment.yml
+                parameters:
+                  release: ${{ parameters.release }}
+                  environments: develop
 
       - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
           - ${{ each environments in parameters.environments_new_staging }}:

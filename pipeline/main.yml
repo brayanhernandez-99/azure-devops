@@ -6,12 +6,6 @@ parameters:
     type: number
     default: 0
 
-  - name: environments_new_develop
-    type: object
-    default:
-      - develop
-      - develop_new
-
   - name: environments_new_staging
     type: object
     default:
@@ -70,10 +64,6 @@ resources:
       name: Invictus/sonarqube-invictus
       type: git
 
-    # - repository: electron
-    #   name: Invictus/electron-app-invictus-test
-    #   type: git
-
 stages:
   #
   # MicroFronted Pre-Build
@@ -93,7 +83,6 @@ stages:
           apps: ${{ parameters.apps }}
           pr_id: ${{ parameters.pr_id }}
           release: ${{ parameters.release }}
-          environments_new_develop: ${{ parameters.environments_new_develop }}
           environments_new_staging: ${{ parameters.environments_new_staging }}
 
   #
@@ -104,7 +93,6 @@ stages:
         parameters:
           red: ${{ parameters.red }}
           release: ${{ parameters.release }}
-          environments_new_develop: ${{ parameters.environments_new_develop }}
           environments_new_staging: ${{ parameters.environments_new_staging }}
 
   #
@@ -115,7 +103,6 @@ stages:
         parameters:
           red: ${{ parameters.red }}
           release: ${{ parameters.release }}
-          environments_new_develop: ${{ parameters.environments_new_develop }}
           environments_new_staging: ${{ parameters.environments_new_staging }}
 
   #
@@ -126,7 +113,6 @@ stages:
         parameters:
           red: ${{ parameters.red }}
           release: ${{ parameters.release }}
-          environments_new_develop: ${{ parameters.environments_new_develop }}
           environments_new_staging: ${{ parameters.environments_new_staging }}
 
   #
@@ -137,15 +123,4 @@ stages:
         parameters:
           red: ${{ parameters.red }}
           release: ${{ parameters.release }}
-          environments_new_develop: ${{ parameters.environments_new_develop }}
           environments_new_staging: ${{ parameters.environments_new_staging }}
-
-  #
-  # MicroFronted - Electron
-  #
-  - ${{ if and(eq(parameters.release, 'electron'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), in(variables['Build.SourceBranchName'], 'develop', 'staging', 'master'))) }}:
-      - template: ./pipelines/pipeline-microfrontend-electron.yml
-        parameters:
-          red: ${{ parameters.red }}
-          apps: ${{ parameters.apps }}
-          release: ${{ parameters.release }}

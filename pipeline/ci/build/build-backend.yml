@@ -12,7 +12,7 @@ jobs:
       - checkout: self
         fetchDepth: 1
         persistCredentials: true
-        
+
       - checkout: git://DevOps-templates-UX/pipelines-templates
         fetchDepth: 1
         persistCredentials: true
@@ -107,7 +107,7 @@ jobs:
             cat <<EOF > "$(Build.Repository.Name)/.npmrc"
             @matrixtech:registry=https://$REPO_DOMAIN_MATRIX/$REPO_PATH_MATRIX/
             //$REPO_DOMAIN_MATRIX/$REPO_PATH_MATRIX/:_authToken=$token_matrix
-            
+
             @ux:registry=https://$REPO_DOMAIN_UX/$REPO_PATH_UX/
             //$REPO_DOMAIN_UX/$REPO_PATH_UX/:_authToken=$token_ux
             EOF
@@ -169,7 +169,7 @@ jobs:
           CLEAN_NAME="${REPO_NAME%-invictus}"
 
           branch="${CURRENT_BRANCH#refs/heads/}"
-          
+
           case "$branch" in
             develop)
               clean_branch="$branch"
@@ -201,7 +201,7 @@ jobs:
           tags: |
             latest
             $(version)
-      
+
       # - script: |
       #     docker run --rm \
       #       -v /var/run/docker.sock:/var/run/docker.sock \
