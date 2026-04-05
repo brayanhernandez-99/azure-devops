@@ -8,48 +8,48 @@ jobs:
       runOnce:
         deploy:
           steps:
-          - checkout: self
-            fetchDepth: 0
-            persistCredentials: true
-            fetchTags: false
+            - checkout: self
+              fetchDepth: 0
+              persistCredentials: true
+              fetchTags: false
 
-          - download: current
-            artifact: versions
-            displayName: "📥 Download Versions"
+            - download: current
+              artifact: versions
+              displayName: "📥 Download Versions"
 
-          - script: |
-              raw_branch=$(Build.SourceBranch)
-              clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
+            - script: |
+                raw_branch=$(Build.SourceBranch)
+                clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
 
-              git config user.name "pipeline"
-              git config user.email "pipelineUX@ux.technology"
+                git config user.name "pipeline"
+                git config user.email "pipelineUX@ux.technology"
 
-              git fetch origin version/$clean_branch
-              git checkout -B version/$clean_branch origin/version/$clean_branch
-
-
-              file_flutter=$(Pipeline.Workspace)/versions/flutter/version.json
-              file_pubspec=$(Pipeline.Workspace)/versions/pubspec/version.json
-
-              cleanNEXT_VERSION=$(jq -r .version "$file_flutter")
-              NEXT_VERSION_PUB=$(jq -r .version "$file_pubspec")
+                git fetch origin version/$clean_branch
+                git checkout -B version/$clean_branch origin/version/$clean_branch
 
 
-              echo "🔧 Actualizando versión $cleanNEXT_VERSION en el pubspec.yaml"
-              sed -i "s/^version: .*/version: $cleanNEXT_VERSION+$NEXT_VERSION_PUB/" pubspec.yaml
+                file_flutter=$(Pipeline.Workspace)/versions/flutter/version.json
+                file_pubspec=$(Pipeline.Workspace)/versions/pubspec/version.json
 
-              echo -e "\n📁 File pubspec.yaml:"
-              cat pubspec.yaml
-              jq --arg version "$cleanNEXT_VERSION" '.VERSION = $version' env.json > tmp.json && mv tmp.json env.json
+                cleanNEXT_VERSION=$(jq -r .version "$file_flutter")
+                NEXT_VERSION_PUB=$(jq -r .version "$file_pubspec")
 
-              echo -e "\n📁 File env.json:"
-              cat env.json
 
-              echo "🔧 $(Build.Repository.Name) → $cleanNEXT_VERSION"
-              echo "🔧 $(Build.Repository.Name) → $NEXT_VERSION_PUB"
+                echo "🔧 Actualizando versión $cleanNEXT_VERSION en el pubspec.yaml"
+                sed -i "s/^version: .*/version: $cleanNEXT_VERSION+$NEXT_VERSION_PUB/" pubspec.yaml
 
-              git add env.json pubspec.yaml
-              git commit -m "chore Flutter: bump version to $cleanNEXT_VERSION"
-              git push origin version/$clean_branch
-              echo "##vso[build.updatebuildnumber]$cleanNEXT_VERSION"
-            displayName: "⚡ Commit Version & Push — $(Build.Repository.Name)"
+                echo -e "\n📁 File pubspec.yaml:"
+                cat pubspec.yaml
+                jq --arg version "$cleanNEXT_VERSION" '.VERSION = $version' env.json > tmp.json && mv tmp.json env.json
+
+                echo -e "\n📁 File env.json:"
+                cat env.json
+
+                echo "🔧 $(Build.Repository.Name) → $cleanNEXT_VERSION"
+                echo "🔧 $(Build.Repository.Name) → $NEXT_VERSION_PUB"
+
+                git add env.json pubspec.yaml
+                git commit -m "chore Flutter: bump version to $cleanNEXT_VERSION"
+                git push origin version/$clean_branch
+                echo "##vso[build.updatebuildnumber]$cleanNEXT_VERSION"
+              displayName: "⚡ Commit Version & Push — $(Build.Repository.Name)"
