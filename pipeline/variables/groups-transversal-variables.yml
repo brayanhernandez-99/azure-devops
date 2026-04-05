@@ -1,11 +1,11 @@
 variables:
-      - group: trasversal-aws-deployment
+        - group: trasversal-aws-deployment
 
-      - ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}:
-              - group: trasversal-aws-develop
+        - ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}:
+                  - group: trasversal-aws-develop
 
-      - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
-              - group: trasversal-aws-staging
+        - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
+                  - group: trasversal-aws-staging-nacional
 
-      - ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
-              - group: trasversal-aws-antioquia
+        - ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
+                  - group: trasversal-aws-antioquia
