@@ -5,7 +5,7 @@ variables:
                   - group: trasversal-aws-develop
 
         - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
-                  - group: trasversal-aws-staging-nacional
+                  - group: trasversal-aws-staging
 
         - ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
                   - group: trasversal-aws-antioquia
