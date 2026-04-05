@@ -1,6 +1,6 @@
 jobs:
-  - job: deploy_microservices
-    displayName: "🚀 deploy microservices"
+  - job: update_microservices
+    displayName: "🚀 update microservices"
     pool:
       name: "Azure Pipelines"
       VmImage: ubuntu-22.04

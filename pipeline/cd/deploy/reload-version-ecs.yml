@@ -1,0 +1,47 @@
+jobs:
+  - job: reload_microservices
+    displayName: "🚀 reload microservices"
+    pool:
+      name: "Azure Pipelines"
+      VmImage: ubuntu-22.04
+
+    variables:
+      - template: ../../variables/groups-transversal-variables.yml
+        parameters:
+          release: ${{ parameters.release }}
+          services: ${{ parameters.services }}
+
+    steps:
+      - task: DownloadBuildArtifacts@0
+        inputs:
+          artifactName: "versions"
+          downloadPath: "$(Pipeline.Workspace)/versions-downloaded"
+        displayName: "📥 Download Version"
+        condition: succeeded()
+
+      - script: |
+          set -e
+          cp $(Pipeline.Workspace)/versions-downloaded/versions/microservices/version.json $(System.DefaultWorkingDirectory)/services.json
+          export CLUSTER="invictus"
+
+          echo "✅ Servicios a reiniciar:"
+          cat services.json
+          echo ""
+
+          SERVICES_JSON=$(cat services.json)
+          for SERVICE in $(echo "$SERVICES_JSON" | jq -r 'keys[]'); do
+            echo "🔄 Reiniciando $SERVICE..."
+
+            aws ecs update-service \
+              --cluster "$CLUSTER" \
+              --service "$SERVICE" \
+              --force-new-deployment
+
+            echo "✅ $SERVICE reiniciado"
+            echo "---------------------------------------------"
+          done
+        displayName: "🚀 Reiniciando Microservices"
+        env:
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
+          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
