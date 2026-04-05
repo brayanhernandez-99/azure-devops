@@ -1,0 +1,40 @@
+jobs:
+  - job: "semantic_version_microservices"
+    displayName: "🏷️ version microservices"
+    pool:
+      name: "Azure Pipelines"
+      VmImage: ubuntu-22.04
+
+    variables:
+      - template: ../variables/groups-transversal-variables.yml
+        parameters:
+          release: ${{ parameters.release }}
+          services: ${{ parameters.services }}
+
+    steps:
+      - checkout: self
+        fetchDepth: 0
+        persistCredentials: true
+
+      - script: |
+          set -e
+          echo "⚙️ Procesando microservices..."
+          echo "$servicesJson" | jq 'to_entries | map(select(.value == true)) | from_entries' > services.json
+
+          mkdir -p $(Build.ArtifactStagingDirectory)/microservices
+          cp services.json $(Build.ArtifactStagingDirectory)/microservices/version.json
+
+          echo -e "\n📂 File : ./services.json"
+          jq . "services.json"
+        displayName: "🔎 Visualizando versiones"
+        condition: succeeded()
+        env:
+          servicesJson: ${{ convertToJson(parameters.services) }}
+
+      - task: PublishBuildArtifacts@1
+        inputs:
+          PathtoPublish: "$(Build.ArtifactStagingDirectory)"
+          ArtifactName: "versions"
+          publishLocation: "Container"
+        displayName: "📥 Publish artifact version"
+        condition: succeeded()
