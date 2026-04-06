@@ -32,7 +32,7 @@ jobs:
             echo "🔄 Reiniciando $SERVICE..."
             aws ecs update-service --cluster "$CLUSTER" --service "$SERVICE" --force-new-deployment > /dev/null 2>&1
             echo "✅ $SERVICE reiniciado correctamente"
-            echo "---------------------------------------------"
+            echo -e "---------------------------------------------\n"
           done
         displayName: "🚀 Reiniciando Microservices"
         condition: succeeded()
