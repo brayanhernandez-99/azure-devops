@@ -9,7 +9,6 @@ parameters:
   - name: environments_new_staging
     type: object
     default:
-      - staging
       - staging_new
       - staging_nacional
 
