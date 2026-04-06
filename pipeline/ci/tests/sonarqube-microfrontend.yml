@@ -20,11 +20,11 @@ jobs:
       - checkout: self
         fetchDepth: 1
         persistCredentials: true
-      
+
       - checkout: git://DevOps-templates-UX/pipelines-templates
         fetchDepth: 1
         persistCredentials: true
-        
+
       - task: DownloadBuildArtifacts@0
         inputs:
           artifactName: "versions"
@@ -34,7 +34,6 @@ jobs:
 
       - script: |
           VERSION_FILE="$(Pipeline.Workspace)/versions-downloaded/versions/$(msName)/version.json"
-
           echo -e "\n📁 Archivo version.json:"
           ls -la "$VERSION_FILE"
           cat "$VERSION_FILE"
@@ -62,29 +61,26 @@ jobs:
           fi
         displayName: "📂 Select Directory"
         condition: succeeded()
-      
+
       - script: |
+          rm "$(Build.Repository.Name)/$(file)/$(msName)/vitest.config.mts"
+          echo -e "\n✅ Elimnación archivo vitest.config.mts ..."
 
-            rm "$(Build.Repository.Name)/$(file)/$(msName)/vitest.config.mts"
-            echo -e "\n✅ Elimnación archivo vitest.config.mts ..."
-          
-            echo -e "\n⚠️ Copiando archivo vitest.config.mts templates..."
-            cp pipelines-templates/pipeline/config/vitest.config.mts $(Build.Repository.Name)/$(file)/$(msName)
+          echo -e "\n⚠️ Copiando archivo vitest.config.mts templates..."
+          cp pipelines-templates/pipeline/config/vitest.config.mts $(Build.Repository.Name)/$(file)/$(msName)
 
-            echo -e "\n✅ vitest.config.mts copiado exitosamente."
-            echo -e "\n📁 Files:"
-            ls -la $(Build.Repository.Name)/$(file)/$(msName)
+          echo -e "\n✅ vitest.config.mts copiado exitosamente."
+          echo -e "\n📁 Files:"
+          ls -la $(Build.Repository.Name)/$(file)/$(msName)
 
-            echo -e "\n✅ Archivo vitest.config.mts"
-            cat $(Build.Repository.Name)/$(file)/$(msName)/vitest.config.mts
+          echo -e "\n✅ Archivo vitest.config.mts"
+          cat $(Build.Repository.Name)/$(file)/$(msName)/vitest.config.mts
 
-
-            FILE="$(Build.Repository.Name)/$(file)/$(msName)/vitest.config.ts"
-
-            if [ -f "$FILE" ]; then
-              rm "$FILE"
-              echo "❌ Eliminando el archivo vitest.config.ts"
-            fi
+          FILE="$(Build.Repository.Name)/$(file)/$(msName)/vitest.config.ts"
+          if [ -f "$FILE" ]; then
+            rm "$FILE"
+            echo "❌ Eliminando el archivo vitest.config.ts"
+          fi
         displayName: "🔍 Replace vitest.config"
         condition: and(succeeded(),
           ne(variables['msName'], 'app-administration-vue2'),
@@ -162,7 +158,6 @@ jobs:
           echo -e "\n⚙️ Instalando dependencias node..."
           npm install -g pnpm
           pnpm install
-
 
           cd $(Build.Repository.Name)/$(file)/$(msName)
           ls -la 

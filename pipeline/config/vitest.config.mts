@@ -54,7 +54,7 @@ export default mergeConfig(
             } as any,
             environment: 'jsdom',
             exclude: [...configDefaults.exclude, 'e2e/**', 'src/main.ts'],
-        },
+            setupFiles: ['test/setup.ts']
+        }
     })
 );
- 

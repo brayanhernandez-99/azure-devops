@@ -8,39 +8,38 @@ jobs:
       runOnce:
         deploy:
           steps:
-          - checkout: self
-            fetchDepth: 0
-            persistCredentials: true
-            fetchTags: false
+            - checkout: self
+              fetchDepth: 0
+              persistCredentials: true
+              fetchTags: false
 
-          - download: current
-            artifact: versions
-            displayName: "📥 Download Versions"
+            - download: current
+              artifact: versions
+              displayName: "📥 Download Versions"
 
-          - script: |
-              raw_branch=$(Build.SourceBranch)
-              clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
+            - script: |
+                raw_branch=$(Build.SourceBranch)
+                clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
 
-              git config user.name "pipeline"
-              git config user.email "pipelineUX@ux.technology"
+                git config user.name "pipeline"
+                git config user.email "pipelineUX@ux.technology"
 
-              git fetch origin version/$clean_branch
-              git checkout -B version/$clean_branch origin/version/$clean_branch
+                git fetch origin version/$clean_branch
+                git checkout -B version/$clean_branch origin/version/$clean_branch
 
-              file=$(Pipeline.Workspace)/versions/microservice/version.json
+                file=$(Pipeline.Workspace)/versions/microservice/version.json
 
 
-              cleanNEXT_VERSION=$(jq -r .version "$file")
-              jq --arg version "$cleanNEXT_VERSION" '.version = $version' package.json > tmp.json && mv tmp.json package.json
+                cleanNEXT_VERSION=$(jq -r .version "$file")
+                jq --arg version "$cleanNEXT_VERSION" '.version = $version' package.json > tmp.json && mv tmp.json package.json
 
-              echo "🔧 $(Build.Repository.Name) → $cleanNEXT_VERSION"
+                echo "🔧 $(Build.Repository.Name) → $cleanNEXT_VERSION"
 
-              git add package.json
-              git commit -m "chore($(Build.Repository.Name)): bump version to $cleanNEXT_VERSION"
-              git push origin version/$clean_branch
-              echo "##vso[build.updatebuildnumber]$cleanNEXT_VERSION"
-            displayName: "⚡ Commit Version & Push — $(Build.Repository.Name)"
-
+                git add package.json
+                git commit -m "chore($(Build.Repository.Name)): bump version to $cleanNEXT_VERSION"
+                git push origin version/$clean_branch
+                echo "##vso[build.updatebuildnumber]$cleanNEXT_VERSION"
+              displayName: "⚡ Commit Version & Push — $(Build.Repository.Name)"
 
   - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/master') }}:
       - job: "create_publish_versioning"

@@ -1,42 +1,43 @@
 variables:
-  # Develop branch
-  - ${{ if or(eq(variables['Build.SourceBranchName'], 'develop'), startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')) }}:
-      - ${{ if eq(parameters.environments, 'develop') }}:
-        - group: trasversal-aws-developer
-      - ${{ if eq(parameters.environments, 'develop_new') }}:
-        - group: trasversal-aws-develop
+    # Develop - Feature - Hotfix branch
+    - ${{ if or(eq(variables['Build.SourceBranchName'], 'develop'), startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')) }}:
+          - group: trasversal-aws-develop
 
-  # Staging branch
-  - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
-      - ${{ if eq(parameters.environments, 'staging') }}:
-        - group: trasversal-aws-qa
-      - ${{ if eq(parameters.environments, 'staging_new') }}:
-        - group: trasversal-aws-staging
+    # Staging branch
+    - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
+          - ${{ if eq(parameters.environments, 'staging') }}:
+                - group: trasversal-aws-qa
 
-  # Master branch → por red
-  - ${{ if and(eq(parameters.region, 'antioquia'), eq(variables['Build.SourceBranchName'], 'master')) }}:
-      - group: trasversal-aws-master-antioquia
-      
-  - ${{ if and(eq(parameters.region, 'antioquia_new'), eq(variables['Build.SourceBranchName'], 'master')) }}:
-      - group: trasversal-aws-antioquia
+          - ${{ if eq(parameters.environments, 'staging_new') }}:
+                - group: trasversal-aws-staging
 
-  - ${{ if and(eq(parameters.region, 'cap'), eq(variables['Build.SourceBranchName'], 'master')) }}:
-      - group: trasversal-aws-antioquia-cap
+          - ${{ if eq(parameters.environments, 'staging_nacional') }}:
+                - group: trasversal-aws-staging-nacional
 
-  - ${{ if and(eq(parameters.region, 'tolima'), eq(variables['Build.SourceBranchName'], 'master')) }}:
-      - group: trasversal-aws-tolima
+    # Master branch → por red
+    - ${{ if and(eq(parameters.region, 'antioquia'), eq(variables['Build.SourceBranchName'], 'master')) }}:
+          - group: trasversal-aws-master-antioquia
 
-  - ${{ if and(eq(parameters.region, 'huila'), eq(variables['Build.SourceBranchName'], 'master')) }}:
-      - group: trasversal-aws-huila
+    - ${{ if and(eq(parameters.region, 'antioquia_new'), eq(variables['Build.SourceBranchName'], 'master')) }}:
+          - group: trasversal-aws-antioquia
 
-  - ${{ if and(eq(parameters.region, 'cauca'), eq(variables['Build.SourceBranchName'], 'master')) }}:
-      - group: trasversal-aws-cauca
+    - ${{ if and(eq(parameters.region, 'cap'), eq(variables['Build.SourceBranchName'], 'master')) }}:
+          - group: trasversal-aws-antioquia-cap
 
-  - ${{ if and(eq(parameters.region, 'boyaca'), eq(variables['Build.SourceBranchName'], 'master')) }}:
-      - group: trasversal-aws-boyaca
+    - ${{ if and(eq(parameters.region, 'tolima'), eq(variables['Build.SourceBranchName'], 'master')) }}:
+          - group: trasversal-aws-tolima
 
-  - ${{ if and(eq(parameters.region, 'santander'), eq(variables['Build.SourceBranchName'], 'master')) }}:
-      - group: trasversal-aws-santander
+    - ${{ if and(eq(parameters.region, 'huila'), eq(variables['Build.SourceBranchName'], 'master')) }}:
+          - group: trasversal-aws-huila
 
-  - ${{ if and(eq(parameters.region, 'putumayo'), eq(variables['Build.SourceBranchName'], 'master')) }}:
-      - group: trasversal-aws-putumayo
+    - ${{ if and(eq(parameters.region, 'cauca'), eq(variables['Build.SourceBranchName'], 'master')) }}:
+          - group: trasversal-aws-cauca
+
+    - ${{ if and(eq(parameters.region, 'boyaca'), eq(variables['Build.SourceBranchName'], 'master')) }}:
+          - group: trasversal-aws-boyaca
+
+    - ${{ if and(eq(parameters.region, 'santander'), eq(variables['Build.SourceBranchName'], 'master')) }}:
+          - group: trasversal-aws-santander
+
+    - ${{ if and(eq(parameters.region, 'putumayo'), eq(variables['Build.SourceBranchName'], 'master')) }}:
+          - group: trasversal-aws-putumayo

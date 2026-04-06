@@ -78,6 +78,9 @@ jobs:
               if [[ "$environments" == "staging_new" ]]; then
                 environment="qa_new"
                 appId="qa"
+              elif [[ "$environments" == "staging_nacional" ]]; then
+                environment="qa_nacional"
+                appId="qa"
               else
                 environment="qa"
                 appId="qa"
