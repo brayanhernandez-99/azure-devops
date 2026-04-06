@@ -13,7 +13,7 @@ variables:
           - group: ftp-infrastructure-develop
 
     - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
-          - ${{ if eq(parameters.environments, 'staging_new') }}:
+          - ${{ if eq(parameters.environment, 'staging') }}:
                 - group: trasversal-aws-staging
                 - group: infrastructure-staging
                 - group: cloudfront-infrastructure-staging
@@ -22,7 +22,7 @@ variables:
                 - group: autoscaling-infrastructure-staging
                 - group: ftp-infrastructure-staging
 
-          - ${{ if eq(parameters.environments, 'staging_nacional') }}:
+          - ${{ if eq(parameters.environment, 'staging_nacional') }}:
                 - group: trasversal-aws-staging-nacional
                 - group: infrastructure-staging-nacional
                 - group: cloudfront-infrastructure-staging-nacional
