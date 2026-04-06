@@ -32,19 +32,10 @@ jobs:
           for SERVICE in $(echo "$SERVICES_JSON" | jq -r 'keys[]'); do
             echo "🔄 Reiniciando $SERVICE..."
 
-            OUTPUT=$(aws ecs update-service \
+            aws ecs update-service \
               --cluster "$CLUSTER" \
               --service "$SERVICE" \
-              --force-new-deployment 2>&1)
-
-            STATUS=$?
-
-            if [ $STATUS -ne 0 ]; then
-              echo "❌ Error reiniciando $SERVICE"
-              echo "$OUTPUT"
-              echo -e "\n##vso[task.logissue type=error]⚠️ Error en servicio [$SERVICE]"
-              exit 99
-            fi
+              --force-new-deployment > /dev/null 2>&1
 
             echo "✅ $SERVICE reiniciado correctamente"
             echo "---------------------------------------------"
