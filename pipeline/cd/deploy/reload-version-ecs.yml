@@ -23,12 +23,12 @@ jobs:
           set -e
           cp $(Pipeline.Workspace)/versions-downloaded/versions/microservices/version.json $(System.DefaultWorkingDirectory)/services.json
           export CLUSTER="invictus"
-
           echo "✅ Servicios a reiniciar:"
-          cat services.json
-          echo ""
 
           SERVICES_JSON=$(cat services.json)
+          jq . services.json
+          echo ""
+
           for SERVICE in $(echo "$SERVICES_JSON" | jq -r 'keys[]'); do
             echo "🔄 Reiniciando $SERVICE..."
 

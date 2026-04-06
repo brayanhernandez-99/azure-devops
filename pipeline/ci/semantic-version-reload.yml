@@ -19,17 +19,18 @@ jobs:
       - script: |
           set -e
           echo "⚙️ Procesando microservices..."
-          echo "$servicesJson" | jq 'to_entries | map(select(.value == true)) | from_entries' > services.json
 
+          SERVICES_JSON='${{ parameters.services }}'
+          echo "$SERVICES_JSON" | jq . > /dev/null
+
+          echo "$SERVICES_JSON" | jq 'to_entries | map(select(.value == true)) | from_entries' > services.json
           mkdir -p $(Build.ArtifactStagingDirectory)/microservices
           cp services.json $(Build.ArtifactStagingDirectory)/microservices/version.json
 
           echo -e "\n📂 File : ./services.json"
-          jq . "services.json"
-        displayName: "🔎 Visualizando versiones"
+          jq . services.json
+        displayName: "🔎 Generando services.json"
         condition: succeeded()
-        env:
-          servicesJson: ${{ convertToJson(parameters.services) }}
 
       - task: PublishBuildArtifacts@1
         inputs:
