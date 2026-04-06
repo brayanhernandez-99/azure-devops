@@ -4,7 +4,7 @@ parameters:
 
   - name: services
     type: string
-    default: "{}"
+    default: "[]"
 
 resources:
   repositories:

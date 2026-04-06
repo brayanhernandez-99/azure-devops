@@ -22,8 +22,8 @@ jobs:
 
           SERVICES_JSON='${{ parameters.services }}'
           echo "$SERVICES_JSON" | jq . > /dev/null
+          echo "$SERVICES_JSON" > services.json
 
-          echo "$SERVICES_JSON" | jq 'to_entries | map(select(.value == true)) | from_entries' > services.json
           mkdir -p $(Build.ArtifactStagingDirectory)/microservices
           cp services.json $(Build.ArtifactStagingDirectory)/microservices/version.json
 
