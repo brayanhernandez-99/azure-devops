@@ -47,7 +47,7 @@ stages:
                   environments: develop
 
       - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
-          - ${{ each environments in parameters.environments_new_staging }}:
+          - ${{ each environments in parameters.environments_staging }}:
               - stage: deploy_repository_configuration_${{ environments }}
                 displayName: "🚀 Deploy Repository Configuration ${{ environments }}"
                 dependsOn: build_repository_configuration

@@ -319,7 +319,6 @@ jobs:
       #     fi
       #   displayName: "📈 Run Tests, coverage report"
       #   condition: succeeded()
-      
       # - task: PublishTestResults@2
       #   displayName: "📊 Publish Test Results"
       #   inputs:
@@ -327,14 +326,12 @@ jobs:
       #     testResultsFiles: "reports/junit/test.xml"
       #     mergeTestResults: true
       #     failTaskOnFailedTests: true
-      
       # - task: PublishCodeCoverageResults@2
       #   displayName: "📊 Publish Code Coverage"
       #   inputs:
       #     codeCoverageTool: "Cobertura"
       #     summaryFileLocation: "$(System.DefaultWorkingDirectory)/reports/coverage/cobertura-coverage.xml"
       #     reportDirectory: "$(System.DefaultWorkingDirectory)/reports/coverage"
-      
       - script: |
           pnpm run coverage
           ls -la $(System.DefaultWorkingDirectory)/coverage
