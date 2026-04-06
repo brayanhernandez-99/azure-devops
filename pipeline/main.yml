@@ -2,10 +2,10 @@ parameters:
   - name: release
     type: string
 
-  - name: environments_new_staging
+  - name: environments_staging
     type: object
     default:
-      - staging_new
+      - staging
       - staging_nacional
 
   - name: red
@@ -35,4 +35,4 @@ stages:
         parameters:
           red: ${{ parameters.red }}
           release: ${{ parameters.release }}
-          environments_new_staging: ${{ parameters.environments_new_staging }}
+          environments_staging: ${{ parameters.environments_staging }}
