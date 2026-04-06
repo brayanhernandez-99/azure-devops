@@ -1,11 +1,10 @@
-variables:
-  - name: services
-    type: string
-    default: "{}"
-
 parameters:
   - name: release
     type: string
+
+  - name: services
+    type: string
+    default: "{}"
 
 resources:
   repositories:
