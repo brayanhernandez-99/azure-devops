@@ -66,17 +66,22 @@ jobs:
               ;;
           esac
 
-          msName=$(echo "$REPO_NAME" | sed -E 's/^microservice-//; s/-invictus$//')
+          if [[ "$environment" = "unknown" ]]; then
+            echo -e "\n##vso[task.logissue type=error]⚠️ Environment [$environment] no reconocido"
+            exit 99
+          fi
+
+          cleanMsName=$(echo "$REPO_NAME" | sed -E 's/^microservice-//; s/-invictus$//')
           ECR_REPOSITORY="${REPO_NAME%-invictus}"
           ECR_REPOSITORY="$ECR_REPOSITORY-$environment"
 
-          echo -e "\n🌐 Desplegando $REPO_NAME..."
-          echo "ℹ️ MS Name: $msName"
-          echo "ℹ️ ECR Repositorio: $ECR_REPOSITORY"
+          echo -e "\nℹ️ Repositorio $REPO_NAME..."
+          echo "MS Name: $cleanMsName"
+          echo "ECR Repositorio: $ECR_REPOSITORY"
 
           echo "##vso[task.setvariable variable=ecr_repository]$ECR_REPOSITORY"
-          echo "##vso[task.setvariable variable=msName]$msName"
-        displayName: "🌐 Deploying $(Build.Repository.Name)"
+          echo "##vso[task.setvariable variable=cleanMsName]$cleanMsName"
+        displayName: "📛 Set ECR Repository Name"
         condition: succeeded()
 
       - task: Bash@3
@@ -142,7 +147,7 @@ jobs:
             SERVICES="$new_service"
           }
 
-          case "$(msName)" in
+          case "$(cleanMsName)" in
             notifier)
               if [[ ( "$BRANCH_NAME" == "develop" && "$BRANCH_NAME_MULTI" == "develop" ) || ( "$BRANCH_NAME" == "staging" && "$BRANCH_NAME_MULTI" == "staging" ) || "$RED" == "antioquia" ]]; then
                 set_cluster_service "msnotifier-cluster" "msnotifier-fg-service"
@@ -179,7 +184,7 @@ jobs:
           echo "##vso[task.setvariable variable=service_name]$SERVICES"
         displayName: "🔗 Get Task Definition ARN"
         condition: and(succeeded(),
-          ne(variables['msName'], 'transaction'))
+          ne(variables['cleanMsName'], 'transaction'))
         env:
           red: ${{ parameters.region }}
           environments: ${{ parameters.environments }}
@@ -244,7 +249,7 @@ jobs:
           done
         displayName: "🔗 Get Task Definition ARN"
         condition: and(succeeded(),
-          eq(variables['msName'], 'transaction'))
+          eq(variables['cleanMsName'], 'transaction'))
         env:
           red: ${{ parameters.region }}
           environments: ${{ parameters.environments }}
@@ -260,7 +265,7 @@ jobs:
           echo "##vso[task.setvariable variable=taskFamily]$FAMILY"
         displayName: "📌 Extract Family from ARN"
         condition: and(succeeded(),
-          ne(variables['msName'], 'transaction'))
+          ne(variables['cleanMsName'], 'transaction'))
 
       - script: |
           echo "Exportando ARNs..."
@@ -271,7 +276,7 @@ jobs:
           echo "##vso[task.setvariable variable=ARN_3]$(taskDefinitionArn_3)"
         displayName: "🔄 Convertir ARNs en variables reales de Bash"
         condition: and(succeeded(),
-          eq(variables['msName'], 'transaction'))
+          eq(variables['cleanMsName'], 'transaction'))
 
       - script: |
           echo -e "\nℹ️ Extrayendo FAMILY para todos los taskDefinitionArn_X..."
@@ -297,7 +302,7 @@ jobs:
           done
         displayName: "📌 Extract Family from ARN"
         condition: and(succeeded(),
-          eq(variables['msName'], 'transaction'))
+          eq(variables['cleanMsName'], 'transaction'))
 
       - script: |
           export AWS_ACCESS_KEY_ID
@@ -312,7 +317,7 @@ jobs:
           cat taskdef.json
         displayName: "📑 Get Current Task Definition"
         condition: and(succeeded(),
-          ne(variables['msName'], 'transaction'))
+          ne(variables['cleanMsName'], 'transaction'))
         env:
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
@@ -349,7 +354,7 @@ jobs:
           done
         displayName: "📑 Get Current Task Definition"
         condition: and(succeeded(),
-          eq(variables['msName'], 'transaction'))
+          eq(variables['cleanMsName'], 'transaction'))
         env:
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
@@ -388,9 +393,9 @@ jobs:
                   )
                 end
               )
-            ' taskdef.json > new-taskdef-$(msName).json
+            ' taskdef.json > new-taskdef-$(cleanMsName).json
             echo -e "\nℹ️ Imagen actualizada con nuevo tag: $newTag"
-            cat new-taskdef-$(msName).json
+            cat new-taskdef-$(cleanMsName).json
           else
             newTag="$(version)"
 
@@ -398,15 +403,15 @@ jobs:
               .containerDefinitions |= map(
                 .image |= (split(":")[0] + ":" + $newTag)
               )
-            ' taskdef.json > new-taskdef-$(msName).json
+            ' taskdef.json > new-taskdef-$(cleanMsName).json
 
             echo -e "\nℹ️ Imagen actualizada con nuevo tag: $newTag"
-            cat new-taskdef-$(msName).json
+            cat new-taskdef-$(cleanMsName).json
           fi
 
         displayName: "📝 Update image tag in task definition"
         condition: and(succeeded(),
-          ne(variables['msName'], 'transaction'))
+          ne(variables['cleanMsName'], 'transaction'))
         env:
           red: ${{ parameters.region }}
           environments: ${{ parameters.environments }}
@@ -479,7 +484,7 @@ jobs:
           done
         displayName: "📝 Update image tag in ALL task definitions"
         condition: and(succeeded(),
-          eq(variables['msName'], 'transaction'))
+          eq(variables['cleanMsName'], 'transaction'))
         env:
           red: ${{ parameters.region }}
           environments: ${{ parameters.environments }}
@@ -506,12 +511,12 @@ jobs:
             inferenceAccelerators,
             ephemeralStorage,
             runtimePlatform
-          } | with_entries(select(.value != null))' new-taskdef-$(msName).json > new-taskdef-$(msName)-ecs.json
+          } | with_entries(select(.value != null))' new-taskdef-$(cleanMsName).json > new-taskdef-$(cleanMsName)-ecs.json
 
-          cat new-taskdef-$(msName)-ecs.json
+          cat new-taskdef-$(cleanMsName)-ecs.json
         displayName: "🧹 Clean up attributes"
         condition: and(succeeded(),
-          ne(variables['msName'], 'transaction'))
+          ne(variables['cleanMsName'], 'transaction'))
 
       - script: |
           echo -e "\n🧹 Limpiando atributos de las 4 task definitions..."
@@ -556,7 +561,7 @@ jobs:
           done
         displayName: "🧹 Clean up attributes (4 definitions)"
         condition: and(succeeded(),
-          eq(variables['msName'], 'transaction'))
+          eq(variables['cleanMsName'], 'transaction'))
 
       - script: |
           export AWS_REGION
@@ -564,7 +569,7 @@ jobs:
           export AWS_SECRET_ACCESS_KEY
 
           output=$(aws ecs register-task-definition \
-          --cli-input-json file://new-taskdef-$(msName)-ecs.json \
+          --cli-input-json file://new-taskdef-$(cleanMsName)-ecs.json \
           --region $AWS_DEFAULT_REGION)
 
           arn=$(echo $output | jq -r '.taskDefinition.taskDefinitionArn')
@@ -573,7 +578,7 @@ jobs:
           echo "##vso[task.setvariable variable=taskDefinitionArnNew]$arn"
         displayName: "🆕 Register New Task Definition"
         condition: and(succeeded(),
-          ne(variables['msName'], 'transaction'))
+          ne(variables['cleanMsName'], 'transaction'))
         env:
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
@@ -615,7 +620,7 @@ jobs:
           done
         displayName: "🆕 Register New Task Definitions (ALL)"
         condition: and(succeeded(),
-          eq(variables['msName'], 'transaction'))
+          eq(variables['cleanMsName'], 'transaction'))
         env:
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
@@ -637,7 +642,7 @@ jobs:
             --region $AWS_DEFAULT_REGION
         displayName: "⚡ Deploy New Task Definition to Service"
         condition: and(succeeded(),
-          ne(variables['msName'], 'transaction'))
+          ne(variables['cleanMsName'], 'transaction'))
         env:
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
@@ -665,7 +670,7 @@ jobs:
 
         displayName: "🔄 Convertir ARNs, SERVICES AND CLUSTER en variables reales de Bash"
         condition: and(succeeded(),
-          eq(variables['msName'], 'transaction'))
+          eq(variables['cleanMsName'], 'transaction'))
 
       - script: |
           export AWS_ACCESS_KEY_ID
@@ -696,7 +701,7 @@ jobs:
 
         displayName: "⚡ Deploy New Task Definition to Service"
         condition: and(succeeded(),
-          eq(variables['msName'], 'transaction'))
+          eq(variables['cleanMsName'], 'transaction'))
         env:
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
