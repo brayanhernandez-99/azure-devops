@@ -48,7 +48,6 @@ stages:
         jobs:
           - template: ../cd/deployment.yml
             parameters:
-              environments: develop
               release: ${{ parameters.release }}
 
   - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
