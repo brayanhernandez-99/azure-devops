@@ -83,17 +83,20 @@ jobs:
         inputs:
           targetType: "inline"
           script: |
-            echo "🔍 Verificando si la imagen '$IMAGE_TAG' existe en '$REPO_NAME'..."
-            REPO_NAME="$(ecr_repository)"
+            ECR_REPOSITORY="$(ecr_repository)"
             IMAGE_TAG="$(version)"
 
+            echo "🔍 Verificando imagen..."
+            echo "Imagen: $IMAGE_TAG"
+            echo "Repositorio: $ECR_REPOSITORY"
+
             if aws ecr describe-images \
-                --repository-name "$REPO_NAME" \
+                --repository-name "$ECR_REPOSITORY" \
                 --image-ids imageTag=$IMAGE_TAG \
                 --region "$AWS_DEFAULT_REGION" > /dev/null 2>&1; then
-              echo "✅ Imagen encontrada en ECR."
+              echo -e "\n✅ Imagen encontrada en ECR."
             else
-              echo -e "\n##vso[task.logissue type=error]⚠️ Imagen no encontrada: $REPO_NAME:$IMAGE_TAG"
+              echo -e "\n##vso[task.logissue type=error]⚠️ Imagen no encontrada: $ECR_REPOSITORY:$IMAGE_TAG"
               exit 99
             fi
         displayName: "🔍 Verify if Image Exists in ECR"
@@ -210,34 +213,34 @@ jobs:
 
           index=0
           for i in 0 1 2 3; do
-              C="${clusters[$i]}"
-              S="${services[$i]}"
+            cluster="${clusters[$i]}"
+            service="${services[$i]}"
 
-              echo "-------------------------"
-              echo "🛡️ Cluster: $C"
-              echo "📦 Services: $S"
-              echo "Obteniendo task definition..."
+            echo "-------------------------"
+            echo "🛡️ Cluster: $cluster"
+            echo "📦 Services: $service"
+            echo "Obteniendo task definition..."
 
-              arn=$(aws ecs describe-services \
-                --cluster "$C" \
-                --services "$S" \
-                --query 'services[0].taskDefinition' \
-                --output text \
-                --region "$AWS_DEFAULT_REGION")
+            arn=$(aws ecs describe-services \
+              --cluster "$cluster" \
+              --services "$service" \
+              --query 'services[0].taskDefinition' \
+              --output text \
+              --region "$AWS_DEFAULT_REGION")
 
-              if [[ -z "$arn" || "$arn" == "None" ]]; then
-                echo "❌ Error: No se encontró taskDefinition para $S en $C"
-                exit 99
-              fi
+            if [[ -z "$arn" || "$arn" == "None" ]]; then
+              echo "❌ Error: No se encontró taskDefinition para $service en $cluster"
+              exit 99
+            fi
 
-              echo "✅ TaskDef ARN: $arn"
+            echo "✅ TaskDef ARN: $arn"
 
-              # Set variables por cada uno
-              echo "##vso[task.setvariable variable=cluster_name_${index}]$C"
-              echo "##vso[task.setvariable variable=service_name_${index}]$S"
-              echo "##vso[task.setvariable variable=taskDefinitionArn_${index}]$arn"
+            # Set variables por cada uno
+            echo "##vso[task.setvariable variable=cluster_name_${index}]$cluster"
+            echo "##vso[task.setvariable variable=service_name_${index}]$service"
+            echo "##vso[task.setvariable variable=taskDefinitionArn_${index}]$arn"
 
-              ((index++))
+            ((index++))
           done
         displayName: "🔗 Get Task Definition ARN"
         condition: and(succeeded(),
