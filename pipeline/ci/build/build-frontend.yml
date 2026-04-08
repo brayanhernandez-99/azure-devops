@@ -30,7 +30,7 @@ jobs:
 
           echo -e "\n📁 Archivo version.json:"
           ls -la "$VERSION_FILE"
-          cat "$VERSION_FILE"
+          jq . "$VERSION_FILE"
 
           if [[ -f "$VERSION_FILE" ]]; then
             VERSION=$(jq -r '.version' $VERSION_FILE)
@@ -159,12 +159,10 @@ jobs:
           ls -l $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc
           cat $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc
 
-          # cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
           cd $(System.DefaultWorkingDirectory)
           echo -e "\n⚙️ Instalando dependencias node..."
           npm install -g pnpm
           pnpm install
-          # pnpm ignored-builds
 
           OUTPUT=$(pnpm ls --depth=0 || true)
           if [[ -z "$OUTPUT" ]]; then

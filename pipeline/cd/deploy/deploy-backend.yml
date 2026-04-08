@@ -83,17 +83,20 @@ jobs:
         inputs:
           targetType: "inline"
           script: |
-            echo "🔍 Verificando si la imagen '$IMAGE_TAG' existe en '$REPO_NAME'..."
-            REPO_NAME="$(ecr_repository)"
+            ECR_REPOSITORY="$(ecr_repository)"
             IMAGE_TAG="$(version)"
 
+            echo "🔍 Verificando imagen..."
+            echo "Imagen: $IMAGE_TAG"
+            echo "Repositorio: $ECR_REPOSITORY"
+
             if aws ecr describe-images \
-                --repository-name "$REPO_NAME" \
+                --repository-name "$ECR_REPOSITORY" \
                 --image-ids imageTag=$IMAGE_TAG \
                 --region "$AWS_DEFAULT_REGION" > /dev/null 2>&1; then
-              echo "✅ Imagen encontrada en ECR."
+              echo -e "\n✅ Imagen encontrada en ECR."
             else
-              echo -e "\n##vso[task.logissue type=error]⚠️ Imagen no encontrada: $REPO_NAME:$IMAGE_TAG"
+              echo -e "\n##vso[task.logissue type=error]⚠️ Imagen no encontrada: $ECR_REPOSITORY:$IMAGE_TAG"
               exit 99
             fi
         displayName: "🔍 Verify if Image Exists in ECR"
