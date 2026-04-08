@@ -75,7 +75,7 @@ jobs:
           set -e
 
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/trino/aws-service-secret-manager
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/trino
           terragrunt plan --all --non-interactive -no-color
 
 
