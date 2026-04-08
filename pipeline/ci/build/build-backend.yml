@@ -126,6 +126,12 @@ jobs:
         condition: succeeded()
 
       - script: |
+          # REPO_NAME="$(Build.Repository.Name)"
+          # branch="${BUILD_SOURCEBRANCH#refs/heads/}"
+          # environment="unknown"
+
+
+
           REPO_NAME="$(Build.Repository.Name)"
           CURRENT_BRANCH="$BUILD_SOURCEBRANCH"
 
@@ -134,7 +140,6 @@ jobs:
           echo "Repositorio: $REPO_NAME"
 
           CLEAN_NAME="${REPO_NAME%-invictus}"
-
           branch="${CURRENT_BRANCH#refs/heads/}"
 
           case "$branch" in
@@ -148,6 +153,11 @@ jobs:
               clean_branch="prd"
               ;;
           esac
+
+          if [[ "$environment" = "unknown" ]]; then
+            echo -e "\n##vso[task.logissue type=error]⚠️ Environment [$environment] no reconocido"
+            exit 99
+          fi
 
           echo -e "\nℹ️ Informacion..."
           echo "Clean Branch: $clean_branch"
