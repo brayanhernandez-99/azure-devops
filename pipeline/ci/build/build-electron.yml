@@ -333,7 +333,7 @@ jobs:
         inputs:
           targetType: "inline"
           script: |
-            $currentBranch="$(Build.SourceBranch)"
+            $CURRENT_BRANCH="$(Build.SourceBranch)"
             $environment = "unknown"
 
             switch -Wildcard ($CURRENT_BRANCH) {
