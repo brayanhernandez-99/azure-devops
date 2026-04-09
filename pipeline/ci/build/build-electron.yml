@@ -12,7 +12,7 @@ jobs:
       - template: ../../variables/groups-transversal-variables-electron.yml
         parameters:
           region: ${{ parameters.region }}
-          environments: ${{ parameters.environments }}
+          environment_staging: ${{ parameters.environment_staging }}
 
     steps:
       - task: DownloadBuildArtifacts@0
@@ -82,23 +82,14 @@ jobs:
           environment="unknown"
 
           case "$CURRENT_BRANCH" in 
-            refs/heads/feature/*) 
-              environment="develop"; 
-            ;;
-            refs/heads/develop)
-              if [[ "$environments" == "develop_new" ]]; then
-                environment="dev_new"
-              else
-                environment="dev"
-              fi
+            refs/heads/develop | refs/heads/feature/* | refs/heads/hotfix/*)
+              environment="develop"
             ;;
             refs/heads/staging)
-              if [[ "$environments" == "staging_new" ]]; then
-                environment="qa_new"
-              elif [[ "$environments" == "staging_nacional" ]]; then
-                environment="qa_nacional"
-              else
-                environment="qa"
+              if [[ "$environment_staging" == "staging" ]]; then
+                environment="staging"
+              elif [[ "$environment_staging" == "staging_nacional" ]]; then
+                environment="staging_nacional"
               fi
             ;;
             refs/heads/master)
@@ -124,7 +115,8 @@ jobs:
         displayName: "⚙️ Generate .env"
         condition: succeeded()
         env:
-          environments: ${{ parameters.environments }}
+          region: ${{ parameters.region }}
+          environment_staging: ${{ parameters.environment_staging }}
 
       - task: UsePythonVersion@0
         displayName: "🔧 Use Python $(pythonVersion)"
@@ -227,7 +219,7 @@ jobs:
             fi
           done
 
-          if [[ "$all_found" == false ]]; then
+          if ! $all_found; then
             echo -e "\n##vso[task.logissue type=error]⚠️ Error: archivos requeridos no encontrados."
             exit 99
           else
@@ -344,61 +336,42 @@ jobs:
             $currentBranch="$(Build.SourceBranch)"
             $environment = "unknown"
 
-            switch -Wildcard ($currentBranch) {
-              "refs/heads/feature/*" { $environment = "dev"; break }
-              "refs/heads/develop" {
-                if ($env:environments -eq "develop_new") {
-                  $environment = "dev_new"
-                } else {
-                  $environment = "dev"
-                }
-                break
-              }
-
+            switch -Wildcard ($CURRENT_BRANCH) {
+              "refs/heads/develop" { $environment = "develop" }
+              "refs/heads/feature/*" { $environment = "develop" }
+              "refs/heads/hotfix/*" { $environment = "develop" }
               "refs/heads/staging" {
-                if ($env:environments -eq "staging_new") {
-                  $environment = "qa_new"
-                } elseif ($env:environments -eq "staging_nacional") {
-                  $environment = "qa_nacional"
-                } else {
-                  $environment = "qa"
+                if ($env:environment_staging -eq "staging") {
+                  $environment = "staging"
                 }
-                break
+                elseif ($env:environment_staging -eq "staging_nacional") {
+                  $environment = "staging_nacional"
+                }
               }
               "refs/heads/master" {
-                switch ($env:region) {
-                  "antioquia" { $environment = "matrixtech"; break }
-                  "cap"       { $environment = "cap"; break }
-                  "tolima"    { $environment = "seapto"; break }
-                  "huila"     { $environment = "suchance"; break }
-                  "cauca"     { $environment = "acertemos"; break }
-                  "boyaca"    { $environment = "jer"; break }
-                  "santander" { $environment = "laperla"; break }
-                  "putumayo"  { $environment = "matrixredes"; break }
-                }
+                $environment = $env:region
               }
             }
 
-            if ($environment -ne "unknown") {
-            @"
-            DOMAIN_ADMIN="$(BASE_URL_ELECTRON_ADMIN)"
-            DOMAIN_SELLER="$(BASE_URL_ELECTRON_SELLERS)"
-            TARGET="windows"
-            TARGET_ENVIRONMENT="$environment"
-            "@ | Set-Content -Encoding UTF8 .env
-
-              Write-Host "##vso[task.setvariable variable=environment]$environment"
-              Write-Host "`n📁 File: .env"
-              Get-Item .env | Select-Object Mode, LastWriteTime, Length, Name | Format-Table
-              Get-Content .env
-            } else {
-              Write-Host "`n❌ No se encontro una rama valida, branch [$environment]."
+            if ($environment -eq "unknown") {
+              Write-Host "`n##vso[task.logissue type=error]⚠️ Environment [$environment] no reconocido"
               exit 99
             }
+
+            @"
+            VITE_DOMAIN="$(VITE_DOMAIN)"
+            URL_APP="$(URL_APP)"
+            TARGET="windows"
+            "@ | Set-Content -Encoding UTF8 .env
+
+            Write-Host "##vso[task.setvariable variable=environment]$environment"
+            Write-Host "`n📁 File: .env"
+            Get-Item .env | Select-Object Mode, LastWriteTime, Length, Name | Format-Table
+            Get-Content .env
         condition: succeeded()
         env:
           region: ${{ parameters.region }}
-          environments: ${{ parameters.environments }}
+          environment_staging: ${{ parameters.environment_staging }}
 
       - task: UsePythonVersion@0
         displayName: "🔧 Use Python $(pythonVersion)"
@@ -507,11 +480,11 @@ jobs:
         inputs:
           targetType: " inline"
           script: |
-            Write-Host "📝 Validando build electron..."
-
             tree "$(Build.SourcesDirectory)\release" /F /A
 
-            $BASE_PATH = "$(Build.SourcesDirectory)\release\$($env:environment)\$($env:version)"
+            Write-Host "📝 Validando build electron..."
+
+            $BASE_PATH = "$(Build.SourcesDirectory)\release\$($env:version)\windows"
             $APP_DIR="$BASE_PATH\app"
             New-Item -ItemType Directory -Path $APP_DIR -Force | Out-Null
             $allFound = $true 
@@ -543,8 +516,7 @@ jobs:
               Write-Output "`n##vso[task.logissue type=error]⚠️ Error: archivos requeridos no encontrados."
               exit 99
             } else {
-              New-Item -ItemType Directory -Path "$(Build.ArtifactStagingDirectory)\release" | Out-Null
-              New-Item -ItemType Directory -Path "$(Build.ArtifactStagingDirectory)\release\windows\$($env:environment)" | Out-Null
+              New-Item -ItemType Directory -Path "$(Build.ArtifactStagingDirectory)\release\windows\$($env:environment)" -Force | Out-Null
               Copy-Item -Path "$APP_DIR\*" -Destination "$(Build.ArtifactStagingDirectory)\release\windows\$($env:environment)" -Recurse -Force
 
               Write-Host "`n📂 Directorio: $APP_DIR"

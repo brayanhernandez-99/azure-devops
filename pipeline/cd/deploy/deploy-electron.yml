@@ -9,7 +9,7 @@ jobs:
       - template: ../../variables/groups-transversal-variables-electron.yml
         parameters:
           region: ${{ parameters.region }}
-          environments: ${{ parameters.environments }}
+          environment_staging: ${{ parameters.environment_staging }}
 
     steps:
       - task: DownloadBuildArtifacts@0
@@ -82,7 +82,6 @@ jobs:
           echo "##vso[task.setvariable variable=environment]$environment"
           echo -e "\n✅ Environment asignado exitosamente:"
           echo "Environment: $environment"
-
         displayName: "⚙️ Generate .env"
         condition: succeeded()
         env:
