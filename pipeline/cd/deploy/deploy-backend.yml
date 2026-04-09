@@ -205,7 +205,6 @@ jobs:
           echo "📦 Repo: $REPO_NAME"
           echo "🌿 Branch: $BRANCH_NAME"
 
-
           if [[ ("$BRANCH_NAME" == "staging" && "$BRANCH_NAME_MULTI" == "staging") || "$RED" == "antioquia" ]]; then
             clusters=("transaction-ms-cluster" "transaction-astro-ms-cluster" "transaction-lg-ms-cluster" "transaction-recharges-ms-cluster")
             services=("transaction-ms-fg-service" "transaction-astro-ms-fg-service" "transaction-lg-ms-fg-service" "transaction-recharges-ms-fg-service")
@@ -407,7 +406,6 @@ jobs:
             echo -e "\nℹ️ Imagen actualizada con nuevo tag: $newTag"
             cat new-taskdef-$(cleanMsName).json
           fi
-
         displayName: "📝 Update image tag in task definition"
         condition: and(succeeded(),
           ne(variables['cleanMsName'], 'transaction'))
@@ -666,7 +664,6 @@ jobs:
           echo "##vso[task.setvariable variable=SERVICE_1]$(service_name_1)"
           echo "##vso[task.setvariable variable=SERVICE_2]$(service_name_2)"
           echo "##vso[task.setvariable variable=SERVICE_3]$(service_name_3)"
-
         displayName: "🔄 Convertir ARNs, SERVICES AND CLUSTER en variables reales de Bash"
         condition: and(succeeded(),
           eq(variables['cleanMsName'], 'transaction'))
@@ -697,7 +694,6 @@ jobs:
               --task-definition $ARN_VALUE \
               --region $AWS_DEFAULT_REGION
           done
-
         displayName: "⚡ Deploy New Task Definition to Service"
         condition: and(succeeded(),
           eq(variables['cleanMsName'], 'transaction'))
