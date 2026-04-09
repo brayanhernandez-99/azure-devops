@@ -21,7 +21,7 @@ jobs:
       #   continueOnError: true
       #   inputs:
       #     scanType: repo
-      
+
       - script: |
           docker run --rm \
             -v $(Build.SourcesDirectory):/repo \
@@ -35,3 +35,4 @@ jobs:
             --report-format json
         displayName: "🔍 Gitleaks full repo scan"
         continueOnError: true
+        condition: succeeded()
