@@ -235,7 +235,7 @@ jobs:
       - task: PublishBuildArtifacts@1
         inputs:
           PathtoPublish: "$(Build.ArtifactStagingDirectory)/release"
-          ArtifactName: "electron"
+          ArtifactName: "release"
           publishLocation: "Container"
         displayName: "📤 Publish artifact electron"
         condition: succeeded()
@@ -527,7 +527,7 @@ jobs:
       - task: PublishBuildArtifacts@1
         inputs:
           PathtoPublish: "$(Build.ArtifactStagingDirectory)/release"
-          ArtifactName: "electron"
+          ArtifactName: "release"
           publishLocation: "Container"
         displayName: "📤 Publish Artifacts Electron"
         condition: succeeded()
