@@ -121,10 +121,6 @@ jobs:
           REPO_NAME="$BUILD_REPOSITORY_NAME"
           RED="${red:-}"
 
-          echo "🏠 Red: $RED"
-          echo "📦 Repo: $REPO_NAME"
-          echo "🌿 Branch: $BRANCH_NAME"
-
           # 🧹 Limpieza base del nombre (para BFFs)
           if [[ "$REPO_NAME" == microservice-bff-*-invictus ]]; then
               CLEAN_NAME="${REPO_NAME#microservice-bff-}"
@@ -134,6 +130,9 @@ jobs:
               CLEAN_NAME="${REPO_NAME%-invictus}"
           fi
 
+          echo "🏠 Red: $RED"
+          echo "📦 Repo: $REPO_NAME"
+          echo "🌿 Branch: $BRANCH_NAME"
           echo "🧩 Clean Name: $CLEAN_NAME"
 
           CLUSTER="${CLUSTER:-$cluster_name}"       # cluster heredado de variable YAML si existe
