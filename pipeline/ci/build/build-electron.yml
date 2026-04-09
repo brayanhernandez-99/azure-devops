@@ -27,7 +27,7 @@ jobs:
 
           echo -e "\n📁 Archivo version.json:"
           ls -la "$VERSION_FILE"
-          cat "$VERSION_FILE"
+          jq . "$VERSION_FILE"
 
           if [[ -f "$VERSION_FILE" ]]; then
             VERSION=$(jq -r '.version' $VERSION_FILE)

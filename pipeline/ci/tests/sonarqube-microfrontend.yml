@@ -36,7 +36,7 @@ jobs:
           VERSION_FILE="$(Pipeline.Workspace)/versions-downloaded/versions/$(msName)/version.json"
           echo -e "\n📁 Archivo version.json:"
           ls -la "$VERSION_FILE"
-          cat "$VERSION_FILE"
+          jq . "$VERSION_FILE"
 
           if [[ -f "$VERSION_FILE" ]]; then
             VERSION=$(jq -r '.version' $VERSION_FILE)
@@ -66,18 +66,16 @@ jobs:
           rm "$(Build.Repository.Name)/$(file)/$(msName)/vitest.config.mts"
           echo -e "\n✅ Elimnación archivo vitest.config.mts ..."
 
-          echo -e "\n⚠️ Copiando archivo vitest.config.mts templates..."
           cp pipelines-templates/pipeline/config/vitest.config.mts $(Build.Repository.Name)/$(file)/$(msName)
+          echo "⚠️ Copiando archivo vitest.config.mts templates..."
 
-          echo -e "\n✅ vitest.config.mts copiado exitosamente."
+          echo "✅ vitest.config.mts copiado exitosamente."
           echo -e "\n📁 Files:"
           ls -la $(Build.Repository.Name)/$(file)/$(msName)
-
-          echo -e "\n✅ Archivo vitest.config.mts"
           cat $(Build.Repository.Name)/$(file)/$(msName)/vitest.config.mts
 
           FILE="$(Build.Repository.Name)/$(file)/$(msName)/vitest.config.ts"
-          if [ -f "$FILE" ]; then
+          if [[ -f "$FILE" ]]; then
             rm "$FILE"
             echo "❌ Eliminando el archivo vitest.config.ts"
           fi
@@ -216,15 +214,6 @@ jobs:
           ne(variables['msName'], 'app-administration-vue2'),
           ne(variables['msName'], 'app-sellers-vue2'),
           ne(variables['Build.SourceBranchName'], 'develop'))
-
-      # - script: |
-      #     cd $(Build.Repository.Name)
-      #     pnpm test --filter=...$(msName) -- --maxWorkers=1
-      #   displayName: "🧪 Run Tests for Microfrontend: $(msName)"
-      #   continueOnError: true
-      #   condition: and(succeeded(),
-      #     ne(variables['msName'], 'app-administration-vue2'),
-      #     ne(variables['msName'], 'app-sellers-vue2'))
 
       - script: |
           cd $(Build.Repository.Name)
