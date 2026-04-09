@@ -29,6 +29,9 @@ if (fs.existsSync(mocksDir)) {
     walkMocks(mocksDir);
 }
 
+const setupFileRelativePath = 'test/setup.ts';
+const hasSetupFile = fs.existsSync(path.resolve(__dirname, setupFileRelativePath));
+
 console.log('Aliases de mocks generados:', alias);
 
 export default mergeConfig(
@@ -53,7 +56,8 @@ export default mergeConfig(
                 ],
             } as any,
             environment: 'jsdom',
-            exclude: [...configDefaults.exclude, 'e2e/**', 'src/main.ts']
+            exclude: [...configDefaults.exclude, 'e2e/**', 'src/main.ts'],
+            ...(hasSetupFile ? { setupFiles: [setupFileRelativePath] } : {}),
         }
     })
 );
