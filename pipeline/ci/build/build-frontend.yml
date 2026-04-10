@@ -140,11 +140,10 @@ jobs:
         displayName: "📝 Update Version package.json"
         condition: succeeded()
 
-      - task: NodeTool@0
+      - task: UseNode@1
         displayName: "🔧 Install Nodejs $(nodeVersion)"
         inputs:
-          versionSource: "spec"
-          versionSpec: "$(nodeVersion)"
+          version: "$(nodeVersion)"
         condition: succeeded()
 
       - script: |
