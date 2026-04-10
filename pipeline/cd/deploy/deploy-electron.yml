@@ -15,7 +15,7 @@ jobs:
       - task: DownloadBuildArtifacts@0
         inputs:
           artifactName: "release"
-          downloadPath: "$(Pipeline.Workspace)/release-downloaded"
+          downloadPath: "$(Pipeline.Workspace)"
         displayName: "📥 Download Electron Artifacts"
         condition: succeeded()
 
@@ -81,7 +81,7 @@ jobs:
       #     set -e
       #     echo -e "\n📦 Cargando al Bucket S3..."
 
-      #     BASE_PATH="$(Pipeline.Workspace)/release-downloaded/release/$(environment)/linux"
+      #     BASE_PATH="$(Pipeline.Workspace)/release/$(environment)/linux"
       #     echo -e "\n📂 Archivos a cargar: $BASE_PATH"
       #     ls -l "$BASE_PATH"
       #     echo ""
@@ -102,7 +102,7 @@ jobs:
       #     set -e
       #     echo -e "\n📦 Cargando al Bucket S3..."
 
-      #     BASE_PATH="$(Pipeline.Workspace)/release-downloaded/release/$(environment)/windows"
+      #     BASE_PATH="$(Pipeline.Workspace)/release/$(environment)/windows"
       #     echo -e "\n📂 Archivos a cargar: $BASE_PATH"
       #     ls -l "$BASE_PATH"
       #     echo ""

@@ -18,12 +18,12 @@ jobs:
       - task: DownloadBuildArtifacts@0
         inputs:
           artifactName: "versions"
-          downloadPath: "$(Pipeline.Workspace)/versions-downloaded"
+          downloadPath: "$(Pipeline.Workspace)"
         displayName: "📥 Download Version"
         condition: succeeded()
 
       - script: |
-          VERSION_FILE="$(Pipeline.Workspace)/versions-downloaded/versions/electron/version.json"
+          VERSION_FILE="$(Pipeline.Workspace)/versions/electron/version.json"
 
           echo -e "\n📁 Archivo version.json:"
           ls -la "$VERSION_FILE"
@@ -259,7 +259,7 @@ jobs:
         displayName: "📥 Download Version"
         inputs:
           artifactName: "versions"
-          downloadPath: "$(Pipeline.Workspace)/versions-downloaded"
+          downloadPath: "$(Pipeline.Workspace)"
         condition: succeeded()
 
       - task: PowerShell@2
@@ -267,7 +267,7 @@ jobs:
         inputs:
           targetType: "inline"
           script: |
-            $versionFile = "$(Pipeline.Workspace)\versions-downloaded\versions\electron\version.json"
+            $versionFile = "$(Pipeline.Workspace)\versions\electron\version.json"
 
             Write-Host "`n📁 Archivo version.json:"
             Get-ChildItem -Path $versionFile | Select-Object Mode, LastWriteTime, Length, Name | Format-Table
