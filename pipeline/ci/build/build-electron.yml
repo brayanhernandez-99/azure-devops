@@ -480,8 +480,6 @@ jobs:
         inputs:
           targetType: " inline"
           script: |
-            tree "$(Build.SourcesDirectory)\release" /F /A
-
             Write-Host "📝 Validando build electron..."
 
             $BASE_PATH = "$(Build.SourcesDirectory)\release\$($env:version)\windows"

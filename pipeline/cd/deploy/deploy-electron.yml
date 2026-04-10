@@ -14,8 +14,8 @@ jobs:
     steps:
       - task: DownloadBuildArtifacts@0
         inputs:
-          artifactName: "electron"
-          downloadPath: "$(Pipeline.Workspace)/electron-artifacts"
+          artifactName: "release"
+          downloadPath: "$(Pipeline.Workspace)/release"
         displayName: "📥 Download Electron Artifacts"
         condition: succeeded()
 
@@ -43,35 +43,20 @@ jobs:
           CURRENT_BRANCH="$(Build.SourceBranch)"
           environment="unknown"
 
-          case "$CURRENT_BRANCH" in
-            refs/heads/feature/*) environment="dev"; ;;
-            refs/heads/develop)
-              if [[ "$environments" == "develop_new" ]]; then
-                environment="dev_new"
-              else
-                environment="dev"
-              fi
-              ;;
+          case "$CURRENT_BRANCH" in 
+            refs/heads/develop | refs/heads/feature/* | refs/heads/hotfix/*)
+              environment="develop"
+            ;;
             refs/heads/staging)
-              if [[ "$environments" == "staging_new" ]]; then
-                environment="qa_new"
-              elif [[ "$environments" == "staging_nacional" ]]; then
-                environment="qa_nacional"
-              else
-                environment="qa"
+              if [[ "$environment_staging" == "staging" ]]; then
+                environment="staging"
+              elif [[ "$environment_staging" == "staging_nacional" ]]; then
+                environment="staging_nacional"
               fi
-              ;;
-            refs/heads/master) 
-              case "$region" in
-                "antioquia") environment="matrixtech"; ;;
-                "cap")       environment="cap"; ;;
-                "tolima")    environment="seapto"; ;;
-                "huila")     environment="suchance"; ;;
-                "cauca")     environment="acertemos"; ;;
-                "boyaca")    environment="jer"; ;;
-                "santander") environment="laperla"; ;;
-                "putumayo")  environment="matrixredes"; ;;
-              esac ;;
+            ;;
+            refs/heads/master)
+              environment = "$region"
+            ;;
           esac
 
           if [[ "$environment" = "unknown" ]]; then
@@ -88,117 +73,117 @@ jobs:
           region: ${{ parameters.region }}
           environments: ${{ parameters.environments }}
 
-      - script: |
-          set -e
-          echo -e "\n📦 Cargando al Bucket S3..."
+      # - script: |
+      #     set -e
+      #     echo -e "\n📦 Cargando al Bucket S3..."
 
-          BASE_PATH="$(Pipeline.Workspace)/electron-artifacts/electron/linux/$(environment)"
-          echo -e "\n📂 Archivos a cargar: $BASE_PATH"
-          ls -l "$BASE_PATH"
-          echo ""
+      #     BASE_PATH="$(Pipeline.Workspace)/release/electron/linux/$(environment)"
+      #     echo -e "\n📂 Archivos a cargar: $BASE_PATH"
+      #     ls -l "$BASE_PATH"
+      #     echo ""
 
-          aws s3 cp "$BASE_PATH" "s3://e-remote/invictus-electron/linux/$(environment)" --recursive --acl public-read
+      #     aws s3 cp "$BASE_PATH" "s3://e-remote/invictus-electron/linux/$(environment)" --recursive --acl public-read
 
-          echo -e "\n✅ Archivos subidos exitosamente."
-          echo "🔗 APP: InvictusUX-$(version).AppImage"
-          echo -e "\n##[command]🔗 URL: https://e-remote.s3.us-east-1.amazonaws.com/invictus-electron/linux/$(environment)/InvictusUX-$(version).AppImage"
-        displayName: "🐧 Upload Bucket S3 Linux"
-        condition: succeeded()
-        env:
-          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
-          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
-          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
+      #     echo -e "\n✅ Archivos subidos exitosamente."
+      #     echo "🔗 APP: InvictusUX-$(version).AppImage"
+      #     echo -e "\n##[command]🔗 URL: https://e-remote.s3.us-east-1.amazonaws.com/invictus-electron/linux/$(environment)/InvictusUX-$(version).AppImage"
+      #   displayName: "🐧 Upload Bucket S3 Linux"
+      #   condition: succeeded()
+      #   env:
+      #     AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+      #     AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
+      #     AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
 
-      - script: |
-          set -e
-          echo -e "\n📦 Cargando al Bucket S3..."
+      # - script: |
+      #     set -e
+      #     echo -e "\n📦 Cargando al Bucket S3..."
 
-          BASE_PATH="$(Pipeline.Workspace)/electron-artifacts/electron/windows/$(environment)"
-          echo -e "\n📂 Archivos a cargar: $BASE_PATH"
-          ls -l "$BASE_PATH"
-          echo ""
+      #     BASE_PATH="$(Pipeline.Workspace)/release/electron/windows/$(environment)"
+      #     echo -e "\n📂 Archivos a cargar: $BASE_PATH"
+      #     ls -l "$BASE_PATH"
+      #     echo ""
 
-          aws s3 cp "$BASE_PATH" "s3://e-remote/invictus-electron/windows/$(environment)" --recursive --acl public-read
+      #     aws s3 cp "$BASE_PATH" "s3://e-remote/invictus-electron/windows/$(environment)" --recursive --acl public-read
 
-          echo -e "\n✅ Archivos subidos exitosamente."
-          echo "🔗 APP: InvictusUX Setup $(version).exe"
-          echo -e "\n##[command] URL: https://e-remote.s3.us-east-1.amazonaws.com/invictus-electron/windows/$(environment)/InvictusUX+Setup+$(version).exe"
-        displayName: "🖥️ Upload Bucket S3 Windows"
-        condition: succeeded()
-        env:
-          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
-          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
-          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
+      #     echo -e "\n✅ Archivos subidos exitosamente."
+      #     echo "🔗 APP: InvictusUX Setup $(version).exe"
+      #     echo -e "\n##[command] URL: https://e-remote.s3.us-east-1.amazonaws.com/invictus-electron/windows/$(environment)/InvictusUX+Setup+$(version).exe"
+      #   displayName: "🖥️ Upload Bucket S3 Windows"
+      #   condition: succeeded()
+      #   env:
+      #     AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+      #     AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
+      #     AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
 
-      - script: |
-          set -e
-          echo -e "\n📦 Send Message SQS..."
-          echo "📦 Account: $(ACCOUNT_ID_INVICTUS)"
-          echo "📦 Version: $(version)"
+      # - script: |
+      #     set -e
+      #     echo -e "\n📦 Send Message SQS..."
+      #     echo "📦 Account: $(ACCOUNT_ID_INVICTUS)"
+      #     echo "📦 Version: $(version)"
 
-          aws sqs send-message \
-            --queue-url https://sqs.us-east-1.amazonaws.com/$(ACCOUNT_ID_INVICTUS)/DynamicStorage \
-            --message-body '{
-              "model": {
-                "parameterName": "VERSION",
-                "parameterDescription": "Parámetro que indica la versión actual del sistema.",
-                "parameterOrigin": "GLOBAL_PARAMETER",
-                "parameterValue": "$(version)"
-              },
-              "event": "setParameter"
-            }' \
-            --delay-seconds 0
-        displayName: "📩 Send Message SQS"
-        env:
-          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
-          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
-          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
+      #     aws sqs send-message \
+      #       --queue-url https://sqs.us-east-1.amazonaws.com/$(ACCOUNT_ID_INVICTUS)/DynamicStorage \
+      #       --message-body '{
+      #         "model": {
+      #           "parameterName": "VERSION",
+      #           "parameterDescription": "Parámetro que indica la versión actual del sistema.",
+      #           "parameterOrigin": "GLOBAL_PARAMETER",
+      #           "parameterValue": "$(version)"
+      #         },
+      #         "event": "setParameter"
+      #       }' \
+      #       --delay-seconds 0
+      #   displayName: "📩 Send Message SQS"
+      #   env:
+      #     AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+      #     AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
+      #     AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
 
-      - script: |
-          DEPLOY_TIME=$(date -d "$BUILD_FINISHTIME -5 hours" "+%Y-%m-%d %H:%M UTC")
-          BRANCH_NAME_MULTI=$environments
-          BRANCH_NAME="$BUILD_SOURCEBRANCHNAME"
+      # - script: |
+      #     DEPLOY_TIME=$(date -d "$BUILD_FINISHTIME -5 hours" "+%Y-%m-%d %H:%M UTC")
+      #     BRANCH_NAME_MULTI=$environments
+      #     BRANCH_NAME="$BUILD_SOURCEBRANCHNAME"
 
-          if [[ "$BRANCH_NAME" == "master" ]]; then
-            BRANCH_DEPLOY="${red:-red}"
+      #     if [[ "$BRANCH_NAME" == "master" ]]; then
+      #       BRANCH_DEPLOY="${red:-red}"
 
-          elif [[ "$BRANCH_NAME" == "develop" && "$BRANCH_NAME_MULTI" == "develop" ]]; then
-            BRANCH_DEPLOY="develop"
+      #     elif [[ "$BRANCH_NAME" == "develop" && "$BRANCH_NAME_MULTI" == "develop" ]]; then
+      #       BRANCH_DEPLOY="develop"
 
-          elif [[ "$BRANCH_NAME" == "staging" && "$BRANCH_NAME_MULTI" == "staging" ]]; then
-            BRANCH_DEPLOY="staging"
+      #     elif [[ "$BRANCH_NAME" == "staging" && "$BRANCH_NAME_MULTI" == "staging" ]]; then
+      #       BRANCH_DEPLOY="staging"
 
-          else
-            BRANCH_DEPLOY="$BRANCH_NAME_MULTI"
-          fi
+      #     else
+      #       BRANCH_DEPLOY="$BRANCH_NAME_MULTI"
+      #     fi
 
-          payload=$(cat <<EOF
-          {
-            "@type": "MessageCard",
-            "@context": "http://schema.org/extensions",
-            "summary": "Deployment successful",
-            "themeColor": "00FF00",
-            "title": "✅ Deployment exitoso $(Build.SourceBranchName)",
-            "sections": [
-              {
-                "facts": [
-                  { "name": "Pipeline", "value": "$(Build.DefinitionName)" },
-                  { "name": "Branch", "value": "$BRANCH_DEPLOY" },
-                  { "name": "Build", "value": "$(Build.BuildNumber)" },
-                  { "name": "Merged by", "value": "$(Build.RequestedFor)" },
-                  { "name": "Deploy time", "value": "$DEPLOY_TIME" }
-                ],
-                "markdown": true
-              }
-            ]
-          }
-          EOF
-          )
+      #     payload=$(cat <<EOF
+      #     {
+      #       "@type": "MessageCard",
+      #       "@context": "http://schema.org/extensions",
+      #       "summary": "Deployment successful",
+      #       "themeColor": "00FF00",
+      #       "title": "✅ Deployment exitoso $(Build.SourceBranchName)",
+      #       "sections": [
+      #         {
+      #           "facts": [
+      #             { "name": "Pipeline", "value": "$(Build.DefinitionName)" },
+      #             { "name": "Branch", "value": "$BRANCH_DEPLOY" },
+      #             { "name": "Build", "value": "$(Build.BuildNumber)" },
+      #             { "name": "Merged by", "value": "$(Build.RequestedFor)" },
+      #             { "name": "Deploy time", "value": "$DEPLOY_TIME" }
+      #           ],
+      #           "markdown": true
+      #         }
+      #       ]
+      #     }
+      #     EOF
+      #     )
 
-          curl -H "Content-Type: application/json" \
-               -d "$payload" \
-               $(URL_WEBHOOK_TEAMS)
-        displayName: "📢 Post message to Teams"
-        env:
-          red: ${{ parameters.region }}
-          environments: ${{ parameters.environments }}
+      #     curl -H "Content-Type: application/json" \
+      #          -d "$payload" \
+      #          $(URL_WEBHOOK_TEAMS)
+      #   displayName: "📢 Post message to Teams"
+      #   env:
+      #     red: ${{ parameters.region }}
+      #     environments: ${{ parameters.environments }}
