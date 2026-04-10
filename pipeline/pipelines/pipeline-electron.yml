@@ -12,7 +12,14 @@ stages:
         dependsOn: semantic_version_electron
         jobs:
           - template: ../ci/build/build-electron.yml
-          - template: ../cd/deploy/deploy-electron.yml
+
+      - stage: deploy_electron_develop
+        displayName: "🚀 Deploy Electron develop"
+        dependsOn: build_electron_develop
+        jobs:
+          - template: ../cd/deployment.yml
+            parameters:
+              release: ${{ parameters.release }}
 
   #####################################################################
 
