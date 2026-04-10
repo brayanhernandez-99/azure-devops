@@ -15,7 +15,7 @@ jobs:
       - task: DownloadBuildArtifacts@0
         inputs:
           artifactName: "release"
-          downloadPath: "$(Pipeline.Workspace)/release"
+          downloadPath: "$(Pipeline.Workspace)/release-downloaded"
         displayName: "📥 Download Electron Artifacts"
         condition: succeeded()
 
@@ -69,8 +69,8 @@ jobs:
           echo "Environment: $environment"
 
 
-          tree
-          
+          tree "$(Pipeline.Workspace)"
+
         displayName: "⚙️ Generate .env"
         condition: succeeded()
         env:
@@ -81,16 +81,16 @@ jobs:
       #     set -e
       #     echo -e "\n📦 Cargando al Bucket S3..."
 
-      #     BASE_PATH="$(Pipeline.Workspace)/release/electron/linux/$(environment)"
+      #     BASE_PATH="$(Pipeline.Workspace)/release-downloaded/release/$(environment)/linux"
       #     echo -e "\n📂 Archivos a cargar: $BASE_PATH"
       #     ls -l "$BASE_PATH"
       #     echo ""
 
-      #     aws s3 cp "$BASE_PATH" "s3://mf-download-171158266043/app/linux/$(environment)" --recursive --acl public-read
+      #     aws s3 cp "$BASE_PATH" "s3://mf-download-171158266043/app/linux" --recursive --acl public-read
 
       #     echo -e "\n✅ Archivos subidos exitosamente."
       #     echo "🔗 APP: InvictusUX-$(version).AppImage"
-      #     echo -e "\n##[command]🔗 URL: https://mf-download-171158266043.s3.us-east-1.amazonaws.com/app/linux/$(environment)/InvictusUX-$(version).AppImage"
+      #     echo -e "\n##[command]🔗 URL: https://mf-download-171158266043.s3.us-east-1.amazonaws.com/app/linux/InvictusUX-$(version).AppImage"
       #   displayName: "🐧 Upload Bucket S3 Linux"
       #   condition: succeeded()
       #   env:
@@ -102,16 +102,16 @@ jobs:
       #     set -e
       #     echo -e "\n📦 Cargando al Bucket S3..."
 
-      #     BASE_PATH="$(Pipeline.Workspace)/release/electron/windows/$(environment)"
+      #     BASE_PATH="$(Pipeline.Workspace)/release-downloaded/release/$(environment)/windows"
       #     echo -e "\n📂 Archivos a cargar: $BASE_PATH"
       #     ls -l "$BASE_PATH"
       #     echo ""
 
-      #     aws s3 cp "$BASE_PATH" "s3://mf-download-171158266043/app/windows/$(environment)" --recursive --acl public-read
+      #     aws s3 cp "$BASE_PATH" "s3://mf-download-171158266043/app/windows" --recursive --acl public-read
 
       #     echo -e "\n✅ Archivos subidos exitosamente."
       #     echo "🔗 APP: InvictusUX Setup $(version).exe"
-      #     echo -e "\n##[command] URL: https://mf-download-171158266043.s3.us-east-1.amazonaws.com/app/windows/$(environment)/InvictusUX+Setup+$(version).exe"
+      #     echo -e "\n##[command] URL: https://mf-download-171158266043.s3.us-east-1.amazonaws.com/app/windows/InvictusUX+Setup+$(version).exe"
       #   displayName: "🖥️ Upload Bucket S3 Windows"
       #   condition: succeeded()
       #   env:
