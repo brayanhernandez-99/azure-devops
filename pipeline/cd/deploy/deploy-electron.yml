@@ -9,25 +9,25 @@ jobs:
       - template: ../../variables/groups-transversal-variables-electron.yml
         parameters:
           region: ${{ parameters.region }}
-          environments: ${{ parameters.environments }}
+          environment_staging: ${{ parameters.environment_staging }}
 
     steps:
       - task: DownloadBuildArtifacts@0
         inputs:
-          artifactName: "electron"
-          downloadPath: "$(Pipeline.Workspace)/electron-artifacts"
+          artifactName: "release"
+          downloadPath: "$(Pipeline.Workspace)"
         displayName: "📥 Download Electron Artifacts"
         condition: succeeded()
 
       - task: DownloadBuildArtifacts@0
         inputs:
           artifactName: "versions"
-          downloadPath: "$(Pipeline.Workspace)/versions-downloaded"
+          downloadPath: "$(Pipeline.Workspace)"
         displayName: "📥 Download Version"
         condition: succeeded()
 
       - script: |
-          VERSION_FILE="$(Pipeline.Workspace)/versions-downloaded/versions/electron/version.json"
+          VERSION_FILE="$(Pipeline.Workspace)/versions/electron/version.json"
           if [[ -f "$VERSION_FILE" ]]; then
             VERSION=$(jq -r '.version' $VERSION_FILE)
             echo -e "\n🚀 Versión detectada para $(Build.Repository.Name): $VERSION"
@@ -43,35 +43,20 @@ jobs:
           CURRENT_BRANCH="$(Build.SourceBranch)"
           environment="unknown"
 
-          case "$CURRENT_BRANCH" in
-            refs/heads/feature/*) environment="dev"; ;;
-            refs/heads/develop)
-              if [[ "$environments" == "develop_new" ]]; then
-                environment="dev_new"
-              else
-                environment="dev"
-              fi
-              ;;
+          case "$CURRENT_BRANCH" in 
+            refs/heads/develop | refs/heads/feature/* | refs/heads/hotfix/*)
+              environment="develop"
+            ;;
             refs/heads/staging)
-              if [[ "$environments" == "staging_new" ]]; then
-                environment="qa_new"
-              elif [[ "$environments" == "staging_nacional" ]]; then
-                environment="qa_nacional"
-              else
-                environment="qa"
+              if [[ "$environment_staging" == "staging" ]]; then
+                environment="staging"
+              elif [[ "$environment_staging" == "staging_nacional" ]]; then
+                environment="staging_nacional"
               fi
-              ;;
-            refs/heads/master) 
-              case "$region" in
-                "antioquia") environment="matrixtech"; ;;
-                "cap")       environment="cap"; ;;
-                "tolima")    environment="seapto"; ;;
-                "huila")     environment="suchance"; ;;
-                "cauca")     environment="acertemos"; ;;
-                "boyaca")    environment="jer"; ;;
-                "santander") environment="laperla"; ;;
-                "putumayo")  environment="matrixredes"; ;;
-              esac ;;
+            ;;
+            refs/heads/master)
+              environment = "$region"
+            ;;
           esac
 
           if [[ "$environment" = "unknown" ]]; then
@@ -80,29 +65,28 @@ jobs:
           fi
 
           echo "##vso[task.setvariable variable=environment]$environment"
-          echo -e "\n✅ Environment asignado exitosamente:"
+          echo -e "\n✅ Environment asignado exitosamente"
           echo "Environment: $environment"
-
         displayName: "⚙️ Generate .env"
         condition: succeeded()
         env:
           region: ${{ parameters.region }}
-          environments: ${{ parameters.environments }}
+          environment_staging: ${{ parameters.environment_staging }}
 
       - script: |
           set -e
           echo -e "\n📦 Cargando al Bucket S3..."
 
-          BASE_PATH="$(Pipeline.Workspace)/electron-artifacts/electron/linux/$(environment)"
+          BASE_PATH="$(Pipeline.Workspace)/release/$(environment)/linux"
           echo -e "\n📂 Archivos a cargar: $BASE_PATH"
           ls -l "$BASE_PATH"
           echo ""
 
-          aws s3 cp "$BASE_PATH" "s3://e-remote/invictus-electron/linux/$(environment)" --recursive --acl public-read
+          aws s3 cp "$BASE_PATH" "s3://mf-download-171158266043/app/linux" --recursive
 
           echo -e "\n✅ Archivos subidos exitosamente."
           echo "🔗 APP: InvictusUX-$(version).AppImage"
-          echo -e "\n##[command]🔗 URL: https://e-remote.s3.us-east-1.amazonaws.com/invictus-electron/linux/$(environment)/InvictusUX-$(version).AppImage"
+          echo -e "\n##[command]🔗 URL: https://mf-download-171158266043.s3.us-east-1.amazonaws.com/app/linux/InvictusUX-$(version).AppImage"
         displayName: "🐧 Upload Bucket S3 Linux"
         condition: succeeded()
         env:
@@ -114,16 +98,16 @@ jobs:
           set -e
           echo -e "\n📦 Cargando al Bucket S3..."
 
-          BASE_PATH="$(Pipeline.Workspace)/electron-artifacts/electron/windows/$(environment)"
+          BASE_PATH="$(Pipeline.Workspace)/release/$(environment)/windows"
           echo -e "\n📂 Archivos a cargar: $BASE_PATH"
           ls -l "$BASE_PATH"
           echo ""
 
-          aws s3 cp "$BASE_PATH" "s3://e-remote/invictus-electron/windows/$(environment)" --recursive --acl public-read
+          aws s3 cp "$BASE_PATH" "s3://mf-download-171158266043/app/windows" --recursive
 
           echo -e "\n✅ Archivos subidos exitosamente."
           echo "🔗 APP: InvictusUX Setup $(version).exe"
-          echo -e "\n##[command] URL: https://e-remote.s3.us-east-1.amazonaws.com/invictus-electron/windows/$(environment)/InvictusUX+Setup+$(version).exe"
+          echo -e "\n##[command] URL: https://mf-download-171158266043.s3.us-east-1.amazonaws.com/app/windows/InvictusUX+Setup+$(version).exe"
         displayName: "🖥️ Upload Bucket S3 Windows"
         condition: succeeded()
         env:
@@ -133,9 +117,9 @@ jobs:
 
       - script: |
           set -e
-          echo -e "\n📦 Send Message SQS..."
-          echo "📦 Account: $(ACCOUNT_ID_INVICTUS)"
-          echo "📦 Version: $(version)"
+          echo -e "\nℹ️ Enviando Mensaje a SQS..."
+          echo "Cuenta : $(ACCOUNT_ID_INVICTUS)"
+          echo "Version: $(version)"
 
           aws sqs send-message \
             --queue-url https://sqs.us-east-1.amazonaws.com/$(ACCOUNT_ID_INVICTUS)/DynamicStorage \
@@ -150,6 +134,7 @@ jobs:
             }' \
             --delay-seconds 0
         displayName: "📩 Send Message SQS"
+        condition: succeeded()
         env:
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
@@ -157,21 +142,14 @@ jobs:
 
       - script: |
           DEPLOY_TIME=$(date -d "$BUILD_FINISHTIME -5 hours" "+%Y-%m-%d %H:%M UTC")
-          BRANCH_NAME_MULTI=$environments
-          BRANCH_NAME="$BUILD_SOURCEBRANCHNAME"
 
-          if [[ "$BRANCH_NAME" == "master" ]]; then
-            BRANCH_DEPLOY="${red:-red}"
-
-          elif [[ "$BRANCH_NAME" == "develop" && "$BRANCH_NAME_MULTI" == "develop" ]]; then
-            BRANCH_DEPLOY="develop"
-
-          elif [[ "$BRANCH_NAME" == "staging" && "$BRANCH_NAME_MULTI" == "staging" ]]; then
-            BRANCH_DEPLOY="staging"
-
-          else
-            BRANCH_DEPLOY="$BRANCH_NAME_MULTI"
-          fi
+          echo -e "\n📢 Generando notificación para Teams..."
+          echo "Pipeline   : $(Build.DefinitionName)"
+          echo "Branch     : $(environment)"
+          echo "Build      : $(Build.BuildNumber)"
+          echo "User       : $(Build.RequestedFor)"
+          echo "DeployTime : $DEPLOY_TIME"
+          echo ""
 
           payload=$(cat <<EOF
           {
@@ -184,7 +162,7 @@ jobs:
               {
                 "facts": [
                   { "name": "Pipeline", "value": "$(Build.DefinitionName)" },
-                  { "name": "Branch", "value": "$BRANCH_DEPLOY" },
+                  { "name": "Branch", "value": "$(environment)" },
                   { "name": "Build", "value": "$(Build.BuildNumber)" },
                   { "name": "Merged by", "value": "$(Build.RequestedFor)" },
                   { "name": "Deploy time", "value": "$DEPLOY_TIME" }
@@ -200,6 +178,4 @@ jobs:
                -d "$payload" \
                $(URL_WEBHOOK_TEAMS)
         displayName: "📢 Post message to Teams"
-        env:
-          red: ${{ parameters.region }}
-          environments: ${{ parameters.environments }}
+        condition: succeeded()

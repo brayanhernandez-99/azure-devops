@@ -12,18 +12,18 @@ jobs:
       - template: ../../variables/groups-transversal-variables-electron.yml
         parameters:
           region: ${{ parameters.region }}
-          environments: ${{ parameters.environments }}
+          environment_staging: ${{ parameters.environment_staging }}
 
     steps:
       - task: DownloadBuildArtifacts@0
         inputs:
           artifactName: "versions"
-          downloadPath: "$(Pipeline.Workspace)/versions-downloaded"
+          downloadPath: "$(Pipeline.Workspace)"
         displayName: "📥 Download Version"
         condition: succeeded()
 
       - script: |
-          VERSION_FILE="$(Pipeline.Workspace)/versions-downloaded/versions/electron/version.json"
+          VERSION_FILE="$(Pipeline.Workspace)/versions/electron/version.json"
 
           echo -e "\n📁 Archivo version.json:"
           ls -la "$VERSION_FILE"
@@ -81,47 +81,31 @@ jobs:
           CURRENT_BRANCH="$(Build.SourceBranch)"
           environment="unknown"
 
-          case "$CURRENT_BRANCH" in
-            refs/heads/feature/*) environment="dev"; ;;
-            refs/heads/develop)
-              if [[ "$environments" == "develop_new" ]]; then
-                environment="dev_new"
-              else
-                environment="dev"
-              fi
-              ;;
+          case "$CURRENT_BRANCH" in 
+            refs/heads/develop | refs/heads/feature/* | refs/heads/hotfix/*)
+              environment="develop"
+            ;;
             refs/heads/staging)
-              if [[ "$environments" == "staging_new" ]]; then
-                environment="qa_new"
-              elif [[ "$environments" == "staging_nacional" ]]; then
-                environment="qa_nacional"
-              else
-                environment="qa"
+              if [[ "$environment_staging" == "staging" ]]; then
+                environment="staging"
+              elif [[ "$environment_staging" == "staging_nacional" ]]; then
+                environment="staging_nacional"
               fi
-              ;;
-            refs/heads/master) 
-              case "$region" in
-                "antioquia") environment="matrixtech"; ;;
-                "cap")       environment="cap"; ;;
-                "tolima")    environment="seapto"; ;;
-                "huila")     environment="suchance"; ;;
-                "cauca")     environment="acertemos"; ;;
-                "boyaca")    environment="jer"; ;;
-                "santander") environment="laperla"; ;;
-                "putumayo")  environment="matrixredes"; ;;
-              esac ;;
+            ;;
+            refs/heads/master)
+              environment = "$region"
+            ;;
           esac
 
-          if [[ "$environment" = "unknown" ]]; then
+          if [[ "$environment" == "unknown" ]]; then
             echo -e "\n##vso[task.logissue type=error]⚠️ Environment [$environment] no reconocido"
             exit 99
           fi
 
           cat <<EOF > .env
-          DOMAIN_ADMIN="${BASE_URL_ELECTRON_ADMIN}"
-          DOMAIN_SELLER="${BASE_URL_ELECTRON_SELLERS}"
+          VITE_DOMAIN="${VITE_DOMAIN}"
+          URL_APP="${URL_APP}"
           TARGET="linux"
-          TARGET_ENVIRONMENT="$environment"
           EOF
 
           echo "##vso[task.setvariable variable=environment]$environment"
@@ -132,7 +116,7 @@ jobs:
         condition: succeeded()
         env:
           region: ${{ parameters.region }}
-          environments: ${{ parameters.environments }}
+          environment_staging: ${{ parameters.environment_staging }}
 
       - task: UsePythonVersion@0
         displayName: "🔧 Use Python $(pythonVersion)"
@@ -207,7 +191,7 @@ jobs:
 
       - script: |
           echo -e "\n📝 Validando build electron..."
-          BASE_PATH="$(Build.SourcesDirectory)/release/$(environment)/$(version)"
+          BASE_PATH="$(Build.SourcesDirectory)/release/$(version)/linux"
           APP_DIR="$BASE_PATH/app"
           mkdir -p $APP_DIR
           all_found=true
@@ -234,12 +218,12 @@ jobs:
             fi
           done
 
-          if [[ "$all_found" == false ]]; then
+          if ! $all_found; then
             echo -e "\n##vso[task.logissue type=error]⚠️ Error: archivos requeridos no encontrados."
             exit 99
           else
-            mkdir -p "$(Build.ArtifactStagingDirectory)/electron-artifacts/linux/$(environment)"
-            cp -R $APP_DIR/* "$(Build.ArtifactStagingDirectory)/electron-artifacts/linux/$(environment)/"
+            mkdir -p "$(Build.ArtifactStagingDirectory)/release/$(environment)/linux"
+            cp -R $APP_DIR/* "$(Build.ArtifactStagingDirectory)/release/$(environment)/linux"
 
             echo -e "\n📂 Directorio: $APP_DIR"
             ls -l $APP_DIR
@@ -249,8 +233,8 @@ jobs:
 
       - task: PublishBuildArtifacts@1
         inputs:
-          PathtoPublish: "$(Build.ArtifactStagingDirectory)/electron-artifacts"
-          ArtifactName: "electron"
+          PathtoPublish: "$(Build.ArtifactStagingDirectory)/release"
+          ArtifactName: "release"
           publishLocation: "Container"
         displayName: "📤 Publish artifact electron"
         condition: succeeded()
@@ -275,7 +259,7 @@ jobs:
         displayName: "📥 Download Version"
         inputs:
           artifactName: "versions"
-          downloadPath: "$(Pipeline.Workspace)/versions-downloaded"
+          downloadPath: "$(Pipeline.Workspace)"
         condition: succeeded()
 
       - task: PowerShell@2
@@ -283,7 +267,7 @@ jobs:
         inputs:
           targetType: "inline"
           script: |
-            $versionFile = "$(Pipeline.Workspace)\versions-downloaded\versions\electron\version.json"
+            $versionFile = "$(Pipeline.Workspace)\versions\electron\version.json"
 
             Write-Host "`n📁 Archivo version.json:"
             Get-ChildItem -Path $versionFile | Select-Object Mode, LastWriteTime, Length, Name | Format-Table
@@ -292,10 +276,10 @@ jobs:
             if (Test-Path $versionFile) {
               $json = Get-Content $versionFile | ConvertFrom-Json
               $version = $json.version
-              Write-Host "`n🚀 Versión detectada para .exe: $version"
+              Write-Host "`n🚀 Versión detectada para app: $version"
               Write-Host "##vso[task.setvariable variable=version]$version"
             } else {
-              Write-Output "`n##vso[task.logissue type=error]⚠️ No se encontro archivo de versión para .exe"
+              Write-Output "`n##vso[task.logissue type=error]⚠️ No se encontro archivo de versión para app"
               exit 99
             }
         condition: succeeded()
@@ -348,64 +332,45 @@ jobs:
         inputs:
           targetType: "inline"
           script: |
-            $currentBranch="$(Build.SourceBranch)"
+            $CURRENT_BRANCH="$(Build.SourceBranch)"
             $environment = "unknown"
 
-            switch -Wildcard ($currentBranch) {
-              "refs/heads/feature/*" { $environment = "dev"; break }
-              "refs/heads/develop" {
-                if ($env:environments -eq "develop_new") {
-                  $environment = "dev_new"
-                } else {
-                  $environment = "dev"
-                }
-                break
-              }
-
+            switch -Wildcard ($CURRENT_BRANCH) {
+              "refs/heads/develop" { $environment = "develop" }
+              "refs/heads/feature/*" { $environment = "develop" }
+              "refs/heads/hotfix/*" { $environment = "develop" }
               "refs/heads/staging" {
-                if ($env:environments -eq "staging_new") {
-                  $environment = "qa_new"
-                } elseif ($env:environments -eq "staging_nacional") {
-                  $environment = "qa_nacional"
-                } else {
-                  $environment = "qa"
+                if ($env:environment_staging -eq "staging") {
+                  $environment = "staging"
                 }
-                break
+                elseif ($env:environment_staging -eq "staging_nacional") {
+                  $environment = "staging_nacional"
+                }
               }
               "refs/heads/master" {
-                switch ($env:region) {
-                  "antioquia" { $environment = "matrixtech"; break }
-                  "cap"       { $environment = "cap"; break }
-                  "tolima"    { $environment = "seapto"; break }
-                  "huila"     { $environment = "suchance"; break }
-                  "cauca"     { $environment = "acertemos"; break }
-                  "boyaca"    { $environment = "jer"; break }
-                  "santander" { $environment = "laperla"; break }
-                  "putumayo"  { $environment = "matrixredes"; break }
-                }
+                $environment = $env:region
               }
             }
 
-            if ($environment -ne "unknown") {
-            @"
-            DOMAIN_ADMIN="$(BASE_URL_ELECTRON_ADMIN)"
-            DOMAIN_SELLER="$(BASE_URL_ELECTRON_SELLERS)"
-            TARGET="windows"
-            TARGET_ENVIRONMENT="$environment"
-            "@ | Set-Content -Encoding UTF8 .env
-
-              Write-Host "##vso[task.setvariable variable=environment]$environment"
-              Write-Host "`n📁 File: .env"
-              Get-Item .env | Select-Object Mode, LastWriteTime, Length, Name | Format-Table
-              Get-Content .env
-            } else {
-              Write-Host "`n❌ No se encontro una rama valida, branch [$environment]."
+            if ($environment -eq "unknown") {
+              Write-Host "`n##vso[task.logissue type=error]⚠️ Environment [$environment] no reconocido"
               exit 99
             }
+
+            @"
+            VITE_DOMAIN="$(VITE_DOMAIN)"
+            URL_APP="$(URL_APP)"
+            TARGET="windows"
+            "@ | Set-Content -Encoding UTF8 .env
+
+            Write-Host "##vso[task.setvariable variable=environment]$environment"
+            Write-Host "`n📁 File: .env"
+            Get-Item .env | Select-Object Mode, LastWriteTime, Length, Name | Format-Table
+            Get-Content .env
         condition: succeeded()
         env:
           region: ${{ parameters.region }}
-          environments: ${{ parameters.environments }}
+          environment_staging: ${{ parameters.environment_staging }}
 
       - task: UsePythonVersion@0
         displayName: "🔧 Use Python $(pythonVersion)"
@@ -514,7 +479,8 @@ jobs:
           targetType: " inline"
           script: |
             Write-Host "📝 Validando build electron..."
-            $BASE_PATH = "$(Build.SourcesDirectory)\release\$($env:environment)\$($env:version)"
+
+            $BASE_PATH = "$(Build.SourcesDirectory)\release\$($env:version)\windows"
             $APP_DIR="$BASE_PATH\app"
             New-Item -ItemType Directory -Path $APP_DIR -Force | Out-Null
             $allFound = $true 
@@ -546,9 +512,8 @@ jobs:
               Write-Output "`n##vso[task.logissue type=error]⚠️ Error: archivos requeridos no encontrados."
               exit 99
             } else {
-              New-Item -ItemType Directory -Path "$(Build.ArtifactStagingDirectory)\electron-artifacts" | Out-Null
-              New-Item -ItemType Directory -Path "$(Build.ArtifactStagingDirectory)\electron-artifacts\windows\$($env:environment)" | Out-Null
-              Copy-Item -Path "$APP_DIR\*" -Destination "$(Build.ArtifactStagingDirectory)\electron-artifacts\windows\$($env:environment)" -Recurse -Force
+              New-Item -ItemType Directory -Path "$(Build.ArtifactStagingDirectory)\release\$($env:environment)\windows" -Force | Out-Null
+              Copy-Item -Path "$APP_DIR\*" -Destination "$(Build.ArtifactStagingDirectory)\release\$($env:environment)\windows" -Recurse -Force
 
               Write-Host "`n📂 Directorio: $APP_DIR"
               Get-ChildItem "$APP_DIR" | Select-Object Mode, LastWriteTime, Length, Name | Format-Table
@@ -557,8 +522,8 @@ jobs:
 
       - task: PublishBuildArtifacts@1
         inputs:
-          PathtoPublish: "$(Build.ArtifactStagingDirectory)/electron-artifacts"
-          ArtifactName: "electron"
+          PathtoPublish: "$(Build.ArtifactStagingDirectory)/release"
+          ArtifactName: "release"
           publishLocation: "Container"
         displayName: "📤 Publish Artifacts Electron"
         condition: succeeded()

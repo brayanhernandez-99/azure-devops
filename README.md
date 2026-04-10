@@ -71,7 +71,7 @@ pipelines-templates/
 
 ## Parámetros principales
 
-- `release`: Tipo de release (`aws-s3`, `aws-ecs`, `apk`, `exe`, `rpc`).
+- `release`: Tipo de release (`aws-s3`, `aws-ecs`, `apk`, `app`, `rpc`).
 - `red`: Lista de regiones para despliegue (por defecto: antioquia, cap, tolima, huila, cauca, boyaca).
 - `apps`: Objeto para definir aplicaciones específicas.
 

@@ -6,10 +6,10 @@ parameters:
     type: number
     default: 0
 
-  - name: environments_new_staging
+  - name: environments_staging
     type: object
     default:
-      - staging_new
+      - staging
       - staging_nacional
 
   - name: red
@@ -82,7 +82,7 @@ stages:
           apps: ${{ parameters.apps }}
           pr_id: ${{ parameters.pr_id }}
           release: ${{ parameters.release }}
-          environments_new_staging: ${{ parameters.environments_new_staging }}
+          environments_staging: ${{ parameters.environments_staging }}
 
   #
   # MicroServices
@@ -92,7 +92,7 @@ stages:
         parameters:
           red: ${{ parameters.red }}
           release: ${{ parameters.release }}
-          environments_new_staging: ${{ parameters.environments_new_staging }}
+          environments_staging: ${{ parameters.environments_staging }}
 
   #
   # Flutter
@@ -102,17 +102,17 @@ stages:
         parameters:
           red: ${{ parameters.red }}
           release: ${{ parameters.release }}
-          environments_new_staging: ${{ parameters.environments_new_staging }}
+          environments_staging: ${{ parameters.environments_staging }}
 
   #
   # Electron
   #
-  - ${{ if and(eq(parameters.release, 'exe'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), in(variables['Build.SourceBranchName'], 'develop', 'staging', 'master'))) }}:
+  - ${{ if and(eq(parameters.release, 'app'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), in(variables['Build.SourceBranchName'], 'develop', 'staging', 'master'))) }}:
       - template: ./pipelines/pipeline-electron.yml
         parameters:
           red: ${{ parameters.red }}
           release: ${{ parameters.release }}
-          environments_new_staging: ${{ parameters.environments_new_staging }}
+          environments_staging: ${{ parameters.environments_staging }}
 
   #
   # Repository Configuration
@@ -122,4 +122,4 @@ stages:
         parameters:
           red: ${{ parameters.red }}
           release: ${{ parameters.release }}
-          environments_new_staging: ${{ parameters.environments_new_staging }}
+          environments_staging: ${{ parameters.environments_staging }}

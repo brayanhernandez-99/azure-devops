@@ -56,7 +56,7 @@ jobs:
 
   #####################################################################
 
-  - ${{ if eq(parameters.release, 'exe') }}:
+  - ${{ if eq(parameters.release, 'app') }}:
       - template: ./deploy/deploy-electron.yml
         parameters:
           region: ${{ parameters.region }}
@@ -64,20 +64,6 @@ jobs:
 
       - ${{ if eq(parameters.region, 'antioquia') }}:
           - template: ./commit/commit-version-electron.yml
-
-  #####################################################################
-
-  - ${{ if eq(parameters.release, 'electron') }}:
-      - template: ./deploy/deploy-electron-new.yml
-        parameters:
-          region: ${{ parameters.region }}
-
-      - ${{ if eq(parameters.region, 'antioquia') }}:
-          - template: ./commit/commit-version-frontend-new.yml
-            parameters:
-              apps: ${{ parameters.apps }}
-
-          - template: ./commit/commit-version-electron-new.yml
 
   #####################################################################
 

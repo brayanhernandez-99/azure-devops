@@ -1,60 +1,60 @@
 variables:
-    - group: trasversal-aws-deployment
-    - group: trasversal-versions-invictus
-    - group: trasversal-flutter-keystore
+        - group: trasversal-aws-deployment
+        - group: trasversal-versions-invictus
+        - group: trasversal-flutter-keystore
 
-    # Develop - Feature - Hotfix branch
-    - ${{ if or(eq(variables['Build.SourceBranchName'], 'develop'), startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')) }}:
-          - group: trasversal-aws-develop
-          - group: variables-flutter-develop
+        # Develop - Feature - Hotfix branch
+        - ${{ if or(eq(variables['Build.SourceBranchName'], 'develop'), startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')) }}:
+                  - group: trasversal-aws-develop
+                  - group: variables-flutter-develop
 
-    # Staging branch
-    - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
-          - ${{ if eq(parameters.environments, 'staging') }}:
-                - group: trasversal-aws-qa
-                - group: variables-flutter-qa
+        # Staging branch
+        - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
+                  - ${{ if eq(parameters.environments, 'staging') }}:
+                            - group: trasversal-aws-qa
+                            - group: variables-flutter-qa
 
-          - ${{ if eq(parameters.environments, 'staging_new') }}:
-                - group: trasversal-aws-staging
-                - group: variables-flutter-staging
+                  - ${{ if eq(parameters.environments, 'staging_new') }}:
+                            - group: trasversal-aws-staging
+                            - group: variables-flutter-staging
 
-          - ${{ if eq(parameters.environments, 'staging_nacional') }}:
-                - group: trasversal-aws-staging-nacional
-                - group: variables-flutter-staging-nacional
+                  - ${{ if eq(parameters.environments, 'staging_nacional') }}:
+                            - group: trasversal-aws-staging-nacional
+                            - group: variables-flutter-staging-nacional
 
-    # Master branch → por red
-    - ${{ if and(eq(parameters.region, 'antioquia'), eq(variables['Build.SourceBranchName'], 'master')) }}:
-          - group: trasversal-aws-master-antioquia
-          - group: variables-flutter-master-antioquia
+        # Master branch → por red
+        - ${{ if and(eq(parameters.region, 'antioquia'), eq(variables['Build.SourceBranchName'], 'master')) }}:
+                  - group: trasversal-aws-master-antioquia
+                  - group: variables-flutter-master-antioquia
 
-    # - ${{ if and(eq(parameters.region, 'antioquia_new'), eq(variables['Build.SourceBranchName'], 'master')) }}:
-    #     - group: trasversal-aws-antioquia
-    #     - group: variables-flutter-antioquia
+        # - ${{ if and(eq(parameters.region, 'antioquia_new'), eq(variables['Build.SourceBranchName'], 'master')) }}:
+        #     - group: trasversal-aws-antioquia
+        #     - group: variables-flutter-antioquia
 
-    - ${{ if and(eq(parameters.region, 'cap'), eq(variables['Build.SourceBranchName'], 'master')) }}:
-          - group: trasversal-aws-antioquia-cap
-          - group: variables-flutter-cap
+        - ${{ if and(eq(parameters.region, 'cap'), eq(variables['Build.SourceBranchName'], 'master')) }}:
+                  - group: trasversal-aws-antioquia-cap
+                  - group: variables-flutter-cap
 
-    - ${{ if and(eq(parameters.region, 'tolima'), eq(variables['Build.SourceBranchName'], 'master')) }}:
-          - group: trasversal-aws-tolima
-          - group: variables-flutter-tolima
+        - ${{ if and(eq(parameters.region, 'tolima'), eq(variables['Build.SourceBranchName'], 'master')) }}:
+                  - group: trasversal-aws-tolima
+                  - group: variables-flutter-tolima
 
-    - ${{ if and(eq(parameters.region, 'huila'), eq(variables['Build.SourceBranchName'], 'master')) }}:
-          - group: trasversal-aws-huila
-          - group: variables-flutter-huila
+        - ${{ if and(eq(parameters.region, 'huila'), eq(variables['Build.SourceBranchName'], 'master')) }}:
+                  - group: trasversal-aws-huila
+                  - group: variables-flutter-huila
 
-    - ${{ if and(eq(parameters.region, 'cauca'), eq(variables['Build.SourceBranchName'], 'master')) }}:
-          - group: trasversal-aws-cauca
-          - group: variables-flutter-cauca
+        - ${{ if and(eq(parameters.region, 'cauca'), eq(variables['Build.SourceBranchName'], 'master')) }}:
+                  - group: trasversal-aws-cauca
+                  - group: variables-flutter-cauca
 
-    - ${{ if and(eq(parameters.region, 'boyaca'), eq(variables['Build.SourceBranchName'], 'master')) }}:
-          - group: trasversal-aws-boyaca
-          - group: variables-flutter-boyaca
+        - ${{ if and(eq(parameters.region, 'boyaca'), eq(variables['Build.SourceBranchName'], 'master')) }}:
+                  - group: trasversal-aws-boyaca
+                  - group: variables-flutter-boyaca
 
-    - ${{ if and(eq(parameters.region, 'santander'), eq(variables['Build.SourceBranchName'], 'master')) }}:
-          - group: trasversal-aws-santander
-          - group: variables-flutter-santander
+        - ${{ if and(eq(parameters.region, 'santander'), eq(variables['Build.SourceBranchName'], 'master')) }}:
+                  - group: trasversal-aws-santander
+                  - group: variables-flutter-santander
 
-    - ${{ if and(eq(parameters.region, 'putumayo'), eq(variables['Build.SourceBranchName'], 'master')) }}:
-          - group: trasversal-aws-putumayo
-          - group: variables-flutter-putumayo
+        - ${{ if and(eq(parameters.region, 'putumayo'), eq(variables['Build.SourceBranchName'], 'master')) }}:
+                  - group: trasversal-aws-putumayo
+                  - group: variables-flutter-putumayo

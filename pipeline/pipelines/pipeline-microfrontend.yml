@@ -81,7 +81,7 @@ stages:
               apps: ${{ parameters.apps }}
 
   - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
-      - ${{ each environments in parameters.environments_new_staging }}:
+      - ${{ each environments in parameters.environments_staging }}:
           - stage: build_micro_frontend_${{ environments }}
             displayName: "📦 Build MicroFrontend ${{ environments }}"
             dependsOn: semantic_version_micro_fronted
