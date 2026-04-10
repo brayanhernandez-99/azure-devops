@@ -125,9 +125,9 @@ jobs:
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
 
       - task: UseNode@1
-        displayName: "🔧 Install Nodejs $(nodeVersion)"
+        displayName: "🔧 Install Nodejs $(nodeVersionNew)"
         inputs:
-          version: "$(nodeVersion)"
+          version: "$(nodeVersionNew)"
         condition: succeeded()
 
       - script: |
