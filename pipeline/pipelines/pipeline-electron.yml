@@ -13,9 +13,9 @@ stages:
         jobs:
           - template: ../ci/build/build-electron.yml
 
-      - stage: deploy_electron_develop
+      - stage: deploy_electron
         displayName: "🚀 Deploy Electron develop"
-        dependsOn: build_electron_develop
+        dependsOn: build_electron
         jobs:
           - template: ../cd/deployment.yml
             parameters:
