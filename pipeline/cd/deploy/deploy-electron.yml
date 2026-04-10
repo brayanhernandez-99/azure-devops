@@ -65,7 +65,7 @@ jobs:
           fi
 
           echo "##vso[task.setvariable variable=environment]$environment"
-          echo -e "\n✅ Environment asignado exitosamente:"
+          echo -e "\n✅ Environment asignado exitosamente"
           echo "Environment: $environment"
         displayName: "⚙️ Generate .env"
         condition: succeeded()
@@ -82,11 +82,11 @@ jobs:
       #     ls -l "$BASE_PATH"
       #     echo ""
 
-      #     aws s3 cp "$BASE_PATH" "s3://e-remote/invictus-electron/linux/$(environment)" --recursive --acl public-read
+      #     aws s3 cp "$BASE_PATH" "s3://mf-download-171158266043/app/linux/$(environment)" --recursive --acl public-read
 
       #     echo -e "\n✅ Archivos subidos exitosamente."
       #     echo "🔗 APP: InvictusUX-$(version).AppImage"
-      #     echo -e "\n##[command]🔗 URL: https://e-remote.s3.us-east-1.amazonaws.com/invictus-electron/linux/$(environment)/InvictusUX-$(version).AppImage"
+      #     echo -e "\n##[command]🔗 URL: https://mf-download-171158266043.s3.us-east-1.amazonaws.com/app/linux/$(environment)/InvictusUX-$(version).AppImage"
       #   displayName: "🐧 Upload Bucket S3 Linux"
       #   condition: succeeded()
       #   env:
@@ -103,11 +103,11 @@ jobs:
       #     ls -l "$BASE_PATH"
       #     echo ""
 
-      #     aws s3 cp "$BASE_PATH" "s3://e-remote/invictus-electron/windows/$(environment)" --recursive --acl public-read
+      #     aws s3 cp "$BASE_PATH" "s3://mf-download-171158266043/app/windows/$(environment)" --recursive --acl public-read
 
       #     echo -e "\n✅ Archivos subidos exitosamente."
       #     echo "🔗 APP: InvictusUX Setup $(version).exe"
-      #     echo -e "\n##[command] URL: https://e-remote.s3.us-east-1.amazonaws.com/invictus-electron/windows/$(environment)/InvictusUX+Setup+$(version).exe"
+      #     echo -e "\n##[command] URL: https://mf-download-171158266043.s3.us-east-1.amazonaws.com/app/windows/$(environment)/InvictusUX+Setup+$(version).exe"
       #   displayName: "🖥️ Upload Bucket S3 Windows"
       #   condition: succeeded()
       #   env:
