@@ -141,11 +141,10 @@ jobs:
           addToPath: true
         condition: succeeded()
 
-      - task: NodeTool@0
+      - task: UseNode@1
         displayName: "🔧 Install Nodejs $(nodeVersion)"
         inputs:
-          versionSource: "spec"
-          versionSpec: "$(nodeVersion)"
+          version: "$(nodeVersion)"
         condition: succeeded()
 
       - script: |
@@ -415,11 +414,10 @@ jobs:
           addToPath: true
         condition: succeeded()
 
-      - task: NodeTool@0
+      - task: UseNode@1
         displayName: "🔧 Install Nodejs $(nodeVersion)"
         inputs:
-          versionSource: "spec"
-          versionSpec: "$(nodeVersion)"
+          version: "$(nodeVersion)"
         condition: succeeded()
 
       - task: PowerShell@2

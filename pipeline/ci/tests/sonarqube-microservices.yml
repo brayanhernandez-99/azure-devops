@@ -124,11 +124,10 @@ jobs:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
 
-      - task: NodeTool@0
+      - task: UseNode@1
         displayName: "🔧 Install Nodejs $(nodeVersionNew)"
         inputs:
-          versionSource: "spec"
-          versionSpec: "$(nodeVersionNew)"
+          version: "$(nodeVersionNew)"
         condition: succeeded()
 
       - script: |
@@ -319,7 +318,6 @@ jobs:
       #     fi
       #   displayName: "📈 Run Tests, coverage report"
       #   condition: succeeded()
-      
       # - task: PublishTestResults@2
       #   displayName: "📊 Publish Test Results"
       #   inputs:
@@ -327,14 +325,12 @@ jobs:
       #     testResultsFiles: "reports/junit/test.xml"
       #     mergeTestResults: true
       #     failTaskOnFailedTests: true
-      
       # - task: PublishCodeCoverageResults@2
       #   displayName: "📊 Publish Code Coverage"
       #   inputs:
       #     codeCoverageTool: "Cobertura"
       #     summaryFileLocation: "$(System.DefaultWorkingDirectory)/reports/coverage/cobertura-coverage.xml"
       #     reportDirectory: "$(System.DefaultWorkingDirectory)/reports/coverage"
-      
       - script: |
           pnpm run coverage
           ls -la $(System.DefaultWorkingDirectory)/coverage
