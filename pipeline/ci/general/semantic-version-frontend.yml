@@ -430,3 +430,4 @@ jobs:
                     git commit -m "chore: bump versions [monorepo]"
                     git push origin version/$clean_branch
                   displayName: "⚡ Commit Version & Push"
+                  condition: succeeded()

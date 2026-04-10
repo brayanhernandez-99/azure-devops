@@ -71,7 +71,7 @@ jobs:
         condition: succeeded()
         env:
           region: ${{ parameters.region }}
-          environments: ${{ parameters.environments }}
+          environment_staging: ${{ parameters.environment_staging }}
 
       - script: |
           set -e
@@ -117,9 +117,9 @@ jobs:
 
       - script: |
           set -e
-          echo -e "\n📦 Send Message SQS..."
-          echo "📦 Account: $(ACCOUNT_ID_INVICTUS)"
-          echo "📦 Version: $(version)"
+          echo -e "\nℹ️ Enviando Mensaje a SQS..."
+          echo "Cuenta : $(ACCOUNT_ID_INVICTUS)"
+          echo "Version: $(version)"
 
           aws sqs send-message \
             --queue-url https://sqs.us-east-1.amazonaws.com/$(ACCOUNT_ID_INVICTUS)/DynamicStorage \
@@ -134,6 +134,7 @@ jobs:
             }' \
             --delay-seconds 0
         displayName: "📩 Send Message SQS"
+        condition: succeeded()
         env:
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
@@ -141,21 +142,14 @@ jobs:
 
       - script: |
           DEPLOY_TIME=$(date -d "$BUILD_FINISHTIME -5 hours" "+%Y-%m-%d %H:%M UTC")
-          BRANCH_NAME_MULTI=$environments
-          BRANCH_NAME="$BUILD_SOURCEBRANCHNAME"
 
-          if [[ "$BRANCH_NAME" == "master" ]]; then
-            BRANCH_DEPLOY="${red:-red}"
-
-          elif [[ "$BRANCH_NAME" == "develop" && "$BRANCH_NAME_MULTI" == "develop" ]]; then
-            BRANCH_DEPLOY="develop"
-
-          elif [[ "$BRANCH_NAME" == "staging" && "$BRANCH_NAME_MULTI" == "staging" ]]; then
-            BRANCH_DEPLOY="staging"
-
-          else
-            BRANCH_DEPLOY="$BRANCH_NAME_MULTI"
-          fi
+          echo -e "\n📢 Generando notificación para Teams..."
+          echo "Pipeline   : $(Build.DefinitionName)"
+          echo "Branch     : $(environment)"
+          echo "Build      : $(Build.BuildNumber)"
+          echo "User       : $(Build.RequestedFor)"
+          echo "DeployTime : $DEPLOY_TIME"
+          echo ""
 
           payload=$(cat <<EOF
           {
@@ -168,7 +162,7 @@ jobs:
               {
                 "facts": [
                   { "name": "Pipeline", "value": "$(Build.DefinitionName)" },
-                  { "name": "Branch", "value": "$BRANCH_DEPLOY" },
+                  { "name": "Branch", "value": "$(environment)" },
                   { "name": "Build", "value": "$(Build.BuildNumber)" },
                   { "name": "Merged by", "value": "$(Build.RequestedFor)" },
                   { "name": "Deploy time", "value": "$DEPLOY_TIME" }
@@ -184,6 +178,4 @@ jobs:
                -d "$payload" \
                $(URL_WEBHOOK_TEAMS)
         displayName: "📢 Post message to Teams"
-        env:
-          red: ${{ parameters.region }}
-          environments: ${{ parameters.environments }}
+        condition: succeeded()

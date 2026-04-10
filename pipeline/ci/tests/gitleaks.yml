@@ -21,7 +21,7 @@ jobs:
       #   continueOnError: true
       #   inputs:
       #     scanType: repo
-
+      #   condition: succeeded()
 
       - script: |
           docker run --rm \
@@ -36,3 +36,4 @@ jobs:
             --report-format json
         displayName: "🔍 Gitleaks full repo scan"
         continueOnError: true
+        condition: succeeded()
