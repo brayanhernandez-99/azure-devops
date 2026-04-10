@@ -78,7 +78,7 @@ jobs:
 
           paths="$(file)/$(msName)"
           git fetch origin "$targetBranch"
-          diff=$(git --no-pager diff "origin/$targetBranch...origin/$sourceBranch" -- $paths)
+          diff=$(git --no-pager diff "origin/$targetBranch..origin/$sourceBranch" -- $paths)
           pattern='console[.]'
 
           console_logs=$(echo "$diff" | awk -v pat="$pattern" '
