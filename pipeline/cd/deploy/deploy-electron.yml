@@ -82,7 +82,7 @@ jobs:
           ls -l "$BASE_PATH"
           echo ""
 
-          aws s3 cp "$BASE_PATH" "s3://mf-download-171158266043/app/linux" --recursive --acl public-read
+          aws s3 cp "$BASE_PATH" "s3://mf-download-171158266043/app/linux" --recursive
 
           echo -e "\n✅ Archivos subidos exitosamente."
           echo "🔗 APP: InvictusUX-$(version).AppImage"
@@ -103,7 +103,7 @@ jobs:
           ls -l "$BASE_PATH"
           echo ""
 
-          aws s3 cp "$BASE_PATH" "s3://mf-download-171158266043/app/windows" --recursive --acl public-read
+          aws s3 cp "$BASE_PATH" "s3://mf-download-171158266043/app/windows" --recursive
 
           echo -e "\n✅ Archivos subidos exitosamente."
           echo "🔗 APP: InvictusUX Setup $(version).exe"
