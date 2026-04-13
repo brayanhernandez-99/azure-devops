@@ -205,7 +205,7 @@ jobs:
           echo "📦 Repo: $REPO_NAME"
           echo "🌿 Branch: $BRANCH_NAME"
 
-          if [[ ("$BRANCH_NAME" == "staging" && "$BRANCH_NAME_MULTI" == "staging") || "$RED" == "antioquia" ]]; then
+          if [[ "$RED" == "antioquia" ]]; then
             clusters=("transaction-ms-cluster" "transaction-astro-ms-cluster" "transaction-lg-ms-cluster" "transaction-recharges-ms-cluster")
             services=("transaction-ms-fg-service" "transaction-astro-ms-fg-service" "transaction-lg-ms-fg-service" "transaction-recharges-ms-fg-service")
           else
@@ -367,7 +367,7 @@ jobs:
           BRANCH_NAME_MULTI=$environments
           RED="${red:-}"
 
-          if [[ ( "$BRANCH_NAME" == "develop" && "$BRANCH_NAME_MULTI" == "develop" ) || ( "$BRANCH_NAME" == "staging" && "$BRANCH_NAME_MULTI" == "staging" ) || "$RED" == "antioquia" ]]; then
+          if [[ "$RED" == "antioquia" ]]; then
             repoName="$(Build.Repository.Name)"
             newTag="$(version)"
 
@@ -443,7 +443,7 @@ jobs:
             BRANCH_NAME_MULTI=$environments
             RED="${red:-}"
 
-            if [[ ( "$BRANCH_NAME" == "develop" && "$BRANCH_NAME_MULTI" == "develop" ) || ( "$BRANCH_NAME" == "staging" && "$BRANCH_NAME_MULTI" == "staging" ) || "$RED" == "antioquia" ]]; then
+            if [[ "$RED" == "antioquia" ]]; then
               newTag="$(version)"
               containerName=$(jq -r '.containerDefinitions[0].name' "$INPUT")
 
