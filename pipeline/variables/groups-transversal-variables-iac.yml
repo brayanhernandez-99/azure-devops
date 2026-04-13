@@ -1,104 +1,105 @@
 variables:
-    - group: trasversal-azure-devops
-    - group: trasversal-aws-deployment
+      - group: trasversal-azure-devops
+      - group: trasversal-aws-deployment
 
-    # Feature branches
-    - ${{ if or(eq(variables['Build.SourceBranchName'], 'develop'), startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')) }}:
-          - group: trasversal-aws-develop
-          - group: infrastructure-develop
-          - group: cloudfront-infrastructure-develop
-          - group: parameters-infrastructure-develop
-          - group: secrets-infrastructure-develop
-          - group: autoscaling-infrastructure-develop
-          - group: ftp-infrastructure-develop
+      # Feature branches
+      - ${{ if or(eq(variables['Build.SourceBranchName'], 'develop'), startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')) }}:
+              - group: trasversal-aws-develop
+              - group: infrastructure-develop
+              - group: cloudfront-infrastructure-develop
+              - group: parameters-infrastructure-develop
+              - group: secrets-infrastructure-develop
+              - group: autoscaling-infrastructure-develop
+              - group: ftp-infrastructure-develop
 
-    - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
-          - ${{ if eq(parameters.environment, 'staging') }}:
-                - group: trasversal-aws-staging
-                - group: infrastructure-staging
-                - group: cloudfront-infrastructure-staging
-                - group: parameters-infrastructure-staging
-                - group: secrets-infrastructure-staging
-                - group: autoscaling-infrastructure-staging
-                - group: ftp-infrastructure-staging
+      - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
+              - ${{ if eq(parameters.environment, 'staging') }}:
+                      - group: trasversal-aws-staging
+                      - group: infrastructure-staging
+                      - group: cloudfront-infrastructure-staging
+                      - group: parameters-infrastructure-staging
+                      - group: secrets-infrastructure-staging
+                      - group: autoscaling-infrastructure-staging
+                      - group: ftp-infrastructure-staging
 
-          - ${{ if eq(parameters.environment, 'staging_nacional') }}:
-                - group: trasversal-aws-staging-nacional
-                - group: infrastructure-staging-nacional
-                - group: cloudfront-infrastructure-staging-nacional
-                - group: parameters-infrastructure-staging-nacional
-                - group: secrets-infrastructure-staging-nacional
-                - group: autoscaling-infrastructure-staging
+              - ${{ if eq(parameters.environment, 'staging_nacional') }}:
+                      - group: trasversal-aws-staging-nacional
+                      - group: infrastructure-staging-nacional
+                      - group: cloudfront-infrastructure-staging-nacional
+                      - group: parameters-infrastructure-staging-nacional
+                      - group: secrets-infrastructure-staging-nacional
+                      - group: autoscaling-infrastructure-staging-nacional
+                      - group: ftp-infrastructure-staging-nacional
 
-    # Master branch → por región
-    - ${{ if and(eq(parameters.region, 'antioquia'), eq(variables['Build.SourceBranchName'], 'master')) }}:
-          - group: trasversal-aws-antioquia
-          - group: infrastructure-antioquia
-          - group: cloudfront-infrastructure-antioquia
-          - group: parameters-infrastructure-antioquia
-          - group: secrets-infrastructure-antioquia
-          - group: autoscaling-infrastructure-antioquia
-          - group: ftp-infrastructure-antioquia
+      # Master branch → por región
+      - ${{ if and(eq(parameters.region, 'antioquia'), eq(variables['Build.SourceBranchName'], 'master')) }}:
+              - group: trasversal-aws-antioquia
+              - group: infrastructure-antioquia
+              - group: cloudfront-infrastructure-antioquia
+              - group: parameters-infrastructure-antioquia
+              - group: secrets-infrastructure-antioquia
+              - group: autoscaling-infrastructure-antioquia
+              - group: ftp-infrastructure-antioquia
 
-    - ${{ if and(eq(parameters.region, 'cap'), eq(variables['Build.SourceBranchName'], 'master')) }}:
-          - group: trasversal-aws-antioquia-cap
-          - group: infrastructure-antioquia-cap
-          - group: cloudfront-infrastructure-antioquia-cap
-          - group: parameters-infrastructure-antioquia-cap
-          - group: secrets-infrastructure-antioquia-cap
-          - group: autoscaling-infrastructure-antioquia-cap
-          - group: ftp-infrastructure-antioquia-cap
+      - ${{ if and(eq(parameters.region, 'cap'), eq(variables['Build.SourceBranchName'], 'master')) }}:
+              - group: trasversal-aws-antioquia-cap
+              - group: infrastructure-antioquia-cap
+              - group: cloudfront-infrastructure-antioquia-cap
+              - group: parameters-infrastructure-antioquia-cap
+              - group: secrets-infrastructure-antioquia-cap
+              - group: autoscaling-infrastructure-antioquia-cap
+              - group: ftp-infrastructure-antioquia-cap
 
-    - ${{ if and(eq(parameters.region, 'tolima'), eq(variables['Build.SourceBranchName'], 'master')) }}:
-          - group: trasversal-aws-tolima
-          - group: infrastructure-tolima
-          - group: cloudfront-infrastructure-tolima
-          - group: parameters-infrastructure-tolima
-          - group: secrets-infrastructure-tolima
-          - group: autoscaling-infrastructure-tolima
-          - group: ftp-infrastructure-tolima
+      - ${{ if and(eq(parameters.region, 'tolima'), eq(variables['Build.SourceBranchName'], 'master')) }}:
+              - group: trasversal-aws-tolima
+              - group: infrastructure-tolima
+              - group: cloudfront-infrastructure-tolima
+              - group: parameters-infrastructure-tolima
+              - group: secrets-infrastructure-tolima
+              - group: autoscaling-infrastructure-tolima
+              - group: ftp-infrastructure-tolima
 
-    - ${{ if and(eq(parameters.region, 'huila'), eq(variables['Build.SourceBranchName'], 'master')) }}:
-          - group: trasversal-aws-huila
-          - group: infrastructure-huila
-          - group: cloudfront-infrastructure-huila
-          - group: parameters-infrastructure-huila
-          - group: secrets-infrastructure-huila
-          - group: autoscaling-infrastructure-huila
-          - group: ftp-infrastructure-huila
+      - ${{ if and(eq(parameters.region, 'huila'), eq(variables['Build.SourceBranchName'], 'master')) }}:
+              - group: trasversal-aws-huila
+              - group: infrastructure-huila
+              - group: cloudfront-infrastructure-huila
+              - group: parameters-infrastructure-huila
+              - group: secrets-infrastructure-huila
+              - group: autoscaling-infrastructure-huila
+              - group: ftp-infrastructure-huila
 
-    - ${{ if and(eq(parameters.region, 'cauca'), eq(variables['Build.SourceBranchName'], 'master')) }}:
-          - group: trasversal-aws-cauca
-          - group: infrastructure-cauca
-          - group: cloudfront-infrastructure-cauca
-          - group: parameters-infrastructure-cauca
-          - group: secrets-infrastructure-cauca
-          - group: autoscaling-infrastructure-cauca
-          - group: ftp-infrastructure-cauca
+      - ${{ if and(eq(parameters.region, 'cauca'), eq(variables['Build.SourceBranchName'], 'master')) }}:
+              - group: trasversal-aws-cauca
+              - group: infrastructure-cauca
+              - group: cloudfront-infrastructure-cauca
+              - group: parameters-infrastructure-cauca
+              - group: secrets-infrastructure-cauca
+              - group: autoscaling-infrastructure-cauca
+              - group: ftp-infrastructure-cauca
 
-    - ${{ if and(eq(parameters.region, 'boyaca'), eq(variables['Build.SourceBranchName'], 'master')) }}:
-          - group: trasversal-aws-boyaca
-          - group: infrastructure-boyaca
-          - group: cloudfront-infrastructure-boyaca
-          - group: parameters-infrastructure-boyaca
-          - group: secrets-infrastructure-boyaca
-          - group: autoscaling-infrastructure-boyaca
-          - group: ftp-infrastructure-boyaca
+      - ${{ if and(eq(parameters.region, 'boyaca'), eq(variables['Build.SourceBranchName'], 'master')) }}:
+              - group: trasversal-aws-boyaca
+              - group: infrastructure-boyaca
+              - group: cloudfront-infrastructure-boyaca
+              - group: parameters-infrastructure-boyaca
+              - group: secrets-infrastructure-boyaca
+              - group: autoscaling-infrastructure-boyaca
+              - group: ftp-infrastructure-boyaca
 
-    - ${{ if and(eq(parameters.region, 'santander'), eq(variables['Build.SourceBranchName'], 'master')) }}:
-          - group: trasversal-aws-santander
-          - group: infrastructure-santander
-          - group: cloudfront-infrastructure-santander
-          - group: parameters-infrastructure-santander
-          - group: secrets-infrastructure-santander
-          - group: autoscaling-infrastructure-santander
-          - group: ftp-infrastructure-santander
+      - ${{ if and(eq(parameters.region, 'santander'), eq(variables['Build.SourceBranchName'], 'master')) }}:
+              - group: trasversal-aws-santander
+              - group: infrastructure-santander
+              - group: cloudfront-infrastructure-santander
+              - group: parameters-infrastructure-santander
+              - group: secrets-infrastructure-santander
+              - group: autoscaling-infrastructure-santander
+              - group: ftp-infrastructure-santander
 
-    - ${{ if and(eq(parameters.region, 'putumayo'), eq(variables['Build.SourceBranchName'], 'master')) }}:
-          - group: trasversal-aws-putumayo
-          - group: infrastructure-putumayo
-          - group: cloudfront-infrastructure-putumayo
-          - group: parameters-infrastructure-putumayo
-          - group: secrets-infrastructure-putumayo
-          - group: autoscaling-infrastructure-putumayo
-          - group: ftp-infrastructure-putumayo
+      - ${{ if and(eq(parameters.region, 'putumayo'), eq(variables['Build.SourceBranchName'], 'master')) }}:
+              - group: trasversal-aws-putumayo
+              - group: infrastructure-putumayo
+              - group: cloudfront-infrastructure-putumayo
+              - group: parameters-infrastructure-putumayo
+              - group: secrets-infrastructure-putumayo
+              - group: autoscaling-infrastructure-putumayo
+              - group: ftp-infrastructure-putumayo
