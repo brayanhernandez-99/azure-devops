@@ -82,11 +82,11 @@ jobs:
           ls -l "$BASE_PATH"
           echo ""
 
-          aws s3 cp "$BASE_PATH" "s3://mf-download-171158266043/app/linux/" --recursive
+          aws s3 cp "$BASE_PATH" "s3://mf-download-$(ACCOUNT_ID_INVICTUS)/app/linux/" --recursive
 
           echo -e "\n✅ Archivos subidos exitosamente."
           echo "🔗 APP: InvictusUX-$(version).AppImage"
-          echo -e "\n##[command]🔗 URL: https://mf-download-171158266043.s3.us-east-1.amazonaws.com/app/linux/InvictusUX-$(version).AppImage"
+          echo -e "\n##[command]🔗 URL: https://mf-download-$(ACCOUNT_ID_INVICTUS).s3.us-east-1.amazonaws.com/app/linux/InvictusUX-$(version).AppImage"
         displayName: "🐧 Upload Bucket S3 Linux"
         condition: succeeded()
         env:
@@ -103,11 +103,11 @@ jobs:
           ls -l "$BASE_PATH"
           echo ""
 
-          aws s3 cp "$BASE_PATH" "s3://mf-download-171158266043/app/windows/" --recursive
+          aws s3 cp "$BASE_PATH" "s3://mf-download-$(ACCOUNT_ID_INVICTUS)/app/windows/" --recursive
 
           echo -e "\n✅ Archivos subidos exitosamente."
           echo "🔗 APP: InvictusUX Setup $(version).exe"
-          echo -e "\n##[command] URL: https://mf-download-171158266043.s3.us-east-1.amazonaws.com/app/windows/InvictusUX+Setup+$(version).exe"
+          echo -e "\n##[command] URL: https://mf-download-$(ACCOUNT_ID_INVICTUS).s3.us-east-1.amazonaws.com/app/windows/InvictusUX+Setup+$(version).exe"
         displayName: "🖥️ Upload Bucket S3 Windows"
         condition: succeeded()
         env:
