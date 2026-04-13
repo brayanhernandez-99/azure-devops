@@ -15,12 +15,6 @@ variables:
         # Staging branch
         - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
                   - ${{ if eq(parameters.environments, 'staging') }}:
-                            - group: trasversal-aws-qa
-                            - group: variables-cloudfront-qa
-                            - group: variables-microfrontend-vue2-qa-old
-                            - group: variables-microfrontend-qa-old
-
-                  - ${{ if eq(parameters.environments, 'staging_new') }}:
                             - group: trasversal-aws-staging
                             - group: variables-cloudfront-staging
                             - group: variables-microfrontend-vue2-staging-old
