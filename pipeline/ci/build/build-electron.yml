@@ -41,8 +41,7 @@ jobs:
         condition: succeeded()
 
       - script: |
-          CLEAN_TIME=$(echo "$BUILD_FINISHTIME" | sed 's/\..*Z/Z/')
-          DEPLOY_TIME=$(TZ="America/Bogota" date -d "$CLEAN_TIME" "+%Y-%m-%d %I:%M %p")
+          DEPLOY_TIME=$(TZ="America/Bogota" date -d "$(echo "$(Build.FinishTime)" | cut -d'.' -f1)Z" "+%Y-%m-%d %I:%M %p")
 
           echo -e "\n📢 Generando notificación para Teams..."
           echo "Pipeline   : $(Build.DefinitionName)"
