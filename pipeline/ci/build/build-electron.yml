@@ -40,20 +40,6 @@ jobs:
         displayName: "📚 Read Version"
         condition: succeeded()
 
-      - script: |
-          #DEPLOY_TIME=$(date -d "$BUILD_FINISHTIME -5 hours" "+%Y-%m-%d %H:%M UTC")
-          DEPLOY_TIME=$(date -d "$BUILD_FINISHTIME -5 hours" "+%Y-%m-%d %I:%M %p")
-
-          echo -e "\n📢 Generando notificación para Teams..."
-          echo "Pipeline   : $(Build.DefinitionName)"
-          echo "Branch     : $(environment)"
-          echo "Build      : $(Build.BuildNumber)"
-          echo "User       : $(Build.RequestedFor)"
-          echo "DeployTime : $DEPLOY_TIME"
-          echo ""
-        displayName: "📢 Post message to Teams"
-        condition: succeeded()
-
       - task: Bash@3
         name: AuthCodeArtifact
         inputs:
