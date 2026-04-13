@@ -142,7 +142,7 @@ jobs:
               ;;
           esac
 
-          if [[ "$environment" = "unknown" ]]; then
+          if [[ "$environment" == "unknown" ]]; then
             echo -e "\n##vso[task.logissue type=error]⚠️ Environment [$environment] no reconocido"
             exit 99
           fi
