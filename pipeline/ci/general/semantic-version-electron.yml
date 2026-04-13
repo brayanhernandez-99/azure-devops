@@ -15,6 +15,20 @@ jobs:
         fetchTags: false
 
       - script: |
+          #DEPLOY_TIME=$(date -d "$BUILD_FINISHTIME -5 hours" "+%Y-%m-%d %H:%M UTC")
+          DEPLOY_TIME=$(date -d "$BUILD_FINISHTIME -5 hours" "+%Y-%m-%d %I:%M %p")
+
+          echo -e "\n📢 Generando notificación para Teams..."
+          echo "Pipeline   : $(Build.DefinitionName)"
+          echo "Branch     : $(environment)"
+          echo "Build      : $(Build.BuildNumber)"
+          echo "User       : $(Build.RequestedFor)"
+          echo "DeployTime : $DEPLOY_TIME"
+          echo ""
+        displayName: "📢 Post message to Teams"
+        condition: succeeded()
+
+      - script: |
           echo -e "\n📌 Verificando si feature está actualizada con master y si hay cambios relevantes..."
           echo "Branch Actual: $(echo $(Build.SourceBranch))"          
           git fetch origin master
