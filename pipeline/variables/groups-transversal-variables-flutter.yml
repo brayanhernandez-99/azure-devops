@@ -11,10 +11,6 @@ variables:
         # Staging branch
         - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
                   - ${{ if eq(parameters.environments, 'staging') }}:
-                            - group: trasversal-aws-qa
-                            - group: variables-flutter-qa
-
-                  - ${{ if eq(parameters.environments, 'staging_new') }}:
                             - group: trasversal-aws-staging
                             - group: variables-flutter-staging
 
