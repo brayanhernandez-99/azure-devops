@@ -141,7 +141,8 @@ jobs:
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
 
       - script: |
-          DEPLOY_TIME=$(TZ="America/Bogota" date -d "$BUILD_FINISHTIME" "+%Y-%m-%d %I:%M %p")
+          CLEAN_TIME=$(echo "$BUILD_FINISHTIME" | sed 's/\..*Z/Z/')
+          DEPLOY_TIME=$(TZ="America/Bogota" date -d "$CLEAN_TIME" "+%Y-%m-%d %I:%M %p")
 
           echo -e "\n📢 Generando notificación para Teams..."
           echo "Pipeline   : $(Build.DefinitionName)"
