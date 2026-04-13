@@ -99,7 +99,7 @@ jobs:
               esac ;;
           esac
 
-          if [ "$environment" = "unknown" ] || [ "$appId" = "unknown" ]; then
+          if [ "$environment" == "unknown" ] || [ "$appId" == "unknown" ]; then
             echo -e "\n##vso[task.logissue type=error]⚠️ App Id o Environment no reconocidos"
             echo -e "\n##vso[task.logissue type=error]⚠️ App Id: [$appId]"
             echo -e "\n##vso[task.logissue type=error]⚠️ Environment: [$environment]"
