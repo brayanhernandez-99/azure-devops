@@ -82,7 +82,7 @@ jobs:
           ls -l "$BASE_PATH"
           echo ""
 
-          aws s3 cp "$BASE_PATH" "s3://mf-download-$(ACCOUNT_ID_INVICTUS)/app/linux/" --recursive --content-type "application/octet-stream"
+          aws s3 cp "$BASE_PATH" "s3://mf-download-$(ACCOUNT_ID_INVICTUS)/app/linux/" --recursive
 
           echo -e "\n✅ Archivos subidos exitosamente."
           echo "🔗 APP: InvictusUX-$(version).AppImage"
@@ -103,11 +103,11 @@ jobs:
           ls -l "$BASE_PATH"
           echo ""
 
-          aws s3 cp "$BASE_PATH" "s3://mf-download-$(ACCOUNT_ID_INVICTUS)/app/windows/" --recursive --content-type "application/octet-stream"
+          aws s3 cp "$BASE_PATH" "s3://mf-download-$(ACCOUNT_ID_INVICTUS)/app/windows/" --recursive
 
           echo -e "\n✅ Archivos subidos exitosamente."
           echo "🔗 APP: InvictusUX Setup $(version).exe"
-          echo -e "\n🔗##[command] URL: https://mf-download-$(ACCOUNT_ID_INVICTUS).s3.us-east-1.amazonaws.com/app/windows/InvictusUX+Setup+$(version).exe"
+          echo -e "\n🔗##[command] URL: https://mf-download-$(ACCOUNT_ID_INVICTUS).s3.us-east-1.amazonaws.com/app/windows/InvictusUX%20Setup%20$(version).exe"
         displayName: "🖥️ Upload Bucket S3 Windows"
         condition: succeeded()
         env:
@@ -115,67 +115,67 @@ jobs:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
 
-      - script: |
-          set -e
-          echo -e "\nℹ️ Enviando Mensaje a SQS..."
-          echo "Cuenta : $(ACCOUNT_ID_INVICTUS)"
-          echo "Version: $(version)"
+      # - script: |
+      #     set -e
+      #     echo -e "\nℹ️ Enviando Mensaje a SQS..."
+      #     echo "Cuenta : $(ACCOUNT_ID_INVICTUS)"
+      #     echo "Version: $(version)"
 
-          aws sqs send-message \
-            --queue-url https://sqs.us-east-1.amazonaws.com/$(ACCOUNT_ID_INVICTUS)/DynamicStorage \
-            --message-body '{
-              "model": {
-                "parameterName": "VERSION",
-                "parameterDescription": "Parámetro que indica la versión actual del sistema.",
-                "parameterOrigin": "GLOBAL_PARAMETER",
-                "parameterValue": "$(version)"
-              },
-              "event": "setParameter"
-            }' \
-            --delay-seconds 0
-        displayName: "📩 Send Message SQS"
-        condition: succeeded()
-        env:
-          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
-          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
-          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
+      #     aws sqs send-message \
+      #       --queue-url https://sqs.us-east-1.amazonaws.com/$(ACCOUNT_ID_INVICTUS)/DynamicStorage \
+      #       --message-body '{
+      #         "model": {
+      #           "parameterName": "VERSION",
+      #           "parameterDescription": "Parámetro que indica la versión actual del sistema.",
+      #           "parameterOrigin": "GLOBAL_PARAMETER",
+      #           "parameterValue": "$(version)"
+      #         },
+      #         "event": "setParameter"
+      #       }' \
+      #       --delay-seconds 0
+      #   displayName: "📩 Send Message SQS"
+      #   condition: succeeded()
+      #   env:
+      #     AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+      #     AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
+      #     AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
 
-      - script: |
-          DEPLOY_TIME=$(date -d "$BUILD_FINISHTIME -5 hours" "+%Y-%m-%d %I:%M %p")
+      # - script: |
+      #     DEPLOY_TIME=$(date -d "$BUILD_FINISHTIME -5 hours" "+%Y-%m-%d %I:%M %p")
 
-          echo -e "\n📢 Generando notificación para Teams..."
-          echo "Pipeline   : $(Build.DefinitionName)"
-          echo "Branch     : $(environment)"
-          echo "Build      : $(Build.BuildNumber)"
-          echo "User       : $(Build.RequestedFor)"
-          echo "DeployTime : $DEPLOY_TIME"
-          echo ""
+      #     echo -e "\n📢 Generando notificación para Teams..."
+      #     echo "Pipeline   : $(Build.DefinitionName)"
+      #     echo "Branch     : $(environment)"
+      #     echo "Build      : $(Build.BuildNumber)"
+      #     echo "User       : $(Build.RequestedFor)"
+      #     echo "DeployTime : $DEPLOY_TIME"
+      #     echo ""
 
-          payload=$(cat <<EOF
-          {
-            "@type": "MessageCard",
-            "@context": "http://schema.org/extensions",
-            "summary": "Deployment successful",
-            "themeColor": "00FF00",
-            "title": "✅ Deployment exitoso $(Build.SourceBranchName)",
-            "sections": [
-              {
-                "facts": [
-                  { "name": "Pipeline", "value": "$(Build.DefinitionName)" },
-                  { "name": "Branch", "value": "$(environment)" },
-                  { "name": "Build", "value": "$(Build.BuildNumber)" },
-                  { "name": "Merged by", "value": "$(Build.RequestedFor)" },
-                  { "name": "Deploy time", "value": "$DEPLOY_TIME" }
-                ],
-                "markdown": true
-              }
-            ]
-          }
-          EOF
-          )
+      #     payload=$(cat <<EOF
+      #     {
+      #       "@type": "MessageCard",
+      #       "@context": "http://schema.org/extensions",
+      #       "summary": "Deployment successful",
+      #       "themeColor": "00FF00",
+      #       "title": "✅ Deployment exitoso $(Build.SourceBranchName)",
+      #       "sections": [
+      #         {
+      #           "facts": [
+      #             { "name": "Pipeline", "value": "$(Build.DefinitionName)" },
+      #             { "name": "Branch", "value": "$(environment)" },
+      #             { "name": "Build", "value": "$(Build.BuildNumber)" },
+      #             { "name": "Merged by", "value": "$(Build.RequestedFor)" },
+      #             { "name": "Deploy time", "value": "$DEPLOY_TIME" }
+      #           ],
+      #           "markdown": true
+      #         }
+      #       ]
+      #     }
+      #     EOF
+      #     )
 
-          curl -H "Content-Type: application/json" \
-               -d "$payload" \
-               $(URL_WEBHOOK_TEAMS)
-        displayName: "📢 Post message to Teams"
-        condition: succeeded()
+      #     curl -H "Content-Type: application/json" \
+      #          -d "$payload" \
+      #          $(URL_WEBHOOK_TEAMS)
+      #   displayName: "📢 Post message to Teams"
+      #   condition: succeeded()
