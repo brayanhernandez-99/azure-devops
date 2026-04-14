@@ -77,6 +77,11 @@ jobs:
           set -e
           echo -e "\n📦 Cargando al Bucket S3..."
 
+          echo "Cuenta : $(ACCOUNT_ID_INVICTUS)"
+          echo "AWS_DEFAULT_REGION : $(AWS_DEFAULT_REGION)"
+          echo "AWS_ACCESS_KEY_ID : $(AWS_ACCESS_KEY_ID_DEPLOY)"
+          echo "AWS_SECRET_ACCESS_KEY : $(AWS_SECRET_ACCESS_KEY_DEPLOY)"
+
           BASE_PATH="$(Pipeline.Workspace)/release/$(environment)/linux"
           echo -e "\n📂 Archivos a cargar: $BASE_PATH"
           ls -l "$BASE_PATH"
