@@ -86,7 +86,7 @@ jobs:
 
           echo -e "\n✅ Archivos subidos exitosamente."
           echo "🔗 APP: InvictusUX-$(version).AppImage"
-          echo -e "\n🔗##[command] URL: https://mf-download-$(ACCOUNT_ID_INVICTUS).s3.us-east-1.amazonaws.com/app/linux/InvictusUX-$(version).AppImage"
+          echo -e "\n🔗##[command] URL: $(URL_APP)/app/linux/InvictusUX-$(version).AppImage"
         displayName: "🐧 Upload Bucket S3 Linux"
         condition: succeeded()
         env:
@@ -107,7 +107,7 @@ jobs:
 
           echo -e "\n✅ Archivos subidos exitosamente."
           echo "🔗 APP: InvictusUX Setup $(version).exe"
-          echo -e "\n🔗##[command] URL: https://mf-download-$(ACCOUNT_ID_INVICTUS).s3.us-east-1.amazonaws.com/app/windows/InvictusUX%20Setup%20$(version).exe"
+          echo -e "\n🔗##[command] URL: $(URL_APP)/app/windows/InvictusUX%20Setup%20$(version).exe"
         displayName: "🖥️ Upload Bucket S3 Windows"
         condition: succeeded()
         env:
