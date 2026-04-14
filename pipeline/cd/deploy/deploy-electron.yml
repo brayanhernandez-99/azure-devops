@@ -77,11 +77,6 @@ jobs:
           set -e
           echo -e "\n📦 Cargando al Bucket S3..."
 
-          echo "Cuenta : $(ACCOUNT_ID_INVICTUS)"
-          echo "AWS_DEFAULT_REGION : $(AWS_DEFAULT_REGION)"
-          echo "AWS_ACCESS_KEY_ID : $(AWS_ACCESS_KEY_ID_DEPLOY)"
-          echo "AWS_SECRET_ACCESS_KEY : $(AWS_SECRET_ACCESS_KEY_DEPLOY)"
-
           BASE_PATH="$(Pipeline.Workspace)/release/$(environment)/linux"
           echo -e "\n📂 Archivos a cargar: $BASE_PATH"
           ls -l "$BASE_PATH"
@@ -96,8 +91,8 @@ jobs:
         condition: succeeded()
         env:
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
-          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
-          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
+          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
+          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
 
       - script: |
           set -e
@@ -117,8 +112,8 @@ jobs:
         condition: succeeded()
         env:
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
-          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
-          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
+          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
+          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
 
       # - script: |
       #     set -e
