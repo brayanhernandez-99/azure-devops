@@ -190,8 +190,8 @@ jobs:
           SonarQube: "SonarQubeConection"
           scannerMode: "CLI"
           configMode: "manual"
-          cliProjectKey: "microfronted-$(msName)-invictus"
-          cliProjectName: "microfronted-$(msName)-invictus"
+          cliProjectKey: "microfrontend-$(msName)-invictus"
+          cliProjectName: "microfrontend-$(msName)-invictus"
           cliSources: "$(Build.Repository.Name)/$(file)/$(msName)"
           extraProperties: |
             sonar.projectVersion=$(msVersion)
@@ -243,4 +243,4 @@ jobs:
 
       - template: sonarqube/job-sonarqube.yml@sonarqube
         parameters:
-          projectKey: "microfronted-$(msName)-invictus"
+          projectKey: "microfrontend-$(msName)-invictus"
