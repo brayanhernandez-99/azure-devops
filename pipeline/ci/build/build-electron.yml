@@ -184,6 +184,7 @@ jobs:
         condition: succeeded()
 
       - script: |
+          set -e
           echo -e "\n📦 Build Electron..."
           pnpm run build
         displayName: "📦 Build Electron Linux"
@@ -469,6 +470,7 @@ jobs:
         inputs:
           targetType: " inline"
           script: |
+            $ErrorActionPreference = "Stop"
             Write-Host "`n📦 Build Electron..."
             pnpm run build
         condition: succeeded()
