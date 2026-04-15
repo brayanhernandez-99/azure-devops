@@ -175,6 +175,7 @@ jobs:
         condition: succeeded()
 
       - script: |
+          set -e
           echo -e "\n📦 Build MicroFrontend..."
 
           if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
