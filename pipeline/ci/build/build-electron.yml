@@ -103,7 +103,6 @@ jobs:
           fi
 
           cat <<EOF > .env
-          DOMAIN_SELLER="Vendedores|mdiAccountChild|${DOMAIN_SELLER}"
           VITE_DOMAIN="${VITE_DOMAIN}"
           URL_APP="${URL_APP}"
           TARGET="linux"
@@ -359,7 +358,6 @@ jobs:
             }
 
             @"
-            DOMAIN_SELLER="Vendedores|mdiAccountChild|$(DOMAIN_SELLER)"
             VITE_DOMAIN="$(VITE_DOMAIN)"
             URL_APP="$(URL_APP)"
             TARGET="windows"
