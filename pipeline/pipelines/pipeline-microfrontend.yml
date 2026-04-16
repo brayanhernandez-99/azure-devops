@@ -12,7 +12,7 @@ stages:
         displayName: "🛡️ Scan Microfrontend"
         dependsOn: semantic_version_micro_fronted
         jobs:
-          - template: ../ci/tests/sonarqube-microfrontend.yml
+          - template: ../ci/tests/sonarqube-frontend.yml
             parameters:
               apps: ${{ parameters.apps }}
 
