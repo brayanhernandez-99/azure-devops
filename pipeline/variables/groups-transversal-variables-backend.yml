@@ -19,9 +19,6 @@ variables:
         - ${{ if and(eq(parameters.region, 'antioquia'), eq(variables['Build.SourceBranchName'], 'master')) }}:
                   - group: trasversal-aws-master-antioquia #cuenta viejas
 
-        - ${{ if and(eq(parameters.region, 'antioquia_new'), eq(variables['Build.SourceBranchName'], 'master')) }}:
-                  - group: trasversal-aws-antioquia #cuenta nuevas
-
         - ${{ if and(eq(parameters.region, 'cap'), eq(variables['Build.SourceBranchName'], 'master')) }}:
                   - group: trasversal-aws-antioquia-cap
 

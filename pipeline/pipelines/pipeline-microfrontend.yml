@@ -76,9 +76,9 @@ stages:
         jobs:
           - template: ../cd/deployment.yml
             parameters:
-              release: ${{ parameters.release }}
               environments: develop
               apps: ${{ parameters.apps }}
+              release: ${{ parameters.release }}
 
   - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
       - ${{ each environments in parameters.environments_staging }}:
@@ -97,9 +97,9 @@ stages:
             jobs:
               - template: ../cd/deployment.yml
                 parameters:
-                  release: ${{ parameters.release }}
                   environments: ${{ environments }}
                   apps: ${{ parameters.apps }}
+                  release: ${{ parameters.release }}
 
   ##################### DEPLOY UNICO AMBIENTE #########################
   # - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
