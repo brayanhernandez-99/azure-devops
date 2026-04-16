@@ -62,28 +62,6 @@ jobs:
         displayName: "📂 Select Directory"
         condition: succeeded()
 
-      - script: |
-          rm "$(Build.Repository.Name)/$(file)/$(msName)/vitest.config.mts"
-          echo -e "\n✅ Elimnación archivo vitest.config.mts ..."
-
-          cp pipelines-templates/pipeline/config/vitest.config.mts $(Build.Repository.Name)/$(file)/$(msName)
-          echo "⚠️ Copiando archivo vitest.config.mts templates..."
-
-          echo "✅ vitest.config.mts copiado exitosamente."
-          echo -e "\n📁 Files:"
-          ls -la $(Build.Repository.Name)/$(file)/$(msName)
-          cat $(Build.Repository.Name)/$(file)/$(msName)/vitest.config.mts
-
-          FILE="$(Build.Repository.Name)/$(file)/$(msName)/vitest.config.ts"
-          if [[ -f "$FILE" ]]; then
-            rm "$FILE"
-            echo "❌ Eliminando el archivo vitest.config.ts"
-          fi
-        displayName: "🔍 Replace vitest.config"
-        condition: and(succeeded(),
-          ne(variables['msName'], 'app-administration-vue2'),
-          ne(variables['msName'], 'app-sellers-vue2'))
-
       - task: Bash@3
         name: AuthCodeArtifact
         inputs:
@@ -134,6 +112,28 @@ jobs:
           sed -i '/app-legacy\//s/  -/  # -/' pnpm-workspace.yaml
           cat pnpm-workspace.yaml
         displayName: "💬 Comment app-legacy/*"
+        condition: and(succeeded(),
+          ne(variables['msName'], 'app-administration-vue2'),
+          ne(variables['msName'], 'app-sellers-vue2'))
+
+      - script: |
+          rm "$(Build.Repository.Name)/$(file)/$(msName)/vitest.config.mts"
+          echo -e "\n✅ Elimnación archivo vitest.config.mts ..."
+
+          cp pipelines-templates/pipeline/config/vitest.config.mts $(Build.Repository.Name)/$(file)/$(msName)
+          echo "⚠️ Copiando archivo vitest.config.mts templates..."
+
+          echo "✅ vitest.config.mts copiado exitosamente."
+          echo -e "\n📁 Files:"
+          ls -la $(Build.Repository.Name)/$(file)/$(msName)
+          cat $(Build.Repository.Name)/$(file)/$(msName)/vitest.config.mts
+
+          FILE="$(Build.Repository.Name)/$(file)/$(msName)/vitest.config.ts"
+          if [[ -f "$FILE" ]]; then
+            rm "$FILE"
+            echo "❌ Eliminando el archivo vitest.config.ts"
+          fi
+        displayName: "♻️ Replace vitest.config"
         condition: and(succeeded(),
           ne(variables['msName'], 'app-administration-vue2'),
           ne(variables['msName'], 'app-sellers-vue2'))
