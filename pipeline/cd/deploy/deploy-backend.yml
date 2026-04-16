@@ -148,7 +148,7 @@ jobs:
 
           case "$(cleanMsName)" in
             notifier)
-              if [[ ( "$BRANCH_NAME" == "develop" && "$BRANCH_NAME_MULTI" == "develop" ) || ( "$BRANCH_NAME" == "staging" && "$BRANCH_NAME_MULTI" == "staging" ) || "$RED" == "antioquia" ]]; then
+              if [[ "$RED" == "antioquia" ]]; then
                 set_cluster_service "msnotifier-cluster" "msnotifier-fg-service"
               fi
               ;;
@@ -156,7 +156,7 @@ jobs:
 
           # ⚙️ Casos específicos para BFFs
           if [[ "$REPO_NAME" == "$name_bff" ]]; then
-              if [[ ( "$BRANCH_NAME" == "develop" && "$BRANCH_NAME_MULTI" == "develop" ) || ( "$BRANCH_NAME" == "staging" && "$BRANCH_NAME_MULTI" == "staging" ) || "$RED" == "antioquia" ]]; then
+              if [[ "$RED" == "antioquia" ]]; then
                   set_cluster_service "bff-${CLEAN_NAME}-cluster" "bff-${CLEAN_NAME}-fg-service"
               fi
           fi
