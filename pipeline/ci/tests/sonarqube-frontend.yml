@@ -244,3 +244,10 @@ jobs:
       - template: sonarqube/job-sonarqube.yml@sonarqube
         parameters:
           projectKey: "microfrontend-$(msName)-invictus"
+        condition: and(
+          succeeded(),
+          ne(variables['msName'], 'app-administration-vue2'),
+          ne(variables['msName'], 'app-sellers-vue2'),
+          ne(variables['Build.SourceBranchName'], 'develop'),
+          ne(variables['Build.SourceBranchName'], 'staging'),
+          ne(variables['Build.SourceBranchName'], 'master'))
