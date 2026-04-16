@@ -241,7 +241,6 @@ jobs:
           ne(variables['msName'], 'app-sellers-vue2'),
           ne(variables['Build.SourceBranchName'], 'develop'))
 
-        ${{ if and(ne(variables.msName, 'app-administration-vue2'), ne(variables.msName, 'app-sellers-vue2'), ne(variables['Build.SourceBranchName'], 'develop'), ne(variables['Build.SourceBranchName'], 'staging'), ne(variables['Build.SourceBranchName'], 'master')) }}:
-          - template: sonarqube/job-sonarqube.yml@sonarqube
-            parameters:
-              projectKey: "microfrontend-$(msName)-invictus"
+      - template: sonarqube/job-sonarqube.yml@sonarqube
+        parameters:
+          projectKey: "microfrontend-$(msName)-invictus"
