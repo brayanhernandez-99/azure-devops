@@ -44,15 +44,14 @@ stages:
               - template: ../cd/deployment.yml
                 parameters:
                   release: ${{ parameters.release }}
-                  environments: develop
 
       - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
-          - ${{ each environments in parameters.environments_staging }}:
-              - stage: deploy_repository_configuration_${{ environments }}
-                displayName: "🚀 Deploy Repository Configuration ${{ environments }}"
+          - ${{ each environment_staging in parameters.environments_staging }}:
+              - stage: deploy_repository_configuration_${{ environment_staging }}
+                displayName: "🚀 Deploy Repository Configuration ${{ environment_staging }}"
                 dependsOn: build_repository_configuration
                 jobs:
                   - template: ../cd/deployment.yml
                     parameters:
                       release: ${{ parameters.release }}
-                      environments: ${{ environments }}
+                      environment_staging: ${{ environment_staging }}

@@ -9,7 +9,7 @@ jobs:
       - template: ../../variables/groups-transversal-variables-rpc.yml
         parameters:
           region: ${{ parameters.region }}
-          environments: ${{ parameters.environments }}
+          environment_staging: ${{ parameters.environment_staging }}
 
     steps:
       - checkout: self
@@ -23,9 +23,7 @@ jobs:
 
           aws s3 cp . s3://configuration-$(ACCOUNT_ID_INVICTUS) --recursive --exclude "pipeline/*"
         displayName: "📤 Upload Configuration to S3"
-        condition: and(succeeded(),
-          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
-          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
+        condition: succeeded()
         env:
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
@@ -35,19 +33,17 @@ jobs:
           set -e
           echo "🔎 Verificando cambios en carpeta reports/..."
           if git diff --name-only HEAD~1 HEAD | grep -q "^reports/"; then 
-            echo "✅ Se detectaron cambios en reports/ y no es develop, enviando mensaje a SQS"; 
+            echo -e "\n✅ Se detectaron cambios en reports/ y no es develop, enviando mensaje a SQS"; 
             json_complete='{"event":"migration","streamNotifier":"Notifier","model":{"method":"insert","reports":[{"name":"modelos_invictus","type_card":"model"},{"name":"reportes_invictus","type_card":"question"},{"name":"archivos_cem","type_card":"question"}]}}'; 
             aws sqs send-message \
               --queue-url https://sqs.us-east-1.amazonaws.com/$(ACCOUNT_ID_INVICTUS)/Sellers \
               --message-body "$json_complete" \
               --delay-seconds 0
           else 
-            echo "ℹ️ No se enviará mensaje a SQS: no hubo cambios en reports/"
+            echo -e "\nℹ️ No se enviará mensaje a SQS: no hubo cambios en reports/"
           fi
         displayName: "🔍 Verify Changes in reports/"
         condition: and(succeeded(),
-          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
-          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')),
           ne(variables['Build.SourceBranch'], 'refs/heads/develop'))
         env:
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
@@ -55,22 +51,30 @@ jobs:
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
 
       - script: |
-          DEPLOY_TIME=$(date -d "$BUILD_FINISHTIME -5 hours" "+%Y-%m-%d %H:%M UTC")
-          BRANCH_NAME_MULTI=$environments
-          BRANCH_NAME="$BUILD_SOURCEBRANCHNAME"
+          DEPLOY_TIME=$(date -d "$BUILD_FINISHTIME -5 hours" "+%Y-%m-%d %I:%M %p")
+          CURRENT_BRANCH="$(Build.SourceBranch)"
+          environment="develop"
 
-          if [[ "$BRANCH_NAME" == "master" ]]; then
-            BRANCH_DEPLOY="${red:-red}"
+          case "$CURRENT_BRANCH" in 
+            refs/heads/staging)
+              if [[ "$environment_staging" == "staging" ]]; then
+                environment="staging"
+              elif [[ "$environment_staging" == "staging_nacional" ]]; then
+                environment="staging_nacional"
+              fi
+            ;;
+            refs/heads/master)
+              environment="$region"
+            ;;
+          esac
 
-          elif [[ "$BRANCH_NAME" == "develop" && "$BRANCH_NAME_MULTI" == "develop" ]]; then
-            BRANCH_DEPLOY="develop"
-
-          elif [[ "$BRANCH_NAME" == "staging" && "$BRANCH_NAME_MULTI" == "staging" ]]; then
-            BRANCH_DEPLOY="staging"
-
-          else
-            BRANCH_DEPLOY="$BRANCH_NAME_MULTI"
-          fi
+          echo -e "\n📢 Generando notificación para Teams..."
+          echo "Pipeline   : $(Build.DefinitionName)"
+          echo "Branch     : $(environment)"
+          echo "Build      : $(Build.BuildNumber)"
+          echo "User       : $(Build.RequestedFor)"
+          echo "DeployTime : $DEPLOY_TIME"
+          echo ""
 
           payload=$(cat <<EOF
           {
@@ -83,7 +87,7 @@ jobs:
               {
                 "facts": [
                   { "name": "Pipeline", "value": "$(Build.DefinitionName)" },
-                  { "name": "Branch", "value": "$BRANCH_DEPLOY" },
+                  { "name": "Branch", "value": "$(environment)" },
                   { "name": "Build", "value": "$(Build.BuildNumber)" },
                   { "name": "Merged by", "value": "$(Build.RequestedFor)" },
                   { "name": "Deploy time", "value": "$DEPLOY_TIME" }
@@ -99,6 +103,6 @@ jobs:
                -d "$payload" \
                $(URL_WEBHOOK_TEAMS)
         displayName: "📢 Post message to Teams"
+        condition: succeeded()
         env:
-          red: ${{ parameters.region }}
-          environments: ${{ parameters.environments }}
+          region: ${{ parameters.region }}

@@ -5,18 +5,15 @@ variables:
 
         # Staging branch
         - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
-                  - ${{ if eq(parameters.environments, 'staging') }}:
+                  - ${{ if eq(parameters.environment_staging, 'staging') }}:
                             - group: trasversal-aws-staging
 
-                  - ${{ if eq(parameters.environments, 'staging_nacional') }}:
+                  - ${{ if eq(parameters.environment_staging, 'staging_nacional') }}:
                             - group: trasversal-aws-staging-nacional
 
         # Master branch → por red
         - ${{ if and(eq(parameters.region, 'antioquia'), eq(variables['Build.SourceBranchName'], 'master')) }}:
                   - group: trasversal-aws-master-antioquia
-
-        - ${{ if and(eq(parameters.region, 'antioquia_new'), eq(variables['Build.SourceBranchName'], 'master')) }}:
-                  - group: trasversal-aws-antioquia
 
         - ${{ if and(eq(parameters.region, 'cap'), eq(variables['Build.SourceBranchName'], 'master')) }}:
                   - group: trasversal-aws-antioquia-cap
