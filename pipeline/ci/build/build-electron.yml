@@ -78,29 +78,17 @@ jobs:
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
 
       - script: |
-          CURRENT_BRANCH="$(Build.SourceBranch)"
-          environment="unknown"
+          CURRENT_BRANCH="$(Build.SourceBranchName)"
+          environment="develop"
 
           case "$CURRENT_BRANCH" in 
-            refs/heads/develop | refs/heads/feature/* | refs/heads/hotfix/*)
-              environment="develop"
+            staging)
+              environment="$environment_staging"
             ;;
-            refs/heads/staging)
-              if [[ "$environment_staging" == "staging" ]]; then
-                environment="staging"
-              elif [[ "$environment_staging" == "staging_nacional" ]]; then
-                environment="staging_nacional"
-              fi
-            ;;
-            refs/heads/master)
-              environment = "$region"
+            master)
+              environment="$region"
             ;;
           esac
-
-          if [[ "$environment" == "unknown" ]]; then
-            echo -e "\n##vso[task.logissue type=error]⚠️ Environment [$environment] no reconocido"
-            exit 99
-          fi
 
           cat <<EOF > .env
           VITE_DOMAIN="${VITE_DOMAIN}"

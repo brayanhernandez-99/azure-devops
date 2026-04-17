@@ -1,28 +1,15 @@
 jobs:
-  - job: build_repository_configuration_${{ parameters.region }}
+  - job: build_repository_configuration
     displayName: "📦 build repository configuration"
     pool:
       name: "Azure Pipelines"
       VmImage: ubuntu-22.04
 
-    variables:
-      - template: ../../variables/groups-transversal-variables-rpc.yml
-        parameters:
-          region: ${{ parameters.region }}
-
     steps:
       - script: |
-          echo "ACCOUNT_ID_INVICTUS: $(ACCOUNT_ID_INVICTUS)"
-          echo "AWS_ACCESS_KEY_ID_INVICTUS: $(AWS_ACCESS_KEY_ID_INVICTUS)"
-          echo "AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)"
-          echo ""
-
-
           echo -e "\n📦 Archivos a cargar a S3"
           echo "🌿 Rama : $BUILD_SOURCEBRANCHNAME"
-          echo "📍 Path : $(pwd)"
-
-          echo -e "\n📂 Files:"
+          echo "📂 Files:"
           tree
         displayName: "📂 File Structure & Account ID"
         condition: succeeded()
