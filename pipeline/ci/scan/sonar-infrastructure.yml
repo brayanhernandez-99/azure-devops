@@ -71,8 +71,15 @@ jobs:
 
           echo ""
           echo "🔹 Proyecto:        $PROJECT_KEY"
-          echo "📊 Estado:          $status_code"
+          echo "🧪 Coverage:        $coverage%"
+          echo "📐 Duplicación:     $duplication%"
+          echo "🛡️ Quality Gate:    $quality_gate"
+          echo "🛡️ Quality Profile: $quality_profile"
+          echo "🧾 Lenguaje Base:   $language"
+          echo "🟢 Estado:          $status_code"
           echo ""
+
+          echo -e "\n##[command]🌐 URL: $SONAR_HOST_URL/dashboard?id=$PROJECT_KEY"
 
           if [[ "$status_code" == "ERROR" ]]; then
             echo -e "\n##vso[task.logissue type=error]⚠️ El proyecto no cumple con los Qualitys."
