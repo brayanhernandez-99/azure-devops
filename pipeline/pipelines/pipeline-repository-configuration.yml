@@ -18,7 +18,7 @@ stages:
       - ${{ each region in parameters.red }}:
           - stage: deploy_repository_configuration_${{ region }}
             displayName: "🚀 Deploy Repository Configuration ${{ region }}"
-            dependsOn: build_repository_configuration_${{ region }}
+            dependsOn: build_repository_configuration
             jobs:
               - template: ../cd/deployment.yml
                 parameters:
