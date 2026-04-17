@@ -12,7 +12,10 @@ jobs:
 
     steps:
       - script: |
-          # echo "ID Cuenta AWS: $(ACCOUNT_ID_INVICTUS)"
+          echo -e "\nℹ️ Informacion:"
+          echo "Id AWS: $(ACCOUNT_ID_INVICTUS)"
+          echo "Branch: $(Build.SourceBranchName)"
+          echo ""
           tree
         displayName: "📂 File Structure & Account ID"
         condition: succeeded()
