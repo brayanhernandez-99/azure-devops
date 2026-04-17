@@ -70,7 +70,7 @@ jobs:
 
           echo -e "\n📢 Generando notificación para Teams..."
           echo "Pipeline   : $(Build.DefinitionName)"
-          echo "Branch     : $(environment)"
+          echo "Branch     : $environment"
           echo "Build      : $(Build.BuildNumber)"
           echo "User       : $(Build.RequestedFor)"
           echo "DeployTime : $DEPLOY_TIME"
@@ -87,7 +87,7 @@ jobs:
               {
                 "facts": [
                   { "name": "Pipeline", "value": "$(Build.DefinitionName)" },
-                  { "name": "Branch", "value": "$(environment)" },
+                  { "name": "Branch", "value": "$environment" },
                   { "name": "Build", "value": "$(Build.BuildNumber)" },
                   { "name": "Merged by", "value": "$(Build.RequestedFor)" },
                   { "name": "Deploy time", "value": "$DEPLOY_TIME" }

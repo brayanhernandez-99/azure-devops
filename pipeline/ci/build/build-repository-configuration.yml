@@ -12,8 +12,8 @@ jobs:
 
     steps:
       - script: |
-          echo -e "\nℹ️ Informacion:"
-          echo "Id AWS: $(ACCOUNT_ID_INVICTUS)"
+          echo -e "\nℹ️ Environment:"
+          echo "AWS: $(ACCOUNT_ID_INVICTUS)"
           echo "Branch: $(Build.SourceBranchName)"
           echo ""
           tree
