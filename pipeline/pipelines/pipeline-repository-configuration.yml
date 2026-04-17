@@ -6,18 +6,16 @@ stages:
         parameters:
           release: ${{ parameters.release }}
 
+  - stage: build_repository_configuration
+    displayName: "📦 Repository Configuration"
+    dependsOn: semantic_version_repository_configuration
+    jobs:
+      - template: ../ci/build/build-repository-configuration.yml
+
   #####################################################################
 
   - ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
       - ${{ each region in parameters.red }}:
-          - stage: build_repository_configuration_${{ region }}
-            displayName: "📦 Repository Configuration ${{ region }}"
-            dependsOn: semantic_version_repository_configuration
-            jobs:
-              - template: ../ci/build/build-repository-configuration.yml
-                parameters:
-                  region: ${{ region }}
-
           - stage: deploy_repository_configuration_${{ region }}
             displayName: "🚀 Deploy Repository Configuration ${{ region }}"
             dependsOn: build_repository_configuration_${{ region }}
@@ -29,29 +27,22 @@ stages:
 
   #####################################################################
 
-  - ${{ if ne(variables['Build.SourceBranchName'], 'master') }}:
-      - stage: build_repository_configuration
-        displayName: "📦 Repository Configuration"
-        dependsOn: semantic_version_repository_configuration
+  - ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}:
+      - stage: deploy_repository_configuration_develop
+        displayName: "🚀 Deploy Repository Configuration develop"
+        dependsOn: build_repository_configuration
         jobs:
-          - template: ../ci/build/build-repository-configuration.yml
+          - template: ../cd/deployment.yml
+            parameters:
+              release: ${{ parameters.release }}
 
-      - ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}:
-          - stage: deploy_repository_configuration_develop
-            displayName: "🚀 Deploy Repository Configuration develop"
+  - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
+      - ${{ each environment_staging in parameters.environments_staging }}:
+          - stage: deploy_repository_configuration_${{ environment_staging }}
+            displayName: "🚀 Deploy Repository Configuration ${{ environment_staging }}"
             dependsOn: build_repository_configuration
             jobs:
               - template: ../cd/deployment.yml
                 parameters:
                   release: ${{ parameters.release }}
-
-      - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
-          - ${{ each environment_staging in parameters.environments_staging }}:
-              - stage: deploy_repository_configuration_${{ environment_staging }}
-                displayName: "🚀 Deploy Repository Configuration ${{ environment_staging }}"
-                dependsOn: build_repository_configuration
-                jobs:
-                  - template: ../cd/deployment.yml
-                    parameters:
-                      release: ${{ parameters.release }}
-                      environment_staging: ${{ environment_staging }}
+                  environment_staging: ${{ environment_staging }}

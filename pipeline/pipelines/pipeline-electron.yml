@@ -37,37 +37,36 @@ stages:
 
   #####################################################################
 
-  - ${{ if ne(variables['Build.SourceBranchName'], 'master') }}:
-      - ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}:
-          - stage: build_electron_develop
-            displayName: "📦 Build Electron develop"
+  - ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}:
+      - stage: build_electron_develop
+        displayName: "📦 Build Electron develop"
+        dependsOn: semantic_version_electron
+        jobs:
+          - template: ../ci/build/build-electron.yml
+
+      - stage: deploy_electron_develop
+        displayName: "🚀 Deploy Electron develop"
+        dependsOn: build_electron_develop
+        jobs:
+          - template: ../cd/deployment.yml
+            parameters:
+              release: ${{ parameters.release }}
+
+  - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
+      - ${{ each environment_staging in parameters.environments_staging }}:
+          - stage: build_electron_${{ environment_staging }}
+            displayName: "📦 Build Electron ${{ environment_staging }}"
             dependsOn: semantic_version_electron
             jobs:
               - template: ../ci/build/build-electron.yml
+                parameters:
+                  environment_staging: ${{ environment_staging }}
 
-          - stage: deploy_electron_develop
-            displayName: "🚀 Deploy Electron develop"
-            dependsOn: build_electron_develop
+          - stage: deploy_electron_${{ environment_staging }}
+            displayName: "🚀 Deploy Electron ${{ environment_staging }}"
+            dependsOn: build_electron_${{ environment_staging }}
             jobs:
               - template: ../cd/deployment.yml
                 parameters:
                   release: ${{ parameters.release }}
-
-      - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
-          - ${{ each environment_staging in parameters.environments_staging }}:
-              - stage: build_electron_${{ environment_staging }}
-                displayName: "📦 Build Electron ${{ environment_staging }}"
-                dependsOn: semantic_version_electron
-                jobs:
-                  - template: ../ci/build/build-electron.yml
-                    parameters:
-                      environment_staging: ${{ environment_staging }}
-
-              - stage: deploy_electron_${{ environment_staging }}
-                displayName: "🚀 Deploy Electron ${{ environment_staging }}"
-                dependsOn: build_electron_${{ environment_staging }}
-                jobs:
-                  - template: ../cd/deployment.yml
-                    parameters:
-                      release: ${{ parameters.release }}
-                      environment_staging: ${{ environment_staging }}
+                  environment_staging: ${{ environment_staging }}

@@ -4,7 +4,6 @@ variables:
                   - group: trasversal-aws-develop
 
         # Staging branch
-
         - ${{ if and(eq(parameters.environment_staging, 'staging'), eq(variables['Build.SourceBranchName'], 'staging')) }}:
                   - group: trasversal-aws-staging
 
