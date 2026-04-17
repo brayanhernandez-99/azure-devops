@@ -52,18 +52,14 @@ jobs:
 
       - script: |
           DEPLOY_TIME=$(date -d "$BUILD_FINISHTIME -5 hours" "+%Y-%m-%d %I:%M %p")
-          CURRENT_BRANCH="$(Build.SourceBranch)"
+          CURRENT_BRANCH="$(Build.SourceBranchName)"
           environment="develop"
 
           case "$CURRENT_BRANCH" in 
-            refs/heads/staging)
-              if [[ "$environment_staging" == "staging" ]]; then
-                environment="staging"
-              elif [[ "$environment_staging" == "staging_nacional" ]]; then
-                environment="staging_nacional"
-              fi
+            staging)
+              environment="$environment_staging"
             ;;
-            refs/heads/master)
+            master)
               environment="$region"
             ;;
           esac
@@ -106,3 +102,4 @@ jobs:
         condition: succeeded()
         env:
           region: ${{ parameters.region }}
+          environment_staging: ${{ parameters.environment_staging }}
