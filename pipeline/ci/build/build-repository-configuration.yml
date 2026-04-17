@@ -12,10 +12,17 @@ jobs:
 
     steps:
       - script: |
-          echo -e "\nℹ️ Ambiente:"
-          echo "AWS: $(ACCOUNT_ID_INVICTUS)"
-          echo "Rama: $(Build.SourceBranchName)"
+          echo "ACCOUNT_ID_INVICTUS: $(ACCOUNT_ID_INVICTUS)"
+          echo "AWS_ACCESS_KEY_ID_INVICTUS: $(AWS_ACCESS_KEY_ID_INVICTUS)"
+          echo "AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)"
           echo ""
+
+
+          echo -e "\n📦 Archivos a cargar a S3"
+          echo "🌿 Rama : $BUILD_SOURCEBRANCHNAME"
+          echo "📍 Path : $(pwd)"
+
+          echo -e "\n📂 Files:"
           tree
         displayName: "📂 File Structure & Account ID"
         condition: succeeded()
