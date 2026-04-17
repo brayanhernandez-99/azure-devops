@@ -75,7 +75,7 @@ jobs:
           set -e
 
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-download
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-assets
           terragrunt plan --all --non-interactive -no-color
 
 
