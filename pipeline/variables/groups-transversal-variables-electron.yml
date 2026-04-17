@@ -9,14 +9,13 @@ variables:
                   - group: variables-electron-develop
 
         # Staging branch
-        - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
-                  - ${{ if eq(parameters.environment_staging, 'staging') }}:
-                            - group: trasversal-aws-staging
-                            - group: variables-electron-staging
+        - ${{ if and(eq(parameters.environment_staging, 'staging'), eq(variables['Build.SourceBranchName'], 'staging')) }}:
+                  - group: trasversal-aws-staging
+                  - group: variables-electron-staging
 
-                  - ${{ if eq(parameters.environment_staging, 'staging_nacional') }}:
-                            - group: trasversal-aws-staging-nacional
-                            - group: variables-electron-staging-nacional
+        - ${{ if and(eq(parameters.environment_staging, 'staging_nacional'), eq(variables['Build.SourceBranchName'], 'staging')) }}:
+                  - group: trasversal-aws-staging-nacional
+                  - group: variables-electron-staging-nacional
 
         # Master branch → por red
         - ${{ if and(eq(parameters.region, 'antioquia'), eq(variables['Build.SourceBranchName'], 'master')) }}:
