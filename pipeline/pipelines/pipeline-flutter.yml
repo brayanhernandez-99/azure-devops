@@ -6,6 +6,8 @@ stages:
         parameters:
           release: ${{ parameters.release }}
 
+  #####################################################################
+
   - ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')) }}:
       - stage: build_flutter
         displayName: "📦 Build Flutter"
@@ -17,60 +19,60 @@ stages:
 
   - ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
       - ${{ each region in parameters.red }}:
-          - ${{ if ne(region, 'antioquia_new') }}:
-              - stage: build_flutter_${{ region }}
-                displayName: "📦 Build Flutter ${{ region }}"
-                dependsOn: semantic_version_flutter
-                jobs:
-                  - template: ../ci/build/build-flutter.yml
-                    parameters:
-                      region: ${{ region }}
-
-              - stage: deploy_flutter_${{ region }}
-                displayName: "🚀 Deploy Flutter ${{ region }}"
-                dependsOn: build_flutter_${{ region }}
-                jobs:
-                  - template: ../cd/deployment.yml
-                    parameters:
-                      region: ${{ region }}
-                      release: ${{ parameters.release }}
-
-  #####################################################################
-
-  - ${{ if ne(variables['Build.SourceBranchName'], 'master') }}:
-      - ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}:
-          - stage: build_flutter_develop
-            displayName: "📦 Build Flutter develop"
+          - stage: build_flutter_${{ region }}
+            displayName: "📦 Build Flutter ${{ region }}"
             dependsOn: semantic_version_flutter
             jobs:
               - template: ../ci/build/build-flutter.yml
                 parameters:
-                  environments: develop
+                  region: ${{ region }}
 
-          - stage: deploy_flutter_develop
-            displayName: "🚀 Deploy Flutter develop"
-            dependsOn: build_flutter_develop
+          - stage: deploy_flutter_${{ region }}
+            displayName: "🚀 Deploy Flutter ${{ region }}"
+            dependsOn: build_flutter_${{ region }}
+            jobs:
+              - template: ../cd/deployment.yml
+                parameters:
+                  region: ${{ region }}
+                  release: ${{ parameters.release }}
+
+  #####################################################################
+
+  - ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}:
+      - stage: build_flutter_develop
+        displayName: "📦 Build Flutter develop"
+        dependsOn: semantic_version_flutter
+        jobs:
+          - template: ../ci/build/build-flutter.yml
+            parameters:
+              environments: develop
+
+      - stage: deploy_flutter_develop
+        displayName: "🚀 Deploy Flutter develop"
+        dependsOn: build_flutter_develop
+        jobs:
+          - template: ../cd/deployment.yml
+            parameters:
+              release: ${{ parameters.release }}
+              environments: develop
+
+  #####################################################################
+
+  - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
+      - ${{ each environments in parameters.environments_staging }}:
+          - stage: build_flutter_${{ environments }}
+            displayName: "📦 Build Flutter ${{ environments }}"
+            dependsOn: semantic_version_flutter
+            jobs:
+              - template: ../ci/build/build-flutter.yml
+                parameters:
+                  environments: ${{ environments }}
+
+          - stage: deploy_flutter_${{ environments }}
+            displayName: "🚀 Deploy Flutter ${{ environments }}"
+            dependsOn: build_flutter_${{ environments }}
             jobs:
               - template: ../cd/deployment.yml
                 parameters:
                   release: ${{ parameters.release }}
-                  environments: develop
-
-      - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
-          - ${{ each environments in parameters.environments_staging }}:
-              - stage: build_flutter_${{ environments }}
-                displayName: "📦 Build Flutter ${{ environments }}"
-                dependsOn: semantic_version_flutter
-                jobs:
-                  - template: ../ci/build/build-flutter.yml
-                    parameters:
-                      environments: ${{ environments }}
-
-              - stage: deploy_flutter_${{ environments }}
-                displayName: "🚀 Deploy Flutter ${{ environments }}"
-                dependsOn: build_flutter_${{ environments }}
-                jobs:
-                  - template: ../cd/deployment.yml
-                    parameters:
-                      release: ${{ parameters.release }}
-                      environments: ${{ environments }}
+                  environments: ${{ environments }}

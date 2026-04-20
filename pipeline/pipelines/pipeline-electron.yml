@@ -6,6 +6,8 @@ stages:
         parameters:
           release: ${{ parameters.release }}
 
+  #####################################################################
+
   - ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')) }}:
       - stage: build_electron
         displayName: "📦 Build Electron"
@@ -51,6 +53,8 @@ stages:
           - template: ../cd/deployment.yml
             parameters:
               release: ${{ parameters.release }}
+
+  #####################################################################
 
   - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
       - ${{ each environment_staging in parameters.environments_staging }}:
