@@ -136,10 +136,8 @@ jobs:
           branch="${CURRENT_BRANCH#refs/heads/}"
           environment="unknown"
 
-          echo "******** Branch: $branch"
-
           case "$branch" in
-            develop)
+            develop | feature/* | hotfix/*)
               environment="develop"
               ;;
             staging)
