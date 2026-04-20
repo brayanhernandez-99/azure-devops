@@ -126,8 +126,14 @@ jobs:
         condition: succeeded()
 
       - script: |
+          if [[ "$(Build.Reason)" == "PullRequest" ]]; then
+            CURRENT_BRANCH="$(System.PullRequest.SourceBranch)"
+          else
+            CURRENT_BRANCH="$(Build.SourceBranch)"
+          fi
+
           REPO_NAME="$(Build.Repository.Name)"
-          branch="${BUILD_SOURCEBRANCH#refs/heads/}"
+          branch="${CURRENT_BRANCH#refs/heads/}"
           environment="unknown"
 
           case "$branch" in
