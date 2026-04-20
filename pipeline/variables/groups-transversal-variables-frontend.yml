@@ -13,18 +13,17 @@ variables:
                   - group: variables-microfrontend-develop-old
 
         # Staging branch
-        - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
-                  - ${{ if eq(parameters.environments, 'staging') }}:
-                            - group: trasversal-aws-staging
-                            - group: variables-cloudfront-staging
-                            - group: variables-microfrontend-vue2-staging-old
-                            - group: variables-microfrontend-staging-old
+        - ${{ if and(eq(parameters.environment_staging, 'staging'), eq(variables['Build.SourceBranchName'], 'staging')) }}:
+                  - group: trasversal-aws-staging
+                  - group: variables-cloudfront-staging
+                  - group: variables-microfrontend-vue2-staging-old
+                  - group: variables-microfrontend-staging-old
 
-                  - ${{ if eq(parameters.environments, 'staging_nacional') }}:
-                            - group: trasversal-aws-staging-nacional
-                            - group: variables-cloudfront-staging-nacional
-                            - group: variables-microfrontend-vue2-staging-nacional-old
-                            - group: variables-microfrontend-staging-nacional-old
+        - ${{ if and(eq(parameters.environment_staging, 'staging_nacional'), eq(variables['Build.SourceBranchName'], 'staging')) }}:
+                  - group: trasversal-aws-staging-nacional
+                  - group: variables-cloudfront-staging-nacional
+                  - group: variables-microfrontend-vue2-staging-nacional-old
+                  - group: variables-microfrontend-staging-nacional-old
 
         # Master branch → por red
         - ${{ if and(eq(parameters.region, 'antioquia'), eq(variables['Build.SourceBranchName'], 'master')) }}:
