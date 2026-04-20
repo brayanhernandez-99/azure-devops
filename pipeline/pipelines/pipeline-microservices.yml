@@ -7,8 +7,7 @@ stages:
           release: ${{ parameters.release }}
 
   #####################################################################
-
-  - ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')) }}:
+  - ${{ if or(eq(variables['Build.Reason'], 'PullRequest'), startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')) }}:
       - stage: scan_micro_service
         displayName: "🛡️ Scan MicroService"
         dependsOn: semantic_version_micro_service

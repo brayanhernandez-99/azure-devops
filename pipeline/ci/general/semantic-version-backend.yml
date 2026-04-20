@@ -46,6 +46,7 @@ jobs:
           fi
         displayName: "🔎 Validate Feature or Hotfix Branch is Up to Date"
         condition: and(succeeded(), or(
+          eq(variables['Build.Reason'], 'PullRequest'),
           startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'),
           startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
 
@@ -97,6 +98,7 @@ jobs:
           fi
         displayName: "🔍 Validate for 'console.*' in changes"
         condition: and(succeeded(), or(
+          eq(variables['Build.Reason'], 'PullRequest'),
           startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'),
           startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
 
@@ -111,9 +113,10 @@ jobs:
         env:
           AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
         displayName: "📌 Set Repository ID"
-        condition: and(succeeded(),
-          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
-          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
+        condition: and(succeeded(), or(
+          eq(variables['Build.Reason'], 'PullRequest'),
+          startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'),
+          startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
 
       - script: |
           CURRENT_BRANCH=$(echo $(Build.SourceBranch))
@@ -142,9 +145,10 @@ jobs:
         env:
           AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
         displayName: "📌 Set Pull Request ID"
-        condition: and(succeeded(),
-          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
-          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
+        condition: and(succeeded(), or(
+          eq(variables['Build.Reason'], 'PullRequest'),
+          startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'),
+          startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
 
       - script: |
           echo -e "\nℹ️ Pull Request ID recuperado: $(ultimoPR)"
@@ -159,9 +163,10 @@ jobs:
         env:
           AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
         displayName: "📌 Pull Request Commit Details"
-        condition: and(succeeded(),
-          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
-          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
+        condition: and(succeeded(), or(
+          eq(variables['Build.Reason'], 'PullRequest'),
+          startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'),
+          startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
 
       - script: |
           CURRENT_BRANCH=$(echo $(Build.SourceBranch))
@@ -341,6 +346,7 @@ jobs:
         displayName: "⚡ Commit Version & Push — $(Build.Repository.Name)"
         condition: and(succeeded(),
           ne(variables['Build.SourceBranchName'], 'master'),
+          ne(variables['Build.Reason'], 'PullRequest'),
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
 
