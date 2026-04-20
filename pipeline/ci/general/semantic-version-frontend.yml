@@ -250,21 +250,21 @@ jobs:
             fi
             
             if [[ "$CURRENT_BRANCH" == refs/heads/develop ]]; then
-              RAW_COMMITS="$(echo $(filteredCommits) | sed -e 's/[\"\\$`!]/\\&/g')"
+              RAW_COMMITS='$(filteredCommits)'
               COMMITS=$(printf '%s' "$RAW_COMMITS" | tr '|' '\n')
               echo "📝 Commits de la rama feature a develop:"
               echo $COMMITS
             fi
 
             if [[ "$CURRENT_BRANCH" == refs/heads/staging ]]; then
-              RAW_COMMITS="$(echo $(filteredCommits) | sed -e 's/[\"\\$`!]/\\&/g')"
+              RAW_COMMITS='$(filteredCommits)'
               COMMITS=$(printf '%s' "$RAW_COMMITS" | tr '|' '\n')
               echo "📝 Commits de la rama pre/staging a staging:"
               echo $COMMITS
             fi
 
             if [[ "$CURRENT_BRANCH" == refs/heads/master ]]; then
-              RAW_COMMITS="$(echo $(filteredCommits) | sed -e 's/[\"\\$`!]/\\&/g')"
+              RAW_COMMITS='$(filteredCommits)'
               COMMITS=$(printf '%s' "$RAW_COMMITS" | tr '|' '\n')
               echo "📝 Commits de la rama staging a master:"
               echo $COMMITS
