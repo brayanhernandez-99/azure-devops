@@ -1,6 +1,7 @@
 parameters:
   - name: release
     type: string
+    default: aws-ecs
 
   - name: pr_id
     type: number
