@@ -136,6 +136,8 @@ jobs:
           branch="${CURRENT_BRANCH#refs/heads/}"
           environment="unknown"
 
+          echo "******** Branch: $branch"
+
           case "$branch" in
             develop)
               environment="develop"
@@ -202,7 +204,8 @@ jobs:
             echo "✅ Repositorio $(ecr_repository) existe"
           fi
         displayName: "🔍 Verify ECR Repository Exists"
-        condition: succeeded()
+        condition: and(succeeded(),
+          ne(variables['Build.Reason'], 'PullRequest'))
         env:
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
@@ -210,7 +213,8 @@ jobs:
 
       - task: Docker@2
         displayName: "🚀 Push Docker Image $(Build.Repository.Name)"
-        condition: succeeded()
+        condition: and(succeeded(),
+          ne(variables['Build.Reason'], 'PullRequest'))
         inputs:
           command: "Push"
           repository: "$(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/$(ecr_repository)"
