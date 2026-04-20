@@ -36,6 +36,8 @@ stages:
             parameters:
               release: ${{ parameters.release }}
 
+  #####################################################################
+
   - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
       - ${{ each environment_staging in parameters.environments_staging }}:
           - stage: deploy_repository_configuration_${{ environment_staging }}

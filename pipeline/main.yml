@@ -16,7 +16,6 @@ parameters:
     type: object
     default:
       - antioquia
-      # - antioquia_new
       - cap
       - tolima
       - huila
