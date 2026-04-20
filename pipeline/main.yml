@@ -1,7 +1,6 @@
 parameters:
   - name: release
     type: string
-    default: aws-ecs
 
   - name: pr_id
     type: number
@@ -87,7 +86,7 @@ stages:
   #
   # MicroServices
   #
-  - ${{ if and(or(eq(parameters.release, 'aws-ecs'), eq(variables['Build.Reason'], 'PullRequest')), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), in(variables['Build.SourceBranchName'], 'develop', 'staging', 'master'))) }}:
+  - ${{ if and(eq(parameters.release, 'aws-ecs'), or(eq(variables['Build.Reason'], 'PullRequest'), startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), in(variables['Build.SourceBranchName'], 'develop', 'staging', 'master'))) }}:
       - template: ./pipelines/pipeline-microservices.yml
         parameters:
           red: ${{ parameters.red }}
