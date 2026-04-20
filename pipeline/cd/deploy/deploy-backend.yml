@@ -161,9 +161,6 @@ jobs:
               fi
           fi
 
-          # CLUSTER="invictus"
-          # SERVICES="astro"
-
           echo "🛡️ Cluster: $CLUSTER"
           echo "📦 Services: $SERVICES"
 
