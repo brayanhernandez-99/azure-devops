@@ -32,8 +32,6 @@ if (fs.existsSync(mocksDir)) {
 const setupFileRelativePath = 'test/setup.ts';
 const hasSetupFile = fs.existsSync(path.resolve(__dirname, setupFileRelativePath));
 
-console.log('Aliases de mocks generados:', alias);
-
 export default mergeConfig(
     resolvedViteConfig,
     defineConfig({
