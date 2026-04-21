@@ -9,7 +9,7 @@ jobs:
       - template: ../../variables/groups-transversal-variables-frontend.yml
         parameters:
           region: ${{ parameters.region }}
-          environments: ${{ parameters.environments }}
+          environment_staging: ${{ parameters.environments }}
 
     strategy:
       matrix:
@@ -126,7 +126,7 @@ jobs:
           ls -l apps/$(msName)/.env
           cat apps/$(msName)/.env
         displayName: "⚙️ Generate $(msName) .env"
-        condition: and(succeeded(),
+        condition: and(succeeded(), 
           ne(variables['msName'], 'app-administration-vue2'),
           ne(variables['msName'], 'app-sellers-vue2'))
 
