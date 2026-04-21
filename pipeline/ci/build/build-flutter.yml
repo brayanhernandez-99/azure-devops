@@ -12,7 +12,7 @@ jobs:
       - template: ../../variables/groups-transversal-variables-flutter.yml
         parameters:
           region: ${{ parameters.region }}
-          environments: ${{ parameters.environments }}
+          environment_staging: ${{ parameters.environments }}
 
     steps:
       - task: DownloadBuildArtifacts@0
