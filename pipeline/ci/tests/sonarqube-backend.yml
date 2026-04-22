@@ -256,8 +256,8 @@ jobs:
             sonar.newCode.referenceBranch=master
             sonar.javascript.lcov.reportPaths=$(System.DefaultWorkingDirectory)/coverage/lcov.info
             sonar.exclusions=**/*.java,**/test/**,**/android/**,**/ios/**,**/coverage/**,**/.nyc_output/**,**/reports/**,**/node_modules/**,**/migrations/**,**/config/**,**/Dockerfile,*.cjs,**/*.spec.ts
-        condition: and(succeeded(),
-          ne(variables['Build.SourceBranchName'], 'develop'))
+        # condition: and(succeeded(),
+        #   ne(variables['Build.SourceBranchName'], 'develop'))
 
       - script: |
           response=$(echo $SONARQUBE_SCANNER_PARAMS | sed -E 's#"sonar\.branch\.name":"[^"]+",##g')
@@ -265,7 +265,7 @@ jobs:
           echo "$json" | jq
           echo "##vso[task.setvariable variable=SONARQUBE_SCANNER_PARAMS]$response"
         displayName: "⚙️ Set Variable — SONARQUBE_SCANNER_PARAMS"
-        condition: ne(variables['Build.Reason'], 'PullRequest')
+        # condition: ne(variables['Build.Reason'], 'PullRequest')
 
       - script: |
           response=$(echo $SONARQUBE_SCANNER_PARAMS | sed -E 's#"sonar\.pullrequest\.[^"]+":"[^"]+",##g') 
@@ -273,14 +273,14 @@ jobs:
           echo "$json" | jq
           echo "##vso[task.setvariable variable=SONARQUBE_SCANNER_PARAMS]$response"
         displayName: "⚙️ Set Variable — SONARQUBE_SCANNER_PARAMS"
-        condition: and( eq(variables['Build.Reason'], 'PullRequest'), or(startsWith(variables['System.PullRequest.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['System.PullRequest.SourceBranch'], 'refs/heads/hotfix/')))
+        # condition: and( eq(variables['Build.Reason'], 'PullRequest'), or(startsWith(variables['System.PullRequest.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['System.PullRequest.SourceBranch'], 'refs/heads/hotfix/')))
 
       - script: |
           pnpm run test
         displayName: "🧪 Run Tests for: $(Build.Repository.Name)"
         continueOnError: true
-        condition: and(succeeded(),
-          ne(variables['Build.SourceBranchName'], 'develop'))
+        # condition: and(succeeded(),
+        #   ne(variables['Build.SourceBranchName'], 'develop'))
 
       # - script: |
       #     PKG="$(System.DefaultWorkingDirectory)/package.json"
@@ -358,14 +358,14 @@ jobs:
       - task: SonarQubeAnalyze@7
         displayName: "📡 Run Sonar Analysis"
         condition: and(succeeded(),
-          ne(variables['Build.SourceBranchName'], 'develop'))
+          # ne(variables['Build.SourceBranchName'], 'develop'))
 
       - task: SonarQubePublish@7
         inputs:
           pollingTimeoutSec: 400
         displayName: "📤 Publish Static Code Analysis Results"
         condition: and(succeeded(),
-          ne(variables['Build.SourceBranchName'], 'develop'))
+          # ne(variables['Build.SourceBranchName'], 'develop'))
 
       - template: sonarqube/job-sonarqube.yml@sonarqube
         parameters:
