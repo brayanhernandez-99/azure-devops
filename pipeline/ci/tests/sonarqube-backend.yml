@@ -236,10 +236,10 @@ jobs:
             echo "--------------------------------------"
           done
         displayName: "📝 Delete before execution"
+        condition: succeeded()
         env:
           SONAR_TOKEN: $(SONAR_TOKEN)
           SONAR_HOST_URL: $(SONAR_HOST_URL)
-        condition: succeeded()
 
       - task: SonarQubePrepare@7
         displayName: "⚙️ Prepare SonarQube Analysis"
@@ -256,8 +256,7 @@ jobs:
             sonar.newCode.referenceBranch=master
             sonar.javascript.lcov.reportPaths=$(System.DefaultWorkingDirectory)/coverage/lcov.info
             sonar.exclusions=**/*.java,**/test/**,**/android/**,**/ios/**,**/coverage/**,**/.nyc_output/**,**/reports/**,**/node_modules/**,**/migrations/**,**/config/**,**/Dockerfile,*.cjs,**/*.spec.ts
-        # condition: and(succeeded(),
-        #   ne(variables['Build.SourceBranchName'], 'develop'))
+        condition: and(succeeded(), ne(variables['Build.SourceBranchName'], 'develop'))
 
       - script: |
           response=$(echo $SONARQUBE_SCANNER_PARAMS | sed -E 's#"sonar\.branch\.name":"[^"]+",##g')
@@ -265,7 +264,7 @@ jobs:
           echo "$json" | jq
           echo "##vso[task.setvariable variable=SONARQUBE_SCANNER_PARAMS]$response"
         displayName: "⚙️ Set Variable — SONARQUBE_SCANNER_PARAMS"
-        # condition: ne(variables['Build.Reason'], 'PullRequest')
+        condition: ne(variables['Build.Reason'], 'PullRequest')
 
       - script: |
           response=$(echo $SONARQUBE_SCANNER_PARAMS | sed -E 's#"sonar\.pullrequest\.[^"]+":"[^"]+",##g') 
@@ -273,99 +272,95 @@ jobs:
           echo "$json" | jq
           echo "##vso[task.setvariable variable=SONARQUBE_SCANNER_PARAMS]$response"
         displayName: "⚙️ Set Variable — SONARQUBE_SCANNER_PARAMS"
-        # condition: and( eq(variables['Build.Reason'], 'PullRequest'), or(startsWith(variables['System.PullRequest.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['System.PullRequest.SourceBranch'], 'refs/heads/hotfix/')))
+        condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'))
 
       - script: |
           pnpm run test
         displayName: "🧪 Run Tests for: $(Build.Repository.Name)"
         continueOnError: true
-        # condition: and(succeeded(),
-        #   ne(variables['Build.SourceBranchName'], 'develop'))
+        condition: and(succeeded(), ne(variables['Build.SourceBranchName'], 'develop'))
 
-      # - script: |
-      #     PKG="$(System.DefaultWorkingDirectory)/package.json"
-      #     if [[ ! -f "$PKG" ]]; then
-      #       echo "❌ package.json not found"
-      #       exit 1
-      #     fi
-      #     TEST_SCRIPT=$(jq -r '.scripts.test // empty' "$PKG")
-      #     if [[ -z "$TEST_SCRIPT" ]]; then
-      #       echo "❌ No test script defined in package.json"
-      #       exit 1
-      #     fi
-      #     if echo "$TEST_SCRIPT" | grep -Eiq '(^|[[:space:]])jest([[:space:]]|$)'; then
-      #       mkdir -p reports/junit
-      #       mkdir -p reports/coverage
-      #       echo "🧪 Running Jest Test and coverage (CI override)"
-      #       pnpm add -D jest@29.7.0 jest-junit@16.0.0
-      #       export JEST_JUNIT_OUTPUT_DIR=reports/junit
-      #       export JEST_JUNIT_OUTPUT_NAME=test.xml
-      #       pnpm dlx jest \
-      #         --ci \
-      #         --coverage \
-      #         --coverageDirectory=reports/coverage \
-      #         --coverageReporters=lcov \
-      #         --coverageReporters=cobertura \
-      #         --reporters=default \
-      #         --reporters=jest-junit \
-      #       echo "📁 Test files:"
-      #       ls -la reports/junit
-      #       echo "📁 Coverage files:"
-      #       ls -la reports/coverage
-      #     fi
-      #     if echo "$TEST_SCRIPT" | grep -Eiq '(^|[[:space:]])mocha([[:space:]]|$)'; then
-      #       echo "🧪 Running Mocha Test (CI override)"
-      #       pnpm add -D mocha-junit-reporter
-      #       pnpm exec mocha \
-      #       --reporter mocha-junit-reporter \
-      #       --reporter-options mochaFile=reports/junit/test.xml
-      #       echo "📁 Test files:"
-      #       ls -la reports/junit
-      #       echo "🧪 Running Mocha coverage (CI override)"
-      #       pnpm exec nyc \
-      #         --report-dir reports/coverage \
-      #         --reporter=lcov \
-      #         --reporter=cobertura \
-      #         --reporter=text \
-      #         mocha
-      #       echo "📁 Coverage files:"
-      #       ls -la reports/coverage
-      #     fi
-      #   displayName: "📈 Run Tests, coverage report"
-      #   condition: succeeded()
-      # - task: PublishTestResults@2
-      #   displayName: "📊 Publish Test Results"
-      #   inputs:
-      #     testResultsFormat: "JUnit"
-      #     testResultsFiles: "reports/junit/test.xml"
-      #     mergeTestResults: true
-      #     failTaskOnFailedTests: true
-      # - task: PublishCodeCoverageResults@2
-      #   displayName: "📊 Publish Code Coverage"
-      #   inputs:
-      #     codeCoverageTool: "Cobertura"
-      #     summaryFileLocation: "$(System.DefaultWorkingDirectory)/reports/coverage/cobertura-coverage.xml"
-      #     reportDirectory: "$(System.DefaultWorkingDirectory)/reports/coverage"
+        # - script: |
+        #     PKG="$(System.DefaultWorkingDirectory)/package.json"
+        #     if [[ ! -f "$PKG" ]]; then
+        #       echo "❌ package.json not found"
+        #       exit 1
+        #     fi
+        #     TEST_SCRIPT=$(jq -r '.scripts.test // empty' "$PKG")
+        #     if [[ -z "$TEST_SCRIPT" ]]; then
+        #       echo "❌ No test script defined in package.json"
+        #       exit 1
+        #     fi
+        #     if echo "$TEST_SCRIPT" | grep -Eiq '(^|[[:space:]])jest([[:space:]]|$)'; then
+        #       mkdir -p reports/junit
+        #       mkdir -p reports/coverage
+        #       echo "🧪 Running Jest Test and coverage (CI override)"
+        #       pnpm add -D jest@29.7.0 jest-junit@16.0.0
+        #       export JEST_JUNIT_OUTPUT_DIR=reports/junit
+        #       export JEST_JUNIT_OUTPUT_NAME=test.xml
+        #       pnpm dlx jest \
+        #         --ci \
+        #         --coverage \
+        #         --coverageDirectory=reports/coverage \
+        #         --coverageReporters=lcov \
+        #         --coverageReporters=cobertura \
+        #         --reporters=default \
+        #         --reporters=jest-junit \
+        #       echo "📁 Test files:"
+        #       ls -la reports/junit
+        #       echo "📁 Coverage files:"
+        #       ls -la reports/coverage
+        #     fi
+        #     if echo "$TEST_SCRIPT" | grep -Eiq '(^|[[:space:]])mocha([[:space:]]|$)'; then
+        #       echo "🧪 Running Mocha Test (CI override)"
+        #       pnpm add -D mocha-junit-reporter
+        #       pnpm exec mocha \
+        #       --reporter mocha-junit-reporter \
+        #       --reporter-options mochaFile=reports/junit/test.xml
+        #       echo "📁 Test files:"
+        #       ls -la reports/junit
+        #       echo "🧪 Running Mocha coverage (CI override)"
+        #       pnpm exec nyc \
+        #         --report-dir reports/coverage \
+        #         --reporter=lcov \
+        #         --reporter=cobertura \
+        #         --reporter=text \
+        #         mocha
+        #       echo "📁 Coverage files:"
+        #       ls -la reports/coverage
+        #     fi
+        #   displayName: "📈 Run Tests, coverage report"
+        #   condition: succeeded()
+        # - task: PublishTestResults@2
+        #   displayName: "📊 Publish Test Results"
+        #   inputs:
+        #     testResultsFormat: "JUnit"
+        #     testResultsFiles: "reports/junit/test.xml"
+        #     mergeTestResults: true
+        #     failTaskOnFailedTests: true
+        # - task: PublishCodeCoverageResults@2
+        #   displayName: "📊 Publish Code Coverage"
+        #   inputs:
+        #     codeCoverageTool: "Cobertura"
+        #     summaryFileLocation: "$(System.DefaultWorkingDirectory)/reports/coverage/cobertura-coverage.xml"
+        #     reportDirectory: "$(System.DefaultWorkingDirectory)/reports/coverage"
 
       - script: |
           pnpm run coverage
           ls -la $(System.DefaultWorkingDirectory)/coverage
         displayName: "🔎 Coverage Analysis: $(Build.Repository.Name)"
-        # condition: and(succeeded(),
-        #   ne(variables['Build.SourceBranchName'], 'develop'))
+        condition: and(succeeded(), ne(variables['Build.SourceBranchName'], 'develop'))
         continueOnError: true
 
       - task: SonarQubeAnalyze@7
         displayName: "📡 Run Sonar Analysis"
-        # condition: and(succeeded(),
-        #   ne(variables['Build.SourceBranchName'], 'develop'))
+        condition: and(succeeded(), ne(variables['Build.SourceBranchName'], 'develop'))
 
       - task: SonarQubePublish@7
         inputs:
           pollingTimeoutSec: 400
         displayName: "📤 Publish Static Code Analysis Results"
-        # condition: and(succeeded(),
-        #   ne(variables['Build.SourceBranchName'], 'develop'))
+        condition: and(succeeded(), ne(variables['Build.SourceBranchName'], 'develop'))
 
       - template: sonarqube/job-sonarqube.yml@sonarqube
         parameters:
