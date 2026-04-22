@@ -351,21 +351,21 @@ jobs:
           pnpm run coverage
           ls -la $(System.DefaultWorkingDirectory)/coverage
         displayName: "🔎 Coverage Analysis: $(Build.Repository.Name)"
-        condition: and(succeeded(),
-          ne(variables['Build.SourceBranchName'], 'develop'))
+        # condition: and(succeeded(),
+        #   ne(variables['Build.SourceBranchName'], 'develop'))
         continueOnError: true
 
       - task: SonarQubeAnalyze@7
         displayName: "📡 Run Sonar Analysis"
-        condition: and(succeeded(),
-          # ne(variables['Build.SourceBranchName'], 'develop'))
+        # condition: and(succeeded(),
+        #   ne(variables['Build.SourceBranchName'], 'develop'))
 
       - task: SonarQubePublish@7
         inputs:
           pollingTimeoutSec: 400
         displayName: "📤 Publish Static Code Analysis Results"
-        condition: and(succeeded(),
-          # ne(variables['Build.SourceBranchName'], 'develop'))
+        # condition: and(succeeded(),
+        #   ne(variables['Build.SourceBranchName'], 'develop'))
 
       - template: sonarqube/job-sonarqube.yml@sonarqube
         parameters:
