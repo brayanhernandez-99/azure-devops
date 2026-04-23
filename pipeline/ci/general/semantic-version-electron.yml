@@ -59,35 +59,30 @@ jobs:
 
           git fetch origin "$targetBranch"
           diff=$(git --no-pager diff "origin/$targetBranch..origin/$sourceBranch")
+          pattern='console[.]'
 
-          console_logs=$(echo "$diff" | awk '
-            # Captura el archivo actual
+          console_logs=$(echo "$diff" | awk -v pat="$pattern" '
             /^\+\+\+ b\// {
               file=$0
               sub(/^\+\+\+ b\//,"",file)
             }
-
-            # Captura el inicio del hunk: @@ -a,b +c,d @@
             /^@@/ {
-              match($0, /\+([0-9]+)/, arr)
-              line=arr[1]
+              if (match($0, /\+([0-9]+)/, arr)) {
+                line=arr[1]
+              } else {
+                line=0
+              }
             }
-
-            # Línea agregada
             /^\+/ && !/^\+\+\+/ {
-              if ($0 ~ /\bconsole\./) {
+              if ($0 ~ pat) {
                 print file ":" line ":" substr($0, 2)
               }
               line++
             }
-
-            # Línea de contexto
-            /^ / {
-              line++
-            }
+            /^ / { line++ }
           ')
 
-          if echo "$diff" | grep -qE '^\+.*\bconsole\.'; then
+          if echo "$diff" | grep -qE '^\+.*console\.'; then
             echo -e "\n🧨 Archivos detectados con console.* en el código 🧨"
             echo "$console_logs"
             echo -e "\n##vso[task.logissue type=error]⚠️ Se encontro 'console.*' en los cambios"
