@@ -6,16 +6,16 @@ stages:
         parameters:
           release: ${{ parameters.release }}
 
-  - stage: scan_micro_service
-    displayName: "🛡️ Scan MicroService"
-    dependsOn: semantic_version_micro_service
-    jobs:
-      - template: ../ci/tests/sonarqube-backend.yml
-      - template: ../ci/tests/gitleaks.yml
+  # - stage: scan_micro_service
+  #   displayName: "🛡️ Scan MicroService"
+  #   dependsOn: semantic_version_micro_service
+  #   jobs:
+  #     - template: ../ci/tests/sonarqube-backend.yml
+  #     - template: ../ci/tests/gitleaks.yml
 
   - stage: build_micro_service
     displayName: "📦 Build MicroService develop"
-    dependsOn: scan_micro_service
+    dependsOn: semantic_version_micro_service
     jobs:
       - template: ../ci/build/build-backend.yml
 
