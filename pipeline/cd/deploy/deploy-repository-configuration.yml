@@ -43,8 +43,7 @@ jobs:
             echo -e "\nℹ️ No se enviará mensaje a SQS: no hubo cambios en reports/"
           fi
         displayName: "🔍 Verify Changes in reports/"
-        condition: and(succeeded(),
-          ne(variables['Build.SourceBranch'], 'refs/heads/develop'))
+        condition: and(succeeded(), ne(variables['Build.SourceBranchName'], 'develop'))
         env:
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
@@ -56,12 +55,8 @@ jobs:
           environment="develop"
 
           case "$CURRENT_BRANCH" in 
-            staging)
-              environment="$environment_staging"
-            ;;
-            master)
-              environment="$region"
-            ;;
+            staging) environment="$environment_staging" ;;
+            master) environment="$region" ;;
           esac
 
           echo -e "\n📢 Generando notificación para Teams..."
