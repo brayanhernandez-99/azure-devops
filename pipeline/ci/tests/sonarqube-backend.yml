@@ -1,5 +1,5 @@
 jobs:
-  - job: "sonarqube_micro_service"
+  - job: "sonarqube_microservice"
     displayName: "🛡️ sonarqube microservice"
     pool:
       name: "Azure Pipelines"
@@ -140,8 +140,7 @@ jobs:
 
           echo "$REPORT"
           if echo "$REPORT" | grep -q "→"; then
-            echo "❌ Outdated npm dependencies detected. Please update them."
-            # exit 99
+            echo -e "\n##vso[task.logissue type=error]⚠️ Outdated npm dependencies detected. Please update them."
           else
             echo "✅ All npm dependencies are up to date"
           fi
@@ -170,21 +169,20 @@ jobs:
           TOKEN="$SONAR_TOKEN"
           PROJECT_KEY="$(Build.Repository.Name)"
 
-          echo -e "\nℹ️ Obteniendo análisis del proyecto '$PROJECT_KEY'..."
+          echo -e "\nℹ️ Obteniendo listado análisis '$PROJECT_KEY'..."
 
           RESPONSE=$(curl -s -u "$TOKEN:" \
             "$SONAR_URL/api/project_analyses/search?project=$PROJECT_KEY&ps=100")
 
           if ! echo "$RESPONSE" | jq . >/dev/null 2>&1; then
-            echo "❌ Error consultando SonarQube"
+            echo -e "\n##vso[task.logissue type=error]⚠️ Error consultando SonarQube"
             echo "$RESPONSE"
-            exit 1
+            exit 99
           fi
 
-          echo "→ Listado de análisis:"
           echo "$RESPONSE" | jq -r '.analyses[] | "KEY=\(.key) DATE=\(.date)"'
 
-          echo "--------------------------------------"
+          echo ""
           INDEX=0
 
           for ANALYSIS_KEY in $(echo "$RESPONSE" | jq -r '.analyses[].key'); do
@@ -195,17 +193,16 @@ jobs:
               continue
             fi
 
-            echo "🗑️ Borrando análisis $ANALYSIS_KEY..."
+            echo -e "\n🗑️ Borrando análisis $ANALYSIS_KEY..."
             DELETE_RESPONSE=$(curl -s -X POST -u "$TOKEN:" \
               "$SONAR_URL/api/project_analyses/delete?analysis=$ANALYSIS_KEY")
 
-            if [ -z "$DELETE_RESPONSE" ]; then
-              echo "→ Eliminado correctamente"
+            if [[ -z "$DELETE_RESPONSE" ]]; then
+              echo "✅ Eliminado correctamente"
             else
-              echo "→ Respuesta: $DELETE_RESPONSE"
+              echo -e "\n##vso[task.logissue type=error]⚠️ Error eliminando análisis de SonarQube"
+              echo "$DELETE_RESPONSE"
             fi
-
-            echo "--------------------------------------"
           done
         displayName: "📝 Delete Before execution"
         condition: succeeded()

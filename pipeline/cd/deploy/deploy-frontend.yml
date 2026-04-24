@@ -1,5 +1,5 @@
 jobs:
-  - job: deploy_micro_frontend
+  - job: deploy_microfrontend
     displayName: "🚀 deploy"
     pool:
       name: "Azure Pipelines"
