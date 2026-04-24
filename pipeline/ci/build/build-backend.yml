@@ -132,20 +132,20 @@ jobs:
             CURRENT_BRANCH="$(Build.SourceBranchName)"
           fi
 
-          environment="develop"
           case "$CURRENT_BRANCH" in 
             staging) environment="$environment_staging" ;;
             master) environment="$region" ;;
+            *) environment="develop" ;;
           esac
 
-          cleanMsName=$(echo "$REPO_NAME" | sed -E 's/^microservice-//; s/-invictus$//')
-          ECR_REPOSITORY="${REPO_NAME%-invictus}"
-          ECR_REPOSITORY="$ECR_REPOSITORY-$environment"
+          msName=$(echo "$(Build.Repository.Name)" | sed -E 's/^microservice-//; s/-invictus$//')
+          ECR_REPOSITORY="$(Build.Repository.Name)"
+          ECR_REPOSITORY="${ECR_REPOSITORY%-invictus}-$environment"
 
           echo -e "ℹ️ Configurando... \n"
-          echo "Environment: $environment"
+          echo "Environment   : $environment"
           echo "ECR Repository: $ECR_REPOSITORY"
-          echo "Repository: $BUILD_REPOSITORY_NAME"
+          echo "Repository    : $(Build.Repository.Name)"
 
           echo "##vso[task.setvariable variable=ecr_repository]$ECR_REPOSITORY"
         displayName: "📛 Set ECR Repository Name"
