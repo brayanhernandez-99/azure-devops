@@ -94,6 +94,16 @@ stages:
           environments_staging: ${{ parameters.environments_staging }}
 
   #
+  # MicroServices
+  #
+  - ${{ if eq(parameters.build, 'test') }}:
+      - template: ./pipelines/pipeline-microservices.yml
+        parameters:
+          red: ${{ parameters.red }}
+          release: ${{ parameters.release }}
+          environments_staging: ${{ parameters.environments_staging }}
+
+  #
   # Flutter
   #
   - ${{ if and(eq(parameters.release, 'apk'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), in(variables['Build.SourceBranchName'], 'develop', 'staging', 'master'))) }}:

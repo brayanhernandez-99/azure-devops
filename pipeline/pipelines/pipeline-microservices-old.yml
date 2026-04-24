@@ -8,19 +8,19 @@ stages:
 
   #####################################################################
 
-  # - ${{ if or(eq(variables['Build.Reason'], 'PullRequest'), startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')) }}:
-  #     - stage: scan_micro_service
-  #       displayName: "🛡️ Scan MicroService"
-  #       dependsOn: semantic_version_micro_service
-  #       jobs:
-  #         - template: ../ci/tests/sonarqube-backend.yml
-  #         - template: ../ci/tests/gitleaks.yml
+  - ${{ if or(eq(variables['Build.Reason'], 'PullRequest'), startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')) }}:
+      - stage: scan_micro_service
+        displayName: "🛡️ Scan MicroService"
+        dependsOn: semantic_version_micro_service
+        jobs:
+          - template: ../ci/tests/sonarqube-backend.yml
+          - template: ../ci/tests/gitleaks.yml
 
-  #     - stage: build_micro_service
-  #       displayName: "📦 Build MicroService"
-  #       dependsOn: scan_micro_service
-  #       jobs:
-  #         - template: ../ci/build/build-backend.yml
+      - stage: build_micro_service
+        displayName: "📦 Build MicroService"
+        dependsOn: scan_micro_service
+        jobs:
+          - template: ../ci/build/build-backend.yml
 
   #####################################################################
 
@@ -41,9 +41,9 @@ stages:
                   region: ${{ region }}
                   release: ${{ parameters.release }}
 
-      #####################################################################
+  #####################################################################
 
-      # - ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}:
+  - ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}:
       - stage: scan_micro_service
         displayName: "🛡️ Scan MicroService"
         dependsOn: semantic_version_micro_service
