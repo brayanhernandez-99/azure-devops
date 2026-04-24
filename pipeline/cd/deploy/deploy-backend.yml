@@ -50,12 +50,13 @@ jobs:
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
 
       - script: |
+          set -e
           CURRENT_BRANCH="$(Build.SourceBranchName)"
           environment="develop"
 
           case "$CURRENT_BRANCH" in 
-            staging) environment="$environment_staging" ;;
-            master) environment="$region" ;;
+            staging) environment="qa" ;;
+            master) environment="prd" ;;
           esac
 
           msName=$(echo "$(Build.Repository.Name)" | sed -E 's/^microservice-//; s/-invictus$//')
