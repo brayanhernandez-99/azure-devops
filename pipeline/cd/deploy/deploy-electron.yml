@@ -44,12 +44,8 @@ jobs:
           environment="develop"
 
           case "$CURRENT_BRANCH" in 
-            staging)
-              environment="$environment_staging"
-            ;;
-            master)
-              environment="$region"
-            ;;
+            staging) environment="$environment_staging" ;;
+            master) environment="$region" ;;
           esac
 
           echo "##vso[task.setvariable variable=environment]$environment"

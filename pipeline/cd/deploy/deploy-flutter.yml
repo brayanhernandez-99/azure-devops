@@ -145,7 +145,7 @@ jobs:
       - script: |
           DEPLOY_TIME=$(date -d "$BUILD_FINISHTIME -5 hours" "+%Y-%m-%d %I:%M %p")
           BRANCH_NAME_MULTI=$environments
-          BRANCH_NAME="$BUILD_SOURCEBRANCHNAME"
+          BRANCH_NAME="$(Build.SourceBranchName)"
 
           if [[ "$BRANCH_NAME" == "master" ]]; then
             BRANCH_DEPLOY="${red:-red}"
