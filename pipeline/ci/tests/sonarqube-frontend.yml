@@ -1,5 +1,5 @@
 jobs:
-  - job: "sonarqube_micro_frontend"
+  - job: "sonarqube_microfrontend"
     displayName: "🛡️ sonarqube microfrontend"
     pool:
       name: "Azure Pipelines"
