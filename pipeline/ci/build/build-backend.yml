@@ -132,7 +132,7 @@ jobs:
             CURRENT_BRANCH="$(Build.SourceBranchName)"
           fi
 
-          environment="develop" ;;
+          environment="develop"
           case "$CURRENT_BRANCH" in 
             staging) environment="$environment_staging" ;;
             master) environment="$region" ;;
