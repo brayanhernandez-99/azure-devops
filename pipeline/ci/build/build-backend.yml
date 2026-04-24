@@ -126,6 +126,7 @@ jobs:
         condition: succeeded()
 
       - script: |
+          set -e
           if [[ "$(Build.Reason)" == "PullRequest" ]]; then
             CURRENT_BRANCH="$(System.PullRequest.SourceBranchName)"
           else
@@ -133,9 +134,10 @@ jobs:
           fi
 
           environment="develop"
+
           case "$CURRENT_BRANCH" in 
-            staging) environment="$environment_staging" ;;
-            master) environment="$region" ;;
+            staging) environment="qa" ;;
+            master) environment="prd" ;;
           esac
 
           msName=$(echo "$(Build.Repository.Name)" | sed -E 's/^microservice-//; s/-invictus$//')
