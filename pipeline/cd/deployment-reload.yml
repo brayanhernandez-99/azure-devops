@@ -1,24 +1,7 @@
 jobs:
-  - deployment: WaitForApproval
-    displayName: "🛡️ waiting approval"
-    ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}:
-      environment: "Reload develop"
-    ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
-      environment: "Reload staging"
-    pool:
-      name: "Azure Pipelines"
-      VmImage: ubuntu-22.04
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-            - script: echo "✅ Aprobación recibida. Iniciando el despliegue..."
-              displayName: "🔓 Awaiting Approval"
-
-  #####################################################################
-
-  - ${{ if eq(parameters.release, 'reload') }}:
-      - template: ./deploy/reload-version-ecs.yml
-        parameters:
-          release: ${{ parameters.release }}
-          services: ${{ parameters.services }}
+  - ${{ if or(eq(variables['Build.SourceBranchName'], 'develop'), eq(variables['Build.SourceBranchName'], 'staging')) }}:
+      - ${{ if eq(parameters.release, 'reload') }}:
+          - template: ./deploy/reload-version-ecs.yml
+            parameters:
+              release: ${{ parameters.release }}
+              services: ${{ parameters.services }}
