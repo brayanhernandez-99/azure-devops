@@ -89,12 +89,12 @@ stages:
   #
   # MicroServices
   #
-  - ${{ if and(eq(parameters.release, 'aws-ecs'), or(eq(variables['Build.Reason'], 'PullRequest'), startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), in(variables['Build.SourceBranchName'], 'develop', 'staging', 'master'))) }}:
-      - template: ./pipelines/pipeline-microservices.yml
-        parameters:
-          red: ${{ parameters.red }}
-          release: ${{ parameters.release }}
-          environments_staging: ${{ parameters.environments_staging }}
+  # - ${{ if and(eq(parameters.release, 'aws-ecs'), or(eq(variables['Build.Reason'], 'PullRequest'), startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), in(variables['Build.SourceBranchName'], 'develop', 'staging', 'master'))) }}:
+  #     - template: ./pipelines/pipeline-microservices.yml
+  #       parameters:
+  #         red: ${{ parameters.red }}
+  #         release: ${{ parameters.release }}
+  #         environments_staging: ${{ parameters.environments_staging }}
 
   #
   # MicroServices
