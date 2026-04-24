@@ -132,10 +132,10 @@ jobs:
             CURRENT_BRANCH="$(Build.SourceBranchName)"
           fi
 
+          environment="develop" ;;
           case "$CURRENT_BRANCH" in 
             staging) environment="$environment_staging" ;;
             master) environment="$region" ;;
-            *) environment="develop" ;;
           esac
 
           msName=$(echo "$(Build.Repository.Name)" | sed -E 's/^microservice-//; s/-invictus$//')
