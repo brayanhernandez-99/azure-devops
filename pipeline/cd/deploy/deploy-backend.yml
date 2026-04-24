@@ -51,12 +51,10 @@ jobs:
 
       - script: |
           set -e
-          CURRENT_BRANCH="$(Build.SourceBranchName)"
-          environment="develop"
-
-          case "$CURRENT_BRANCH" in 
+          case "$(Build.SourceBranchName)" in 
             staging) environment="qa" ;;
             master) environment="prd" ;;
+            *) environment="develop" ;;
           esac
 
           msName=$(echo "$(Build.Repository.Name)" | sed -E 's/^microservice-//; s/-invictus$//')
