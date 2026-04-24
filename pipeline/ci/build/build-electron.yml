@@ -82,12 +82,8 @@ jobs:
           environment="develop"
 
           case "$CURRENT_BRANCH" in 
-            staging)
-              environment="$environment_staging"
-            ;;
-            master)
-              environment="$region"
-            ;;
+            staging) environment="$environment_staging" ;;
+            master) environment="$region" ;;
           esac
 
           cat <<EOF > .env
@@ -321,29 +317,12 @@ jobs:
         inputs:
           targetType: "inline"
           script: |
-            $CURRENT_BRANCH="$(Build.SourceBranch)"
-            $environment = "unknown"
+            $CURRENT_BRANCH="$(Build.SourceBranchName)"
+            $environment = "develop"
 
             switch -Wildcard ($CURRENT_BRANCH) {
-              "refs/heads/develop" { $environment = "develop" }
-              "refs/heads/feature/*" { $environment = "develop" }
-              "refs/heads/hotfix/*" { $environment = "develop" }
-              "refs/heads/staging" {
-                if ($env:environment_staging -eq "staging") {
-                  $environment = "staging"
-                }
-                elseif ($env:environment_staging -eq "staging_nacional") {
-                  $environment = "staging_nacional"
-                }
-              }
-              "refs/heads/master" {
-                $environment = $env:region
-              }
-            }
-
-            if ($environment -eq "unknown") {
-              Write-Host "`n##vso[task.logissue type=error]⚠️ Environment [$environment] no reconocido"
-              exit 99
+                "staging" { $environment = $environment_staging }
+                "master"  { $environment = $region }
             }
 
             @"
