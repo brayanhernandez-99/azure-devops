@@ -2,6 +2,9 @@ parameters:
   - name: release
     type: string
 
+  - name: build
+    type: string
+
   - name: pr_id
     type: number
     default: 0
