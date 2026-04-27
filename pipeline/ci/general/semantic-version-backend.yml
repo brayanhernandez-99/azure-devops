@@ -16,9 +16,9 @@ jobs:
 
       - script: |
           if [[ "$(Build.Reason)" == "PullRequest" ]]; then
-            CURRENT_BRANCH="$(System.PullRequest.SourceBranch)"
+            CURRENT_BRANCH="$(System.PullRequest.SourceBranchName)"
           else
-            CURRENT_BRANCH="$(Build.SourceBranch)"
+            CURRENT_BRANCH="$(Build.SourceBranchName)"
           fi
 
           echo -e "\n📌 Verificando si feature está actualizada con master y si hay cambios relevantes..."
