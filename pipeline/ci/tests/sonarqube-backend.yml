@@ -110,25 +110,6 @@ jobs:
           targetType: inline
           script: |
             set -e
-
-            echo "📍 PWD actual:"
-            pwd
-
-            echo -e "\n📂 Contenido raíz:"
-            ls -la
-
-            echo "📍 ls $(System.DefaultWorkingDirectory):"
-            ls -la $(System.DefaultWorkingDirectory)
-
-            echo -e "\n📂 Contenido apps:"
-            ls -la $(System.DefaultWorkingDirectory)/apps || true
-
-            echo -e "\n📂 Intentando ruta completa:"
-            ls -la $(System.DefaultWorkingDirectory)/$(file) || true
-            ls -la $(System.DefaultWorkingDirectory)/$(file)/$(msName) || true
-
-
-
             echo -e "\n📁 Generando archivo .pnpmrc en: $(System.DefaultWorkingDirectory)/.pnpmrc"
             cat <<EOF > "$(System.DefaultWorkingDirectory)/.pnpmrc"
             node-linker=hoisted
