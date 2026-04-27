@@ -41,9 +41,8 @@ jobs:
         condition: succeeded()
 
       - task: Bash@3
-        name: AuthCodeArtifact
         inputs:
-          targetType: "inline"
+          targetType: inline
           script: |
             echo -e "\n🔐 Obteniendo token de AWS CodeArtifact..."
             token=$(aws codeartifact get-authorization-token \
@@ -69,6 +68,8 @@ jobs:
             //$REPO_DOMAIN/$REPO_PATH/:_authToken=$token
             registry=$REPO_URL
             EOF
+
+            echo -e "\n✅ .npmrc generado"
             ls -l .npmrc
         displayName: "🔐 Setup CodeArtifact & npm config"
         condition: succeeded()
@@ -250,7 +251,7 @@ jobs:
       - task: PowerShell@2
         displayName: "📚 Read Version"
         inputs:
-          targetType: "inline"
+          targetType: inline
           script: |
             $versionFile = "$(Pipeline.Workspace)\versions\electron\version.json"
 
@@ -272,7 +273,7 @@ jobs:
       - task: PowerShell@2
         displayName: "🔐 Setup CodeArtifact & npm config"
         inputs:
-          targetType: "inline"
+          targetType: inline
           script: |
             Write-Host "🔐 Obteniendo token de AWS CodeArtifact..."
 
@@ -315,7 +316,7 @@ jobs:
       - task: PowerShell@2
         displayName: "⚙️ Generate .env"
         inputs:
-          targetType: "inline"
+          targetType: inline
           script: |
             $CURRENT_BRANCH="$(Build.SourceBranchName)"
             $environment = "develop"
@@ -356,7 +357,7 @@ jobs:
       - task: PowerShell@2
         displayName: "📝 Update Version package.json"
         inputs:
-          targetType: "inline"
+          targetType: inline
           script: |
             Write-Host "📦 Modificando versión en package.json: $env:version"
             $packagePath = "$(Build.SourcesDirectory)\package.json"
@@ -377,7 +378,7 @@ jobs:
       - task: PowerShell@2
         displayName: "🧹 Remove BOM from package.json"
         inputs:
-          targetType: "inline"
+          targetType: inline
           script: |
             $filePath = "$(Build.SourcesDirectory)\package.json"
 
@@ -398,7 +399,7 @@ jobs:
       - task: PowerShell@2
         displayName: "⚙️ Install Dependencies"
         inputs:
-          targetType: "inline"
+          targetType: inline
           script: |
             Write-Host "`n📁 Generando archivo .pnpmrc en: $(System.DefaultWorkingDirectory)\.pnpmrc"
             $filePath = "$(System.DefaultWorkingDirectory)\.pnpmrc"

@@ -57,9 +57,8 @@ jobs:
         condition: succeeded()
 
       - task: Bash@3
-        name: AuthCodeArtifact
         inputs:
-          targetType: "inline"
+          targetType: inline
           script: |
             echo "🔐 Obteniendo token de AWS CodeArtifact..."
             token=$(aws codeartifact get-authorization-token \
@@ -86,6 +85,8 @@ jobs:
             //$REPO_DOMAIN/$REPO_PATH/:_authToken=$token
             registry=$REPO_URL
             EOF
+            
+            echo -e "\n✅ .npmrc generado"
             ls -l $npmrcPath
         displayName: "🔐 Setup CodeArtifact & npm config"
         condition: succeeded()

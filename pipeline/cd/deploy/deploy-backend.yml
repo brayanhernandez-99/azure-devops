@@ -77,7 +77,7 @@ jobs:
 
       - task: Bash@3
         inputs:
-          targetType: "inline"
+          targetType: inline
           script: |
             set -e
             echo "🔍 Verificando imagen..."
