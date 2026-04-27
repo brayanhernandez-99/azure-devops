@@ -1,5 +1,5 @@
 jobs:
-  - job: "semantic_version_micro_micro_service"
+  - job: "semantic_version_microservice"
     displayName: "🏷️ version microservice"
     pool:
       name: "Azure Pipelines"
@@ -14,359 +14,380 @@ jobs:
         persistCredentials: true
         fetchTags: false
 
-      - script: |
-          set -e
-          if [[ "$(Build.Reason)" == "PullRequest" ]]; then
-            CURRENT_BRANCH="$(System.PullRequest.SourceBranch)"
-          else
-            CURRENT_BRANCH="$(Build.SourceBranch)"
-          fi
-
-          echo -e "\n📌 Verificando si feature está actualizada con master y si hay cambios relevantes..."
-          echo "Branch Actual: $CURRENT_BRANCH" 
-          git fetch origin master
-
-          # Encuentra el punto de bifurcación (base común)
-          MERGE_BASE=$(git merge-base HEAD origin/master)
-
-          # Verifica si la rama está actualizada
-          if [ "$MERGE_BASE" = "$(git rev-parse origin/master)" ]; then
-            echo -e "\n✅ La rama feature está actualizada con master."
-          else
-            echo -e "\n⚠️ La rama feature NO contiene todos los commits de master. Verificando cambios relevantes en master..."
-
-            # Obtén los archivos cambiados en master desde el punto de bifurcación
-            CHANGED_FILES=$(git diff --name-only "$MERGE_BASE".."origin/master")
-
-            echo "🔍 Archivos nuevos en master desde el punto de bifurcación:"
-            echo "$CHANGED_FILES"
-
-            # Filtrar cambios relevantes (ignorar carpeta pipeline/)
-            RELEVANT_CHANGES=$(echo "$CHANGED_FILES" | grep -vE '^pipeline/')
-
-            if [[ -z "$RELEVANT_CHANGES" ]]; then
-              echo -e "\nℹ️ Solo hay cambios en archivos ignorados (pipeline/). Continuando..."
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            set -e
+            if [[ "$(Build.Reason)" == "PullRequest" ]]; then
+              CURRENT_BRANCH="$(System.PullRequest.SourceBranch)"
             else
-              echo -e "\n##vso[task.logissue type=error]❌ Cambios relevantes detectados en master y no están integrados. Debes actualizar tu rama."
-              exit 99
+              CURRENT_BRANCH="$(Build.SourceBranch)"
             fi
-          fi
+
+            echo -e "\n📌 Verificando si feature está actualizada con master y si hay cambios relevantes..."
+            echo "Branch Actual: $CURRENT_BRANCH" 
+            git fetch origin master
+
+            # Encuentra el punto de bifurcación (base común)
+            MERGE_BASE=$(git merge-base HEAD origin/master)
+
+            # Verifica si la rama está actualizada
+            if [ "$MERGE_BASE" = "$(git rev-parse origin/master)" ]; then
+              echo -e "\n✅ La rama feature está actualizada con master."
+            else
+              echo -e "\n⚠️ La rama feature NO contiene todos los commits de master. Verificando cambios relevantes en master..."
+
+              # Obtén los archivos cambiados en master desde el punto de bifurcación
+              CHANGED_FILES=$(git diff --name-only "$MERGE_BASE".."origin/master")
+
+              echo "🔍 Archivos nuevos en master desde el punto de bifurcación:"
+              echo "$CHANGED_FILES"
+
+              # Filtrar cambios relevantes (ignorar carpeta pipeline/)
+              RELEVANT_CHANGES=$(echo "$CHANGED_FILES" | grep -vE '^pipeline/')
+
+              if [[ -z "$RELEVANT_CHANGES" ]]; then
+                echo -e "\nℹ️ Solo hay cambios en archivos ignorados (pipeline/). Continuando..."
+              else
+                echo -e "\n##vso[task.logissue type=error]❌ Cambios relevantes detectados en master y no están integrados. Debes actualizar tu rama."
+                exit 99
+              fi
+            fi
         displayName: "🔎 Validate Feature or Hotfix Branch is Up to Date"
         condition: and(succeeded(), or(
           eq(variables['Build.Reason'], 'PullRequest'),
           startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'),
           startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
 
-      - script: |
-          set -e
-          if [[ "$(Build.Reason)" == "PullRequest" ]]; then
-            sourceBranch="$(System.PullRequest.SourceBranch)"
-            sourceBranch="${sourceBranch/refs\/heads\//}"
-          else
-            sourceBranch="${BUILD_SOURCEBRANCH/refs\/heads\//}"
-          fi
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            set -e
+            if [[ "$(Build.Reason)" == "PullRequest" ]]; then
+              sourceBranch="$(System.PullRequest.SourceBranch)"
+              sourceBranch="${sourceBranch/refs\/heads\//}"
+            else
+              sourceBranch="${BUILD_SOURCEBRANCH/refs\/heads\//}"
+            fi
 
-          echo -e "\n🔎 Verificando que no se hayan agregado nuevas sentencias console.* ..."
-          targetBranch="master"
-          echo "Branch actual: $sourceBranch"
-          echo "Branch destino: $targetBranch"
+            echo -e "\n🔎 Verificando que no se hayan agregado nuevas sentencias console.* ..."
+            targetBranch="master"
+            echo "Branch actual: $sourceBranch"
+            echo "Branch destino: $targetBranch"
 
-          git fetch origin "$targetBranch"
-          diff=$(git --no-pager diff "origin/$targetBranch..origin/$sourceBranch")
-          pattern='console[.]'
+            git fetch origin "$targetBranch"
+            diff=$(git --no-pager diff "origin/$targetBranch..origin/$sourceBranch")
+            pattern='console[.]'
 
-          console_logs=$(echo "$diff" | awk -v pat="$pattern" '
-            /^\+\+\+ b\// {
-              file=$0
-              sub(/^\+\+\+ b\//,"",file)
-            }
-            /^@@/ {
-              if (match($0, /\+([0-9]+)/, arr)) {
-                line=arr[1]
-              } else {
-                line=0
+            console_logs=$(echo "$diff" | awk -v pat="$pattern" '
+              /^\+\+\+ b\// {
+                file=$0
+                sub(/^\+\+\+ b\//,"",file)
               }
-            }
-            /^\+/ && !/^\+\+\+/ {
-              if ($0 ~ pat) {
-                print file ":" line ":" substr($0, 2)
+              /^@@/ {
+                if (match($0, /\+([0-9]+)/, arr)) {
+                  line=arr[1]
+                } else {
+                  line=0
+                }
               }
-              line++
-            }
-            /^ / { line++ }
-          ')
+              /^\+/ && !/^\+\+\+/ {
+                if ($0 ~ pat) {
+                  print file ":" line ":" substr($0, 2)
+                }
+                line++
+              }
+              /^ / { line++ }
+            ')
 
-          if echo "$diff" | grep -qE '^\+.*console\.'; then
-            echo -e "$\n🧨 Archivos detectados con console.* en el código 🧨"
-            echo "$console_logs"
-            echo -e "\n##vso[task.logissue type=error]⚠️ Se encontro 'console.*' en los cambios"
-            exit 99
-          else
-            echo -e "\n✅ No se encontraron sentencias 'console.*' en los cambios"
-          fi
+            if echo "$diff" | grep -qE '^\+.*console\.'; then
+              echo -e "$\n🧨 Archivos detectados con console.* en el código 🧨"
+              echo "$console_logs"
+              echo -e "\n##vso[task.logissue type=error]⚠️ Se encontro 'console.*' en los cambios"
+              exit 99
+            else
+              echo -e "\n✅ No se encontraron sentencias 'console.*' en los cambios"
+            fi
         displayName: "🔍 Validate for 'console.*' in changes"
         condition: and(succeeded(), or(
           eq(variables['Build.Reason'], 'PullRequest'),
           startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'),
           startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
 
-      - script: |
-          set -e
-          REPO_NAME="$(Build.Repository.Name)"          
-          RESPONSE=$(curl -s -u ":$AZURE_DEVOPS_CLI_PAT" \
-            "https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories?api-version=5.0")
-          REPO_ID=$(echo "$RESPONSE" | jq -r --arg repo "$REPO_NAME" '.value[] | select(.name == $repo).id')
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            set -e
+            REPO_NAME="$(Build.Repository.Name)"          
+            RESPONSE=$(curl -s -u ":$AZURE_DEVOPS_CLI_PAT" \
+              "https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories?api-version=5.0")
+            REPO_ID=$(echo "$RESPONSE" | jq -r --arg repo "$REPO_NAME" '.value[] | select(.name == $repo).id')
 
-          echo "##vso[task.setvariable variable=repoID]$REPO_ID"
-          echo "ℹ️ id del repositorio $REPO_NAME: $REPO_ID"
-        env:
-          AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
+            echo "##vso[task.setvariable variable=repoID]$REPO_ID"
+            echo "ℹ️ id del repositorio $REPO_NAME: $REPO_ID"
         displayName: "📌 Set Repository ID"
         condition: and(succeeded(),
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
-
-      - script: |
-          set -e
-          if [[ "$(Build.Reason)" == "PullRequest" ]]; then
-            CURRENT_BRANCH="$(System.PullRequest.SourceBranch)"
-          else
-            CURRENT_BRANCH="$(Build.SourceBranch)"
-          fi
-
-          echo -e "\nℹ️ id repositorio $(Build.Repository.Name): $(repoID)"
-          echo "Branch Actual: $CURRENT_BRANCH"
-
-          if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
-            CURRENT_BRANCH_PR=refs/heads/feature
-          fi
-
-          if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|staging|master)$ ]]; then
-            CURRENT_BRANCH_PR=$(echo $(Build.SourceBranch))
-          fi
-
-          URL="https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories/$(repoID)/pullrequests?searchCriteria.status=completed&searchCriteria.targetRefName=$CURRENT_BRANCH_PR&api-version=5.0"
-          response=$(curl -s -u ":$AZURE_DEVOPS_CLI_PAT" "$URL")
-          echo "$response" | jq '.value[0]'
-          PR_ID=$(echo "$response" | jq -r '.value[0].pullRequestId')
-
-          echo -e "\nℹ️ id del pr $PR_ID"
-          echo "##vso[task.setvariable variable=ultimoPR]$PR_ID"
-
-          mkdir -p $(Build.ArtifactStagingDirectory)/idpr
-          touch $(Build.ArtifactStagingDirectory)/idpr/idpr.json
-          echo "{\"idpr\": \"$PR_ID\" }" > $(Build.ArtifactStagingDirectory)/idpr/idpr.json
         env:
           AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
+
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            set -e
+            if [[ "$(Build.Reason)" == "PullRequest" ]]; then
+              CURRENT_BRANCH="$(System.PullRequest.SourceBranch)"
+            else
+              CURRENT_BRANCH="$(Build.SourceBranch)"
+            fi
+
+            echo -e "\nℹ️ id repositorio $(Build.Repository.Name): $(repoID)"
+            echo "Branch Actual: $CURRENT_BRANCH"
+
+            if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
+              CURRENT_BRANCH_PR=refs/heads/feature
+            fi
+
+            if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|staging|master)$ ]]; then
+              CURRENT_BRANCH_PR=$(echo $(Build.SourceBranch))
+            fi
+
+            URL="https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories/$(repoID)/pullrequests?searchCriteria.status=completed&searchCriteria.targetRefName=$CURRENT_BRANCH_PR&api-version=5.0"
+            response=$(curl -s -u ":$AZURE_DEVOPS_CLI_PAT" "$URL")
+            echo "$response" | jq '.value[0]'
+            PR_ID=$(echo "$response" | jq -r '.value[0].pullRequestId')
+
+            echo -e "\nℹ️ id del pr $PR_ID"
+            echo "##vso[task.setvariable variable=ultimoPR]$PR_ID"
+
+            mkdir -p $(Build.ArtifactStagingDirectory)/idpr
+            touch $(Build.ArtifactStagingDirectory)/idpr/idpr.json
+            echo "{\"idpr\": \"$PR_ID\" }" > $(Build.ArtifactStagingDirectory)/idpr/idpr.json
         displayName: "📌 Set Pull Request ID"
         condition: and(succeeded(),
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
-
-      - script: |
-          set -e
-          echo -e "\nℹ️ Pull Request ID recuperado: $(ultimoPR)"
-          echo "id del repositorio $(Build.Repository.Name) = $(repoID)"
-
-          COMMITS=$(curl -s -u ":$AZURE_DEVOPS_CLI_PAT" \
-            "https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories/$(repoID)/pullRequests/$(ultimoPR)/commits?api-version=7.0" \
-            | jq -r '.value[].comment' | grep -E 'feat:|fix:|!')
-          SAFE_COMMITS=$(echo "$COMMITS" | tr '\n' '|')
-          echo $SAFE_COMMITS
-          echo "##vso[task.setvariable variable=filteredCommits]$SAFE_COMMITS"
         env:
           AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
+
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            set -e
+            echo -e "\nℹ️ Pull Request ID recuperado: $(ultimoPR)"
+            echo "id del repositorio $(Build.Repository.Name) = $(repoID)"
+
+            COMMITS=$(curl -s -u ":$AZURE_DEVOPS_CLI_PAT" \
+              "https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories/$(repoID)/pullRequests/$(ultimoPR)/commits?api-version=7.0" \
+              | jq -r '.value[].comment' | grep -E 'feat:|fix:|!')
+            SAFE_COMMITS=$(echo "$COMMITS" | tr '\n' '|')
+            echo $SAFE_COMMITS
+            echo "##vso[task.setvariable variable=filteredCommits]$SAFE_COMMITS"
         displayName: "📌 Pull Request Commit Details"
         condition: and(succeeded(),
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
+        env:
+          AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
 
-      - script: |
-          set -e
-          if [[ "$(Build.Reason)" == "PullRequest" ]]; then
-            CURRENT_BRANCH="$(System.PullRequest.SourceBranch)"
-          else
-            CURRENT_BRANCH="$(Build.SourceBranch)"
-          fi
-
-          echo -e "\nℹ️ Branch Actual: $CURRENT_BRANCH"
-
-          if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|master|staging|feature/.+|hotfix/.+)$ ]]; then
-
-            if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
-              clean_branch=develop
-              echo $clean_branch
-            fi
-
-            if [[ "$CURRENT_BRANCH" == refs/heads/hotfix/* ]]; then
-              clean_branch=master
-              echo $clean_branch
-            fi
-
-            if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|staging|master)$ ]]; then
-              raw_branch=$(Build.SourceBranch)
-              clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
-            fi
-
-            if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
-              BASE=$(git merge-base HEAD origin/master)
-              COMMITS=$(git log --pretty=format:"%s" $BASE..HEAD | grep -vi "Auto-generated pipeline config")
-              echo "📝 Commits de la rama feature"
-              echo $COMMITS
-            fi
-
-            if [[ "$CURRENT_BRANCH" == refs/heads/hotfix/* ]]; then
-              BASE=$(git merge-base HEAD origin/master)
-              COMMITS=$(git log --pretty=format:"%s" $BASE..HEAD | grep -vi "Auto-generated pipeline config")
-              echo "📝 Commits de la rama hotfix"
-              echo $COMMITS
-            fi
-
-            if [[ "$CURRENT_BRANCH" == refs/heads/develop ]]; then
-              RAW_COMMITS='$(filteredCommits)'
-              COMMITS=$(printf '%s' "$RAW_COMMITS" | tr '|' '\n')
-              echo "📝 Commits de la rama feature a develop:"
-              echo $COMMITS
-            fi
-
-            if [[ "$CURRENT_BRANCH" == refs/heads/staging ]]; then
-              RAW_COMMITS='$(filteredCommits)'
-              COMMITS=$(printf '%s' "$RAW_COMMITS" | tr '|' '\n')
-              echo "📝 Commits de la rama pre/staging a staging:"
-              echo $COMMITS
-            fi
-
-            if [[ "$CURRENT_BRANCH" == refs/heads/master ]]; then
-              RAW_COMMITS='$(filteredCommits)'
-              COMMITS=$(printf '%s' "$RAW_COMMITS" | tr '|' '\n')
-              echo "📝 Commits de la rama staging a master:"
-              echo $COMMITS
-            fi
-            
-            IS_MAJOR=0
-            IS_MINOR=0
-            IS_PATCH=0
-
-            while read -r COMMIT; do
-              if [[ "$COMMIT" == *"!"* ]]; then
-                IS_MAJOR=1
-              elif [[ "$COMMIT" == feat:* ]]; then
-                IS_MINOR=1
-              elif [[ "$COMMIT" == fix:* ]]; then
-                IS_PATCH=1
-              fi
-            done <<< "$COMMITS"
-
-            if [[ $IS_MAJOR -eq 1 ]]; then
-              RELEASE_TYPE="major"
-            elif [[ $IS_MINOR -eq 1 ]]; then
-              RELEASE_TYPE="minor"
-            elif [[ $IS_PATCH -eq 1 ]]; then
-              RELEASE_TYPE="patch"
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            set -e
+            if [[ "$(Build.Reason)" == "PullRequest" ]]; then
+              CURRENT_BRANCH="$(System.PullRequest.SourceBranch)"
             else
-              RELEASE_TYPE="patch" 
+              CURRENT_BRANCH="$(Build.SourceBranch)"
             fi
-            echo $RELEASE_TYPE
 
-            bump_version() {
-              IFS='.' read -r MAJOR MINOR PATCH <<< "$1"
-              case "$2" in
-                major) echo "$((MAJOR + 1)).0.0" ;;
-                minor) echo "$MAJOR.$((MINOR + 1)).0" ;;
-                patch) echo "$MAJOR.$MINOR.$((PATCH + 1))" ;;
-              esac
-            }
-            version_gt() {
-              # returns 0 (true) if $1 > $2
-              [ "$(printf '%s\n' "$1" "$2" | sort -V | head -n1)" != "$1" ]
-            }
+            echo -e "\nℹ️ Branch Actual: $CURRENT_BRANCH"
 
-            if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|staging|feature/.+)$ ]]; then
-              git checkout version/$clean_branch
-              VERSION_ACTUAL=$(jq -r .version package.json)
-              BASE_VERSION_BRANCH=$(echo "$VERSION_ACTUAL" | sed -E "s/-${clean_branch}\.[0-9]+//")
-              echo "versión base actual: $BASE_VERSION_BRANCH"
+            if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|master|staging|feature/.+|hotfix/.+)$ ]]; then
 
-              CURRENT_PRERELEASE=$(echo "$VERSION_ACTUAL" | sed -n "s/.*-${clean_branch}\.\([0-9]\+\)/\1/p")
-
-              git checkout version/master
-              VERSION_ACTUAL_MASTER=$(jq -r .version package.json)
-              echo "versión base master: $VERSION_ACTUAL_MASTER"
-
-              git checkout version/$clean_branch
-
-              if [[ "$BASE_VERSION_BRANCH" == "$VERSION_ACTUAL_MASTER" ]]; then
-                # Las versiones base son iguales, calcular nueva base y resetear prerelease 
-                NEXT_BASE_VERSION=$(bump_version "$VERSION_ACTUAL_MASTER" "$RELEASE_TYPE")
-                NEXT_VERSION="$NEXT_BASE_VERSION-$clean_branch.0"
-              elif version_gt "$BASE_VERSION_BRANCH" "$VERSION_ACTUAL_MASTER"; then
-                # Base ya es mayor que master, también incrementa el prerelease
-                NEXT_VERSION="$BASE_VERSION_BRANCH-$clean_branch.$((CURRENT_PRERELEASE + 1))"
-              elif version_gt "$VERSION_ACTUAL_MASTER" "$BASE_VERSION_BRANCH"; then
-                # La base actual es menor que la de master, subir versión base y resetear prerelease
-                NEXT_BASE_VERSION=$(bump_version "$VERSION_ACTUAL_MASTER" "$RELEASE_TYPE")
-                NEXT_VERSION="$NEXT_BASE_VERSION-$clean_branch.0"
-              else
-                # Las bases son diferentes, solo incrementa el prerelease
-                NEXT_VERSION="$BASE_VERSION_BRANCH-$clean_branch.$((CURRENT_PRERELEASE + 1))"
+              if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
+                clean_branch=develop
+                echo $clean_branch
               fi
-              echo -e "\n🔍 Versiones Detectadas"
-              echo "📌 anterior versión : $VERSION_ACTUAL"
-              echo "🚀 Próxima versión : $NEXT_VERSION"
+
+              if [[ "$CURRENT_BRANCH" == refs/heads/hotfix/* ]]; then
+                clean_branch=master
+                echo $clean_branch
+              fi
+
+              if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|staging|master)$ ]]; then
+                raw_branch=$(Build.SourceBranch)
+                clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
+              fi
+
+              if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
+                BASE=$(git merge-base HEAD origin/master)
+                COMMITS=$(git log --pretty=format:"%s" $BASE..HEAD | grep -vi "Auto-generated pipeline config")
+                echo "📝 Commits de la rama feature"
+                echo $COMMITS
+              fi
+
+              if [[ "$CURRENT_BRANCH" == refs/heads/hotfix/* ]]; then
+                BASE=$(git merge-base HEAD origin/master)
+                COMMITS=$(git log --pretty=format:"%s" $BASE..HEAD | grep -vi "Auto-generated pipeline config")
+                echo "📝 Commits de la rama hotfix"
+                echo $COMMITS
+              fi
+
+              if [[ "$CURRENT_BRANCH" == refs/heads/develop ]]; then
+                RAW_COMMITS='$(filteredCommits)'
+                COMMITS=$(printf '%s' "$RAW_COMMITS" | tr '|' '\n')
+                echo "📝 Commits de la rama feature a develop:"
+                echo $COMMITS
+              fi
+
+              if [[ "$CURRENT_BRANCH" == refs/heads/staging ]]; then
+                RAW_COMMITS='$(filteredCommits)'
+                COMMITS=$(printf '%s' "$RAW_COMMITS" | tr '|' '\n')
+                echo "📝 Commits de la rama pre/staging a staging:"
+                echo $COMMITS
+              fi
+
+              if [[ "$CURRENT_BRANCH" == refs/heads/master ]]; then
+                RAW_COMMITS='$(filteredCommits)'
+                COMMITS=$(printf '%s' "$RAW_COMMITS" | tr '|' '\n')
+                echo "📝 Commits de la rama staging a master:"
+                echo $COMMITS
+              fi
+              
+              IS_MAJOR=0
+              IS_MINOR=0
+              IS_PATCH=0
+
+              while read -r COMMIT; do
+                if [[ "$COMMIT" == *"!"* ]]; then
+                  IS_MAJOR=1
+                elif [[ "$COMMIT" == feat:* ]]; then
+                  IS_MINOR=1
+                elif [[ "$COMMIT" == fix:* ]]; then
+                  IS_PATCH=1
+                fi
+              done <<< "$COMMITS"
+
+              if [[ $IS_MAJOR -eq 1 ]]; then
+                RELEASE_TYPE="major"
+              elif [[ $IS_MINOR -eq 1 ]]; then
+                RELEASE_TYPE="minor"
+              elif [[ $IS_PATCH -eq 1 ]]; then
+                RELEASE_TYPE="patch"
+              else
+                RELEASE_TYPE="patch" 
+              fi
+              echo $RELEASE_TYPE
+
+              bump_version() {
+                IFS='.' read -r MAJOR MINOR PATCH <<< "$1"
+                case "$2" in
+                  major) echo "$((MAJOR + 1)).0.0" ;;
+                  minor) echo "$MAJOR.$((MINOR + 1)).0" ;;
+                  patch) echo "$MAJOR.$MINOR.$((PATCH + 1))" ;;
+                esac
+              }
+              version_gt() {
+                # returns 0 (true) if $1 > $2
+                [ "$(printf '%s\n' "$1" "$2" | sort -V | head -n1)" != "$1" ]
+              }
+
+              if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|staging|feature/.+)$ ]]; then
+                git checkout version/$clean_branch
+                VERSION_ACTUAL=$(jq -r .version package.json)
+                BASE_VERSION_BRANCH=$(echo "$VERSION_ACTUAL" | sed -E "s/-${clean_branch}\.[0-9]+//")
+                echo "versión base actual: $BASE_VERSION_BRANCH"
+
+                CURRENT_PRERELEASE=$(echo "$VERSION_ACTUAL" | sed -n "s/.*-${clean_branch}\.\([0-9]\+\)/\1/p")
+
+                git checkout version/master
+                VERSION_ACTUAL_MASTER=$(jq -r .version package.json)
+                echo "versión base master: $VERSION_ACTUAL_MASTER"
+
+                git checkout version/$clean_branch
+
+                if [[ "$BASE_VERSION_BRANCH" == "$VERSION_ACTUAL_MASTER" ]]; then
+                  # Las versiones base son iguales, calcular nueva base y resetear prerelease 
+                  NEXT_BASE_VERSION=$(bump_version "$VERSION_ACTUAL_MASTER" "$RELEASE_TYPE")
+                  NEXT_VERSION="$NEXT_BASE_VERSION-$clean_branch.0"
+                elif version_gt "$BASE_VERSION_BRANCH" "$VERSION_ACTUAL_MASTER"; then
+                  # Base ya es mayor que master, también incrementa el prerelease
+                  NEXT_VERSION="$BASE_VERSION_BRANCH-$clean_branch.$((CURRENT_PRERELEASE + 1))"
+                elif version_gt "$VERSION_ACTUAL_MASTER" "$BASE_VERSION_BRANCH"; then
+                  # La base actual es menor que la de master, subir versión base y resetear prerelease
+                  NEXT_BASE_VERSION=$(bump_version "$VERSION_ACTUAL_MASTER" "$RELEASE_TYPE")
+                  NEXT_VERSION="$NEXT_BASE_VERSION-$clean_branch.0"
+                else
+                  # Las bases son diferentes, solo incrementa el prerelease
+                  NEXT_VERSION="$BASE_VERSION_BRANCH-$clean_branch.$((CURRENT_PRERELEASE + 1))"
+                fi
+                echo -e "\n🔍 Versiones Detectadas"
+                echo "📌 anterior versión : $VERSION_ACTUAL"
+                echo "🚀 Próxima versión : $NEXT_VERSION"
+              fi
+
+              if [[ "$CURRENT_BRANCH" == refs/heads/master ]]; then
+                git checkout version/$clean_branch
+                VERSION_ACTUAL_MASTER=$(jq -r .version package.json)
+                NEXT_BASE_VERSION=$(bump_version "$VERSION_ACTUAL_MASTER" "$RELEASE_TYPE")
+                NEXT_VERSION="$NEXT_BASE_VERSION"
+
+                echo -e "\n🔍 Versiones Detectadas"
+                echo "📌 Anterior versión : $VERSION_ACTUAL_MASTER"
+                echo "🚀 Próxima versión : $NEXT_VERSION"
+              fi
+
+              if [[ "$CURRENT_BRANCH" == refs/heads/hotfix/* ]]; then
+                git checkout version/$clean_branch
+                VERSION_ACTUAL_MASTER=$(jq -r .version package.json)
+                NEXT_BASE_VERSION=$(bump_version "$VERSION_ACTUAL_MASTER" "$RELEASE_TYPE")
+                NEXT_VERSION="$NEXT_BASE_VERSION"
+
+                echo -e "\n🔍 Versiones Detectadas"
+                echo "📌 Anterior versión : $VERSION_ACTUAL_MASTER"
+                echo "🚀 Próxima versión : $NEXT_VERSION"
+              fi
+
+              mkdir -p $(Build.ArtifactStagingDirectory)/microservice
+              touch $(Build.ArtifactStagingDirectory)/microservice/version.json
+              echo "{ \"ms\": \"$(Build.Repository.Name)\", \"version\": \"$NEXT_VERSION\" }" > $(Build.ArtifactStagingDirectory)/microservice/version.json
+
+              echo "##vso[task.setvariable variable=cleanNEXT_VERSION]$NEXT_VERSION"
             fi
-
-            if [[ "$CURRENT_BRANCH" == refs/heads/master ]]; then
-              git checkout version/$clean_branch
-              VERSION_ACTUAL_MASTER=$(jq -r .version package.json)
-              NEXT_BASE_VERSION=$(bump_version "$VERSION_ACTUAL_MASTER" "$RELEASE_TYPE")
-              NEXT_VERSION="$NEXT_BASE_VERSION"
-
-              echo -e "\n🔍 Versiones Detectadas"
-              echo "📌 Anterior versión : $VERSION_ACTUAL_MASTER"
-              echo "🚀 Próxima versión : $NEXT_VERSION"
-            fi
-
-            if [[ "$CURRENT_BRANCH" == refs/heads/hotfix/* ]]; then
-              git checkout version/$clean_branch
-              VERSION_ACTUAL_MASTER=$(jq -r .version package.json)
-              NEXT_BASE_VERSION=$(bump_version "$VERSION_ACTUAL_MASTER" "$RELEASE_TYPE")
-              NEXT_VERSION="$NEXT_BASE_VERSION"
-
-              echo -e "\n🔍 Versiones Detectadas"
-              echo "📌 Anterior versión : $VERSION_ACTUAL_MASTER"
-              echo "🚀 Próxima versión : $NEXT_VERSION"
-            fi
-
-            mkdir -p $(Build.ArtifactStagingDirectory)/microservice
-            touch $(Build.ArtifactStagingDirectory)/microservice/version.json
-            echo "{ \"ms\": \"$(Build.Repository.Name)\", \"version\": \"$NEXT_VERSION\" }" > $(Build.ArtifactStagingDirectory)/microservice/version.json
-
-            echo "##vso[task.setvariable variable=cleanNEXT_VERSION]$NEXT_VERSION"
-          fi
         displayName: "🔍 Detect next version"
         condition: succeeded()
 
-      - script: |
-          set -e
-          if [[ "$(Build.Reason)" == "PullRequest" ]]; then
-            raw_branch="$(System.PullRequest.SourceBranch)"
-          else
-            raw_branch="$(Build.SourceBranch)"
-          fi
-          clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            set -e
+            if [[ "$(Build.Reason)" == "PullRequest" ]]; then
+              raw_branch="$(System.PullRequest.SourceBranch)"
+            else
+              raw_branch="$(Build.SourceBranch)"
+            fi
+            clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
 
-          git config user.name "pipeline"
-          git config user.email "pipelineUX@ux.technology"
+            git config user.name "pipeline"
+            git config user.email "pipelineUX@ux.technology"
 
-          echo "🔧 Actualizando versión en $(Build.Repository.Name)/package.json a $(cleanNEXT_VERSION)"
-          jq --arg version "$(cleanNEXT_VERSION)" '.version = $version' package.json > tmp.json && mv tmp.json package.json
+            echo "🔧 Actualizando versión en $(Build.Repository.Name)/package.json a $(cleanNEXT_VERSION)"
+            jq --arg version "$(cleanNEXT_VERSION)" '.version = $version' package.json > tmp.json && mv tmp.json package.json
 
-          git fetch origin version/$clean_branch
-          git checkout -B version/$clean_branch origin/version/$clean_branch
-          git add package.json
-          git commit -m "chore($(Build.Repository.Name)): bump version to $(cleanNEXT_VERSION)"
-          git push origin version/$clean_branch
-          echo "##vso[build.updatebuildnumber]$(cleanNEXT_VERSION)"
+            git fetch origin version/$clean_branch
+            git checkout -B version/$clean_branch origin/version/$clean_branch
+            git add package.json
+            git commit -m "chore($(Build.Repository.Name)): bump version to $(cleanNEXT_VERSION)"
+            git push origin version/$clean_branch
+            echo "##vso[build.updatebuildnumber]$(cleanNEXT_VERSION)"
         displayName: "⚡ Commit Version & Push — $(Build.Repository.Name)"
         condition: and(succeeded(),
           ne(variables['Build.SourceBranchName'], 'master'),

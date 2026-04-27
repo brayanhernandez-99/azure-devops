@@ -1,51 +1,55 @@
 jobs:
-  - job: check_build_micro_frontend
+  - job: check_build_microfrontend
     displayName: "🛡️ check build"
     pool:
       name: "Azure Pipelines"
       VmImage: ubuntu-22.04
 
     steps:
-      - script: |
-          ORGANIZATION=$(System.CollectionUri)
-          PROJECT=$(System.TeamProject)
-          STATE="succeeded"
-          DESCRIPTION="Build completed successfully"
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            set -e
+            ORGANIZATION=$(System.CollectionUri)
+            PROJECT=$(System.TeamProject)
+            STATE="succeeded"
+            DESCRIPTION="Build completed successfully"
 
-          ITERATION_ID=$(curl -s \
-            -H "Authorization: Bearer $SYSTEM_ACCESSTOKEN" \
-            "$ORGANIZATION/$PROJECT/_apis/git/repositories/$(Build.Repository.Name)/pullRequests/$PR_ID/iterations?api-version=7.1-preview.1" \
-            | jq '.value[-1].id')
+            ITERATION_ID=$(curl -s \
+              -H "Authorization: Bearer $SYSTEM_ACCESSTOKEN" \
+              "$ORGANIZATION/$PROJECT/_apis/git/repositories/$(Build.Repository.Name)/pullRequests/$PR_ID/iterations?api-version=7.1-preview.1" \
+              | jq '.value[-1].id')
 
-          echo -e "\n📡 Reportando resultado a Azure DevOps..."
-          echo "Estado: $STATE"
-          echo "Descripcion: $DESCRIPTION"
-          echo "Pull Request Id: $PR_ID"
-          echo "Iteration Id: $ITERATION_ID"
+            echo -e "\n📡 Reportando resultado a Azure DevOps..."
+            echo "Estado: $STATE"
+            echo "Descripcion: $DESCRIPTION"
+            echo "Pull Request Id: $PR_ID"
+            echo "Iteration Id: $ITERATION_ID"
 
-          cat <<EOF > body.json
-          {
-            "state": "$STATE",
-            "description": "$DESCRIPTION",
-            "context": {
-              "name": "build-check",
-              "genre": "pipeline"
-            },
-            "iterationId": $ITERATION_ID
-          }
-          EOF
+            cat <<EOF > body.json
+            {
+              "state": "$STATE",
+              "description": "$DESCRIPTION",
+              "context": {
+                "name": "build-check",
+                "genre": "pipeline"
+              },
+              "iterationId": $ITERATION_ID
+            }
+            EOF
 
-          echo -e "\n📁 File: body.json"
-          cat body.json
+            echo -e "\n📁 File: body.json"
+            cat body.json
 
-          API_URL="$ORGANIZATION/$PROJECT/_apis/git/repositories/$(Build.Repository.Name)/pullRequests/$PR_ID/statuses?api-version=7.1-preview.1"
-          echo -e "\n##[command]🌐 Calling API: $API_URL"
+            API_URL="$ORGANIZATION/$PROJECT/_apis/git/repositories/$(Build.Repository.Name)/pullRequests/$PR_ID/statuses?api-version=7.1-preview.1"
+            echo -e "\n##[command]🌐 Calling API: $API_URL"
 
-          curl -s \
-            -X POST "$API_URL" \
-            -H "Content-Type: application/json" \
-            -H "Authorization: Bearer $SYSTEM_ACCESSTOKEN" \
-            --data-binary "@body.json"
+            curl -s \
+              -X POST "$API_URL" \
+              -H "Content-Type: application/json" \
+              -H "Authorization: Bearer $SYSTEM_ACCESSTOKEN" \
+              --data-binary "@body.json"
         displayName: "📡 Update PR Status"
         condition: succeeded()
         env:

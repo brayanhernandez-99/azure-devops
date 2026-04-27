@@ -1,5 +1,5 @@
 jobs:
-  - job: "gitleaks_micro_service"
+  - job: "gitleaks_microservice"
     displayName: "🔐 gitleaks microservice"
     pool:
       name: "Azure Pipelines"
@@ -27,6 +27,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
+            set -e
             docker run --rm \
               -v $(Build.SourcesDirectory):/repo \
               zricethezav/gitleaks:latest \
