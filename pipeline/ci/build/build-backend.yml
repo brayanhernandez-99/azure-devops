@@ -143,9 +143,10 @@ jobs:
           script: |
             set -e
             if [[ "$(Build.Reason)" == "PullRequest" ]]; then
-              CURRENT_BRANCH="$(System.PullRequest.SourceBranchName)"
+              CURRENT_BRANCH="$(System.PullRequest.SourceBranch)"
+              CURRENT_BRANCH="${CURRENT_BRANCH/refs\/heads\//}"
             else
-              CURRENT_BRANCH="$(Build.SourceBranchName)"
+              CURRENT_BRANCH="${BUILD_SOURCEBRANCH/refs\/heads\//}"
             fi
 
             case "$CURRENT_BRANCH" in 
