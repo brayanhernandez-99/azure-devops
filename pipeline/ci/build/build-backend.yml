@@ -125,36 +125,37 @@ jobs:
         displayName: "🔍 Validate Dockerfile"
         condition: succeeded()
 
-      - script: |
-          set -e
-          if [[ "$(Build.Reason)" == "PullRequest" ]]; then
-            CURRENT_BRANCH="$(System.PullRequest.SourceBranchName)"
-          else
-            CURRENT_BRANCH="$(Build.SourceBranchName)"
-          fi
+      - task: Bash@3
+        inputs:
+          targetType: "inline"
+          script: |
+            set -e
+            if [[ "$(Build.Reason)" == "PullRequest" ]]; then
+              CURRENT_BRANCH="$(System.PullRequest.SourceBranchName)"
+            else
+              CURRENT_BRANCH="$(Build.SourceBranchName)"
+            fi
 
-          case "$CURRENT_BRANCH" in 
-            staging) environment="qa" ;;
-            master) environment="prd" ;;
-            *) environment="develop" ;;
-          esac
+            case "$CURRENT_BRANCH" in 
+              staging) environment="qa" ;;
+              master) environment="prd" ;;
+              *) environment="develop" ;;
+            esac
 
-          msName=$(echo "$(Build.Repository.Name)" | sed -E 's/^microservice-//; s/-invictus$//')
-          ECR_REPOSITORY="$(Build.Repository.Name)"
-          ECR_REPOSITORY="${ECR_REPOSITORY%-invictus}-$environment"
+            msName=$(echo "$(Build.Repository.Name)" | sed -E 's/^microservice-//; s/-invictus$//')
+            ECR_REPOSITORY="$(Build.Repository.Name)"
+            ECR_REPOSITORY="${ECR_REPOSITORY%-invictus}-$environment"
 
-          echo -e "ℹ️ Configurando... \n"
-          echo "Environment:    $environment"
-          echo "Micro service:  $msName"
-          echo "ECR Repository: $ECR_REPOSITORY"
+            echo -e "ℹ️ Configurando... \n"
+            echo "Environment:    $environment"
+            echo "Micro service:  $msName"
+            echo "ECR Repository: $ECR_REPOSITORY"
 
-          echo "##vso[task.setvariable variable=ecr_repository]$ECR_REPOSITORY"
+            echo "##vso[task.setvariable variable=ecr_repository]$ECR_REPOSITORY"
         displayName: "📛 Set ECR Repository Name"
         condition: succeeded()
 
       - task: Docker@2
-        displayName: "📦 Build Docker Image: $(Build.Repository.Name)"
-        condition: succeeded()
         inputs:
           command: "build"
           Dockerfile: "$(Build.Repository.Name)/Dockerfile"
@@ -162,6 +163,8 @@ jobs:
           tags: |
             latest
             $(version)
+        displayName: "📦 Build Docker Image: $(Build.Repository.Name)"
+        condition: succeeded()
 
       # - script: |
       #     docker run --rm \
@@ -194,11 +197,11 @@ jobs:
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
 
       - task: Docker@2
-        displayName: "🚀 Push Docker Image $(Build.Repository.Name)"
-        condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
         inputs:
           command: "Push"
           repository: "$(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/$(ecr_repository)"
           tags: |
             latest
             $(version)
+        displayName: "🚀 Push Docker Image $(Build.Repository.Name)"
+        condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
