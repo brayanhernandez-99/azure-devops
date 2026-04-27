@@ -24,29 +24,32 @@ jobs:
         displayName: "📥 Download Version"
         condition: succeeded()
 
-      - script: |
-          VERSION_FILE="$(Pipeline.Workspace)/version-downloaded/versions/microservice/version.json"
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            set -e
+            VERSION_FILE="$(Pipeline.Workspace)/version-downloaded/versions/microservice/version.json"
+            echo "📁 Archivo version.json:"
+            ls -la "$VERSION_FILE"
+            jq . "$VERSION_FILE"
 
-          echo -e "\n📁 Archivo version.json:"
-          ls -la "$VERSION_FILE"
-          jq . "$VERSION_FILE"
-
-          if [[ -f "$VERSION_FILE" ]]; then
-            VERSION=$(jq -r '.version' $VERSION_FILE)
-            echo -e "\n🚀 Versión detectada para $(Build.Repository.Name): $VERSION"
-            echo "##vso[task.setvariable variable=version]$VERSION"
-          else
-            echo -e "\n##vso[task.logissue type=error]⚠️ No se encontro archivo de versión para $(Build.Repository.Name)"
-            exit 99
-          fi
+            if [[ -f "$VERSION_FILE" ]]; then
+              VERSION=$(jq -r '.version' "$VERSION_FILE")
+              echo "🚀 Versión detectada: $VERSION"
+              echo "##vso[task.setvariable variable=version]$VERSION"
+            else
+              echo "##vso[task.logissue type=error]No se encontro archivo de versión"
+              exit 99
+            fi
         displayName: "📚 Read Version"
         condition: succeeded()
 
       - task: Bash@3
-        name: AuthCodeArtifact
         inputs:
-          targetType: "inline"
+          targetType: inline
           script: |
+            set -e
             echo -e "\n🔐 Obteniendo token de AWS CodeArtifact..."
             token_matrix=$(aws codeartifact get-authorization-token \
               --domain matrixtech-npm-repository \
@@ -89,6 +92,8 @@ jobs:
             @ux:registry=https://$REPO_DOMAIN_UX/$REPO_PATH_UX/
             //$REPO_DOMAIN_UX/$REPO_PATH_UX/:_authToken=$token_ux
             EOF
+
+            echo -e "\n✅ .npmrc generado"
             ls -la $(Build.Repository.Name)/.npmrc
         displayName: "🔐 Setup CodeArtifact & npm config"
         condition: succeeded()
@@ -97,11 +102,13 @@ jobs:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
 
-      - script: |
-          set -e
-          echo -e "\n🔐 Logging in to ECR..."
-          aws ecr get-login-password --region $AWS_DEFAULT_REGION | \
-          docker login --username AWS --password-stdin $ACCOUNT_ID_DEPLOY.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            set -e
+            aws ecr get-login-password --region $AWS_DEFAULT_REGION | \
+            docker login --username AWS --password-stdin $ACCOUNT_ID_DEPLOY.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
         displayName: "🔐 Login to AWS ECR"
         condition: succeeded()
         env:
@@ -109,25 +116,30 @@ jobs:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
 
-      - script: |
-          DOCKER_FILE=$(Build.Repository.Name)/Dockerfile
-          echo -e "\n🔍 Validando DockerFile en: $DOCKER_FILE"
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            set -e
+            DOCKER_FILE="$(Build.Repository.Name)/Dockerfile"
+            echo -e "\n🔍 Validando DockerFile en: $DOCKER_FILE"
 
-          if [[ -f "$DOCKER_FILE" ]]; then
-            echo "✅ Existe el Dockerfile"
-          else
-            echo "⚠️ No existe el Dockerfile"
-            cp pipelines-templates/pipeline/docker/Dockerfile $(Build.Repository.Name)/Dockerfile
-            echo "✅ Dockerfile copiado exitosamente"
-          fi
-          echo -e "\n📁 Files:"
-          ls -la $(Build.Repository.Name)
+            if [[ -f "$DOCKER_FILE" ]]; then
+              echo "✅ Dockerfile existe"
+            else
+              echo "⚠️ No existe, copiando..."
+              cp pipelines-templates/pipeline/docker/Dockerfile "$DOCKER_FILE"
+              echo "✅ Dockerfile copiado exitosamente"
+            fi
+
+            echo -e "\n📁 Files:"
+            ls -la "$(Build.Repository.Name)"
         displayName: "🔍 Validate Dockerfile"
         condition: succeeded()
 
       - task: Bash@3
         inputs:
-          targetType: "inline"
+          targetType: inline
           script: |
             set -e
             if [[ "$(Build.Reason)" == "PullRequest" ]]; then
@@ -179,16 +191,21 @@ jobs:
       #   condition: and(succeeded(),
       #     ne(variables['Build.SourceBranchName'], 'master'))
 
-      - script: |
-          set -e
-          echo -e "\nℹ️ Verificando repositorio $(ecr_repository)..."
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            set -e
+            echo -e "\nℹ️ Verificando..."
+            echo "Id Cuenta:   $(ACCOUNT_ID_DEPLOY)"
+            echo "Repositorio: $(ecr_repository)"
 
-          if aws ecr describe-repositories --repository-names "$(ecr_repository)" > /dev/null 2>&1; then
-            echo -e "\n✅ Repositorio $(ecr_repository) existe"
-          else
-            echo -e "\n##vso[task.logissue type=error]⚠️ Repositorio $(ecr_repository) no existe."
-            exit 99
-          fi
+            if aws ecr describe-repositories --repository-names "$(ecr_repository)" > /dev/null 2>&1; then
+              echo -e "\n✅ Repositorio $(ecr_repository) existe"
+            else
+              echo -e "\n##vso[task.logissue type=error]⚠️ Repositorio $(ecr_repository) no existe."
+              exit 99
+            fi
         displayName: "🔍 Verify ECR Repository Exists"
         condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
         env:
