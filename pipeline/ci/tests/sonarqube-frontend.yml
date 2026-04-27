@@ -168,32 +168,29 @@ jobs:
             echo -e "\n📂 Contenido raíz:"
             ls -la
 
-            echo "📍 ls $(System.DefaultWorkingDirectory):"
-            ls -la $(System.DefaultWorkingDirectory)
+            echo "📍 ls $(Build.Repository.Name):"
+            ls -la $(Build.Repository.Name)
 
-            echo -e "\n📂 Contenido apps:"
-            ls -la $(System.DefaultWorkingDirectory)/apps || true
 
-            echo -e "\n📂 Intentando ruta completa:"
-            ls -la $(System.DefaultWorkingDirectory)/$(file) || true
-            ls -la $(System.DefaultWorkingDirectory)/$(file)/$(msName) || true
+            echo -e "\n📂 ls -la $(Build.Repository.Name)/$(file):"
+            ls -la $(Build.Repository.Name)/$(file)
 
 
 
 
 
-            echo -e "\n📁 Generando archivo .pnpmrc en: $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc"
-            cat <<EOF > "$(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc"
+            echo -e "\n📁 Generando archivo .pnpmrc en: $(Build.Repository.Name)/$(file)/$(msName)/.pnpmrc"
+            cat <<EOF > "$(Build.Repository.Name)/$(file)/$(msName)/.pnpmrc"
             node-linker=hoisted
             shamefully-hoist=true
             ignore-scripts=false
             allow-build-script=true
             strict-peer-dependencies=false
             EOF
-            ls -l $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc
-            cat $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc
+            ls -l $(Build.Repository.Name)/$(file)/$(msName)/.pnpmrc
+            cat $(Build.Repository.Name)/$(file)/$(msName)/.pnpmrc
 
-            cd $(System.DefaultWorkingDirectory)
+            cd $(Build.Repository.Name)
             echo -e "\n⚙️ Instalando dependencias node..."
             npm install -g pnpm
             pnpm install
