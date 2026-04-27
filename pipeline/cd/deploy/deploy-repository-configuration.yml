@@ -16,12 +16,14 @@ jobs:
         fetchDepth: 0
         persistCredentials: true
 
-      - script: |
-          set -e
-          echo -e "\n📦 Cargando al Bucket S3..."
-          ls -l
-
-          aws s3 cp . s3://configuration-$(ACCOUNT_ID_INVICTUS) --recursive --exclude "pipeline/*"
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            set -e
+            echo -e "\n📦 Cargando al Bucket S3..."
+            ls -la
+            aws s3 cp . s3://configuration-$(ACCOUNT_ID_INVICTUS) --recursive --exclude "pipeline/*"
         displayName: "📤 Upload Configuration to S3"
         condition: succeeded()
         env:
@@ -29,19 +31,22 @@ jobs:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
 
-      - script: |
-          set -e
-          echo "🔎 Verificando cambios en carpeta reports/..."
-          if git diff --name-only HEAD~1 HEAD | grep -q "^reports/"; then 
-            echo -e "\n✅ Se detectaron cambios en reports/ y no es develop, enviando mensaje a SQS"; 
-            json_complete='{"event":"migration","streamNotifier":"Notifier","model":{"method":"insert","reports":[{"name":"modelos_invictus","type_card":"model"},{"name":"reportes_invictus","type_card":"question"},{"name":"archivos_cem","type_card":"question"}]}}'; 
-            aws sqs send-message \
-              --queue-url https://sqs.us-east-1.amazonaws.com/$(ACCOUNT_ID_INVICTUS)/Sellers \
-              --message-body "$json_complete" \
-              --delay-seconds 0
-          else 
-            echo -e "\nℹ️ No se enviará mensaje a SQS: no hubo cambios en reports/"
-          fi
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            set -e
+            echo "🔎 Verificando cambios en carpeta reports/..."
+            if git diff --name-only HEAD~1 HEAD | grep -q "^reports/"; then 
+              echo -e "\n✅ Se detectaron cambios en reports/ y no es develop, enviando mensaje a SQS"; 
+              json_complete='{"event":"migration","streamNotifier":"Notifier","model":{"method":"insert","reports":[{"name":"modelos_invictus","type_card":"model"},{"name":"reportes_invictus","type_card":"question"},{"name":"archivos_cem","type_card":"question"}]}}'; 
+              aws sqs send-message \
+                --queue-url https://sqs.us-east-1.amazonaws.com/$(ACCOUNT_ID_INVICTUS)/Sellers \
+                --message-body "$json_complete" \
+                --delay-seconds 0
+            else 
+              echo -e "\nℹ️ No se enviará mensaje a SQS: no hubo cambios en reports/"
+            fi
         displayName: "🔍 Verify Changes in reports/"
         condition: and(succeeded(), ne(variables['Build.SourceBranchName'], 'develop'))
         env:
@@ -49,50 +54,54 @@ jobs:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
 
-      - script: |
-          DEPLOY_TIME=$(date -d "$BUILD_FINISHTIME -5 hours" "+%Y-%m-%d %I:%M %p")
-          CURRENT_BRANCH="$(Build.SourceBranchName)"
-          environment="develop"
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            set -e
+            DEPLOY_TIME=$(date -d "$BUILD_FINISHTIME -5 hours" "+%Y-%m-%d %I:%M %p")
+            CURRENT_BRANCH="$(Build.SourceBranchName)"
+            environment="develop"
 
-          case "$CURRENT_BRANCH" in 
-            staging) environment="$environment_staging" ;;
-            master) environment="$region" ;;
-          esac
+            case "$CURRENT_BRANCH" in 
+              staging) environment="$environment_staging" ;;
+              master) environment="$region" ;;
+            esac
 
-          echo -e "\n📢 Generando notificación para Teams..."
-          echo "Pipeline   : $(Build.DefinitionName)"
-          echo "Branch     : $environment"
-          echo "Build      : $(Build.BuildNumber)"
-          echo "User       : $(Build.RequestedFor)"
-          echo "DeployTime : $DEPLOY_TIME"
-          echo ""
+            echo -e "\n📢 Generando notificación para Teams..."
+            echo "Pipeline   : $(Build.DefinitionName)"
+            echo "Branch     : $environment"
+            echo "Build      : $(Build.BuildNumber)"
+            echo "User       : $(Build.RequestedFor)"
+            echo "DeployTime : $DEPLOY_TIME"
+            echo ""
 
-          payload=$(cat <<EOF
-          {
-            "@type": "MessageCard",
-            "@context": "http://schema.org/extensions",
-            "summary": "Deployment successful",
-            "themeColor": "00FF00",
-            "title": "✅ Deployment exitoso $(Build.SourceBranchName)",
-            "sections": [
-              {
-                "facts": [
-                  { "name": "Pipeline", "value": "$(Build.DefinitionName)" },
-                  { "name": "Branch", "value": "$environment" },
-                  { "name": "Build", "value": "$(Build.BuildNumber)" },
-                  { "name": "Merged by", "value": "$(Build.RequestedFor)" },
-                  { "name": "Deploy time", "value": "$DEPLOY_TIME" }
-                ],
-                "markdown": true
-              }
-            ]
-          }
-          EOF
-          )
+            payload=$(cat <<EOF
+            {
+              "@type": "MessageCard",
+              "@context": "http://schema.org/extensions",
+              "summary": "Deployment successful",
+              "themeColor": "00FF00",
+              "title": "✅ Deployment exitoso $(Build.SourceBranchName)",
+              "sections": [
+                {
+                  "facts": [
+                    { "name": "Pipeline", "value": "$(Build.DefinitionName)" },
+                    { "name": "Branch", "value": "$environment" },
+                    { "name": "Build", "value": "$(Build.BuildNumber)" },
+                    { "name": "Merged by", "value": "$(Build.RequestedFor)" },
+                    { "name": "Deploy time", "value": "$DEPLOY_TIME" }
+                  ],
+                  "markdown": true
+                }
+              ]
+            }
+            EOF
+            )
 
-          curl -H "Content-Type: application/json" \
-               -d "$payload" \
-               $(URL_WEBHOOK_TEAMS)
+            curl -H "Content-Type: application/json" \
+                -d "$payload" \
+                $(URL_WEBHOOK_TEAMS)
         displayName: "📢 Post message to Teams"
         condition: succeeded()
         env:

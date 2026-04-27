@@ -1,5 +1,5 @@
 stages:
-  - stage: semantic_version_micro_fronted
+  - stage: semantic_version_microfrontend
     displayName: "🏷️ Semantic Version MicroFrontend"
     jobs:
       - template: ../ci/semantic-version-integration.yml
@@ -10,25 +10,25 @@ stages:
   #####################################################################
 
   - ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')) }}:
-      - stage: scan_micro_frontend
-        displayName: "🛡️ Scan Microfrontend"
-        dependsOn: semantic_version_micro_fronted
+      - stage: scan_microfrontend
+        displayName: "🛡️ Scan MicroFrontend"
+        dependsOn: semantic_version_microfrontend
         jobs:
           - template: ../ci/tests/sonarqube-frontend.yml
             parameters:
               apps: ${{ parameters.apps }}
 
-      - stage: build_micro_frontend
+      - stage: build_microfrontend
         displayName: "📦 Build MicroFrontend"
-        dependsOn: scan_micro_frontend
+        dependsOn: scan_microfrontend
         jobs:
           - template: ../ci/build/build-frontend.yml
             parameters:
               apps: ${{ parameters.apps }}
 
-      - stage: check_build_micro_frontend
+      - stage: check_build_microfrontend
         displayName: "🛡️ Check Build MicroFrontend"
-        dependsOn: build_micro_frontend
+        dependsOn: build_microfrontend
         condition: and(succeeded(), ne('${{ parameters.pr_id }}', '0'))
         jobs:
           - template: ../ci/pre-build/check-build-frontend.yml
@@ -39,9 +39,9 @@ stages:
 
   - ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
       - ${{ each region in parameters.red }}:
-          - stage: build_micro_frontend_${{ region }}
+          - stage: build_microfrontend_${{ region }}
             displayName: "📦 Build MicroFrontend ${{ region }}"
-            dependsOn: semantic_version_micro_fronted
+            dependsOn: semantic_version_microfrontend
             jobs:
               - template: ../ci/build/build-frontend.yml
                 parameters:
@@ -49,9 +49,9 @@ stages:
                   apps: ${{ parameters.apps }}
                   pr_id: ${{ parameters.pr_id }}
 
-          - stage: deploy_micro_frontend_${{ region }}
+          - stage: deploy_microfrontend_${{ region }}
             displayName: "🚀 Deploy MicroFrontend ${{ region }}"
-            dependsOn: build_micro_frontend_${{ region }}
+            dependsOn: build_microfrontend_${{ region }}
             jobs:
               - template: ../cd/deployment.yml
                 parameters:
@@ -62,26 +62,26 @@ stages:
   #####################################################################
 
   - ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}:
-      - stage: scan_micro_frontend
-        displayName: "🛡️ Scan Microfrontend"
-        dependsOn: semantic_version_micro_fronted
+      - stage: scan_microfrontend
+        displayName: "🛡️ Scan MicroFrontend"
+        dependsOn: semantic_version_microfrontend
         jobs:
           - template: ../ci/tests/sonarqube-frontend.yml
             parameters:
               apps: ${{ parameters.apps }}
 
-      - stage: build_micro_frontend_develop
+      - stage: build_microfrontend_develop
         displayName: "📦 Build MicroFrontend develop"
-        dependsOn: scan_micro_frontend
+        dependsOn: scan_microfrontend
         jobs:
           - template: ../ci/build/build-frontend.yml
             parameters:
               environments: develop
               apps: ${{ parameters.apps }}
 
-      - stage: deploy_micro_frontend_develop
+      - stage: deploy_microfrontend_develop
         displayName: "🚀 Deploy MicroFrontend develop"
-        dependsOn: build_micro_frontend_develop
+        dependsOn: build_microfrontend_develop
         jobs:
           - template: ../cd/deployment.yml
             parameters:
@@ -93,18 +93,18 @@ stages:
 
   - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
       - ${{ each environments in parameters.environments_staging }}:
-          - stage: build_micro_frontend_${{ environments }}
+          - stage: build_microfrontend_${{ environments }}
             displayName: "📦 Build MicroFrontend ${{ environments }}"
-            dependsOn: semantic_version_micro_fronted
+            dependsOn: semantic_version_microfrontend
             jobs:
               - template: ../ci/build/build-frontend.yml
                 parameters:
                   environments: ${{ environments }}
                   apps: ${{ parameters.apps }}
 
-          - stage: deploy_micro_frontend_${{ environments }}
+          - stage: deploy_microfrontend_${{ environments }}
             displayName: "🚀 Deploy MicroFrontend ${{ environments }}"
-            dependsOn: build_micro_frontend_${{ environments }}
+            dependsOn: build_microfrontend_${{ environments }}
             jobs:
               - template: ../cd/deployment.yml
                 parameters:

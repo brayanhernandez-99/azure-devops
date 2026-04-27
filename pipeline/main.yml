@@ -64,7 +64,7 @@ resources:
 
 stages:
   #
-  # MicroFronted Pre-Build
+  # Microfrontend Pre-Build
   #
   - ${{ if and( contains('PullRequest,IndividualCI', variables['Build.Reason']), eq(variables['Build.Repository.Name'], 'apps-microfrontend-invictus')) }}:
       - template: ./pipelines/pipeline-pre-build.yml
@@ -72,7 +72,7 @@ stages:
           release: ${{ parameters.release }}
 
   #
-  # MicroFronted
+  # Microfrontend
   #
   - ${{ if and(eq(parameters.release, 'aws-s3'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), in(variables['Build.SourceBranchName'], 'develop', 'staging', 'master'))) }}:
       - template: ./pipelines/pipeline-microfrontend.yml

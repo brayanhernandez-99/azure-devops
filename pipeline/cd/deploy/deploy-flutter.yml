@@ -26,91 +26,101 @@ jobs:
         displayName: "📥 Download Version"
         condition: succeeded()
 
-      - script: |
-          VERSION_FILE="$(Pipeline.Workspace)/versions-downloaded/versions/flutter/version.json"
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            set -e
+            VERSION_FILE="$(Pipeline.Workspace)/versions-downloaded/versions/flutter/version.json"
+            echo -e "\n📁 Archivo version.json:"
+            ls -la "$VERSION_FILE"
+            cat "$VERSION_FILE"
 
-          echo -e "\n📁 Archivo version.json:"
-          ls -la "$VERSION_FILE"
-          cat "$VERSION_FILE"
-
-          if [[ -f "$VERSION_FILE" ]]; then
-            VERSION=$(jq -r '.version' $VERSION_FILE)
-            echo -e "\n🚀 Versión detectada para $(Build.Repository.Name): $VERSION"
-            echo "##vso[task.setvariable variable=version]$VERSION"
-          else
-            echo -e "\n##vso[task.logissue type=error]⚠️ No se encontro archivo de versión para $(Build.Repository.Name)"
-            exit 99
-          fi
+            if [[ -f "$VERSION_FILE" ]]; then
+              VERSION=$(jq -r '.version' $VERSION_FILE)
+              echo -e "\n🚀 Versión detectada para $(Build.Repository.Name): $VERSION"
+              echo "##vso[task.setvariable variable=version]$VERSION"
+            else
+              echo -e "\n##vso[task.logissue type=error]⚠️ No se encontro archivo de versión para $(Build.Repository.Name)"
+              exit 99
+            fi
         displayName: "📚 Read Version"
         condition: succeeded()
 
-      - script: |
-          CURRENT_BRANCH="$(Build.SourceBranch)"
-          environment="unknown"
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            set -e
+            CURRENT_BRANCH="$(Build.SourceBranch)"
+            environment="unknown"
 
-          case "$CURRENT_BRANCH" in
-            refs/heads/feature/*) environment="dev"; ;;
-            refs/heads/develop)
-              if [[ "$environments" == "develop_new" ]]; then
-                environment="dev_new"
-              else
-                environment="dev"
-              fi
-              ;;
-            refs/heads/staging)
-              if [[ "$environments" == "staging_new" ]]; then
-                environment="qa_new"
-              elif [[ "$environments" == "staging_nacional" ]]; then
-                environment="qa_nacional"
-              else
-                environment="qa"
-              fi
-              ;;
-            refs/heads/master) 
-              case "$region" in
-                "antioquia") environment="prd-gana"; ;;
-                "cap")       environment="prd-cap"; ;;
-                "tolima")    environment="prd-seapto"; ;;
-                "huila")     environment="prd-suchance"; ;;
-                "cauca")     environment="prd-acertemos"; ;;
-                "boyaca")    environment="prd-jer"; ;;
-                "santander") environment="prd-laperla"; ;;
-                "putumayo")  environment="prd-matrixredes"; ;;
-              esac ;;
-          esac
+            case "$CURRENT_BRANCH" in
+              refs/heads/feature/*) environment="dev"; ;;
+              refs/heads/develop)
+                if [[ "$environments" == "develop_new" ]]; then
+                  environment="dev_new"
+                else
+                  environment="dev"
+                fi
+                ;;
+              refs/heads/staging)
+                if [[ "$environments" == "staging_new" ]]; then
+                  environment="qa_new"
+                elif [[ "$environments" == "staging_nacional" ]]; then
+                  environment="qa_nacional"
+                else
+                  environment="qa"
+                fi
+                ;;
+              refs/heads/master) 
+                case "$region" in
+                  "antioquia") environment="prd-gana"; ;;
+                  "cap")       environment="prd-cap"; ;;
+                  "tolima")    environment="prd-seapto"; ;;
+                  "huila")     environment="prd-suchance"; ;;
+                  "cauca")     environment="prd-acertemos"; ;;
+                  "boyaca")    environment="prd-jer"; ;;
+                  "santander") environment="prd-laperla"; ;;
+                  "putumayo")  environment="prd-matrixredes"; ;;
+                esac ;;
+            esac
 
-          if [[ "$environment" == "unknown" ]]; then
-            echo -e "\n##vso[task.logissue type=error]⚠️ Environment [$environment] no reconocido"
-            exit 99
-          fi
+            if [[ "$environment" == "unknown" ]]; then
+              echo -e "\n##vso[task.logissue type=error]⚠️ Environment [$environment] no reconocido"
+              exit 99
+            fi
 
-          echo "##vso[task.setvariable variable=environment]$environment"
+            echo "##vso[task.setvariable variable=environment]$environment"
 
-          echo -e "\nℹ️ Varibles de entorno:"
-          echo "Environment: $environment"
+            echo -e "\nℹ️ Varibles de entorno:"
+            echo "Environment: $environment"
         displayName: "⚙️ Generate Environment"
         condition: succeeded()
         env:
           region: ${{ parameters.region }}
           environments: ${{ parameters.environments }}
 
-      - script: |
-          set -e
-          echo -e "\n📦 Cargando al Bucket S3..."
-          APK_NAME="invictus-$(environment)-$(version).apk"
-          BASE_PATH="$(Pipeline.Workspace)/flutter-artifact/flutter"
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            set -e
+            echo -e "\n📦 Cargando al Bucket S3..."
+            APK_NAME="invictus-$(environment)-$(version).apk"
+            BASE_PATH="$(Pipeline.Workspace)/flutter-artifact/flutter"
 
-          echo "APK: $APK_NAME"
-          echo "Environment: $(environment)"
+            echo "APK: $APK_NAME"
+            echo "Environment: $(environment)"
 
-          echo -e "\n📁 Archivos a cargar:"
-          ls -la $BASE_PATH/*
+            echo -e "\n📁 Archivos a cargar:"
+            ls -la $BASE_PATH/*
 
-          aws s3 cp $BASE_PATH/$APK_NAME s3://repository-native/app-seller/android/$(environment)/$APK_NAME --acl public-read
+            aws s3 cp $BASE_PATH/$APK_NAME s3://repository-native/app-seller/android/$(environment)/$APK_NAME --acl public-read
 
-          echo -e "\n✅ Archivos subidos exitosamente."
-          echo "🔗 APK: $APK_NAME"
-          echo -e "\n##[command]🔗 URL: https://repository-native.s3.us-east-1.amazonaws.com/app-seller/android/$(environment)/$APK_NAME"
+            echo -e "\n✅ Archivos subidos exitosamente."
+            echo "🔗 APK: $APK_NAME"
+            echo -e "\n##[command]🔗 URL: https://repository-native.s3.us-east-1.amazonaws.com/app-seller/android/$(environment)/$APK_NAME"
         displayName: "📤 Upload Bucket S3"
         condition: succeeded()
         env:
@@ -118,74 +128,81 @@ jobs:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
 
-      - script: |
-          set -e
-          echo -e "\nℹ️ Enviando Mensaje a SQS..."
-          echo "Cuenta : $(ACCOUNT_ID_INVICTUS)"
-          echo "Version: $(version)"
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            set -e
+            echo -e "\nℹ️ Enviando Mensaje a SQS..."
+            echo "Cuenta : $(ACCOUNT_ID_INVICTUS)"
+            echo "Version: $(version)"
 
-          aws sqs send-message \
-            --queue-url https://sqs.us-east-1.amazonaws.com/$(ACCOUNT_ID_INVICTUS)/DynamicStorage \
-            --message-body '{
-              "model": {
-                "parameterName": "VERSION-ANDROID",
-                "parameterDescription": "Parámetro que indica la versión actual Android.",
-                "parameterOrigin": "GLOBAL_PARAMETER",
-                "parameterValue": "$(version)"
-              },
-              "event": "setParameter"
-            }' \
-            --delay-seconds 0
+            aws sqs send-message \
+              --queue-url https://sqs.us-east-1.amazonaws.com/$(ACCOUNT_ID_INVICTUS)/DynamicStorage \
+              --message-body '{
+                "model": {
+                  "parameterName": "VERSION-ANDROID",
+                  "parameterDescription": "Parámetro que indica la versión actual Android.",
+                  "parameterOrigin": "GLOBAL_PARAMETER",
+                  "parameterValue": "$(version)"
+                },
+                "event": "setParameter"
+              }' \
+              --delay-seconds 0
         displayName: "📩 Send Message SQS"
         env:
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
 
-      - script: |
-          DEPLOY_TIME=$(date -d "$BUILD_FINISHTIME -5 hours" "+%Y-%m-%d %I:%M %p")
-          BRANCH_NAME_MULTI=$environments
-          BRANCH_NAME="$(Build.SourceBranchName)"
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            set -e
+            DEPLOY_TIME=$(date -d "$BUILD_FINISHTIME -5 hours" "+%Y-%m-%d %I:%M %p")
+            BRANCH_NAME_MULTI=$environments
+            BRANCH_NAME="$(Build.SourceBranchName)"
 
-          if [[ "$BRANCH_NAME" == "master" ]]; then
-            BRANCH_DEPLOY="${red:-red}"
+            if [[ "$BRANCH_NAME" == "master" ]]; then
+              BRANCH_DEPLOY="${red:-red}"
 
-          elif [[ "$BRANCH_NAME" == "develop" && "$BRANCH_NAME_MULTI" == "develop" ]]; then
-            BRANCH_DEPLOY="develop"
+            elif [[ "$BRANCH_NAME" == "develop" && "$BRANCH_NAME_MULTI" == "develop" ]]; then
+              BRANCH_DEPLOY="develop"
 
-          elif [[ "$BRANCH_NAME" == "staging" && "$BRANCH_NAME_MULTI" == "staging" ]]; then
-            BRANCH_DEPLOY="staging"
+            elif [[ "$BRANCH_NAME" == "staging" && "$BRANCH_NAME_MULTI" == "staging" ]]; then
+              BRANCH_DEPLOY="staging"
 
-          else
-            BRANCH_DEPLOY="$BRANCH_NAME_MULTI"
-          fi
+            else
+              BRANCH_DEPLOY="$BRANCH_NAME_MULTI"
+            fi
 
-          payload=$(cat <<EOF
-          {
-            "@type": "MessageCard",
-            "@context": "http://schema.org/extensions",
-            "summary": "Deployment successful",
-            "themeColor": "00FF00",
-            "title": "✅ Deployment exitoso $(Build.SourceBranchName)",
-            "sections": [
-              {
-                "facts": [
-                  { "name": "Pipeline", "value": "$(Build.DefinitionName)" },
-                  { "name": "Branch", "value": "$BRANCH_DEPLOY" },
-                  { "name": "Build", "value": "$(Build.BuildNumber)" },
-                  { "name": "Merged by", "value": "$(Build.RequestedFor)" },
-                  { "name": "Deploy time", "value": "$DEPLOY_TIME" }
-                ],
-                "markdown": true
-              }
-            ]
-          }
-          EOF
-          )
+            payload=$(cat <<EOF
+            {
+              "@type": "MessageCard",
+              "@context": "http://schema.org/extensions",
+              "summary": "Deployment successful",
+              "themeColor": "00FF00",
+              "title": "✅ Deployment exitoso $(Build.SourceBranchName)",
+              "sections": [
+                {
+                  "facts": [
+                    { "name": "Pipeline", "value": "$(Build.DefinitionName)" },
+                    { "name": "Branch", "value": "$BRANCH_DEPLOY" },
+                    { "name": "Build", "value": "$(Build.BuildNumber)" },
+                    { "name": "Merged by", "value": "$(Build.RequestedFor)" },
+                    { "name": "Deploy time", "value": "$DEPLOY_TIME" }
+                  ],
+                  "markdown": true
+                }
+              ]
+            }
+            EOF
+            )
 
-          curl -H "Content-Type: application/json" \
-               -d "$payload" \
-               $(URL_WEBHOOK_TEAMS)
+            curl -H "Content-Type: application/json" \
+                -d "$payload" \
+                $(URL_WEBHOOK_TEAMS)
         displayName: "📢 Post message to Teams"
         env:
           red: ${{ parameters.region }}

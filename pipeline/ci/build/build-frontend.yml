@@ -1,5 +1,5 @@
 jobs:
-  - job: build_micro_frontend_${{ parameters.region }}
+  - job: build_microfrontend_${{ parameters.region }}
     displayName: "📦 build"
     pool:
       name: "Azure Pipelines"
@@ -25,34 +25,41 @@ jobs:
         displayName: "📥 Download Version"
         condition: succeeded()
 
-      - script: |
-          VERSION_FILE="$(Pipeline.Workspace)/versions-downloaded/versions/$(msName)/version.json"
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            set -e
+            VERSION_FILE="$(Pipeline.Workspace)/versions-downloaded/versions/$(msName)/version.json"
+            echo -e "\n📁 Archivo version.json:"
+            ls -la "$VERSION_FILE"
+            jq . "$VERSION_FILE"
 
-          echo -e "\n📁 Archivo version.json:"
-          ls -la "$VERSION_FILE"
-          jq . "$VERSION_FILE"
-
-          if [[ -f "$VERSION_FILE" ]]; then
-            VERSION=$(jq -r '.version' $VERSION_FILE)
-            echo -e "\n🚀 Versión detectada para $(msName): $VERSION"
-            echo "##vso[task.setvariable variable=msVersion]$VERSION"
-          else
-            echo -e "\n##vso[task.logissue type=error]⚠️ No se encontró archivo de versión para: $(msName)" 
-            exit 99
-          fi
+            if [[ -f "$VERSION_FILE" ]]; then
+              VERSION=$(jq -r '.version' $VERSION_FILE)
+              echo -e "\n🚀 Versión detectada para $(msName): $VERSION"
+              echo "##vso[task.setvariable variable=msVersion]$VERSION"
+            else
+              echo -e "\n##vso[task.logissue type=error]⚠️ No se encontró archivo de versión para: $(msName)" 
+              exit 99
+            fi
         displayName: "📚 Read Version"
         condition: succeeded()
 
-      - script: |
-          if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
-            fileselect=app-legacy
-            echo -e "\nℹ️ Ruta de archivo del micro frontend: $fileselect"
-            echo "##vso[task.setvariable variable=file]$fileselect"
-          else
-            fileselect=apps
-            echo -e "\nℹ️ Ruta de archivo del micro frontend: $fileselect"
-            echo "##vso[task.setvariable variable=file]$fileselect"
-          fi
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            set -e
+            if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
+              fileselect=app-legacy
+              echo -e "\nℹ️ Ruta de archivo del microfrontend: $fileselect"
+              echo "##vso[task.setvariable variable=file]$fileselect"
+            else
+              fileselect=apps
+              echo -e "\nℹ️ Ruta de archivo del microfrontend: $fileselect"
+              echo "##vso[task.setvariable variable=file]$fileselect"
+            fi
         displayName: "📂 Select Directory"
         condition: succeeded()
 
@@ -60,6 +67,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
+            set -e
             echo "🔐 Obteniendo token de AWS CodeArtifact..."
             token=$(aws codeartifact get-authorization-token \
               --domain matrixtech-npm-repository \
@@ -85,7 +93,7 @@ jobs:
             //$REPO_DOMAIN/$REPO_PATH/:_authToken=$token
             registry=$REPO_URL
             EOF
-            
+
             echo -e "\n✅ .npmrc generado"
             ls -l $npmrcPath
         displayName: "🔐 Setup CodeArtifact & npm config"
@@ -95,114 +103,133 @@ jobs:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
 
-      - script: |
-          echo -e "\n📁 Archivo .env.local: app-administration-vue2"
-          printenv | grep "^VUE2_" | sed "s/^VUE2_//" > $(System.DefaultWorkingDirectory)/app-legacy/app-administration-vue2/.env.local
-          printenv | grep "^ADMIN_" | sed "s/^ADMIN_//" >> $(System.DefaultWorkingDirectory)/app-legacy/app-administration-vue2/.env.local
-          ls -l app-legacy/app-administration-vue2/.env.local
-          cat app-legacy/app-administration-vue2/.env.local
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            set -e
+            echo -e "\n📁 Archivo .env.local: app-administration-vue2"
+            printenv | grep "^VUE2_" | sed "s/^VUE2_//" > $(System.DefaultWorkingDirectory)/app-legacy/app-administration-vue2/.env.local
+            printenv | grep "^ADMIN_" | sed "s/^ADMIN_//" >> $(System.DefaultWorkingDirectory)/app-legacy/app-administration-vue2/.env.local
+            ls -l app-legacy/app-administration-vue2/.env.local
+            cat app-legacy/app-administration-vue2/.env.local
 
-          echo -e "\n📁 Archivo .env.local: app-sellers-vue2"
-          printenv | grep "^VUE2_" | sed "s/^VUE2_//" > $(System.DefaultWorkingDirectory)/app-legacy/app-sellers-vue2/.env.local
-          printenv | grep "^SELLERS_" | sed "s/^SELLERS_//" >> $(System.DefaultWorkingDirectory)/app-legacy/app-sellers-vue2/.env.local
-          ls -l app-legacy/app-sellers-vue2/.env.local
-          cat app-legacy/app-sellers-vue2/.env.local
+            echo -e "\n📁 Archivo .env.local: app-sellers-vue2"
+            printenv | grep "^VUE2_" | sed "s/^VUE2_//" > $(System.DefaultWorkingDirectory)/app-legacy/app-sellers-vue2/.env.local
+            printenv | grep "^SELLERS_" | sed "s/^SELLERS_//" >> $(System.DefaultWorkingDirectory)/app-legacy/app-sellers-vue2/.env.local
+            ls -l app-legacy/app-sellers-vue2/.env.local
+            cat app-legacy/app-sellers-vue2/.env.local
 
-          echo -e "\n📁 Archivo .env: invictus"
-          printenv | grep -i "^INVICTUS_" |sed "s/^INVICTUS_//" > $(System.DefaultWorkingDirectory)/apps/invictus/.env
-          ls -l apps/invictus/.env
-          cat apps/invictus/.env
+            echo -e "\n📁 Archivo .env: invictus"
+            printenv | grep -i "^INVICTUS_" |sed "s/^INVICTUS_//" > $(System.DefaultWorkingDirectory)/apps/invictus/.env
+            ls -l apps/invictus/.env
+            cat apps/invictus/.env
 
-          echo -e "\n📁 Archivos .env para el path raiz"
-          printenv | grep "^ROOT_" | sed "s/^ROOT_//" > $(System.DefaultWorkingDirectory)/.env
-          ls -l .env
-          cat .env
+            echo -e "\n📁 Archivos .env para el path raiz"
+            printenv | grep "^ROOT_" | sed "s/^ROOT_//" > $(System.DefaultWorkingDirectory)/.env
+            ls -l .env
+            cat .env
         displayName: "⚙️ Generate .env"
         condition: succeeded()
 
-      - script: |
-          echo -e "\n📁 Archivos .env: $(msName)"
-          printenv | grep -i "^$(msName)_" |sed -E "s/^($(msName))_//I" > $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.env
-          cat apps/invictus/.env >> $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.env
-          ls -l apps/$(msName)/.env
-          cat apps/$(msName)/.env
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            set -e
+            echo -e "\n📁 Archivos .env: $(msName)"
+            printenv | grep -i "^$(msName)_" |sed -E "s/^($(msName))_//I" > $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.env
+            cat apps/invictus/.env >> $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.env
+            ls -l apps/$(msName)/.env
+            cat apps/$(msName)/.env
         displayName: "⚙️ Generate $(msName) .env"
         condition: and(succeeded(),
           ne(variables['msName'], 'app-administration-vue2'),
           ne(variables['msName'], 'app-sellers-vue2'))
 
-      - script: |
-          cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
-          echo "🔧 Actualizando versión en $(file)/$(msName)/package.json: $(msVersion)"
-          jq --arg version "$(msVersion)" '.version = $version' package.json > tmp.json && mv tmp.json package.json
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            set -e
+            cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
+            echo "🔧 Actualizando versión en $(file)/$(msName)/package.json: $(msVersion)"
+            jq --arg version "$(msVersion)" '.version = $version' package.json > tmp.json && mv tmp.json package.json
 
-          echo -e "\n📁 File package.json:"      
-          cat $(System.DefaultWorkingDirectory)/$(file)/$(msName)/package.json
+            echo -e "\n📁 File package.json:"      
+            cat $(System.DefaultWorkingDirectory)/$(file)/$(msName)/package.json
         displayName: "📝 Update Version package.json"
         condition: succeeded()
 
       - task: UseNode@1
-        displayName: "🔧 Install Nodejs $(nodeVersion)"
         inputs:
           version: "$(nodeVersion)"
+        displayName: "🔧 Install Nodejs $(nodeVersion)"
         condition: succeeded()
 
-      - script: |
-          echo -e "\n📁 Generando archivo .pnpmrc en: $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc"
-          cat <<EOF > "$(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc"
-          node-linker=hoisted
-          shamefully-hoist=true
-          ignore-scripts=false
-          allow-build-script=true
-          strict-peer-dependencies=false
-          EOF
-          ls -l $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc
-          cat $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            set -e
+            echo -e "\n📁 Generando archivo .pnpmrc en: $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc"
+            cat <<EOF > "$(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc"
+            node-linker=hoisted
+            shamefully-hoist=true
+            ignore-scripts=false
+            allow-build-script=true
+            strict-peer-dependencies=false
+            EOF
+            ls -l $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc
+            cat $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc
 
-          cd $(System.DefaultWorkingDirectory)
-          echo -e "\n⚙️ Instalando dependencias node..."
-          npm install -g pnpm
-          pnpm install
+            cd $(System.DefaultWorkingDirectory)
+            echo -e "\n⚙️ Instalando dependencias node..."
+            npm install -g pnpm
+            pnpm install
 
-          OUTPUT=$(pnpm ls --depth=0 || true)
-          if [[ -z "$OUTPUT" ]]; then
-            echo -e "\n##vso[task.logissue type=error]⚠️ No se instalaron dependencias, esperar que se actualicen las dependencias a nivel global"
-            exit 99
-          else
-            echo -e "\n✅ Dependencias Instaladas:"
-            echo "$OUTPUT"
-          fi
+            OUTPUT=$(pnpm ls --depth=0 || true)
+            if [[ -z "$OUTPUT" ]]; then
+              echo -e "\n##vso[task.logissue type=error]⚠️ No se instalaron dependencias, esperar que se actualicen las dependencias a nivel global"
+              exit 99
+            else
+              echo -e "\n✅ Dependencias Instaladas:"
+              echo "$OUTPUT"
+            fi
         displayName: "⚙️ Install Dependencies"
         condition: succeeded()
 
-      - script: |
-          set -e
-          echo -e "\n📦 Build MicroFrontend..."
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            set -e
+            echo -e "\n📦 Build MicroFrontend..."
 
-          if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
-            cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
-            pnpm run build
-          else
-            pnpm run build --filter=...$(msName)
-          fi
-
-          DIST_PATH="$(System.DefaultWorkingDirectory)/$(file)/$(msName)/dist"
-
-          if [[ ! -d "$DIST_PATH" ]] || [[ -z "$(ls -A "$DIST_PATH" 2>/dev/null)" ]]; then
-            echo -e "\n##vso[task.logissue type=error]⚠️ Error: No se generó el build o la carpeta dist está vacía." 
-            exit 99
-          else
-            CURRENT_BRANCH=$(echo $(Build.SourceBranch))
-            if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|staging)$ ]]; then
-              mkdir -p "$(Build.ArtifactStagingDirectory)/dists/$environments"
-              cp -R $DIST_PATH $(Build.ArtifactStagingDirectory)/dists/$environments/$(msName)
+            if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
+              cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
+              pnpm run build
             else
-              mkdir -p "$(Build.ArtifactStagingDirectory)/dists/$region"
-              cp -R $DIST_PATH $(Build.ArtifactStagingDirectory)/dists/$region/$(msName)
+              pnpm run build --filter=...$(msName)
             fi
-            echo -e "\n✅ Build generado correctamente en: $DIST_PATH"
-            ls -l "$DIST_PATH"
-          fi
+
+            DIST_PATH="$(System.DefaultWorkingDirectory)/$(file)/$(msName)/dist"
+
+            if [[ ! -d "$DIST_PATH" ]] || [[ -z "$(ls -A "$DIST_PATH" 2>/dev/null)" ]]; then
+              echo -e "\n##vso[task.logissue type=error]⚠️ Error: No se generó el build o la carpeta dist está vacía." 
+              exit 99
+            else
+              CURRENT_BRANCH=$(echo $(Build.SourceBranch))
+              if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|staging)$ ]]; then
+                mkdir -p "$(Build.ArtifactStagingDirectory)/dists/$environments"
+                cp -R $DIST_PATH $(Build.ArtifactStagingDirectory)/dists/$environments/$(msName)
+              else
+                mkdir -p "$(Build.ArtifactStagingDirectory)/dists/$region"
+                cp -R $DIST_PATH $(Build.ArtifactStagingDirectory)/dists/$region/$(msName)
+              fi
+              echo -e "\n✅ Build generado correctamente en: $DIST_PATH"
+              ls -l "$DIST_PATH"
+            fi
         displayName: "📦 Build $(msName)"
         condition: succeeded()
         env:

@@ -1,5 +1,5 @@
 stages:
-  - stage: pre_build_micro_fronted
+  - stage: pre_build_microfrontend
     displayName: "🔍 Pre Build MicroFrontend"
     jobs:
       - template: ../ci/pre-build/changes-files-frontend.yml

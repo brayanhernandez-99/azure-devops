@@ -19,29 +19,35 @@ jobs:
         displayName: "📥 Download Version"
         condition: succeeded()
 
-      - script: |
-          VERSION_FILE="$(Pipeline.Workspace)/version-downloaded/versions/microservice/version.json"
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            set -e
+            VERSION_FILE="$(Pipeline.Workspace)/version-downloaded/versions/microservice/version.json"
+            echo -e "\n📁 Archivo version.json:"
+            ls -la "$VERSION_FILE"
+            cat "$VERSION_FILE"
 
-          echo -e "\n📁 Archivo version.json:"
-          ls -la "$VERSION_FILE"
-          cat "$VERSION_FILE"
-
-          if [[ -f "$VERSION_FILE" ]]; then
-            VERSION=$(jq -r '.version' $VERSION_FILE)
-            echo -e "\n🚀 Versión detectada para $(Build.Repository.Name): $VERSION"
-            echo "##vso[task.setvariable variable=version]$VERSION"
-          else
-            echo -e "\n##vso[task.logissue type=error]⚠️ No se encontro archivo de versión para $(Build.Repository.Name)"
-            exit 99
-          fi
+            if [[ -f "$VERSION_FILE" ]]; then
+              VERSION=$(jq -r '.version' $VERSION_FILE)
+              echo -e "\n🚀 Versión detectada para $(Build.Repository.Name): $VERSION"
+              echo "##vso[task.setvariable variable=version]$VERSION"
+            else
+              echo -e "\n##vso[task.logissue type=error]⚠️ No se encontro archivo de versión para $(Build.Repository.Name)"
+              exit 99
+            fi
         displayName: "📚 Read Version"
         condition: succeeded()
 
-      - script: |
-          set -e
-          echo -e "\n🔐 Logging in to ECR..."
-          aws ecr get-login-password --region $AWS_DEFAULT_REGION | \
-          docker login --username AWS --password-stdin $ACCOUNT_ID_DEPLOY.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            set -e
+            echo -e "\n🔐 Logging in to ECR..."
+            aws ecr get-login-password --region $AWS_DEFAULT_REGION | \
+            docker login --username AWS --password-stdin $ACCOUNT_ID_DEPLOY.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
         displayName: "🔐 Login to AWS ECR"
         condition: succeeded()
         env:
@@ -49,26 +55,29 @@ jobs:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
 
-      - script: |
-          set -e
-          case "$(Build.SourceBranchName)" in 
-            staging) environment="qa" ;;
-            master) environment="prd" ;;
-            *) environment="develop" ;;
-          esac
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            set -e
+            case "$(Build.SourceBranchName)" in 
+              staging) environment="qa" ;;
+              master) environment="prd" ;;
+              *) environment="develop" ;;
+            esac
 
-          msName=$(echo "$(Build.Repository.Name)" | sed -E 's/^microservice-//; s/-invictus$//')
-          ECR_REPOSITORY="$(Build.Repository.Name)"
-          ECR_REPOSITORY="${ECR_REPOSITORY%-invictus}-$environment"
+            msName=$(echo "$(Build.Repository.Name)" | sed -E 's/^microservice-//; s/-invictus$//')
+            ECR_REPOSITORY="$(Build.Repository.Name)"
+            ECR_REPOSITORY="${ECR_REPOSITORY%-invictus}-$environment"
 
-          echo -e "ℹ️ Configurando... \n"
-          echo "Environment:    $environment"
-          echo "Micro service:  $msName"
-          echo "ECR Repository: $ECR_REPOSITORY"
+            echo -e "ℹ️ Configurando... \n"
+            echo "Environment:    $environment"
+            echo "Micro service:  $msName"
+            echo "ECR Repository: $ECR_REPOSITORY"
 
-          echo "##vso[task.setvariable variable=ecr_repository]$ECR_REPOSITORY"
-          echo "##vso[task.setvariable variable=environment]$environment"
-          echo "##vso[task.setvariable variable=msName]$msName"
+            echo "##vso[task.setvariable variable=ecr_repository]$ECR_REPOSITORY"
+            echo "##vso[task.setvariable variable=environment]$environment"
+            echo "##vso[task.setvariable variable=msName]$msName"
         displayName: "📛 Set ECR Repository Name"
         condition: succeeded()
         env:
@@ -97,109 +106,112 @@ jobs:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
 
-      - script: |
-          set -e
-          ecs_cluster_array=()
-          ecs_service_array=()
-          ecs_taskdef_arn_array=()
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            set -e
+            ecs_cluster_array=()
+            ecs_service_array=()
+            ecs_taskdef_arn_array=()
 
-          MS_NAME="$(msName)"
-          REGION="${region:-none}"
-          clusters=("invictus")
-          services=("$MS_NAME")
+            MS_NAME="$(msName)"
+            REGION="${region:-none}"
+            clusters=("invictus")
+            services=("$MS_NAME")
 
-          echo "📦 Repo:    $(Build.Repository.Name)"
-          echo "🧩 MS Name: $MS_NAME"
-          echo "🏠 Region:  $REGION"
+            echo "📦 Repo:    $(Build.Repository.Name)"
+            echo "🧩 MS Name: $MS_NAME"
+            echo "🏠 Region:  $REGION"
 
-          get_task_definition() {
-            local cluster=$1
-            local service=$2
+            get_task_definition() {
+              local cluster=$1
+              local service=$2
 
-            echo ""
-            echo "🛡️ Cluster: $cluster"
-            echo "📦 Service: $service"
+              echo ""
+              echo "🛡️ Cluster: $cluster"
+              echo "📦 Service: $service"
 
-            arn=$(aws ecs describe-services \
-              --cluster "$cluster" \
-              --services "$service" \
-              --query 'services[0].taskDefinition' \
-              --output text)
+              arn=$(aws ecs describe-services \
+                --cluster "$cluster" \
+                --services "$service" \
+                --query 'services[0].taskDefinition' \
+                --output text)
 
-            if [[ -z "$arn" || "$arn" == "None" ]]; then
-              echo "##vso[task.logissue type=error]⚠️ Error: TaskDefinition no encontrada para service [$service] en cluster [$cluster]"
-              exit 99
-            fi
-
-            echo "✅ Task Definition ARN: $arn"
-          }
-
-          case "$MS_NAME" in
-            transaction)
-              echo -e "\n🔄 Modo: TRANSACTION"
-
-              if [[ "$REGION" == "antioquia" ]]; then
-                clusters=("transaction-ms-cluster" "transaction-astro-ms-cluster" "transaction-lg-ms-cluster" "transaction-recharges-ms-cluster")
-                services=("transaction-ms-fg-service" "transaction-astro-ms-fg-service" "transaction-lg-ms-fg-service" "transaction-recharges-ms-fg-service")
-              else
-                clusters=("invictus" "invictus" "invictus" "invictus")
-                services=("transaction" "transaction-astro" "transaction-lotteries-games" "transaction-recharges")
+              if [[ -z "$arn" || "$arn" == "None" ]]; then
+                echo "##vso[task.logissue type=error]⚠️ Error: TaskDefinition no encontrada para service [$service] en cluster [$cluster]"
+                exit 99
               fi
-              ;;
 
-            lotteries-games)
-              echo -e "\n🔄 Modo: LOTTERIES-GAMES"
+              echo "✅ Task Definition ARN: $arn"
+            }
 
-              if [[ "$REGION" == "antioquia" ]]; then
-                clusters=("lotteries-games-ms-cluster" "lotteries-games-admin-ms-cluster")
-                services=("lotteries-games-ms-fg-service" "lotteries-games-admin-ms-fg-service")
-              else
-                clusters=("invictus" "invictus")
-                services=("lotteries-games" "lotteries-games-admin")
-              fi
-              ;;
+            case "$MS_NAME" in
+              transaction)
+                echo -e "\n🔄 Modo: TRANSACTION"
 
-            notifier|bff-*)
-              echo -e "\n🔄 Modo: NOTIFIER | BFF"
+                if [[ "$REGION" == "antioquia" ]]; then
+                  clusters=("transaction-ms-cluster" "transaction-astro-ms-cluster" "transaction-lg-ms-cluster" "transaction-recharges-ms-cluster")
+                  services=("transaction-ms-fg-service" "transaction-astro-ms-fg-service" "transaction-lg-ms-fg-service" "transaction-recharges-ms-fg-service")
+                else
+                  clusters=("invictus" "invictus" "invictus" "invictus")
+                  services=("transaction" "transaction-astro" "transaction-lotteries-games" "transaction-recharges")
+                fi
+                ;;
 
-              if [[ "$REGION" == "antioquia" ]]; then
-                case "$MS_NAME" in
-                  notifier)
-                    clusters=("msnotifier-cluster")
-                    services=("msnotifier-fg-service")
-                    ;;
-                  bff-*)
-                    clusters=("${MS_NAME}-cluster")
-                    services=("${MS_NAME}-fg-service")
-                    ;;
-                esac
-              fi
-              ;;
+              lotteries-games)
+                echo -e "\n🔄 Modo: LOTTERIES-GAMES"
 
-            *)
-              echo -e "\n🔄 Modo: DEFAULT"
+                if [[ "$REGION" == "antioquia" ]]; then
+                  clusters=("lotteries-games-ms-cluster" "lotteries-games-admin-ms-cluster")
+                  services=("lotteries-games-ms-fg-service" "lotteries-games-admin-ms-fg-service")
+                else
+                  clusters=("invictus" "invictus")
+                  services=("lotteries-games" "lotteries-games-admin")
+                fi
+                ;;
 
-              if [[ "$REGION" == "antioquia" ]]; then
-                clusters=("${MS_NAME}-ms-cluster")
-                services=("${MS_NAME}-ms-fg-service")
-              fi
-              ;;
-          esac
+              notifier|bff-*)
+                echo -e "\n🔄 Modo: NOTIFIER | BFF"
 
-          for i in "${!clusters[@]}"; do
-            CLUSTER="${clusters[$i]}"
-            SERVICE="${services[$i]}"
+                if [[ "$REGION" == "antioquia" ]]; then
+                  case "$MS_NAME" in
+                    notifier)
+                      clusters=("msnotifier-cluster")
+                      services=("msnotifier-fg-service")
+                      ;;
+                    bff-*)
+                      clusters=("${MS_NAME}-cluster")
+                      services=("${MS_NAME}-fg-service")
+                      ;;
+                  esac
+                fi
+                ;;
 
-            get_task_definition "$CLUSTER" "$SERVICE"
+              *)
+                echo -e "\n🔄 Modo: DEFAULT"
 
-            ecs_cluster_array+=("$CLUSTER")
-            ecs_service_array+=("$SERVICE")
-            ecs_taskdef_arn_array+=("$arn")
-          done
+                if [[ "$REGION" == "antioquia" ]]; then
+                  clusters=("${MS_NAME}-ms-cluster")
+                  services=("${MS_NAME}-ms-fg-service")
+                fi
+                ;;
+            esac
 
-          echo "##vso[task.setvariable variable=ecs_clusters]$(IFS=,; echo "${ecs_cluster_array[*]}")"
-          echo "##vso[task.setvariable variable=ecs_services]$(IFS=,; echo "${ecs_service_array[*]}")"
-          echo "##vso[task.setvariable variable=ecs_taskdef_arns]$(IFS=,; echo "${ecs_taskdef_arn_array[*]}")"
+            for i in "${!clusters[@]}"; do
+              CLUSTER="${clusters[$i]}"
+              SERVICE="${services[$i]}"
+
+              get_task_definition "$CLUSTER" "$SERVICE"
+
+              ecs_cluster_array+=("$CLUSTER")
+              ecs_service_array+=("$SERVICE")
+              ecs_taskdef_arn_array+=("$arn")
+            done
+
+            echo "##vso[task.setvariable variable=ecs_clusters]$(IFS=,; echo "${ecs_cluster_array[*]}")"
+            echo "##vso[task.setvariable variable=ecs_services]$(IFS=,; echo "${ecs_service_array[*]}")"
+            echo "##vso[task.setvariable variable=ecs_taskdef_arns]$(IFS=,; echo "${ecs_taskdef_arn_array[*]}")"
         displayName: "🔗 Get Task Definition ARN"
         env:
           region: ${{ parameters.region }}
@@ -207,50 +219,53 @@ jobs:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
 
-      - script: |
-          set -e
-          IFS=',' read -ra CLUSTERS_ARRAY <<< "$(ecs_clusters)"
-          IFS=',' read -ra SERVICES_ARRAY <<< "$(ecs_services)"
-          IFS=',' read -ra ARNS_ARRAY <<< "$(ecs_taskdef_arns)"
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            set -e
+            IFS=',' read -ra CLUSTERS_ARRAY <<< "$(ecs_clusters)"
+            IFS=',' read -ra SERVICES_ARRAY <<< "$(ecs_services)"
+            IFS=',' read -ra ARNS_ARRAY <<< "$(ecs_taskdef_arns)"
 
-          TOTAL=${#CLUSTERS_ARRAY[@]}
-          NEW_VERSION="$(version)"
-          new_taskdef_arns_array=()
+            TOTAL=${#CLUSTERS_ARRAY[@]}
+            NEW_VERSION="$(version)"
+            new_taskdef_arns_array=()
 
-          echo -e "\n📄 Obteniendo y actualizando Task Definitions..."
-          echo "📊 Total de servicios a procesar: $TOTAL"
+            echo -e "\n📄 Obteniendo y actualizando Task Definitions..."
+            echo "📊 Total de servicios a procesar: $TOTAL"
 
-          for i in "${!CLUSTERS_ARRAY[@]}"; do
-            CLUSTER="${CLUSTERS_ARRAY[$i]}"
-            SERVICE="${SERVICES_ARRAY[$i]}"
-            TASK_DEF_ARN="${ARNS_ARRAY[$i]}"
-            
-            echo ""
-            echo "🛡️ Cluster: $CLUSTER"
-            echo "📦 Service: $SERVICE"
-            echo "📝 ARN    : $TASK_DEF_ARN"
-            
-            # Obtener definición completa
-            TASKDEF_JSON=$(aws ecs describe-task-definition --task-definition "$TASK_DEF_ARN" --query "taskDefinition" --output json)
-            
-            # Limpiar campos innecesarios
-            TASKDEF_CLEAN=$(echo "$TASKDEF_JSON" | jq 'del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .registeredBy)')
-            
-            # Obtener nombre del contenedor
-            CONTAINER_NAME=$(echo "$TASKDEF_JSON" | jq -r '.containerDefinitions[0].name')
-            
-            # Actualizar imagen
-            NEW_TASKDEF=$(echo "$TASKDEF_CLEAN" | jq -c --arg img "$ACCOUNT_ID_DEPLOY.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$(ecr_repository):$NEW_VERSION" --arg container "$CONTAINER_NAME" '.containerDefinitions |= map(if .name == $container then .image = $img else . end)')
-            
-            # Registrar nueva task definition
-            REGISTERED_OUTPUT=$(aws ecs register-task-definition --cli-input-json "$NEW_TASKDEF" --region "$AWS_DEFAULT_REGION")
-            NEW_TASKDEF_ARN=$(echo "$REGISTERED_OUTPUT" | jq -r '.taskDefinition.taskDefinitionArn')
-            
-            echo "✅ New ARN: $NEW_TASKDEF_ARN"
-            new_taskdef_arns_array+=("$NEW_TASKDEF_ARN")
-          done
+            for i in "${!CLUSTERS_ARRAY[@]}"; do
+              CLUSTER="${CLUSTERS_ARRAY[$i]}"
+              SERVICE="${SERVICES_ARRAY[$i]}"
+              TASK_DEF_ARN="${ARNS_ARRAY[$i]}"
+              
+              echo ""
+              echo "🛡️ Cluster: $CLUSTER"
+              echo "📦 Service: $SERVICE"
+              echo "📝 ARN    : $TASK_DEF_ARN"
+              
+              # Obtener definición completa
+              TASKDEF_JSON=$(aws ecs describe-task-definition --task-definition "$TASK_DEF_ARN" --query "taskDefinition" --output json)
+              
+              # Limpiar campos innecesarios
+              TASKDEF_CLEAN=$(echo "$TASKDEF_JSON" | jq 'del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .registeredBy)')
+              
+              # Obtener nombre del contenedor
+              CONTAINER_NAME=$(echo "$TASKDEF_JSON" | jq -r '.containerDefinitions[0].name')
+              
+              # Actualizar imagen
+              NEW_TASKDEF=$(echo "$TASKDEF_CLEAN" | jq -c --arg img "$ACCOUNT_ID_DEPLOY.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$(ecr_repository):$NEW_VERSION" --arg container "$CONTAINER_NAME" '.containerDefinitions |= map(if .name == $container then .image = $img else . end)')
+              
+              # Registrar nueva task definition
+              REGISTERED_OUTPUT=$(aws ecs register-task-definition --cli-input-json "$NEW_TASKDEF" --region "$AWS_DEFAULT_REGION")
+              NEW_TASKDEF_ARN=$(echo "$REGISTERED_OUTPUT" | jq -r '.taskDefinition.taskDefinitionArn')
+              
+              echo "✅ New ARN: $NEW_TASKDEF_ARN"
+              new_taskdef_arns_array+=("$NEW_TASKDEF_ARN")
+            done
 
-          echo "##vso[task.setvariable variable=new_taskdef_arns]$(IFS=,; echo "${new_taskdef_arns_array[*]}")"
+            echo "##vso[task.setvariable variable=new_taskdef_arns]$(IFS=,; echo "${new_taskdef_arns_array[*]}")"
         displayName: "📄 Get & Update Task Definitions"
         condition: succeeded()
         env:
@@ -258,32 +273,35 @@ jobs:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
 
-      - script: |
-          set -e
-          IFS=',' read -ra CLUSTERS_ARRAY <<< "$(ecs_clusters)"
-          IFS=',' read -ra SERVICES_ARRAY <<< "$(ecs_services)"
-          IFS=',' read -ra NEW_TASKDEF_ARNS_ARRAY <<< "$(new_taskdef_arns)"
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            set -e
+            IFS=',' read -ra CLUSTERS_ARRAY <<< "$(ecs_clusters)"
+            IFS=',' read -ra SERVICES_ARRAY <<< "$(ecs_services)"
+            IFS=',' read -ra NEW_TASKDEF_ARNS_ARRAY <<< "$(new_taskdef_arns)"
 
-          TOTAL=${#CLUSTERS_ARRAY[@]}
-          echo -e "\n🆕 Registrando y desplegando Task Definitions..."
-          echo "📊 Total de servicios a desplegar: $TOTAL"
+            TOTAL=${#CLUSTERS_ARRAY[@]}
+            echo -e "\n🆕 Registrando y desplegando Task Definitions..."
+            echo "📊 Total de servicios a desplegar: $TOTAL"
 
-          for i in "${!CLUSTERS_ARRAY[@]}"; do
-            CLUSTER="${CLUSTERS_ARRAY[$i]}"
-            SERVICE="${SERVICES_ARRAY[$i]}"
-            NEW_TASKDEF_ARN="${NEW_TASKDEF_ARNS_ARRAY[$i]}"
-            
-            echo ""
-            echo "🛡️ Cluster: $CLUSTER"
-            echo "📦 Service: $SERVICE"
-            echo "📝 New ARN: $NEW_TASKDEF_ARN"
-            
-            UPDATED_OUTPUT=$(aws ecs update-service --cluster "$CLUSTER" --service "$SERVICE" --task-definition "$NEW_TASKDEF_ARN" --force-new-deployment)
-            UPDATED_TASK_DEF=$(echo "$UPDATED_OUTPUT" | jq -r '.service.taskDefinition')
-            
-            echo "✅ ECS Service Actualizado"
-            echo -e "Task Definition: $UPDATED_TASK_DEF"
-          done
+            for i in "${!CLUSTERS_ARRAY[@]}"; do
+              CLUSTER="${CLUSTERS_ARRAY[$i]}"
+              SERVICE="${SERVICES_ARRAY[$i]}"
+              NEW_TASKDEF_ARN="${NEW_TASKDEF_ARNS_ARRAY[$i]}"
+              
+              echo ""
+              echo "🛡️ Cluster: $CLUSTER"
+              echo "📦 Service: $SERVICE"
+              echo "📝 New ARN: $NEW_TASKDEF_ARN"
+              
+              UPDATED_OUTPUT=$(aws ecs update-service --cluster "$CLUSTER" --service "$SERVICE" --task-definition "$NEW_TASKDEF_ARN" --force-new-deployment)
+              UPDATED_TASK_DEF=$(echo "$UPDATED_OUTPUT" | jq -r '.service.taskDefinition')
+              
+              echo "✅ ECS Service Actualizado"
+              echo -e "Task Definition: $UPDATED_TASK_DEF"
+            done
         displayName: "🚀 Deploy microservice"
         condition: succeeded()
         env:
@@ -291,42 +309,46 @@ jobs:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
 
-      - script: |
-          DEPLOY_TIME=$(date -d "$BUILD_FINISHTIME -5 hours" "+%Y-%m-%d %I:%M %p")
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            set -e
+            DEPLOY_TIME=$(date -d "$BUILD_FINISHTIME -5 hours" "+%Y-%m-%d %I:%M %p")
 
-          echo -e "\n📢 Generando notificación para Teams..."
-          echo "Pipeline   : $(Build.DefinitionName)"
-          echo "Branch     : $(environment)"
-          echo "Build      : $(Build.BuildNumber)"
-          echo "User       : $(Build.RequestedFor)"
-          echo "DeployTime : $DEPLOY_TIME"
-          echo ""
+            echo -e "\n📢 Generando notificación para Teams..."
+            echo "Pipeline   : $(Build.DefinitionName)"
+            echo "Branch     : $(environment)"
+            echo "Build      : $(Build.BuildNumber)"
+            echo "User       : $(Build.RequestedFor)"
+            echo "DeployTime : $DEPLOY_TIME"
+            echo ""
 
-          payload=$(cat <<EOF
-          {
-            "@type": "MessageCard",
-            "@context": "http://schema.org/extensions",
-            "summary": "Deployment successful",
-            "themeColor": "00FF00",
-            "title": "✅ Deployment exitoso $(Build.SourceBranchName)",
-            "sections": [
-              {
-                "facts": [
-                  { "name": "Pipeline", "value": "$(Build.DefinitionName)" },
-                  { "name": "Branch", "value": "$(environment)" },
-                  { "name": "Build", "value": "$(Build.BuildNumber)" },
-                  { "name": "Merged by", "value": "$(Build.RequestedFor)" },
-                  { "name": "Deploy time", "value": "$DEPLOY_TIME" }
-                ],
-                "markdown": true
-              }
-            ]
-          }
-          EOF
-          )
+            payload=$(cat <<EOF
+            {
+              "@type": "MessageCard",
+              "@context": "http://schema.org/extensions",
+              "summary": "Deployment successful",
+              "themeColor": "00FF00",
+              "title": "✅ Deployment exitoso $(Build.SourceBranchName)",
+              "sections": [
+                {
+                  "facts": [
+                    { "name": "Pipeline", "value": "$(Build.DefinitionName)" },
+                    { "name": "Branch", "value": "$(environment)" },
+                    { "name": "Build", "value": "$(Build.BuildNumber)" },
+                    { "name": "Merged by", "value": "$(Build.RequestedFor)" },
+                    { "name": "Deploy time", "value": "$DEPLOY_TIME" }
+                  ],
+                  "markdown": true
+                }
+              ]
+            }
+            EOF
+            )
 
-          curl -H "Content-Type: application/json" \
-               -d "$payload" \
-               $(URL_WEBHOOK_TEAMS)
+            curl -H "Content-Type: application/json" \
+                -d "$payload" \
+                $(URL_WEBHOOK_TEAMS)
         displayName: "📢 Post message to Teams"
         condition: succeeded()

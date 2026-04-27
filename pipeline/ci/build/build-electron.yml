@@ -22,21 +22,24 @@ jobs:
         displayName: "📥 Download Version"
         condition: succeeded()
 
-      - script: |
-          VERSION_FILE="$(Pipeline.Workspace)/versions/electron/version.json"
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            set -e
+            VERSION_FILE="$(Pipeline.Workspace)/versions/electron/version.json"
+            echo -e "\n📁 Archivo version.json:"
+            ls -la "$VERSION_FILE"
+            jq . "$VERSION_FILE"
 
-          echo -e "\n📁 Archivo version.json:"
-          ls -la "$VERSION_FILE"
-          jq . "$VERSION_FILE"
-
-          if [[ -f "$VERSION_FILE" ]]; then
-            VERSION=$(jq -r '.version' $VERSION_FILE)
-            echo -e "\n🚀 Versión detectada para $(Build.Repository.Name): $VERSION"
-            echo "##vso[task.setvariable variable=version]$VERSION"
-          else
-            echo -e "\n##vso[task.logissue type=error]⚠️ No se encontro archivo de versión para $(Build.Repository.Name)"
-            exit 99
-          fi
+            if [[ -f "$VERSION_FILE" ]]; then
+              VERSION=$(jq -r '.version' $VERSION_FILE)
+              echo -e "\n🚀 Versión detectada para $(Build.Repository.Name): $VERSION"
+              echo "##vso[task.setvariable variable=version]$VERSION"
+            else
+              echo -e "\n##vso[task.logissue type=error]⚠️ No se encontro archivo de versión para $(Build.Repository.Name)"
+              exit 99
+            fi
         displayName: "📚 Read Version"
         condition: succeeded()
 
@@ -44,6 +47,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
+            set -e
             echo -e "\n🔐 Obteniendo token de AWS CodeArtifact..."
             token=$(aws codeartifact get-authorization-token \
               --domain matrixtech-npm-repository \
@@ -78,25 +82,29 @@ jobs:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
 
-      - script: |
-          CURRENT_BRANCH="$(Build.SourceBranchName)"
-          environment="develop"
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            set -e
+            CURRENT_BRANCH="$(Build.SourceBranchName)"
+            environment="develop"
 
-          case "$CURRENT_BRANCH" in 
-            staging) environment="$environment_staging" ;;
-            master) environment="$region" ;;
-          esac
+            case "$CURRENT_BRANCH" in 
+              staging) environment="$environment_staging" ;;
+              master) environment="$region" ;;
+            esac
 
-          cat <<EOF > .env
-          VITE_DOMAIN="${VITE_DOMAIN}"
-          URL_APP="${URL_APP}"
-          TARGET="linux"
-          EOF
+            cat <<EOF > .env
+            VITE_DOMAIN="${VITE_DOMAIN}"
+            URL_APP="${URL_APP}"
+            TARGET="linux"
+            EOF
 
-          echo "##vso[task.setvariable variable=environment]$environment"
-          echo -e "\n📁 File: .env"
-          ls -l .env
-          cat .env
+            echo "##vso[task.setvariable variable=environment]$environment"
+            echo -e "\n📁 File: .env"
+            ls -l .env
+            cat .env
         displayName: "⚙️ Generate .env"
         condition: succeeded()
         env:
@@ -104,116 +112,131 @@ jobs:
           environment_staging: ${{ parameters.environment_staging }}
 
       - task: UsePythonVersion@0
-        displayName: "🔧 Use Python $(pythonVersion)"
         inputs:
           versionSpec: "$(pythonVersion)"
           addToPath: true
+        displayName: "🔧 Use Python $(pythonVersion)"
         condition: succeeded()
 
       - task: UseNode@1
-        displayName: "🔧 Install Nodejs $(nodeVersion)"
         inputs:
           version: "$(nodeVersion)"
+        displayName: "🔧 Install Nodejs $(nodeVersion)"
         condition: succeeded()
 
-      - script: |
-          echo -e "\n📦 Modificando versión en package.json: $(version)"
-          PACKAGE_PATH="$(Build.SourcesDirectory)/package.json"
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            set -e
+            echo -e "\n📦 Modificando versión en package.json: $(version)"
+            PACKAGE_PATH="$(Build.SourcesDirectory)/package.json"
 
-          if [[ -f "$PACKAGE_PATH" ]]; then
-            jq --arg ver "$(version)" '.version = $ver' "$PACKAGE_PATH" > "$PACKAGE_PATH.tmp" && mv "$PACKAGE_PATH.tmp" "$PACKAGE_PATH"
+            if [[ -f "$PACKAGE_PATH" ]]; then
+              jq --arg ver "$(version)" '.version = $ver' "$PACKAGE_PATH" > "$PACKAGE_PATH.tmp" && mv "$PACKAGE_PATH.tmp" "$PACKAGE_PATH"
 
-            echo -e "\n✅ Versión en package.json actualizada correctamente."
-            cat "$PACKAGE_PATH"
-          else
-            echo -e "\n##vso[task.logissue type=error]⚠️ No se encontró el archivo package.json en la ruta [$PACKAGE_PATH]"
-            exit 99
-          fi
+              echo -e "\n✅ Versión en package.json actualizada correctamente."
+              cat "$PACKAGE_PATH"
+            else
+              echo -e "\n##vso[task.logissue type=error]⚠️ No se encontró el archivo package.json en la ruta [$PACKAGE_PATH]"
+              exit 99
+            fi
         displayName: "📝 Update Version package.json"
         condition: succeeded()
 
-      - script: |
-          echo -e "\n📁 Generando archivo .pnpmrc en: $(System.DefaultWorkingDirectory)/.pnpmrc"
-          cat <<EOF > "$(System.DefaultWorkingDirectory)/.pnpmrc"
-          node-linker=hoisted
-          shamefully-hoist=true
-          ignore-scripts=false
-          allow-build-script=true
-          strict-peer-dependencies=false
-          EOF
-          ls -l $(System.DefaultWorkingDirectory)/.pnpmrc
-          cat $(System.DefaultWorkingDirectory)/.pnpmrc
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            set -e
+            echo -e "\n📁 Generando archivo .pnpmrc en: $(System.DefaultWorkingDirectory)/.pnpmrc"
+            cat <<EOF > "$(System.DefaultWorkingDirectory)/.pnpmrc"
+            node-linker=hoisted
+            shamefully-hoist=true
+            ignore-scripts=false
+            allow-build-script=true
+            strict-peer-dependencies=false
+            EOF
+            ls -l $(System.DefaultWorkingDirectory)/.pnpmrc
+            cat $(System.DefaultWorkingDirectory)/.pnpmrc
 
-          cat $(System.DefaultWorkingDirectory)/.pnpmrc >> $(System.DefaultWorkingDirectory)/.npmrc
-          echo -e "\n✅ Contenido de .pnpmrc anexado a .npmrc correctamente."
+            cat $(System.DefaultWorkingDirectory)/.pnpmrc >> $(System.DefaultWorkingDirectory)/.npmrc
+            echo -e "\n✅ Contenido de .pnpmrc anexado a .npmrc correctamente."
 
-          echo -e "\n⚙️ Instalando dependencias ubuntu..."
-          sudo apt-get update
-          sudo apt-get install -y libcups2-dev
+            echo -e "\n⚙️ Instalando dependencias ubuntu..."
+            sudo apt-get update
+            sudo apt-get install -y libcups2-dev
 
-          echo -e "\n⚙️ Instalando dependencias node..."
-          npm install -g pnpm
-          pnpm install
-          pnpm exec electron-builder install-app-deps
-          pnpm ignored-builds
+            echo -e "\n⚙️ Instalando dependencias node..."
+            npm install -g pnpm
+            pnpm install
+            pnpm exec electron-builder install-app-deps
+            pnpm ignored-builds
 
-          OUTPUT=$(pnpm ls --depth=0 || true)
-          if [[ -z "$OUTPUT" ]]; then
-            echo -e "\n##vso[task.logissue type=error]⚠️ No se instalaron dependencias, esperar que se actualicen las dependencias a nivel global"
-            exit 99
-          else
-            echo -e "\n✅ Dependencias Instaladas:"
-            echo "$OUTPUT"
-          fi
+            OUTPUT=$(pnpm ls --depth=0 || true)
+            if [[ -z "$OUTPUT" ]]; then
+              echo -e "\n##vso[task.logissue type=error]⚠️ No se instalaron dependencias, esperar que se actualicen las dependencias a nivel global"
+              exit 99
+            else
+              echo -e "\n✅ Dependencias Instaladas:"
+              echo "$OUTPUT"
+            fi
         displayName: "⚙️ Install Dependencies"
         condition: succeeded()
 
-      - script: |
-          set -e
-          echo -e "\n📦 Build Electron..."
-          pnpm run build
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            set -e
+            echo -e "\n📦 Build Electron..."
+            pnpm run build
         displayName: "📦 Build Electron Linux"
         condition: succeeded()
 
-      - script: |
-          echo -e "\n📝 Validando build electron..."
-          BASE_PATH="$(Build.SourcesDirectory)/release/$(version)/linux"
-          APP_DIR="$BASE_PATH/app"
-          mkdir -p $APP_DIR
-          all_found=true
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            set -e
+            echo -e "\n📝 Validando build electron..."
+            BASE_PATH="$(Build.SourcesDirectory)/release/$(version)/linux"
+            APP_DIR="$BASE_PATH/app"
+            mkdir -p $APP_DIR
+            all_found=true
 
-          echo -e "\n📂 Directorio: $BASE_PATH"
-          ls -lt $BASE_PATH
-          echo ""
+            echo -e "\n📂 Directorio: $BASE_PATH"
+            ls -lt $BASE_PATH
+            echo ""
 
-          FILES_TO_COPY=(
-            "InvictusUX-$(version).AppImage"
-            "latest-linux.yml"
-          )
+            FILES_TO_COPY=(
+              "InvictusUX-$(version).AppImage"
+              "latest-linux.yml"
+            )
 
-          for file in "${FILES_TO_COPY[@]}"; do
-            source_path="$BASE_PATH/$file"
-            destination_path="$APP_DIR/$file"
+            for file in "${FILES_TO_COPY[@]}"; do
+              source_path="$BASE_PATH/$file"
+              destination_path="$APP_DIR/$file"
 
-            if [[ -f "$source_path" ]]; then
-              cp -f "$source_path" "$destination_path"
-              echo "📂 Copiado: $file -> $destination_path"
+              if [[ -f "$source_path" ]]; then
+                cp -f "$source_path" "$destination_path"
+                echo "📂 Copiado: $file -> $destination_path"
+              else
+                echo "⚠️ Archivo no encontrado: $file"
+                all_found=false
+              fi
+            done
+
+            if ! $all_found; then
+              echo -e "\n##vso[task.logissue type=error]⚠️ Error: archivos requeridos no encontrados."
+              exit 99
             else
-              echo "⚠️ Archivo no encontrado: $file"
-              all_found=false
+              mkdir -p "$(Build.ArtifactStagingDirectory)/release/$(environment)/linux"
+              cp -R $APP_DIR/* "$(Build.ArtifactStagingDirectory)/release/$(environment)/linux"
+
+              echo -e "\n📂 Directorio: $APP_DIR"
+              ls -l $APP_DIR
             fi
-          done
-
-          if ! $all_found; then
-            echo -e "\n##vso[task.logissue type=error]⚠️ Error: archivos requeridos no encontrados."
-            exit 99
-          else
-            mkdir -p "$(Build.ArtifactStagingDirectory)/release/$(environment)/linux"
-            cp -R $APP_DIR/* "$(Build.ArtifactStagingDirectory)/release/$(environment)/linux"
-
-            echo -e "\n📂 Directorio: $APP_DIR"
-            ls -l $APP_DIR
-          fi
         displayName: "🔍 Validate Build"
         condition: succeeded()
 
@@ -238,7 +261,7 @@ jobs:
       - template: ../../variables/groups-transversal-variables-electron.yml
         parameters:
           region: ${{ parameters.region }}
-          environments: ${{ parameters.environments }}
+          environment_staging: ${{ parameters.environment_staging }}
 
     steps:
       - task: DownloadBuildArtifacts@0
@@ -249,12 +272,10 @@ jobs:
         condition: succeeded()
 
       - task: PowerShell@2
-        displayName: "📚 Read Version"
         inputs:
           targetType: inline
           script: |
             $versionFile = "$(Pipeline.Workspace)\versions\electron\version.json"
-
             Write-Host "`n📁 Archivo version.json:"
             Get-ChildItem -Path $versionFile | Select-Object Mode, LastWriteTime, Length, Name | Format-Table
             Get-Content -Path $versionFile
@@ -268,10 +289,10 @@ jobs:
               Write-Output "`n##vso[task.logissue type=error]⚠️ No se encontro archivo de versión para app"
               exit 99
             }
+        displayName: "📚 Read Version"
         condition: succeeded()
 
       - task: PowerShell@2
-        displayName: "🔐 Setup CodeArtifact & npm config"
         inputs:
           targetType: inline
           script: |
@@ -307,6 +328,7 @@ jobs:
             registry=$repoUrl
             "@ | Set-Content -Encoding UTF8 -Path $npmrcPath
             Get-Item $npmrcPath | Select-Object Mode, LastWriteTime, Length, Name | Format-Table
+        displayName: "🔐 Setup CodeArtifact & npm config"
         condition: succeeded()
         env:
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
@@ -314,7 +336,6 @@ jobs:
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
 
       - task: PowerShell@2
-        displayName: "⚙️ Generate .env"
         inputs:
           targetType: inline
           script: |
@@ -336,26 +357,26 @@ jobs:
             Write-Host "`n📁 File: .env"
             Get-Item .env | Select-Object Mode, LastWriteTime, Length, Name | Format-Table
             Get-Content .env
+        displayName: "⚙️ Generate .env"
         condition: succeeded()
         env:
           region: ${{ parameters.region }}
           environment_staging: ${{ parameters.environment_staging }}
 
       - task: UsePythonVersion@0
-        displayName: "🔧 Use Python $(pythonVersion)"
         inputs:
           versionSpec: "$(pythonVersion)"
           addToPath: true
+        displayName: "🔧 Use Python $(pythonVersion)"
         condition: succeeded()
 
       - task: UseNode@1
-        displayName: "🔧 Install Nodejs $(nodeVersion)"
         inputs:
           version: "$(nodeVersion)"
+        displayName: "🔧 Install Nodejs $(nodeVersion)"
         condition: succeeded()
 
       - task: PowerShell@2
-        displayName: "📝 Update Version package.json"
         inputs:
           targetType: inline
           script: |
@@ -373,10 +394,10 @@ jobs:
               Write-Output "`n##vso[task.logissue type=error]⚠️ No se encontro el archivo package.json en la ruta [$packagePath]"
               exit 99
             }
+        displayName: "📝 Update Version package.json"
         condition: succeeded()
 
       - task: PowerShell@2
-        displayName: "🧹 Remove BOM from package.json"
         inputs:
           targetType: inline
           script: |
@@ -394,10 +415,10 @@ jobs:
                 Write-Output "`n##vso[task.logissue type=error]⚠️ Error: package.json no se encontró en $filePath"
                 exit 99
             }
+        displayName: "🧹 Remove BOM from package.json"
         condition: succeeded()
 
       - task: PowerShell@2
-        displayName: "⚙️ Install Dependencies"
         inputs:
           targetType: inline
           script: |
@@ -431,20 +452,20 @@ jobs:
               Write-Host "`n✅ Dependencias Instaladas:"
               Write-Host $output
             }
+        displayName: "⚙️ Install Dependencies"
         condition: succeeded()
 
       - task: PowerShell@2
-        displayName: "📦 Build Electron Windows"
         inputs:
           targetType: " inline"
           script: |
             $ErrorActionPreference = "Stop"
             Write-Host "`n📦 Build Electron..."
             pnpm run build
+        displayName: "📦 Build Electron Windows"
         condition: succeeded()
 
       - task: PowerShell@2
-        displayName: "🔍 Validate Build"
         inputs:
           targetType: " inline"
           script: |
@@ -488,6 +509,7 @@ jobs:
               Write-Host "`n📂 Directorio: $APP_DIR"
               Get-ChildItem "$APP_DIR" | Select-Object Mode, LastWriteTime, Length, Name | Format-Table
             }
+        displayName: "🔍 Validate Build"
         condition: succeeded()
 
       - task: PublishBuildArtifacts@1
