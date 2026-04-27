@@ -161,19 +161,18 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
-            echo -e "\n📁 Generando archivo .pnpmrc en: $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc"
-            cat <<EOF > "$(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc"
+            echo -e "\n📁 Generando archivo .pnpmrc en: $(Build.Repository.Name)/$(file)/$(msName)/.pnpmrc"
+            cat <<EOF > "$(Build.Repository.Name)/$(file)/$(msName)/.pnpmrc"
             node-linker=hoisted
             shamefully-hoist=true
             ignore-scripts=false
             allow-build-script=true
             strict-peer-dependencies=false
             EOF
-            ls -l $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc
-            cat $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc
+            ls -l $(Build.Repository.Name)/$(file)/$(msName)/.pnpmrc
+            cat $(Build.Repository.Name)/$(file)/$(msName)/.pnpmrc
 
-            cd $(System.DefaultWorkingDirectory)
+            cd $(Build.Repository.Name)
             echo -e "\n⚙️ Instalando dependencias node..."
             npm install -g pnpm
             pnpm install
