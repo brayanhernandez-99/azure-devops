@@ -161,24 +161,6 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
-            echo "📍 PWD actual:"
-            pwd
-
-            echo -e "\n📂 Contenido raíz:"
-            ls -la
-
-            echo "📍 ls $(Build.Repository.Name):"
-            ls -la $(Build.Repository.Name)
-
-
-            echo -e "\n📂 ls -la $(Build.Repository.Name)/$(file):"
-            ls -la $(Build.Repository.Name)/$(file)
-
-
-
-
-
             echo -e "\n📁 Generando archivo .pnpmrc en: $(Build.Repository.Name)/$(file)/$(msName)/.pnpmrc"
             cat <<EOF > "$(Build.Repository.Name)/$(file)/$(msName)/.pnpmrc"
             node-linker=hoisted
