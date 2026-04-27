@@ -15,10 +15,11 @@ jobs:
         fetchTags: false
 
       - script: |
+          set -e
           if [[ "$(Build.Reason)" == "PullRequest" ]]; then
-            CURRENT_BRANCH="$(System.PullRequest.SourceBranchName)"
+            CURRENT_BRANCH="$(System.PullRequest.SourceBranch)"
           else
-            CURRENT_BRANCH="$(Build.SourceBranchName)"
+            CURRENT_BRANCH="$(Build.SourceBranch)"
           fi
 
           echo -e "\n📌 Verificando si feature está actualizada con master y si hay cambios relevantes..."
@@ -57,6 +58,7 @@ jobs:
           startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
 
       - script: |
+          set -e
           if [[ "$(Build.Reason)" == "PullRequest" ]]; then
             sourceBranch="$(System.PullRequest.SourceBranch)"
             sourceBranch="${sourceBranch/refs\/heads\//}"
@@ -109,6 +111,7 @@ jobs:
           startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
 
       - script: |
+          set -e
           REPO_NAME="$(Build.Repository.Name)"          
           RESPONSE=$(curl -s -u ":$AZURE_DEVOPS_CLI_PAT" \
             "https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories?api-version=5.0")
@@ -125,6 +128,7 @@ jobs:
           startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
 
       - script: |
+          set -e
           if [[ "$(Build.Reason)" == "PullRequest" ]]; then
             CURRENT_BRANCH="$(System.PullRequest.SourceBranch)"
           else
@@ -162,6 +166,7 @@ jobs:
           startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
 
       - script: |
+          set -e
           echo -e "\nℹ️ Pull Request ID recuperado: $(ultimoPR)"
           echo "id del repositorio $(Build.Repository.Name) = $(repoID)"
 
@@ -180,6 +185,7 @@ jobs:
           startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
 
       - script: |
+          set -e
           if [[ "$(Build.Reason)" == "PullRequest" ]]; then
             CURRENT_BRANCH="$(System.PullRequest.SourceBranch)"
           else
@@ -344,6 +350,7 @@ jobs:
         condition: succeeded()
 
       - script: |
+          set -e
           if [[ "$(Build.Reason)" == "PullRequest" ]]; then
             raw_branch="$(System.PullRequest.SourceBranch)"
           else
