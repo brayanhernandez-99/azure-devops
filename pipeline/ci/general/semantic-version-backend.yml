@@ -122,10 +122,9 @@ jobs:
         env:
           AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
         displayName: "📌 Set Repository ID"
-        condition: and(succeeded(), or(
-          eq(variables['Build.Reason'], 'PullRequest'),
-          startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'),
-          startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
+        condition: and(succeeded(),
+          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
+          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
 
       - script: |
           set -e
@@ -160,10 +159,9 @@ jobs:
         env:
           AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
         displayName: "📌 Set Pull Request ID"
-        condition: and(succeeded(), or(
-          eq(variables['Build.Reason'], 'PullRequest'),
-          startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'),
-          startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
+        condition: and(succeeded(),
+          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
+          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
 
       - script: |
           set -e
@@ -179,10 +177,9 @@ jobs:
         env:
           AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
         displayName: "📌 Pull Request Commit Details"
-        condition: and(succeeded(), or(
-          eq(variables['Build.Reason'], 'PullRequest'),
-          startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'),
-          startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
+        condition: and(succeeded(),
+          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
+          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
 
       - script: |
           set -e
