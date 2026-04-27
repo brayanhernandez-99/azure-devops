@@ -6,10 +6,13 @@ jobs:
       VmImage: ubuntu-22.04
 
     steps:
-      - script: |
-          echo -e "\n📦 Archivos a cargar a S3"
-          echo "🌿 Rama : $(Build.SourceBranchName)"
-          echo "📂 Files:"
-          tree
+      - task: Bash@3
+        inputs:
+          targetType: "inline"
+          script: |
+            echo -e "\n📦 Archivos a cargar a S3"
+            echo "🌿 Rama : $BUILD_SOURCEBRANCHNAME"
+            echo "📂 Files:"
+            tree
         displayName: "📂 File Structure & Account ID"
         condition: succeeded()
