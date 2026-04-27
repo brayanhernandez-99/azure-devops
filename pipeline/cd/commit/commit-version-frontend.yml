@@ -1,8 +1,8 @@
 jobs:
   - deployment: push_versions
     displayName: "🔐 serial git push (version/*)"
-    dependsOn: "deploy_micro_frontend"
-    condition: in(dependencies.deploy_micro_frontend.result, 'Succeeded', 'SucceededWithIssues')
+    dependsOn: "deploy_microfrontend"
+    condition: in(dependencies.deploy_microfrontend.result, 'Succeeded', 'SucceededWithIssues')
     environment: git-version-lock
     strategy:
       runOnce:
@@ -17,34 +17,39 @@ jobs:
               artifact: versions
               displayName: "📥 Download Versions"
 
-            - script: |
-                raw_branch=$(Build.SourceBranch)
-                clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
+            - task: Bash@3
+              inputs:
+                targetType: inline
+                script: |
+                  set -e
+                  raw_branch=$(Build.SourceBranch)
+                  clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
 
-                git config user.name "pipeline"
-                git config user.email "pipelineUX@ux.technology"
+                  git config user.name "pipeline"
+                  git config user.email "pipelineUX@ux.technology"
 
-                git fetch origin version/$clean_branch
-                git checkout -B version/$clean_branch origin/version/$clean_branch
+                  git fetch origin version/$clean_branch
+                  git checkout -B version/$clean_branch origin/version/$clean_branch
 
-                for files in $(Pipeline.Workspace)/versions/*/version.json; do
-                  ms=$(jq -r .ms "$files")
-                  version=$(jq -r .version "$files")
+                  for files in $(Pipeline.Workspace)/versions/*/version.json; do
+                    ms=$(jq -r .ms "$files")
+                    version=$(jq -r .version "$files")
 
-                  echo "🔧 $ms → $version"
-                  if [[ "$ms" == "app-administration-vue2" || "$ms" == "app-sellers-vue2" ]]; then
-                    dir="app-legacy"
-                  else
-                    dir="apps"
-                  fi
+                    echo "🔧 $ms → $version"
+                    if [[ "$ms" == "app-administration-vue2" || "$ms" == "app-sellers-vue2" ]]; then
+                      dir="app-legacy"
+                    else
+                      dir="apps"
+                    fi
 
-                  jq --arg version "$version" \
-                    '.version = $version' \
-                    "$dir/$ms/package.json" > tmp.json && mv tmp.json "$dir/$ms/package.json"
+                    jq --arg version "$version" \
+                      '.version = $version' \
+                      "$dir/$ms/package.json" > tmp.json && mv tmp.json "$dir/$ms/package.json"
 
-                  git add "$dir/$ms/package.json"
-                done
+                    git add "$dir/$ms/package.json"
+                  done
 
-                git commit -m "chore: bump versions [monorepo]"
-                git push origin version/$clean_branch
+                  git commit -m "chore: bump versions [monorepo]"
+                  git push origin version/$clean_branch
               displayName: "⚡ Commit Version & Push"
+              condition: succeeded()
