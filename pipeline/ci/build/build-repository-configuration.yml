@@ -11,7 +11,7 @@ jobs:
           targetType: "inline"
           script: |
             echo -e "\n📦 Archivos a cargar a S3"
-            echo "🌿 Rama : $BUILD_SOURCEBRANCHNAME"
+            echo "🌿 Rama : $(Build.SourceBranchName)"
             echo "📂 Files:"
             tree
         displayName: "📂 File Structure & Account ID"
