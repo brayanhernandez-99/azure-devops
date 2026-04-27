@@ -15,6 +15,7 @@ jobs:
         fetchTags: false
 
       - script: |
+          set -e
           echo -e "\n📌 Verificando si feature está actualizada con master y si hay cambios relevantes..."
           echo "Branch Actual: $(echo $(Build.SourceBranch))"          
           git fetch origin master
