@@ -178,18 +178,20 @@ jobs:
         displayName: "📦 Build Docker Image: $(Build.Repository.Name)"
         condition: succeeded()
 
-      # - script: |
-      #     docker run --rm \
-      #       -v /var/run/docker.sock:/var/run/docker.sock \
-      #       aquasec/trivy:latest \
-      #       image \
-      #       --severity CRITICAL,HIGH \
-      #       --exit-code 1 \
-      #       $(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/$(ecr_repository):$(version)
+      # - task: Bash@3
+      #   inputs:
+      #     targetType: inline
+      #     script: |
+      #       docker run --rm \
+      #         -v /var/run/docker.sock:/var/run/docker.sock \
+      #         aquasec/trivy:latest \
+      #         image \
+      #         --severity CRITICAL,HIGH \
+      #         --exit-code 1 \
+      #         $(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/$(ecr_repository):$(version)
       #   displayName: "🛡️ Trivy scan Docker image"
       #   continueOnError: true
-      #   condition: and(succeeded(),
-      #     ne(variables['Build.SourceBranchName'], 'master'))
+      #   condition: and(succeeded(), ne(variables['Build.SourceBranchName'], 'master'))
 
       - task: Bash@3
         inputs:
