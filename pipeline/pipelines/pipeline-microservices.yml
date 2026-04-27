@@ -1,5 +1,5 @@
 stages:
-  - stage: semantic_version_micro_service
+  - stage: semantic_version_microservice
     displayName: "🏷️ Semantic Version MicroService"
     jobs:
       - template: ../ci/semantic-version-integration.yml
@@ -9,32 +9,32 @@ stages:
   #####################################################################
 
   - ${{ if or(eq(variables['Build.Reason'], 'PullRequest'), startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')) }}:
-      - stage: scan_micro_service
+      - stage: scan_microservice
         displayName: "🛡️ Scan MicroService"
-        dependsOn: semantic_version_micro_service
+        dependsOn: semantic_version_microservice
         jobs:
           - template: ../ci/tests/sonarqube-backend.yml
           - template: ../ci/tests/gitleaks.yml
 
-      - stage: build_micro_service
+      - stage: build_microservice
         displayName: "📦 Build MicroService"
-        dependsOn: scan_micro_service
+        dependsOn: scan_microservice
         jobs:
           - template: ../ci/build/build-backend.yml
 
   #####################################################################
 
   - ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
-      - stage: build_micro_service
+      - stage: build_microservice
         displayName: "📦 Build MicroService"
-        dependsOn: semantic_version_micro_service
+        dependsOn: semantic_version_microservice
         jobs:
           - template: ../ci/build/build-backend.yml
 
       - ${{ each region in parameters.red }}:
-          - stage: deploy_micro_service_${{ region }}
+          - stage: deploy_microservice_${{ region }}
             displayName: "🚀 Deploy MicroService ${{ region }}"
-            dependsOn: build_micro_service
+            dependsOn: build_microservice
             jobs:
               - template: ../cd/deployment.yml
                 parameters:
@@ -44,22 +44,22 @@ stages:
   #####################################################################
 
   - ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}:
-      - stage: scan_micro_service
+      - stage: scan_microservice
         displayName: "🛡️ Scan MicroService"
-        dependsOn: semantic_version_micro_service
+        dependsOn: semantic_version_microservice
         jobs:
           - template: ../ci/tests/sonarqube-backend.yml
           - template: ../ci/tests/gitleaks.yml
 
-      - stage: build_micro_service
+      - stage: build_microservice
         displayName: "📦 Build MicroService develop"
-        dependsOn: scan_micro_service
+        dependsOn: scan_microservice
         jobs:
           - template: ../ci/build/build-backend.yml
 
-      - stage: deploy_micro_service_develop
+      - stage: deploy_microservice_develop
         displayName: "🚀 Deploy MicroService develop"
-        dependsOn: build_micro_service
+        dependsOn: build_microservice
         jobs:
           - template: ../cd/deployment.yml
             parameters:
@@ -68,16 +68,16 @@ stages:
   #####################################################################
 
   - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
-      - stage: build_micro_service
+      - stage: build_microservice
         displayName: "📦 Build MicroService"
-        dependsOn: semantic_version_micro_service
+        dependsOn: semantic_version_microservice
         jobs:
           - template: ../ci/build/build-backend.yml
 
       - ${{ each environment_staging in parameters.environments_staging }}:
-          - stage: deploy_micro_service_${{ environment_staging }}
+          - stage: deploy_microservice_${{ environment_staging }}
             displayName: "🚀 Deploy MicroService ${{ environment_staging }}"
-            dependsOn: build_micro_service
+            dependsOn: build_microservice
             jobs:
               - template: ../cd/deployment.yml
                 parameters:

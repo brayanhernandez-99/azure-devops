@@ -22,141 +22,163 @@ jobs:
         displayName: "📥 Download Version"
         condition: succeeded()
 
-      - script: |
-          VERSION_FILE="$(Pipeline.Workspace)/versions-downloaded/versions/flutter/version.json"
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            set -e
+            VERSION_FILE="$(Pipeline.Workspace)/versions-downloaded/versions/flutter/version.json"
+            echo -e "\n📁 Archivo version.json:"
+            ls -la "$VERSION_FILE"
+            jq . "$VERSION_FILE"
 
-          echo -e "\n📁 Archivo version.json:"
-          ls -la "$VERSION_FILE"
-          jq . "$VERSION_FILE"
-
-          if [[ -f "$VERSION_FILE" ]]; then
-            VERSION=$(jq -r '.version' $VERSION_FILE)
-            echo -e "\n🚀 Versión detectada para $(Build.Repository.Name): $VERSION"
-            echo "##vso[task.setvariable variable=version]$VERSION"
-          else
-            echo -e "\n##vso[task.logissue type=error]⚠️ No se encontro archivo de versión para $(Build.Repository.Name)"
-            exit 99
-          fi
+            if [[ -f "$VERSION_FILE" ]]; then
+              VERSION=$(jq -r '.version' $VERSION_FILE)
+              echo -e "\n🚀 Versión detectada para $(Build.Repository.Name): $VERSION"
+              echo "##vso[task.setvariable variable=version]$VERSION"
+            else
+              echo -e "\n##vso[task.logissue type=error]⚠️ No se encontro archivo de versión para $(Build.Repository.Name)"
+              exit 99
+            fi
         displayName: "📚 Read Version"
         condition: succeeded()
 
-      - script: |
-          VERSION_FILE="$(Pipeline.Workspace)/versions-downloaded/versions/pubspec/version.json"
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            set -e
+            VERSION_FILE="$(Pipeline.Workspace)/versions-downloaded/versions/pubspec/version.json"
+            echo -e "\n📁 Archivo version.json:"
+            ls -la "$VERSION_FILE"
+            jq . "$VERSION_FILE"
 
-          echo -e "\n📁 Archivo version.json:"
-          ls -la "$VERSION_FILE"
-          jq . "$VERSION_FILE"
-
-          if [[ -f "$VERSION_FILE" ]]; then
-            VERSION=$(jq -r '.version' $VERSION_FILE)
-            echo -e "\n🚀 Versión detectada para pubspec: +$VERSION"
-            echo "##vso[task.setvariable variable=versionPubspec]$VERSION"
-          else
-            echo -e "\n##vso[task.logissue type=error]⚠️ No se encontro archivo de versión para pubspec"
-            exit 99
-          fi
+            if [[ -f "$VERSION_FILE" ]]; then
+              VERSION=$(jq -r '.version' $VERSION_FILE)
+              echo -e "\n🚀 Versión detectada para pubspec: +$VERSION"
+              echo "##vso[task.setvariable variable=versionPubspec]$VERSION"
+            else
+              echo -e "\n##vso[task.logissue type=error]⚠️ No se encontro archivo de versión para pubspec"
+              exit 99
+            fi
         displayName: "📚 Read Version pubspec"
         condition: succeeded()
 
-      - script: |
-          CURRENT_BRANCH="$(Build.SourceBranch)"
-          environment="unknown"
-          appId="unknown"
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            set -e
+            CURRENT_BRANCH="$(Build.SourceBranch)"
+            environment="unknown"
+            appId="unknown"
 
-          case "$CURRENT_BRANCH" in
-            refs/heads/feature/*) environment="dev"; appId="dev"; ;;
-            refs/heads/develop)
-              if [[ "$environments" == "develop_new" ]]; then
-                environment="dev_new"
-                appId="dev"
-              else
-                environment="dev"
-                appId="dev"
-              fi
-              ;;
-            refs/heads/staging)
-              if [[ "$environments" == "staging_new" ]]; then
-                environment="qa_new"
-                appId="qa"
-              elif [[ "$environments" == "staging_nacional" ]]; then
-                environment="qa_nacional"
-                appId="qa"
-              else
-                environment="qa"
-                appId="qa"
-              fi
-              ;;
-            refs/heads/master) 
-              case "$region" in
-                "antioquia") environment="prd-gana"; appId="GANA"; ;;
-                "cap")       environment="prd-cap";  appId="CAP"; ;;
-                "tolima")    environment="prd-seapto"; appId="SEAPTO"; ;;
-                "huila")     environment="prd-suchance"; appId="SUCHANCE"; ;;
-                "cauca")     environment="prd-acertemos"; appId="ACERTEMOS"; ;;
-                "boyaca")    environment="prd-jer"; appId="JER"; ;;
-                "santander") environment="prd-laperla"; appId="LAPERLA"; ;;
-                "putumayo")  environment="prd-matrixredes"; appId="MATRIXREDES"; ;;
-              esac ;;
-          esac
+            case "$CURRENT_BRANCH" in
+              refs/heads/feature/*) environment="dev"; appId="dev"; ;;
+              refs/heads/develop)
+                if [[ "$environments" == "develop_new" ]]; then
+                  environment="dev_new"
+                  appId="dev"
+                else
+                  environment="dev"
+                  appId="dev"
+                fi
+                ;;
+              refs/heads/staging)
+                if [[ "$environments" == "staging_new" ]]; then
+                  environment="qa_new"
+                  appId="qa"
+                elif [[ "$environments" == "staging_nacional" ]]; then
+                  environment="qa_nacional"
+                  appId="qa"
+                else
+                  environment="qa"
+                  appId="qa"
+                fi
+                ;;
+              refs/heads/master) 
+                case "$region" in
+                  "antioquia") environment="prd-gana"; appId="GANA"; ;;
+                  "cap")       environment="prd-cap";  appId="CAP"; ;;
+                  "tolima")    environment="prd-seapto"; appId="SEAPTO"; ;;
+                  "huila")     environment="prd-suchance"; appId="SUCHANCE"; ;;
+                  "cauca")     environment="prd-acertemos"; appId="ACERTEMOS"; ;;
+                  "boyaca")    environment="prd-jer"; appId="JER"; ;;
+                  "santander") environment="prd-laperla"; appId="LAPERLA"; ;;
+                  "putumayo")  environment="prd-matrixredes"; appId="MATRIXREDES"; ;;
+                esac ;;
+            esac
 
-          if [ "$environment" == "unknown" ] || [ "$appId" == "unknown" ]; then
-            echo -e "\n##vso[task.logissue type=error]⚠️ App Id o Environment no reconocidos"
-            echo -e "\n##vso[task.logissue type=error]⚠️ App Id: [$appId]"
-            echo -e "\n##vso[task.logissue type=error]⚠️ Environment: [$environment]"
-            exit 99
-          fi
+            if [ "$environment" == "unknown" ] || [ "$appId" == "unknown" ]; then
+              echo -e "\n##vso[task.logissue type=error]⚠️ App Id o Environment no reconocidos"
+              echo -e "\n##vso[task.logissue type=error]⚠️ App Id: [$appId]"
+              echo -e "\n##vso[task.logissue type=error]⚠️ Environment: [$environment]"
+              exit 99
+            fi
 
-          echo "##vso[task.setvariable variable=appId]$appId"
-          echo "##vso[task.setvariable variable=environment]$environment"
+            echo "##vso[task.setvariable variable=appId]$appId"
+            echo "##vso[task.setvariable variable=environment]$environment"
 
-          echo -e "\nℹ️ Varibles de entorno:"
-          echo "App Id: $appId"
-          echo "Environment: $environment"
+            echo -e "\nℹ️ Varibles de entorno:"
+            echo "App Id:      $appId"
+            echo "Environment: $environment"
         displayName: "⚙️ Generate Environment & Region"
         condition: succeeded()
         env:
           region: ${{ parameters.region }}
           environments: ${{ parameters.environments }}
 
-      - script: |
-          CURRENT_BRANCH="$(Build.SourceBranch)"
-          echo -e "\nℹ️ Actualizando version:"
-          echo "Version: $(version)"
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            set -e
+            CURRENT_BRANCH="$(Build.SourceBranch)"
+            echo -e "\nℹ️ Actualizando version:"
+            echo "Version: $(version)"
 
-          jq --arg version "$(version)" \
-            --arg environment "$(environment)" \
-            --arg url "$(BASE_URL_FLUTTER)" \
-            '.VERSION = $version | .ENVIRONMENT = $environment | .BASE_URL = $url' env.json > tmp.json && mv tmp.json env.json
+            jq --arg version "$(version)" \
+              --arg environment "$(environment)" \
+              --arg url "$(BASE_URL_FLUTTER)" \
+              '.VERSION = $version | .ENVIRONMENT = $environment | .BASE_URL = $url' env.json > tmp.json && mv tmp.json env.json
 
-          echo -e "\n📁 Archivo env.json:"
-          ls -la env.json
-          cat env.json
+            echo -e "\n📁 Archivo env.json:"
+            ls -la env.json
+            cat env.json
         displayName: "⚙️ Generate env.json"
         condition: succeeded()
 
-      - script: |
-          echo -e "\nℹ️ Actualizando version:"
-          echo "Version: $(version)"
-          echo "Version Pubspec: $(versionPubspec)"
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            set -e
+            echo -e "\nℹ️ Actualizando version:"
+            echo "Version: $(version)"
+            echo "Version Pubspec: $(versionPubspec)"
 
-          sed -i '' "s/^version: .*/version: $(version)+$(versionPubspec)/" pubspec.yaml
+            sed -i '' "s/^version: .*/version: $(version)+$(versionPubspec)/" pubspec.yaml
 
-          echo -e "\n📁 Archivo pubspec.yaml:"
-          ls -la pubspec.yaml
-          cat pubspec.yaml
+            echo -e "\n📁 Archivo pubspec.yaml:"
+            ls -la pubspec.yaml
+            cat pubspec.yaml
         displayName: "🔁 Change Version pubspec"
         condition: succeeded()
 
-      - script: |
-          echo -e "\nℹ️ Actualizando App ID:"
-          echo "App Id: com.ux.mobile.$(appId)"
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            set -e
+            echo -e "\nℹ️ Actualizando App ID:"
+            echo "App Id: com.ux.mobile.$(appId)"
 
-          NEW_APP_ID="com.ux.mobile.$(appId)"
-          sed -i '' "s|applicationId *= *\"[^\"]*\"|applicationId = \"$NEW_APP_ID\"|" android/app/build.gradle
+            NEW_APP_ID="com.ux.mobile.$(appId)"
+            sed -i '' "s|applicationId *= *\"[^\"]*\"|applicationId = \"$NEW_APP_ID\"|" android/app/build.gradle
 
-          echo -e "\n📁 Archivo build.gradle:"
-          ls -la android/app/build.gradle
-          cat android/app/build.gradle
+            echo -e "\n📁 Archivo build.gradle:"
+            ls -la android/app/build.gradle
+            cat android/app/build.gradle
         displayName: "🔁 Change Version build.gradle"
         condition: succeeded()
 
@@ -169,40 +191,51 @@ jobs:
         displayName: "🔧 Install Flutter $(flutterVersion)"
         condition: succeeded()
 
-      - script: |
-          echo "🔍 Verificando entorno Flutter y Android SDK..."
-          echo -e "\n📦 ANDROID_HOME: $ANDROID_HOME" && ls -la "$ANDROID_HOME"
-          echo -e "\n🌀 Flutter versión:" && flutter --version
-          echo -e "\n📥 Ejecutando flutter pub get..."
-          flutter pub get
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            set -e
+            echo "🔍 Verificando entorno Flutter y Android SDK..."
+            echo -e "\n📦 ANDROID_HOME: $ANDROID_HOME" && ls -la "$ANDROID_HOME"
+            echo -e "\n🌀 Flutter versión:" && flutter --version
+            echo -e "\n📥 Ejecutando flutter pub get..."
+            flutter pub get
         displayName: "🌀 Flutter: Get Dependencies"
         condition: succeeded()
 
-      - script: |
-          echo -e "\nℹ️ Verificando carpeta assets..."
-
-          if [[ -d "assets" ]] && [[ "$(ls -A assets)" ]]; then
-            echo -e "\n📁 Assets encontrados:"
-            ls -la assets
-          else
-            echo -e "\n##vso[task.logissue type=error]⚠️ Error: No se encontraron assets"
-            exit 99
-          fi
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            set -e
+            echo -e "\nℹ️ Verificando carpeta assets..."
+            if [[ -d "assets" ]] && [[ "$(ls -A assets)" ]]; then
+              echo -e "\n📁 Assets encontrados:"
+              ls -la assets
+            else
+              echo -e "\n##vso[task.logissue type=error]⚠️ Error: No se encontraron assets"
+              exit 99
+            fi
         displayName: "🔍 Validate Assets"
         condition: succeeded()
 
-      - script: |
-          echo -e "\nℹ️ Descargando Keystore..."
-          mkdir -p android/app/keystore
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            set -e
+            echo -e "\nℹ️ Descargando Keystore..."
+            mkdir -p android/app/keystore
 
-          aws s3 cp s3://repository-native/app-seller/android/keystore/$(KEY_ALIAS).jks android/app/keystore/
-          if [[ -d "android/app/keystore" ]] && [[ "$(ls -A android/app/keystore/$(KEY_ALIAS).jks)" ]]; then    
-            echo -e "\n📁 Keystore descargado:"
-            ls -la android/app/keystore/*
-          else
-            echo -e "\n##vso[task.logissue type=error]⚠️ Error: No se descargo el Keystore"
-            exit 99
-          fi
+            aws s3 cp s3://repository-native/app-seller/android/keystore/$(KEY_ALIAS).jks android/app/keystore/
+            if [[ -d "android/app/keystore" ]] && [[ "$(ls -A android/app/keystore/$(KEY_ALIAS).jks)" ]]; then    
+              echo -e "\n📁 Keystore descargado:"
+              ls -la android/app/keystore/*
+            else
+              echo -e "\n##vso[task.logissue type=error]⚠️ Error: No se descargo el Keystore"
+              exit 99
+            fi
         displayName: "📥 Download Keystore"
         condition: succeeded()
         env:
@@ -210,33 +243,37 @@ jobs:
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
 
-      - script: |
-          escape_value() {
-          local raw="$1"
-          printf '%s' "$raw" | sed \
-            -e 's/\\/\\\\/g' \
-            -e 's/"/\\"/g' \
-            -e "s/'/\\'/g" \
-            -e 's/=/\\=/g' \
-            -e 's/:/\\:/g' \
-            -e 's/ /\\ /g' \
-            -e 's/!/\!/g' \
-            -e 's/#/\\#/g' \
-            -e 's/\$/\\$/g' \
-            -e 's/-/\\-/g'
-          }
-          ESCAPED_STORE_PASSWORD=$(escape_value "$STORE_PASSWORD")
-          ESCAPED_KEY_PASSWORD=$(escape_value "$KEY_PASSWORD")
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            set -e
+            escape_value() {
+            local raw="$1"
+            printf '%s' "$raw" | sed \
+              -e 's/\\/\\\\/g' \
+              -e 's/"/\\"/g' \
+              -e "s/'/\\'/g" \
+              -e 's/=/\\=/g' \
+              -e 's/:/\\:/g' \
+              -e 's/ /\\ /g' \
+              -e 's/!/\!/g' \
+              -e 's/#/\\#/g' \
+              -e 's/\$/\\$/g' \
+              -e 's/-/\\-/g'
+            }
+            ESCAPED_STORE_PASSWORD=$(escape_value "$STORE_PASSWORD")
+            ESCAPED_KEY_PASSWORD=$(escape_value "$KEY_PASSWORD")
 
-          touch android/key.properties
-          echo "keyAlias=$KEY_ALIAS" >> android/key.properties
-          echo "keyPassword=$ESCAPED_KEY_PASSWORD" >> android/key.properties
-          echo "storePassword=$ESCAPED_STORE_PASSWORD" >> android/key.properties
-          echo "storeFile=keystore/$KEY_ALIAS.jks" >> android/key.properties
+            touch android/key.properties
+            echo "keyAlias=$KEY_ALIAS" >> android/key.properties
+            echo "keyPassword=$ESCAPED_KEY_PASSWORD" >> android/key.properties
+            echo "storePassword=$ESCAPED_STORE_PASSWORD" >> android/key.properties
+            echo "storeFile=keystore/$KEY_ALIAS.jks" >> android/key.properties
 
-          echo -e "\n📁 File key.properties creado:"
-          ls -la android/key.properties
-          cat android/key.properties | sed -E 's/^(keyPassword|storePassword)=.*/\1=*** /'
+            echo -e "\n📁 File key.properties creado:"
+            ls -la android/key.properties
+            cat android/key.properties | sed -E 's/^(keyPassword|storePassword)=.*/\1=*** /'
         displayName: "🔐 Assign Keystore"
         condition: succeeded()
         env:
@@ -244,47 +281,58 @@ jobs:
           KEY_PASSWORD: $(KEY_PASSWORD)
           STORE_PASSWORD: $(STORE_PASSWORD)
 
-      - script: |
-          echo -e "\n☕ JAVA_HOME: $JAVA_HOME" && java -version
-          echo -e "\n🌀 Flutter versión:" && flutter --version
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            set -e
+            echo -e "\n☕ JAVA_HOME: $JAVA_HOME" && java -version
+            echo -e "\n🌀 Flutter versión:" && flutter --version
 
-          echo -e "\n🌀Ejecutando Build Flutter: flutter --no-color build apk --no-tree-shake-icons --profile"
-          flutter --no-color build apk --no-tree-shake-icons --profile
+            echo -e "\n🌀Ejecutando Build Flutter: flutter --no-color build apk --no-tree-shake-icons --profile"
+            flutter --no-color build apk --no-tree-shake-icons --profile
         displayName: "📦 Flutter Build APK"
         condition: succeeded()
 
-      - script: |
-          echo -e "\nℹ️ Verificando Build Apk..."
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            set -e
+            echo -e "\nℹ️ Verificando Build Apk..."
 
-          if [[ -d "build/app/outputs/flutter-apk" ]] && [[ "$(ls -A build/app/outputs/flutter-apk)" ]]; then
-            echo -e "\n✅ Apk encontrado:"
-            ls -la build/app/outputs/flutter-apk
+            if [[ -d "build/app/outputs/flutter-apk" ]] && [[ "$(ls -A build/app/outputs/flutter-apk)" ]]; then
+              echo -e "\n✅ Apk encontrado:"
+              ls -la build/app/outputs/flutter-apk
 
-            SHA1_APK=$(shasum -a 1 build/app/outputs/flutter-apk/app-profile.apk | awk '{print $1}')
-            SHA1_FLUTTER=$(cut -d ' ' -f1 build/app/outputs/flutter-apk/app-profile.apk.sha1)
-            echo -e "\n🔐 SHA-1 Apk: $SHA1_APK"
-            echo "🔐 SHA-1 Flutter: $SHA1_FLUTTER"
-            echo "🔐 SHA-1 Certificado:"
-            $ANDROID_HOME/build-tools/34.0.0/apksigner verify --print-certs build/app/outputs/flutter-apk/app-profile.apk | grep -A 5 "Signer #"
-          else
-            echo -e "\n##vso[task.logissue type=error]⚠️ Error: Apk no encontrado"
-            exit 99
-          fi
+              SHA1_APK=$(shasum -a 1 build/app/outputs/flutter-apk/app-profile.apk | awk '{print $1}')
+              SHA1_FLUTTER=$(cut -d ' ' -f1 build/app/outputs/flutter-apk/app-profile.apk.sha1)
+              echo -e "\n🔐 SHA-1 Apk: $SHA1_APK"
+              echo "🔐 SHA-1 Flutter: $SHA1_FLUTTER"
+              echo "🔐 SHA-1 Certificado:"
+              $ANDROID_HOME/build-tools/34.0.0/apksigner verify --print-certs build/app/outputs/flutter-apk/app-profile.apk | grep -A 5 "Signer #"
+            else
+              echo -e "\n##vso[task.logissue type=error]⚠️ Error: Apk no encontrado"
+              exit 99
+            fi
         displayName: "🔍 Validate APK"
         condition: succeeded()
 
-      - script: |
-          set -e
-          echo -e "\nℹ️ Renombrando APK..."
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            set -e
+            echo -e "\nℹ️ Renombrando APK..."
 
-          mv build/app/outputs/flutter-apk/app-profile.apk build/app/outputs/flutter-apk/invictus-$(environment)-$(version).apk
-          mv build/app/outputs/flutter-apk/app-profile.apk.sha1 build/app/outputs/flutter-apk/invictus-$(environment)-$(version).apk.sha1
+            mv build/app/outputs/flutter-apk/app-profile.apk build/app/outputs/flutter-apk/invictus-$(environment)-$(version).apk
+            mv build/app/outputs/flutter-apk/app-profile.apk.sha1 build/app/outputs/flutter-apk/invictus-$(environment)-$(version).apk.sha1
 
-          mkdir -p "$(Build.ArtifactStagingDirectory)/flutter-artifact"
-          cp -R build/app/outputs/flutter-apk/* $(Build.ArtifactStagingDirectory)/flutter-artifact/
+            mkdir -p "$(Build.ArtifactStagingDirectory)/flutter-artifact"
+            cp -R build/app/outputs/flutter-apk/* $(Build.ArtifactStagingDirectory)/flutter-artifact/
 
-          echo -e "\n📁 APK generados:"
-          ls -l build/app/outputs/flutter-apk
+            echo -e "\n📁 APK generados:"
+            ls -l build/app/outputs/flutter-apk
         displayName: "📝 Change Name File APK"
         condition: succeeded()
 
