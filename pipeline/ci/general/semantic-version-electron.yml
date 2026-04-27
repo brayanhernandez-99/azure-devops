@@ -15,6 +15,7 @@ jobs:
         fetchTags: false
 
       - script: |
+          set -e
           echo -e "\n📌 Verificando si feature está actualizada con master y si hay cambios relevantes..."
           echo "Branch Actual: $(echo $(Build.SourceBranch))"          
           git fetch origin master
@@ -50,6 +51,7 @@ jobs:
           startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
 
       - script: |
+          set -e
           sourceBranch="${BUILD_SOURCEBRANCH/refs\/heads\//}"
           targetBranch="master"
 
@@ -96,6 +98,7 @@ jobs:
           startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
 
       - script: |
+          set -e
           REPO_NAME="$(Build.Repository.Name)"          
           RESPONSE=$(curl -s -u ":$AZURE_DEVOPS_CLI_PAT" \
             "https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories?api-version=5.0")
@@ -111,6 +114,7 @@ jobs:
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
 
       - script: |
+          set -e
           CURRENT_BRANCH=$(echo $(Build.SourceBranch))
           echo -e "\nℹ️ id repositorio $(Build.Repository.Name): $(repoID)"
           echo "Branch Actual: $CURRENT_BRANCH"
@@ -142,6 +146,7 @@ jobs:
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
 
       - script: |
+          set -e
           echo -e "\nℹ️ Pull Request ID recuperado: $(ultimoPR)"
           echo "id del repositorio $(Build.Repository.Name) = $(repoID)"
 
@@ -159,6 +164,7 @@ jobs:
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
 
       - script: |
+          set -e
           CURRENT_BRANCH=$(echo $(Build.SourceBranch))
           echo -e "\nℹ️ Branch Actual: $CURRENT_BRANCH"
 
@@ -295,6 +301,7 @@ jobs:
         condition: succeeded()
 
       - script: |
+          set -e
           raw_branch=$(Build.SourceBranch)
           clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
 
