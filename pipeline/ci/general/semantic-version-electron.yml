@@ -183,10 +183,9 @@ jobs:
             echo -e "\nℹ️ Pull Request ID recuperado: $(ultimoPR)"
             echo "id del repositorio $(Build.Repository.Name) = $(repoID)"
 
-            COMMITS=$(curl -s -u ":$AZURE_DEVOPS_CLI_PAT" \
-              "https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories/$(repoID)/pullRequests/$(ultimoPR)/commits?api-version=7.0" \
+            COMMITS=$(curl -s -u ":$AZURE_DEVOPS_CLI_PAT" "https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories/$(repoID)/pullRequests/$(ultimoPR)/commits?api-version=7.0" \
               | jq -r '.value // [] | .[].comment' \
-              | grep -E 'feat:|fix:|!' || true)
+              | grep -E 'feat:|fix:|!')
             SAFE_COMMITS=$(echo "$COMMITS" | tr '\n' '|')
             echo $SAFE_COMMITS
             echo "##vso[task.setvariable variable=filteredCommits]$SAFE_COMMITS"
