@@ -24,8 +24,9 @@ stages:
       - stage: build_microservice
         displayName: "📦 Build MicroService"
         dependsOn: scan_microservice
-        condition: and(succeeded('semantic_version_microservice'),or(
+        condition: and(succeeded('semantic_version_microservice'), or(
           eq(dependencies.scan_microservice.result, 'Succeeded'),
+          eq(dependencies.scan_microservice.result, 'SucceededWithIssues'),
           eq(dependencies.scan_microservice.result, 'Skipped')))
         jobs:
           - template: ../ci/build/build-backend.yml
