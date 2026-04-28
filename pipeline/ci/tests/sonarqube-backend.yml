@@ -198,7 +198,14 @@ jobs:
               exit 99
             fi
 
-            echo "$RESPONSE" | jq -r '.analyses[] | "KEY=\(.key) DATE=\(.date)"'
+            ANALYSIS=$(echo "$RESPONSE" | jq -r '.paging.total // 0')
+            if [[ "$ANALYSIS" -eq 0 ]]; then
+              echo -e "\nℹ️ No existen análisis previos en SonarQube para '$PROJECT_KEY'. Continuando..."
+              exit 0
+            fi
+
+            echo -e "\n📋 Análisis encontrados:"
+            echo "$RESPONSE" | jq -r '.analyses[]? | "KEY=\(.key) DATE=\(.date)"'
             echo ""
             INDEX=0
 
