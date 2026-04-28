@@ -55,6 +55,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
+            set -e
             echo "⚙️ Configurando organización y proyecto por defecto"
             az devops configure --defaults organization=https://dev.azure.com/ux-technology project=$(System.TeamProject)
 
@@ -162,7 +163,6 @@ jobs:
 
                   echo "🔍 Comparando cambios entre: $CURRENT_BRANCH ... $CURRENT_BRANCH"
                   packages_changed=$(git diff --name-only HEAD~1 HEAD | grep "^packages/")
-
                   apps=$(git diff --name-only HEAD~1 HEAD | grep -E "^apps/|^app-legacy/" | cut -d '/' -f1,2 | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u)
 
                   if [[ -n "$packages_changed" ]]; then
