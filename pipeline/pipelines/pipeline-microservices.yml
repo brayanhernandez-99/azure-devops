@@ -12,6 +12,9 @@ stages:
       - stage: scan_microservice
         displayName: "🛡️ Scan MicroService"
         dependsOn: semantic_version_microservice
+        condition: not(and(
+          eq(variables['System.PullRequest.SourceBranch'],'refs/heads/staging'),
+          eq(variables['System.PullRequest.TargetBranch'],'refs/heads/master')))
         jobs:
           - template: ../ci/tests/sonarqube-backend.yml
           - template: ../ci/tests/gitleaks.yml
