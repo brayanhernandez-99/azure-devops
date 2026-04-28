@@ -12,9 +12,11 @@ stages:
       - stage: scan_microservice
         displayName: "🛡️ Scan MicroService"
         dependsOn: semantic_version_microservice
-        condition: and(succeeded(),or(
+        condition: and(succeeded(), or(
           startsWith(variables['System.PullRequest.SourceBranch'], 'refs/heads/feature/'),
-          startsWith(variables['System.PullRequest.SourceBranch'], 'refs/heads/hotfix/')))
+          startsWith(variables['System.PullRequest.SourceBranch'], 'refs/heads/hotfix/'),
+          startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'),
+          startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
         jobs:
           - template: ../ci/tests/sonarqube-backend.yml
           - template: ../ci/tests/gitleaks.yml
