@@ -47,7 +47,7 @@ jobs:
             else 
               echo -e "\nℹ️ No se enviará mensaje a SQS: no hubo cambios en reports/"
             fi
-        displayName: "🔍 Verify Changes in reports/"
+        displayName: "🔎 Verify Changes in reports/"
         condition: and(succeeded(), ne(variables['Build.SourceBranchName'], 'develop'))
         env:
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)

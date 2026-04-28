@@ -20,7 +20,7 @@ jobs:
       #   continueOnError: true
       #   inputs:
       #     scanType: repo
-      #   displayName: "🔍 Gitleaks (feature)"
+      #   displayName: "🔎 Gitleaks (feature)"
       #   condition: succeeded()
 
       - task: Bash@3
@@ -38,6 +38,6 @@ jobs:
               --verbose \
               --redact \
               --report-format json
-        displayName: "🔍 Gitleaks full repo scan"
+        displayName: "🔎 Gitleaks full repo scan"
         continueOnError: true
         condition: succeeded()
