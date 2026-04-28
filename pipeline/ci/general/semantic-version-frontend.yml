@@ -191,7 +191,8 @@ jobs:
 
             COMMITS=$(curl -s -u ":$AZURE_DEVOPS_CLI_PAT" \
               "https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories/$(repoID)/pullRequests/$(ultimoPR)/commits?api-version=7.0" \
-              | jq -r '.value[].comment' | grep -E 'feat:|fix:|!')
+              | jq -r '.value // [] | .[].comment' \
+              | grep -E 'feat:|fix:|!' || true)
             SAFE_COMMITS=$(echo "$COMMITS" | tr '\n' '|')
             echo $SAFE_COMMITS
             echo "##vso[task.setvariable variable=filteredCommits]$SAFE_COMMITS"
