@@ -158,7 +158,7 @@ jobs:
             echo "🔧 Actualizando versión en $(file)/$(msName)/package.json: $(msVersion)"
             jq --arg version "$(msVersion)" '.version = $version' package.json > tmp.json && mv tmp.json package.json
 
-            echo -e "\n📁 File package.json:"      
+            echo -e "\n📁 File package.json:"
             cat $(System.DefaultWorkingDirectory)/$(file)/$(msName)/package.json
         displayName: "📝 Update Version package.json"
         condition: succeeded()
