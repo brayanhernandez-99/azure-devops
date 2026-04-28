@@ -19,11 +19,16 @@ jobs:
           targetType: inline
           script: |
             set -e
-            echo -e "\nℹ️ Validando branch: $(Build.SourceBranch)"
+            if [[ "$(Build.Reason)" == "PullRequest" ]]; then
+              CURRENT_BRANCH="$(System.PullRequest.SourceBranch)"
+            else
+              CURRENT_BRANCH="$(Build.SourceBranch)"
+            fi
+            echo -e "\nℹ️ Validando branch: $CURRENT_BRANCH"
             REGEX='^refs/heads/(feature\/[a-zA-Z0-9._-]+|hotfix\/[a-zA-Z0-9._-]+|develop|staging|master)$'
 
-            if [[ ! "$(Build.SourceBranch)" =~ $REGEX ]]; then
-              echo -e "\n##vso[task.logissue type=error]⚠️ Error: la rama '$(Build.SourceBranch)' no cumple con el nombramiento."
+            if [[ ! "$CURRENT_BRANCH" =~ $REGEX ]]; then
+              echo -e "\n##vso[task.logissue type=error]⚠️ Error: la rama '$CURRENT_BRANCH' no cumple con el nombramiento."
               echo "##vso[task.logissue type=error] Usa: feature/*, hotfix/*, develop, staging o master"
               exit 99
             else
