@@ -163,7 +163,7 @@ jobs:
                 echo -e "\n🔄 Modo: LOTTERIES-GAMES"
 
                 if [[ "$REGION" == "antioquia" ]]; then
-                  clusters=("lotteries-games-ms-cluster" "lotteries-games-admin-ms-cluster")
+                  clusters=("lotteries-games-ms-cluster" "lotteries-games-ms-cluster")
                   services=("lotteries-games-ms-fg-service" "lotteries-games-admin-ms-fg-service")
                 else
                   clusters=("invictus" "invictus")
