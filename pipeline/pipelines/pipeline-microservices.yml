@@ -22,7 +22,6 @@ stages:
       - stage: build_microservice
         displayName: "📦 Build MicroService"
         dependsOn: scan_microservice
-        condition: always()
         jobs:
           - template: ../ci/build/build-backend.yml
 
