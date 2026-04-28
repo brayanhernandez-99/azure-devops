@@ -120,7 +120,6 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
             REPO_NAME="$(Build.Repository.Name)"          
             RESPONSE=$(curl -s -u ":$AZURE_DEVOPS_CLI_PAT" \
               "https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories?api-version=5.0")
@@ -130,7 +129,6 @@ jobs:
             echo "ℹ️ id del repositorio $REPO_NAME: $REPO_ID"
         displayName: "📌 Set Repository ID"
         condition: and(succeeded(),
-          ne(variables['Build.Reason'], 'PullRequest'),
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
         env:
@@ -140,7 +138,6 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
             if [[ "$(Build.Reason)" == "PullRequest" ]]; then
               CURRENT_BRANCH="$(System.PullRequest.SourceBranch)"
             else
@@ -171,7 +168,6 @@ jobs:
             echo "{\"idpr\": \"$PR_ID\" }" > $(Build.ArtifactStagingDirectory)/idpr/idpr.json
         displayName: "📌 Set Pull Request ID"
         condition: and(succeeded(),
-          ne(variables['Build.Reason'], 'PullRequest'),
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
         env:
@@ -181,7 +177,6 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
             echo -e "\nℹ️ Pull Request ID recuperado: $(ultimoPR)"
             echo "id del repositorio $(Build.Repository.Name) = $(repoID)"
 
@@ -193,7 +188,6 @@ jobs:
             echo "##vso[task.setvariable variable=filteredCommits]$SAFE_COMMITS"
         displayName: "📌 Pull Request Commit Details"
         condition: and(succeeded(),
-          ne(variables['Build.Reason'], 'PullRequest'),
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
         env:
