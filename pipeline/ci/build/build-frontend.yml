@@ -136,13 +136,6 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            # set -e
-            # echo -e "\n📁 Archivos .env: $(msName)"
-            # printenv | grep -i "^$(msName)_" |sed -E "s/^($(msName))_//I" > $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.env
-            # cat apps/invictus/.env >> $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.env
-            # ls -l apps/$(msName)/.env
-            # cat apps/$(msName)/.env
-
             set -e
             echo -e "\n📁 Archivos .env: $(msName)"
             printenv | grep -i "^$(msName)_" | sed -E "s/^($(msName))_//I" > $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.env.tmp
