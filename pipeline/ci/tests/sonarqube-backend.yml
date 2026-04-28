@@ -145,7 +145,7 @@ jobs:
           targetType: inline
           script: |
             set -e
-            echo "🔍 Checking for outdated npm dependencies..."
+            echo "🔎 Checking for outdated npm dependencies..."
             REPORT=$(npx npm-check-updates)
 
             echo "$REPORT"

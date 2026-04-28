@@ -196,7 +196,7 @@ jobs:
           targetType: inline
           script: |
             set -e
-            echo "🔍 Verificando entorno Flutter y Android SDK..."
+            echo "🔎 Verificando entorno Flutter y Android SDK..."
             echo -e "\n📦 ANDROID_HOME: $ANDROID_HOME" && ls -la "$ANDROID_HOME"
             echo -e "\n🌀 Flutter versión:" && flutter --version
             echo -e "\n📥 Ejecutando flutter pub get..."
@@ -217,7 +217,7 @@ jobs:
               echo -e "\n##vso[task.logissue type=error]⚠️ Error: No se encontraron assets"
               exit 99
             fi
-        displayName: "🔍 Validate Assets"
+        displayName: "🔎 Validate Assets"
         condition: succeeded()
 
       - task: Bash@3
@@ -315,7 +315,7 @@ jobs:
               echo -e "\n##vso[task.logissue type=error]⚠️ Error: Apk no encontrado"
               exit 99
             fi
-        displayName: "🔍 Validate APK"
+        displayName: "🔎 Validate APK"
         condition: succeeded()
 
       - task: Bash@3

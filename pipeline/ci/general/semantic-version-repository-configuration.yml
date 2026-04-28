@@ -53,7 +53,7 @@ jobs:
               # Obtén los archivos cambiados en master desde el punto de bifurcación
               CHANGED_FILES=$(git diff --name-only "$MERGE_BASE".."origin/master")
 
-              echo "🔍 Archivos nuevos en master desde el punto de bifurcación:"
+              echo "🔎 Archivos nuevos en master desde el punto de bifurcación:"
               echo "$CHANGED_FILES"
 
               # Filtrar cambios relevantes (ignorar carpeta pipeline/)
