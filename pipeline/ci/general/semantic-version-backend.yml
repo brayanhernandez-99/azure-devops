@@ -142,7 +142,6 @@ jobs:
             set -e
             if [[ "$(Build.Reason)" == "PullRequest" ]]; then
               CURRENT_BRANCH="$(System.PullRequest.SourceBranch)"
-              echo "entro pr"
             else
               CURRENT_BRANCH="$(Build.SourceBranch)"
             fi
@@ -156,12 +155,11 @@ jobs:
 
             if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|staging|master)$ ]]; then
               CURRENT_BRANCH_PR=$(echo $(Build.SourceBranch))
-              echo "entro staging"
             fi
 
-            # if [[ "$(Build.Reason)" == "PullRequest" ]]; then
-            #   CURRENT_BRANCH_PR="$(System.PullRequest.TargetBranch)"
-            # fi
+            if [[ "$(Build.Reason)" == "PullRequest" ]]; then
+              CURRENT_BRANCH_PR="$(System.PullRequest.SourceBranch)"
+            fi
 
             URL="https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories/$(repoID)/pullrequests?searchCriteria.status=completed&searchCriteria.targetRefName=$CURRENT_BRANCH_PR&api-version=5.0"
             response=$(curl -s -u ":$AZURE_DEVOPS_CLI_PAT" "$URL")
