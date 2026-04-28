@@ -139,9 +139,8 @@ jobs:
             set -e
             echo -e "\n📁 Archivos .env: $(msName)"
             printenv | grep -i "^$(msName)_" | sed -E "s/^($(msName))_//I" > $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.env.tmp
-            if [ -f "apps/invictus/.env" ]; then
-              cat apps/invictus/.env >> $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.env.tmp
-            fi
+            cat apps/invictus/.env >> $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.env.tmp
+
             mv $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.env.tmp $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.env
             ls -l $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.env
             cat $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.env
