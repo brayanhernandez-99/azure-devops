@@ -130,6 +130,7 @@ jobs:
             echo "ℹ️ id del repositorio $REPO_NAME: $REPO_ID"
         displayName: "📌 Set Repository ID"
         condition: and(succeeded(),
+          ne(variables['Build.Reason'], 'PullRequest'),
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
         env:
@@ -170,6 +171,7 @@ jobs:
             echo "{\"idpr\": \"$PR_ID\" }" > $(Build.ArtifactStagingDirectory)/idpr/idpr.json
         displayName: "📌 Set Pull Request ID"
         condition: and(succeeded(),
+          ne(variables['Build.Reason'], 'PullRequest'),
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
         env:
@@ -191,6 +193,7 @@ jobs:
             echo "##vso[task.setvariable variable=filteredCommits]$SAFE_COMMITS"
         displayName: "📌 Pull Request Commit Details"
         condition: and(succeeded(),
+          ne(variables['Build.Reason'], 'PullRequest'),
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
         env:
