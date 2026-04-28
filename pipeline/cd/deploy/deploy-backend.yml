@@ -297,10 +297,10 @@ jobs:
               echo "📝 New ARN: $NEW_TASKDEF_ARN"
               
               UPDATED_OUTPUT=$(aws ecs update-service --cluster "$CLUSTER" --service "$SERVICE" --task-definition "$NEW_TASKDEF_ARN" --force-new-deployment)
-              UPDATED_TASK_DEF=$(echo "$UPDATED_OUTPUT" | jq -r '.service.taskDefinition')
-              
+              IMAGE=$(aws ecs describe-task-definition --task-definition "$NEW_TASKDEF_ARN" --query "taskDefinition.containerDefinitions[0].image" --output text)
+
+              echo -e "🖼️ Image: $IMAGE"
               echo "✅ ECS Service Actualizado"
-              echo -e "Task Definition: $UPDATED_TASK_DEF"
             done
         displayName: "🚀 Deploy microservice"
         condition: succeeded()
