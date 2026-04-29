@@ -32,12 +32,6 @@ variables:
       - group: variables-microfrontend-vue2-master-antioquia-old
       - group: variables-microfrontend-master-antioquia-old
 
-  - ${{ if and(eq(parameters.region, 'antioquia_new'), eq(variables['Build.SourceBranchName'], 'master')) }}:
-      - group: trasversal-aws-antioquia
-      - group: variables-cloudfront-antioquia
-      - group: variables-microfrontend-vue2-antioquia-old
-      - group: variables-microfrontend-antioquia-old
-
   - ${{ if and(eq(parameters.region, 'cap'), eq(variables['Build.SourceBranchName'], 'master')) }}:
       - group: trasversal-aws-antioquia-cap
       - group: variables-cloudfront-antioquia-cap
