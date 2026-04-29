@@ -237,7 +237,7 @@ jobs:
               echo -e "\n📂 Directorio: $APP_DIR"
               ls -l $APP_DIR
             fi
-        displayName: "🔍 Validate Build"
+        displayName: "🔎 Validate Build"
         condition: succeeded()
 
       - task: PublishBuildArtifacts@1
@@ -509,7 +509,7 @@ jobs:
               Write-Host "`n📂 Directorio: $APP_DIR"
               Get-ChildItem "$APP_DIR" | Select-Object Mode, LastWriteTime, Length, Name | Format-Table
             }
-        displayName: "🔍 Validate Build"
+        displayName: "🔎 Validate Build"
         condition: succeeded()
 
       - task: PublishBuildArtifacts@1
