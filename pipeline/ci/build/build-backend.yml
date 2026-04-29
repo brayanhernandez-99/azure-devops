@@ -122,7 +122,7 @@ jobs:
           script: |
             set -e
             DOCKER_FILE="$(Build.Repository.Name)/Dockerfile"
-            echo -e "\n🔍 Validando DockerFile en: $DOCKER_FILE"
+            echo -e "\n🔎 Validando DockerFile en: $DOCKER_FILE"
 
             if [[ -f "$DOCKER_FILE" ]]; then
               echo "✅ Dockerfile existe"
@@ -134,7 +134,7 @@ jobs:
 
             echo -e "\n📁 Files:"
             ls -la "$(Build.Repository.Name)"
-        displayName: "🔍 Validate Dockerfile"
+        displayName: "🔎 Validate Dockerfile"
         condition: succeeded()
 
       - task: Bash@3
@@ -210,7 +210,7 @@ jobs:
               echo -e "\n##vso[task.logissue type=error]⚠️ Repositorio $(ecr_repository) no existe."
               exit 99
             fi
-        displayName: "🔍 Verify ECR Repository Exists"
+        displayName: "🔎 Verify ECR Repository Exists"
         condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
         env:
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)

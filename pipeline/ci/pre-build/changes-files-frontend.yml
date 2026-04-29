@@ -1,6 +1,6 @@
 jobs:
   - job: "pre_build_microfrontend"
-    displayName: "🔍 detect changes microfrontend"
+    displayName: "🔎 detect changes microfrontend"
     pool:
       name: "Azure Pipelines"
       VmImage: ubuntu-22.04
@@ -19,7 +19,7 @@ jobs:
           targetType: inline
           script: |
             set -e
-            echo "🔍 Validando ejecucion..."
+            echo "🔎 Validando ejecucion..."
 
             case "$(Build.Reason)" in
               "PullRequest")
@@ -65,7 +65,7 @@ jobs:
                 TARGET_BRANCH=$(echo "$(System.PullRequest.TargetBranch)" | sed 's#refs/heads/##')
                 CURRENT_BRANCH=$SOURCE_BRANCH
 
-                echo -e "\n🔍 Validando nombre de la rama: $CURRENT_BRANCH"
+                echo -e "\n🔎 Validando nombre de la rama: $CURRENT_BRANCH"
                 if [[ ! "$CURRENT_BRANCH" =~ ^(feature\/[a-zA-Z0-9._-]+|hotfix\/[a-zA-Z0-9._-]+|develop|staging|master)$ ]]; then
                   echo -e "\n##vso[task.logissue type=error]⚠️ Error: la rama '$CURRENT_BRANCH' no cumple con el nombramiento."
                   echo "##vso[task.logissue type=error] Usa: feature/*, hotfix/*, develop, staging o master"
@@ -97,7 +97,7 @@ jobs:
                   exit 99
                 fi
                 
-                echo "🔍 Apps modificadas detectadas:"
+                echo "🔎 Apps modificadas detectadas:"
                 echo "${apps[@]}"
                 apps_json=$(printf '%s\n' "${apps[@]}" | jq -R . | jq -s .)
 
@@ -154,14 +154,14 @@ jobs:
                   git checkout $CURRENT_BRANCH
                   git reset --hard HEAD
 
-                  echo -e "\n🔍 Validando nombre de la rama: $CURRENT_BRANCH"
+                  echo -e "\n🔎 Validando nombre de la rama: $CURRENT_BRANCH"
                   if [[ ! "$CURRENT_BRANCH" =~ ^(feature\/[a-zA-Z0-9._-]+|hotfix\/[a-zA-Z0-9._-]+|develop|staging|master)$ ]]; then
                     echo -e "\n##vso[task.logissue type=error]⚠️ Error: la rama '$CURRENT_BRANCH' no cumple con el nombramiento."
                     echo "##vso[task.logissue type=error] Usa: feature/*, hotfix/*, develop, staging o master"
                     exit 99
                   fi
 
-                  echo "🔍 Comparando cambios entre: $CURRENT_BRANCH ... $CURRENT_BRANCH"
+                  echo "🔎 Comparando cambios entre: $CURRENT_BRANCH ... $CURRENT_BRANCH"
                   packages_changed=$(git diff --name-only HEAD~1 HEAD | grep "^packages/")
                   apps=$(git diff --name-only HEAD~1 HEAD | grep -E "^apps/|^app-legacy/" | cut -d '/' -f1,2 | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u)
 
@@ -174,7 +174,7 @@ jobs:
                     exit 99
                   fi
 
-                  echo "🔍 Apps modificadas detectadas:"
+                  echo "🔎 Apps modificadas detectadas:"
                   echo "${apps[@]}"
                   apps_json=$(printf '%s\n' "${apps[@]}" | jq -R . | jq -s .)
 
@@ -195,7 +195,7 @@ jobs:
                 exit 99
                 ;;
             esac
-        displayName: "🔍 Detect Changed Files MS"
+        displayName: "🔎 Detect Changed Files MS"
         condition: succeeded()
         env:
           AZURE_DEVOPS_EXT_PAT: $(PAT-AZ)

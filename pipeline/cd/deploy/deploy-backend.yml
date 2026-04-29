@@ -89,7 +89,7 @@ jobs:
           targetType: inline
           script: |
             set -e
-            echo "🔍 Verificando imagen..."
+            echo "� Verificando imagen..."
             echo "Repositorio: $(ecr_repository)"
             echo "Imagen:      $(version)"
 
@@ -99,7 +99,7 @@ jobs:
               echo -e "\n##vso[task.logissue type=error]⚠️ Imagen no encontrada: $(ecr_repository):$(version)"
               exit 99
             fi
-        displayName: "🔍 Verify Image Exists in ECR"
+        displayName: "� Verify Image Exists in ECR"
         condition: succeeded()
         env:
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
