@@ -55,7 +55,6 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
             echo "⚙️ Configurando organización y proyecto por defecto"
             az devops configure --defaults organization=https://dev.azure.com/ux-technology project=$(System.TeamProject)
 
