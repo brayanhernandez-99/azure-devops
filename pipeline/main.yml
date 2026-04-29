@@ -66,7 +66,7 @@ stages:
   #
   # Microfrontend Pre-Build
   #
-  - ${{ if and( contains('PullRequest,IndividualCI', variables['Build.Reason']), eq(variables['Build.Repository.Name'], 'apps-microfrontend-invictus')) }}:
+  - ${{ if and( contains('PullRequest,IndividualCI', variables['Build.Reason']), eq(variables['Build.Repository.Name'], 'apps-microfrontend-invictus-test')) }}:
       - template: ./pipelines/pipeline-pre-build.yml
         parameters:
           release: ${{ parameters.release }}
