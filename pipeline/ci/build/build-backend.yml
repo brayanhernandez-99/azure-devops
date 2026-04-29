@@ -191,8 +191,8 @@ jobs:
       #         --severity CRITICAL,HIGH \
       #         --exit-code 1 \
       #         $(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/$(ecr_repository):$(version)
-      #   displayName: "🛡️ Trivy scan Docker image"
       #   continueOnError: true
+      #   displayName: "🛡️ Trivy scan Docker image"
       #   condition: and(succeeded(), ne(variables['Build.SourceBranchName'], 'master'))
 
       - task: Bash@3
