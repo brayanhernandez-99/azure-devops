@@ -23,7 +23,12 @@ jobs:
             set -e
             echo -e "\n📦 Cargando al Bucket S3..."
             ls -la
-            aws s3 cp . s3://configuration-$(ACCOUNT_ID_INVICTUS) --recursive --exclude "pipeline/*"
+            aws s3 sync . s3://configuration-$(ACCOUNT_ID_INVICTUS) \
+              --exclude ".git/*" \
+              --exclude ".gitignore" \
+              --exclude "pipeline/*" \
+              --delete
+            echo -e "\n✅ Se finalizo la carga al Bucket S3"
         displayName: "📤 Upload Configuration to S3"
         condition: succeeded()
         env:
