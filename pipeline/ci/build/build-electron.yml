@@ -345,7 +345,7 @@ jobs:
             switch -Wildcard ($CURRENT_BRANCH) {
                 "staging" { $environment = $env:environment_staging }
                 "master"  { $environment = $env:region }
-                "*"       { $environment = "develop" }
+                default   { $environment = "develop" }
             }
 
             @"
