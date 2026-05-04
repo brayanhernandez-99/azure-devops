@@ -86,7 +86,7 @@ jobs:
                 changed_files=$(git diff --name-only $BASE HEAD)
                 packages_changed=$(echo "$changed_files" | grep "^packages/" || true)
 
-                apps=$(echo "$changed_files" | grep -E "^apps/|^app-legacy/" | cut -d '/' -f1,2 | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u)
+                apps=$(echo "$changed_files" | grep -E "^apps/|^app-legacy/" | cut -d '/' -f1,2 | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u || true)
 
                 if [[ -n "$packages_changed" ]]; then
                   apps=$(printf "%s\ninvictus" "$apps" | sort -u)
@@ -126,7 +126,7 @@ jobs:
                   ITERATION_ID=$(curl -s \
                     -H "Authorization: Bearer $SYSTEM_ACCESSTOKEN" \
                     "$ORGANIZATION/$PROJECT/_apis/git/repositories/$(Build.Repository.Name)/pullRequests/$(System.PullRequest.PullRequestId)/iterations?api-version=7.1-preview.1" \
-                    | jq '.value[-1].id')
+                    | jq '.value[-1].id' || true)
 
                   echo -e "\n📡 Reportando resultado a Azure DevOps..."
                   echo "Estado: $STATE"
@@ -136,7 +136,7 @@ jobs:
 
                   cat > body.json <<< "{\"state\":\"$STATE\",\"description\":\"$DESCRIPTION\",\"context\":{\"name\":\"build-check\",\"genre\":\"pipeline\"},\"iterationId\":$ITERATION_ID}"
                   echo -e "\n📁 File: body.json"
-                  jq . body.json
+                  jq . body.json || true
 
                   API_URL="$ORGANIZATION/$PROJECT/_apis/git/repositories/$(Build.Repository.Name)/pullRequests/$(System.PullRequest.PullRequestId)/statuses?api-version=7.1-preview.1"
                   echo -e "\n##[command]🌐 Build Results: $API_URL"
@@ -162,8 +162,9 @@ jobs:
                   fi
 
                   echo "🔎 Comparando cambios entre: $CURRENT_BRANCH ... $CURRENT_BRANCH"
-                  packages_changed=$(git diff --name-only HEAD~1 HEAD | grep "^packages/" || true)
-                  apps=$(git diff --name-only HEAD~1 HEAD | grep -E "^apps/|^app-legacy/" | cut -d '/' -f1,2 | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u)
+                  changed_files=$(git diff --name-only HEAD~1 HEAD)
+                  packages_changed=$(echo "$changed_files" | grep "^packages/" || true)
+                  apps=$(echo "$changed_files" | grep -E "^apps/|^app-legacy/" | cut -d '/' -f1,2 | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u || true)
 
                   if [[ -n "$packages_changed" ]]; then
                     apps=$(printf "%s\ninvictus" "$apps" | sort -u)
