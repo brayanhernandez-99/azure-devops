@@ -66,11 +66,11 @@ jobs:
             set -e
             DEPLOY_TIME=$(date -d "$BUILD_FINISHTIME -5 hours" "+%Y-%m-%d %I:%M %p")
             CURRENT_BRANCH="$(Build.SourceBranchName)"
-            environment="develop"
 
             case "$CURRENT_BRANCH" in 
               staging) environment="$environment_staging" ;;
               master) environment="$region" ;;
+              *) environment="develop" ;;
             esac
 
             echo -e "\n📢 Generando notificación para Teams..."
