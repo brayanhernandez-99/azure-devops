@@ -88,11 +88,10 @@ jobs:
           script: |
             set -e
             CURRENT_BRANCH="$(Build.SourceBranchName)"
-            environment="develop"
-
             case "$CURRENT_BRANCH" in 
               staging) environment="$environment_staging" ;;
               master) environment="$region" ;;
+              *) environment="develop" ;;
             esac
 
             cat <<EOF > .env
