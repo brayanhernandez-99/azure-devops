@@ -98,7 +98,7 @@ jobs:
             VITE_DOMAIN="${VITE_DOMAIN}"
             URL_APP="${URL_APP}"
             TARGET="linux"
-            CERT_FILE="certs/invictus.pfx"
+            CERT_FILE="./certs/invictus.pfx"
             WIN_CERT_PASS="${CERT_PASSWORD}"
             WIN_CERT_PUBLISHER="UX Technology"
             EOF
@@ -352,7 +352,7 @@ jobs:
             VITE_DOMAIN="$(VITE_DOMAIN)"
             URL_APP="$(URL_APP)"
             TARGET="windows"
-            CERT_FILE="certs/invictus.pfx"
+            CERT_FILE="./certs/invictus.pfx"
             WIN_CERT_PASS="$(CERT_PASSWORD)"
             WIN_CERT_PUBLISHER="UX Technology"
             "@ | Set-Content -Encoding UTF8 .env
