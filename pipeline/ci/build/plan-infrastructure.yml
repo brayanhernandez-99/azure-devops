@@ -75,9 +75,8 @@ jobs:
           set -e
 
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/lotteries-games-admin/aws-service-sqs
-          terragrunt plan --all --non-interactive -no-color
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/lotteries-games-admin/aws-service-ssm-parameter
+
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-s3-applications
           terragrunt plan --all --non-interactive -no-color
 
 
