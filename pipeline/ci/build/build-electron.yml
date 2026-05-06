@@ -110,6 +110,7 @@ jobs:
         displayName: "⚙️ Generate .env"
         condition: succeeded()
         env:
+          CERT_PASSWORD: $(CERT_PASSWORD)
           region: ${{ parameters.region }}
           environment_staging: ${{ parameters.environment_staging }}
 
@@ -370,7 +371,7 @@ jobs:
             URL_APP="$(URL_APP)"
             TARGET="windows"
             CERT_FILE="./certs/invictus.pfx"
-            WIN_CERT_PASS="$(CERT_PASSWORD)"
+            WIN_CERT_PASS="$env:CERT_PASSWORD"
             WIN_CERT_PUBLISHER="UX Technology"
             "@ | Set-Content -Encoding UTF8 .env
 
@@ -381,6 +382,7 @@ jobs:
         displayName: "⚙️ Generate .env"
         condition: succeeded()
         env:
+          CERT_PASSWORD: $(CERT_PASSWORD)
           region: ${{ parameters.region }}
           environment_staging: ${{ parameters.environment_staging }}
 
