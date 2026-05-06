@@ -1,7 +1,6 @@
 variables:
   - group: trasversal-aws-deployment
   - group: trasversal-versions-invictus
-  - group: trasversal-flutter-keystore
 
   # Develop - Feature - Hotfix branch
   - ${{ if or(eq(variables['Build.SourceBranchName'], 'develop'), startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')) }}:
@@ -20,11 +19,11 @@ variables:
   # Master branch → por red
   - ${{ if and(eq(parameters.region, 'antioquia'), eq(variables['Build.SourceBranchName'], 'master')) }}:
       - group: trasversal-aws-master-antioquia
-      - group: variables-flutter-master-antioquia
+      - group: variables-flutter-antioquia
 
   - ${{ if and(eq(parameters.region, 'cap'), eq(variables['Build.SourceBranchName'], 'master')) }}:
       - group: trasversal-aws-antioquia-cap
-      - group: variables-flutter-cap
+      - group: variables-flutter-antioquia-cap
 
   - ${{ if and(eq(parameters.region, 'tolima'), eq(variables['Build.SourceBranchName'], 'master')) }}:
       - group: trasversal-aws-tolima
