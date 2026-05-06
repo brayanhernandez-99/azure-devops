@@ -77,7 +77,8 @@ jobs:
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges/aws-service-secret-manager-flypass
           terragrunt plan --all --non-interactive -no-color
-
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/security/aws-service-secret-manager-otp
+          terragrunt plan --all --non-interactive -no-color
 
 
           # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3/s3-download
