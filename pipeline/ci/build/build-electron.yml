@@ -113,6 +113,23 @@ jobs:
           region: ${{ parameters.region }}
           environment_staging: ${{ parameters.environment_staging }}
 
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            set -e
+            echo "📥 Descargando certificados..."
+            aws s3 cp s3://applications-$(ACCOUNT_ID_INVICTUS)/certs/ ./certs --recursive
+
+            echo -e "\n📂 Directorio: certs"
+            ls -la certs
+        displayName: "📥 Download certificates for signing"
+        condition: succeeded()
+        env:
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
+          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
+
       - task: UsePythonVersion@0
         inputs:
           versionSpec: "$(pythonVersion)"
@@ -366,6 +383,22 @@ jobs:
         env:
           region: ${{ parameters.region }}
           environment_staging: ${{ parameters.environment_staging }}
+
+      - task: PowerShell@2
+        inputs:
+          targetType: inline
+          script: |
+            Write-Host "📥 Descargando certificados..."
+            aws s3 cp s3://applications-$(ACCOUNT_ID_INVICTUS)/certs/ ./certs --recursive
+
+            Write-Host "`n📂 Directorio: certs"
+            Get-ChildItem -Force ./certs
+        displayName: "📥 Download certificates for signing"
+        condition: succeeded()
+        env:
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
+          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
 
       - task: UsePythonVersion@0
         inputs:
