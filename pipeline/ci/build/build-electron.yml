@@ -98,10 +98,8 @@ jobs:
             VITE_DOMAIN="${VITE_DOMAIN}"
             URL_APP="${URL_APP}"
             TARGET="linux"
-            CERT_FILE="./certs/invictus.pfx"
-            WIN_CERT_PASS="${WIN_CERT_PASS}"
-            WIN_CERT_PUBLISHER="UX Technology"
-            LINUX_SIGN_KEY_ID="${LINUX_SIGN_KEY_ID}"
+            SIGN_PASSWORD="${SIGN_PASSWORD}"
+            LINUX_KEY_ID="${LINUX_KEY_ID}"
             EOF
 
             echo "##vso[task.setvariable variable=environment]$environment"
@@ -111,10 +109,10 @@ jobs:
         displayName: "⚙️ Generate .env"
         condition: succeeded()
         env:
-          WIN_CERT_PASS: $(WIN_CERT_PASS)
-          LINUX_SIGN_KEY_ID: $(LINUX_SIGN_KEY_ID)
           region: ${{ parameters.region }}
           environment_staging: ${{ parameters.environment_staging }}
+          SIGN_PASSWORD: $(SIGN_PASSWORD)
+          LINUX_KEY_ID: $(LINUX_KEY_ID)
 
       - task: Bash@3
         inputs:
@@ -388,7 +386,7 @@ jobs:
             URL_APP="$(URL_APP)"
             TARGET="windows"
             CERT_FILE="./certs/invictus.pfx"
-            WIN_CERT_PASS="$env:WIN_CERT_PASS"
+            SIGN_PASSWORD="$(SIGN_PASSWORD)"
             WIN_CERT_PUBLISHER="UX Technology"
             "@ | Set-Content -Encoding UTF8 .env
 
@@ -399,7 +397,6 @@ jobs:
         displayName: "⚙️ Generate .env"
         condition: succeeded()
         env:
-          WIN_CERT_PASS: $(WIN_CERT_PASS)
           region: ${{ parameters.region }}
           environment_staging: ${{ parameters.environment_staging }}
 
