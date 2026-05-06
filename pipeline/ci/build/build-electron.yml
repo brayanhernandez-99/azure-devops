@@ -185,7 +185,7 @@ jobs:
 
             echo -e "\n⚙️ Instalando dependencias ubuntu..."
             sudo apt-get update
-            sudo apt-get install -y libcups2-dev
+            sudo apt-get install -y libcups2-dev build-essential python3 make g++ gcc
 
             echo -e "\n⚙️ Instalando dependencias node..."
             npm install -g pnpm
