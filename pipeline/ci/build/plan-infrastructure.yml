@@ -75,8 +75,7 @@ jobs:
           set -e
 
 
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-s3-applications
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges/aws-service-secret-manager-flypass
           terragrunt plan --all --non-interactive -no-color
 
 
