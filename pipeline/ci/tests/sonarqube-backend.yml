@@ -116,6 +116,9 @@ jobs:
             shamefully-hoist=true
             ignore-scripts=false
             strict-peer-dependencies=false
+            only-built-dependencies[]=aws-sdk
+            only-built-dependencies[]=protobufjs
+            only-built-dependencies[]=unrs-resolver
             EOF
             ls -l $(System.DefaultWorkingDirectory)/.pnpmrc
             cat $(System.DefaultWorkingDirectory)/.pnpmrc
