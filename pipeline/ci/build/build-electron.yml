@@ -202,8 +202,12 @@ jobs:
             sudo apt-get update
             sudo apt-get install -y libcups2-dev build-essential python3 make g++ gcc
 
-            echo -e "\n⚙️ Instalando dependencias node..."
+            echo -e "\n📌 Versiones:"
             npm install -g pnpm
+            echo "Node version: $(node --version)"
+            echo "PNPM version: $(pnpm --version)"
+
+            echo -e "\n⚙️ Instalando dependencias node..."
             pnpm install
             pnpm exec electron-builder install-app-deps
 
@@ -490,8 +494,12 @@ jobs:
             Get-Content $filePath | Add-Content -Path $(System.DefaultWorkingDirectory)\.npmrc -Encoding UTF8
             Write-Host "`n✅ Contenido de .pnpmrc anexado a .npmrc correctamente."
 
-            Write-Host "`n⚙️ Instalando dependencias node..."
+            Write-Host "`n📌 Versiones:`n"
             npm install -g pnpm
+            Write-Host "Node version: " (node --version)
+            Write-Host "PNPM version: " (pnpm --version)
+
+            Write-Host "`n⚙️ Instalando dependencias node..."
             pnpm install
             pnpm exec electron-builder install-app-deps
 
