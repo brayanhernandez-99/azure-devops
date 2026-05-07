@@ -390,7 +390,6 @@ jobs:
             TARGET="windows"
             SIGN_PASSWORD="$(SIGN_PASSWORD)"
             WIN_CERT_FILE="./certs/invictus.pfx"
-            WIN_CERT_PUBLISHER="UX Technology"
             "@ | Set-Content -Encoding UTF8 .env
 
             Write-Host "##vso[task.setvariable variable=environment]$environment"

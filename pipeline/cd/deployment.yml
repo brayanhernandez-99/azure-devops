@@ -49,7 +49,7 @@ jobs:
       - template: ./deploy/deploy-flutter.yml
         parameters:
           region: ${{ parameters.region }}
-          environments: ${{ parameters.environments }}
+          environment_staging: ${{ parameters.environment_staging }}
 
       - ${{ if eq(parameters.region, 'antioquia') }}:
           - template: ./commit/commit-version-flutter.yml
