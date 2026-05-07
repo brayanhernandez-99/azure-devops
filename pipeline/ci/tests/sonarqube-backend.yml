@@ -115,7 +115,6 @@ jobs:
             node-linker=hoisted
             shamefully-hoist=true
             ignore-scripts=false
-            allow-build-script=true
             strict-peer-dependencies=false
             EOF
             ls -l $(System.DefaultWorkingDirectory)/.pnpmrc
@@ -125,7 +124,8 @@ jobs:
             echo -e "\n✅ Contenido de .pnpmrc anexado a .npmrc correctamente."
 
             echo -e "\n⚙️ Instalando dependencias node..."
-            npm install -g pnpm@9
+            npm install -g pnpm
+            pnpm --version
             pnpm install
 
             OUTPUT=$(pnpm ls --depth=0 || true)
