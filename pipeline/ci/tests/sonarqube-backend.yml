@@ -143,7 +143,8 @@ jobs:
         displayName: "⚙️ Install Dependencies"
         condition: succeeded()
         env:
-          PNPM_ENABLE_PREPOST_SCRIPTS: "true"
+          PNPM_CONFIG_AUTO_APPROVE_BUILDS: "true"
+          PNPM_CONFIG_ENABLE_PRE_POST_SCRIPTS: "true"
 
       - task: Bash@3
         inputs:
