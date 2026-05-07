@@ -172,6 +172,11 @@ jobs:
             ls -l $(Build.Repository.Name)/$(file)/$(msName)/.pnpmrc
             cat $(Build.Repository.Name)/$(file)/$(msName)/.pnpmrc
 
+            echo -e "\n📌 Versiones:"
+            npm install -g pnpm@9
+            echo "Node version: $(node --version)"
+            echo "PNPM version: $(pnpm --version)"
+
             cd $(Build.Repository.Name)
             echo -e "\n⚙️ Instalando dependencias node..."
             npm install -g pnpm
