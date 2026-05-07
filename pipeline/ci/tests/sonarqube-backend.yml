@@ -121,11 +121,8 @@ jobs:
             ls -l $(System.DefaultWorkingDirectory)/.pnpmrc
             cat $(System.DefaultWorkingDirectory)/.pnpmrc
 
-            # cat $(System.DefaultWorkingDirectory)/.pnpmrc >> $(System.DefaultWorkingDirectory)/.npmrc
-            # echo -e "\n✅ Contenido de .pnpmrc anexado a .npmrc correctamente."
-
             echo -e "\n📌 Versiones:"
-            npm install -g pnpm@9
+            npm install -g pnpm
             echo "Node version: $(node --version)"
             echo "PNPM version: $(pnpm --version)"
 
