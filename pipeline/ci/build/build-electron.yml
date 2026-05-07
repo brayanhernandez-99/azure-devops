@@ -207,7 +207,6 @@ jobs:
             npm install -g pnpm
             pnpm install
             pnpm exec electron-builder install-app-deps
-            pnpm ignored-builds
 
             OUTPUT=$(pnpm ls --depth=0 || true)
             if [[ -z "$OUTPUT" ]]; then
@@ -497,7 +496,6 @@ jobs:
             npm install -g pnpm
             pnpm install
             pnpm exec electron-builder install-app-deps
-            pnpm ignored-builds
 
             $output = pnpm ls --depth=0
             if (-not $output) {
