@@ -180,7 +180,6 @@ jobs:
             shamefully-hoist=true
             ignore-scripts=false
             allow-build-script=true
-            dangerouslyAllowAllBuilds=true
             strict-peer-dependencies=false
             EOF
             ls -l $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc

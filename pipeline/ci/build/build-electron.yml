@@ -190,7 +190,6 @@ jobs:
             shamefully-hoist=true
             ignore-scripts=false
             allow-build-script=true
-            dangerouslyAllowAllBuilds=true
             strict-peer-dependencies=false
             EOF
             ls -l $(System.DefaultWorkingDirectory)/.pnpmrc
@@ -482,7 +481,6 @@ jobs:
             shamefully-hoist=true
             ignore-scripts=false
             allow-build-script=true
-            dangerouslyAllowAllBuilds=true
             strict-peer-dependencies=false
             "@
             Set-Content -Path $filePath -Value $fileContent -Encoding UTF8
