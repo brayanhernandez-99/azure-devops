@@ -9,7 +9,7 @@ jobs:
       - template: ../../variables/groups-transversal-variables-flutter.yml
         parameters:
           region: ${{ parameters.region }}
-          environment_staging: ${{ parameters.environments }}
+          environment_staging: ${{ parameters.environment_staging }}
 
     steps:
       - task: DownloadBuildArtifacts@0
@@ -58,16 +58,16 @@ jobs:
             case "$CURRENT_BRANCH" in
               refs/heads/feature/*) environment="dev"; ;;
               refs/heads/develop)
-                if [[ "$environments" == "develop_new" ]]; then
+                if [[ "$environment_staging" == "develop_new" ]]; then
                   environment="dev_new"
                 else
                   environment="dev"
                 fi
                 ;;
               refs/heads/staging)
-                if [[ "$environments" == "staging_new" ]]; then
+                if [[ "$environment_staging" == "staging_new" ]]; then
                   environment="qa_new"
-                elif [[ "$environments" == "staging_nacional" ]]; then
+                elif [[ "$environment_staging" == "staging_nacional" ]]; then
                   environment="qa_nacional"
                 else
                   environment="qa"
@@ -99,7 +99,7 @@ jobs:
         condition: succeeded()
         env:
           region: ${{ parameters.region }}
-          environments: ${{ parameters.environments }}
+          environment_staging: ${{ parameters.environment_staging }}
 
       - task: Bash@3
         inputs:
@@ -161,7 +161,7 @@ jobs:
           script: |
             set -e
             DEPLOY_TIME=$(date -d "$BUILD_FINISHTIME -5 hours" "+%Y-%m-%d %I:%M %p")
-            BRANCH_NAME_MULTI=$environments
+            BRANCH_NAME_MULTI=$environment_staging
             BRANCH_NAME="$(Build.SourceBranchName)"
 
             if [[ "$BRANCH_NAME" == "master" ]]; then
@@ -206,4 +206,4 @@ jobs:
         displayName: "📢 Post message to Teams"
         env:
           red: ${{ parameters.region }}
-          environments: ${{ parameters.environments }}
+          environment_staging: ${{ parameters.environment_staging }}
