@@ -116,6 +116,7 @@ jobs:
             shamefully-hoist=true
             ignore-scripts=false
             strict-peer-dependencies=false
+
             only-built-dependencies[]=aws-sdk
             only-built-dependencies[]=protobufjs
             only-built-dependencies[]=unrs-resolver
@@ -126,9 +127,12 @@ jobs:
             cat $(System.DefaultWorkingDirectory)/.pnpmrc >> $(System.DefaultWorkingDirectory)/.npmrc
             echo -e "\n✅ Contenido de .pnpmrc anexado a .npmrc correctamente."
 
-            echo -e "\n⚙️ Instalando dependencias node..."
+            echo -e "\n📌 Versiones:"
             npm install -g pnpm
+            node --version
             pnpm --version
+
+            echo -e "\n⚙️ Instalando dependencias node..."
             pnpm install
 
             OUTPUT=$(pnpm ls --depth=0 || true)
