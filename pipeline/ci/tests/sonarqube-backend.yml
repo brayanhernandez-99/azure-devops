@@ -117,12 +117,23 @@ jobs:
             ignore-scripts=false
             allow-build-script=true
             strict-peer-dependencies=false
-            enable-pre-post-scripts=true
             EOF
             ls -l $(System.DefaultWorkingDirectory)/.pnpmrc
             cat $(System.DefaultWorkingDirectory)/.pnpmrc
 
-            cat $(System.DefaultWorkingDirectory)/.pnpmrc >> $(System.DefaultWorkingDirectory)/.npmrc
+            echo -e "\n📁 Generando archivo .pnpmrc en: $(System.DefaultWorkingDirectory)/.npmrc"
+            cat <<EOF > "$(System.DefaultWorkingDirectory)/.npmrc"
+            node-linker=hoisted
+            shamefully-hoist=true
+            ignore-scripts=false
+            allow-build-script=true
+            strict-peer-dependencies=false
+            enable-pre-post-scripts=true
+            EOF
+            ls -l $(System.DefaultWorkingDirectory)/.npmrc
+            cat $(System.DefaultWorkingDirectory)/.npmrc
+
+            # cat $(System.DefaultWorkingDirectory)/.pnpmrc >> $(System.DefaultWorkingDirectory)/.npmrc
             echo -e "\n✅ Contenido de .pnpmrc anexado a .npmrc correctamente."
 
             echo -e "\n📌 Versiones:"
