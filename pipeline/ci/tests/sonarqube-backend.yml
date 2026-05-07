@@ -129,8 +129,8 @@ jobs:
 
             echo -e "\n📌 Versiones:"
             npm install -g pnpm
-            echo "$(node --version)"
-            echo "$(pnpm --version)"
+            echo "Node version: $(node --version)"
+            echo "PNPM version: $(pnpm --version)"
 
             echo -e "\n⚙️ Instalando dependencias node..."
             pnpm install
