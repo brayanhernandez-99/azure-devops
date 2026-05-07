@@ -59,20 +59,20 @@ stages:
   #####################################################################
 
   - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
-      - ${{ each environments in parameters.environments_staging }}:
-          - stage: build_flutter_${{ environments }}
-            displayName: "📦 Build Flutter ${{ environments }}"
+      - ${{ each environment_staging in parameters.environments_staging }}:
+          - stage: build_flutter_${{ environment_staging }}
+            displayName: "📦 Build Flutter ${{ environment_staging }}"
             dependsOn: semantic_version_flutter
             jobs:
               - template: ../ci/build/build-flutter.yml
                 parameters:
-                  environments: ${{ environments }}
+                  environment_staging: ${{ environment_staging }}
 
-          - stage: deploy_flutter_${{ environments }}
-            displayName: "🚀 Deploy Flutter ${{ environments }}"
-            dependsOn: build_flutter_${{ environments }}
+          - stage: deploy_flutter_${{ environment_staging }}
+            displayName: "🚀 Deploy Flutter ${{ environment_staging }}"
+            dependsOn: build_flutter_${{ environment_staging }}
             jobs:
               - template: ../cd/deployment.yml
                 parameters:
                   release: ${{ parameters.release }}
-                  environments: ${{ environments }}
+                  environment_staging: ${{ environment_staging }}
