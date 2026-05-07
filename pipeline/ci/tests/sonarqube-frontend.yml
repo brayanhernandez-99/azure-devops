@@ -173,13 +173,12 @@ jobs:
             cat $(Build.Repository.Name)/$(file)/$(msName)/.pnpmrc
 
             echo -e "\n📌 Versiones:"
-            npm install -g pnpm@9
+            npm install -g pnpm
             echo "Node version: $(node --version)"
             echo "PNPM version: $(pnpm --version)"
 
             cd $(Build.Repository.Name)
             echo -e "\n⚙️ Instalando dependencias node..."
-            npm install -g pnpm
             pnpm install
 
             OUTPUT=$(pnpm ls --depth=0 || true)
