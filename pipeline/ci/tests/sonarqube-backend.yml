@@ -115,11 +115,8 @@ jobs:
             node-linker=hoisted
             shamefully-hoist=true
             ignore-scripts=false
+            allow-build-script=true
             strict-peer-dependencies=false
-
-            allow-build=aws-sdk
-            allow-build=protobufjs
-            allow-build=unrs-resolver
             EOF
             ls -l $(System.DefaultWorkingDirectory)/.pnpmrc
             cat $(System.DefaultWorkingDirectory)/.pnpmrc
@@ -133,7 +130,7 @@ jobs:
             echo "PNPM version: $(pnpm --version)"
 
             echo -e "\n⚙️ Instalando dependencias node..."
-            pnpm install
+            pnpm install --no-frozen-lockfile --ignore-scripts=false
 
             OUTPUT=$(pnpm ls --depth=0 || true)
             if [[ -z "$OUTPUT" ]]; then
@@ -145,6 +142,8 @@ jobs:
             fi
         displayName: "⚙️ Install Dependencies"
         condition: succeeded()
+        env:
+          PNPM_ENABLE_PREPOST_SCRIPTS: "true"
 
       - task: Bash@3
         inputs:
