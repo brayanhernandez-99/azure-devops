@@ -114,8 +114,6 @@ jobs:
             cat <<EOF > "$(System.DefaultWorkingDirectory)/.pnpmrc"
             node-linker=hoisted
             shamefully-hoist=true
-            ignore-scripts=false
-            allow-build-script=true
             strict-peer-dependencies=false
             EOF
             ls -l $(System.DefaultWorkingDirectory)/.pnpmrc
@@ -127,7 +125,7 @@ jobs:
             echo "PNPM version: $(pnpm --version)"
 
             echo -e "\n⚙️ Instalando dependencias node..."
-            pnpm install
+            pnpm install --frozen-lockfile
 
             OUTPUT=$(pnpm ls --depth=0 || true)
             if [[ -z "$OUTPUT" ]]; then
