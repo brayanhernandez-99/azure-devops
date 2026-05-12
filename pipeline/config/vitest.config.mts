@@ -1,10 +1,10 @@
 import { mergeConfig, defineConfig, configDefaults } from 'vitest/config';
 import viteConfig from './vite.config.mts';
-import path from 'path';
-import fs from 'fs';
+import path from 'node:path';
+import fs from 'node:fs';
 
 const resolvedViteConfig =
-    typeof viteConfig === 'function' ? viteConfig({ mode: 'test' } as any) : viteConfig;
+    typeof viteConfig === 'function' ? await viteConfig({ mode: 'test' } as any) : viteConfig;
 
 const mocksDir = path.resolve(__dirname, 'test/__mocks__');
 
@@ -59,3 +59,4 @@ export default mergeConfig(
         }
     })
 );
+ 
