@@ -75,11 +75,19 @@ jobs:
           set -e
 
 
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-apigateway-metabase
+          terragrunt plan --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-apigateway-domain-names-metabase
+          terragrunt plan --all --non-interactive -no-color
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/metabase
-          terragrunt plan --all --non-interactive -no-color
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/trino
-          terragrunt plan --all --non-interactive -no-color
+
+
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/metabase
+          # terragrunt plan --all --non-interactive -no-color
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/trino
+          # terragrunt plan --all --non-interactive -no-color
+
+          
 
 
 
