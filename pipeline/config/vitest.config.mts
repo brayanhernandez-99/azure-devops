@@ -50,6 +50,8 @@ export default mergeConfig(
                     '*.mts',
                     'src/**/*.vue',
                     'src/main.ts',
+                    'src/domain/entities/**',
+                    'dist/**',
                     'test/**',
                 ],
             } as any,
@@ -59,4 +61,3 @@ export default mergeConfig(
         }
     })
 );
- 
