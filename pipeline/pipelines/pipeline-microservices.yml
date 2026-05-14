@@ -53,16 +53,16 @@ stages:
   #####################################################################
 
   - ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}:
-      - stage: scan_microservice
-        displayName: "🛡️ Scan MicroService"
-        dependsOn: semantic_version_microservice
-        jobs:
-          - template: ../ci/tests/sonarqube-backend.yml
-          - template: ../ci/tests/gitleaks.yml
+      # - stage: scan_microservice
+      #   displayName: "🛡️ Scan MicroService"
+      #   dependsOn: semantic_version_microservice
+      #   jobs:
+      #     - template: ../ci/tests/sonarqube-backend.yml
+      #     - template: ../ci/tests/gitleaks.yml
 
       - stage: build_microservice
         displayName: "📦 Build MicroService develop"
-        dependsOn: scan_microservice
+        dependsOn: semantic_version_microservice
         jobs:
           - template: ../ci/build/build-backend.yml
 

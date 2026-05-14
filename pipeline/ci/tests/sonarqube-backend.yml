@@ -247,7 +247,7 @@ jobs:
             sonar.javascript.lcov.reportPaths=$(System.DefaultWorkingDirectory)/coverage/lcov.info
             sonar.exclusions=**/*.java,**/test/**,**/android/**,**/ios/**,**/coverage/**,**/.nyc_output/**,**/reports/**,**/node_modules/**,**/migrations/**,**/config/**,**/Dockerfile,*.cjs,**/*.spec.ts
         displayName: "⚙️ Prepare SonarQube Analysis"
-        condition: and(succeeded(), ne(variables['Build.SourceBranchName'], 'develop'))
+        condition: succeeded()
 
       - task: Bash@3
         inputs:
@@ -259,7 +259,7 @@ jobs:
             echo "$json" | jq
             echo "##vso[task.setvariable variable=SONARQUBE_SCANNER_PARAMS]$response"
         displayName: "⚙️ Set Variable — SONARQUBE_SCANNER_PARAMS"
-        condition: ne(variables['Build.Reason'], 'PullRequest')
+        condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
 
       - task: Bash@3
         inputs:
@@ -280,7 +280,7 @@ jobs:
             pnpm run test
         continueOnError: true
         displayName: "🧪 Run Tests for: $(Build.Repository.Name)"
-        condition: and(succeeded(), ne(variables['Build.SourceBranchName'], 'develop'))
+        condition: succeeded()
 
       - task: Bash@3
         inputs:
@@ -290,17 +290,17 @@ jobs:
             ls -la $(System.DefaultWorkingDirectory)/coverage
         continueOnError: true
         displayName: "🔎 Coverage Analysis: $(Build.Repository.Name)"
-        condition: and(succeeded(), ne(variables['Build.SourceBranchName'], 'develop'))
+        condition: succeeded()
 
       - task: SonarQubeAnalyze@7
         displayName: "📡 Run Sonar Analysis"
-        condition: and(succeeded(), ne(variables['Build.SourceBranchName'], 'develop'))
+        condition: succeeded()
 
       - task: SonarQubePublish@7
         inputs:
           pollingTimeoutSec: 400
         displayName: "📤 Publish Static Code Analysis Results"
-        condition: and(succeeded(), ne(variables['Build.SourceBranchName'], 'develop'))
+        condition: succeeded()
 
       - template: sonarqube/job-sonarqube.yml@sonarqube
         parameters:
