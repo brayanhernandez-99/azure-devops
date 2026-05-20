@@ -71,17 +71,22 @@ jobs:
         displayName: "⚙️ Replace Tokens"
         condition: succeeded()
 
+      - checkout: self
+        clean: true
+
       - script: |
           set -e
+          du -sh *
+          ls -ltra $(Agent.WorkFolder)/*
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds/aws-service-iam-role
           terragrunt plan --all --non-interactive -no-color
 
-          cd $(Build.SourcesDirectory)
-          find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          # cd $(Build.SourcesDirectory)
+          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds/aws-service-proxy
-          terragrunt plan --all --non-interactive -no-color
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds/aws-service-proxy
+          # terragrunt plan --all --non-interactive -no-color
 
 
 
