@@ -75,8 +75,8 @@ jobs:
       - script: |
           set -e
           echo "🔧 Setup Terragrunt cache"
-          export TG_DOWNLOAD_DIR=/home/vsts/.terragrunt-cache
           mkdir -p $TG_DOWNLOAD_DIR
+          echo "TG_DOWNLOAD_DIR=$TG_DOWNLOAD_DIR"
 
           echo "📊 Disk usage before:"
           du -sh $(Build.SourcesDirectory) || true
@@ -136,6 +136,7 @@ jobs:
         timeoutInMinutes: 120
         condition: succeeded()
         env:
+          TG_DOWNLOAD_DIR: /home/vsts/.terragrunt-cache
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
