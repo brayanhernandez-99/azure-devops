@@ -74,6 +74,15 @@ jobs:
 
       - script: |
           set -e
+          echo "🔧 Setup Terragrunt cache"
+          export TG_DOWNLOAD_DIR=/home/vsts/.terragrunt-cache
+          mkdir -p $TG_DOWNLOAD_DIR
+
+          echo "📊 Disk usage before:"
+          du -sh $(Build.SourcesDirectory) || true
+          echo "🚀 Running plan..."
+
+
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds/aws-service-iam-role
           terragrunt plan --all --non-interactive -no-color
@@ -120,6 +129,9 @@ jobs:
 
           # cd $(Build.SourcesDirectory)
           # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+
+          echo "📊 Cache usage:"
+          du -sh $TG_DOWNLOAD_DIR || true
         displayName: "🧩 Plan Infrastructure"
         timeoutInMinutes: 120
         condition: succeeded()
