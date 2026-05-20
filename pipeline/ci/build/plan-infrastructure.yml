@@ -85,13 +85,13 @@ jobs:
 
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds/aws-service-iam-role
-          terragrunt plan --all --non-interactive -no-color
+          terragrunt run-all plan --non-interactive
 
           # cd $(Build.SourcesDirectory)
           # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
 
           # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds/aws-service-proxy
-          # terragrunt plan --all --non-interactive -no-color
+          # terragrunt run-all plan --non-interactive
 
 
 
