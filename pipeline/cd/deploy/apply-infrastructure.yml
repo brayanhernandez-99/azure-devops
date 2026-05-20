@@ -45,6 +45,7 @@ jobs:
           unzip terraform.zip
           chmod +x terraform
           sudo mv terraform /usr/local/bin/terraform
+          rm -rf terraform.zip
 
           echo "🚀 Terraform instalado:"
           terraform --version
