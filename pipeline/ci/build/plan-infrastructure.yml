@@ -77,7 +77,7 @@ jobs:
           echo "**********************"
           du -sh *
           echo "**********************"
-          ls -ltra $(Agent.WorkFolder)/*
+          du -sh $(Agent.WorkFolder)
 
           # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds/aws-service-iam-role
           # terragrunt plan --all --non-interactive -no-color
