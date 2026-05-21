@@ -112,41 +112,26 @@ jobs:
       - script: |
           set -e
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds/aws-service-iam-role
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds/aws-service-iam-role
+          # terragrunt plan --all --non-interactive -no-color
+          # terragrunt apply --all --non-interactive -no-color
+
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds/aws-service-proxy
+          # terragrunt plan --all --non-interactive -no-color
+          # terragrunt apply --all --non-interactive -no-color
+
+
+
+
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-apigateway-iam-rol
           terragrunt plan --all --non-interactive -no-color
           terragrunt apply --all --non-interactive -no-color
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds/aws-service-proxy
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-apigateway-domain-names-metabase
           terragrunt plan --all --non-interactive -no-color
           terragrunt apply --all --non-interactive -no-color
-
-
-
-
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-apigateway-iam-rol
-          # terragrunt apply --all --non-interactive -no-color
-
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-apigateway-metabase
-          # terragrunt apply --all --non-interactive -no-color
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-apigateway-administration
-          # terragrunt apply --all --non-interactive -no-color
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-apigateway-seller
-          # terragrunt apply --all --non-interactive -no-color
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-apigateway-integration
-          # terragrunt apply --all --non-interactive -no-color
-
-
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-apigateway-domain-names-metabase
-          # terragrunt apply --all --non-interactive -no-color
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-apigateway-domain-names-admin
-          # terragrunt apply --all --non-interactive -no-color
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-apigateway-domain-names-seller
-          # terragrunt apply --all --non-interactive -no-color
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-apigateway-domain-names-integration
-          # terragrunt apply --all --non-interactive -no-color
-
-
-
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-apigateway-metabase
+          terragrunt plan --all --non-interactive -no-color
+          terragrunt apply --all --non-interactive -no-color
 
 
 
