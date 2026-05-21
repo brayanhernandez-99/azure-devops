@@ -9,7 +9,6 @@ jobs:
       environment: "Deploy master"
     pool:
       name: "Azure Pipelines"
-      # name: "Azure Pipelines Self-hosted"
     strategy:
       runOnce:
         deploy:
