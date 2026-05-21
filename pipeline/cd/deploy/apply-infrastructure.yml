@@ -1,16 +1,27 @@
 jobs:
-  - job: apply_infrastructure_${{ parameters.region }}
-    displayName: "🚀 terragrunt apply"
+  - job: plan_infrastructure_${{ parameters.region }}
+    displayName: "🧩 terragrunt plan"
     timeoutInMinutes: 120
     pool:
       name: "Azure Pipelines"
-      # name: "Azure Pipelines Self-hosted"
 
     variables:
       - template: ../../variables/groups-transversal-variables-iac.yml
         parameters:
           region: ${{ parameters.region }}
           environment: ${{ parameters.environment }}
+
+      - name: terraformVersion
+        value: "1.12.0"
+
+      - name: terragruntVersion
+        value: "0.84.1"
+
+      - name: TF_PLUGIN_CACHE_DIR
+        value: "$(Pipeline.Workspace)/terraform-plugin-cache/$(Agent.OS)/$(terraformVersion)"
+
+      - name: TG_DOWNLOAD_DIR
+        value: "$(Pipeline.Workspace)/terragrunt-cache/$(Agent.OS)/$(terraformVersion)"
 
     steps:
       - script: |
@@ -24,7 +35,7 @@ jobs:
 
       - script: |
           echo "📥 Descargando Terragrunt 0.84.1..."
-          curl -L "https://github.com/gruntwork-io/terragrunt/releases/download/v0.84.1/terragrunt_linux_amd64" -o terragrunt
+          curl -L "https://github.com/gruntwork-io/terragrunt/releases/download/v$(terragruntVersion)/terragrunt_linux_amd64" -o terragrunt
 
           chmod +x terragrunt
           sudo mv terragrunt /usr/local/bin/terragrunt
@@ -33,14 +44,10 @@ jobs:
           terragrunt --version
         displayName: "🛠️ Install Terragrunt 0.84.1"
         condition: succeeded()
-        env:
-          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
-          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
-          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
 
       - script: |
           echo "📥 Descargando Terraform 1.12.0..."
-          curl -L "https://releases.hashicorp.com/terraform/1.12.0/terraform_1.12.0_linux_amd64.zip" -o terraform.zip
+          curl -L "https://releases.hashicorp.com/terraform/$(terraformVersion)/terraform_$(terraformVersion)_linux_amd64.zip" -o terraform.zip
 
           unzip terraform.zip
           chmod +x terraform
@@ -51,10 +58,6 @@ jobs:
           terraform --version
         displayName: "🛠️ Install Terraform 1.12.0"
         condition: succeeded()
-        env:
-          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
-          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
-          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
 
       - task: replacetokens@5
         inputs:
@@ -73,23 +76,37 @@ jobs:
         condition: succeeded()
 
       - script: |
-          echo "📦 Configuring Terragrunt & Terraform cache..."
+          echo "📦 Configurando Terraform/Terragrunt cache..."
 
-          sudo mkdir -p /opt/terragrunt-cache
-          sudo chmod -R 777 /opt/terragrunt-cache
+          mkdir -p "$(TF_PLUGIN_CACHE_DIR)"
+          mkdir -p "$(TG_DOWNLOAD_DIR)"
+          chmod -R 777 "$(TF_PLUGIN_CACHE_DIR)"
+          chmod -R 777 "$(TG_DOWNLOAD_DIR)"
 
-          sudo mkdir -p /opt/terraform-plugin-cache
-          sudo chmod -R 777 /opt/terraform-plugin-cache
+          cat > ~/.terraformrc <<EOF
+          plugin_cache_dir = "$(TF_PLUGIN_CACHE_DIR)"
+          EOF
 
-          export TG_DOWNLOAD_DIR=/opt/terragrunt-cache
-          export TF_PLUGIN_CACHE_DIR=/opt/terraform-plugin-cache
+          echo ""
+          echo "✅ TF_PLUGIN_CACHE_DIR=$(TF_PLUGIN_CACHE_DIR)"
+          echo "✅ TG_DOWNLOAD_DIR=$(TG_DOWNLOAD_DIR)"
 
-          echo "##vso[task.setvariable variable=TG_DOWNLOAD_DIR]/opt/terragrunt-cache"
-          echo "##vso[task.setvariable variable=TF_PLUGIN_CACHE_DIR]/opt/terraform-plugin-cache"
+          echo -e "\n📂 Terraform Plugin Cache:"
+          ls -ltra "$(TF_PLUGIN_CACHE_DIR)" || true
 
-          echo "✅ TG_DOWNLOAD_DIR=$TG_DOWNLOAD_DIR"
-          echo "✅ TF_PLUGIN_CACHE_DIR=$TF_PLUGIN_CACHE_DIR"
+          echo -e "\n📂 Terragrunt Cache:"
+          ls -ltra "$(TG_DOWNLOAD_DIR)" || true
         displayName: "📦 Configure Cache"
+        condition: succeeded()
+
+      - script: |
+          echo "🧹 Limpiando local .terraform directorios..."
+
+          find . -type d -name ".terraform" -prune -exec rm -rf {} + || true
+          find "$(TG_DOWNLOAD_DIR)" -type d -name ".terraform" -prune -exec rm -rf {} + || true
+
+          echo "✅ Limpieza completa"
+        displayName: "🧹 Clean Terraform Working Dirs"
         condition: succeeded()
 
       - script: |
@@ -165,7 +182,7 @@ jobs:
 
 
 
-          find $(Build.SourcesDirectory) -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          # find $(Build.SourcesDirectory) -type d -name ".terragrunt-cache" -exec rm -rf {} +
         displayName: "🚀 Apply Infrastructure"
         timeoutInMinutes: 120
         condition: succeeded()
