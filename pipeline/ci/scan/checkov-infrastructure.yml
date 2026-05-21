@@ -2,8 +2,8 @@ jobs:
   - job: "checkov_infrastructure"
     displayName: "🛡️ checkov"
     pool:
-      # name: "Azure Pipelines"
-      name: "Azure Pipelines Self-hosted"
+      name: "Azure Pipelines"
+      # name: "Azure Pipelines Self-hosted"
 
     variables:
       - template: ../../variables/groups-transversal-variables-iac.yml
