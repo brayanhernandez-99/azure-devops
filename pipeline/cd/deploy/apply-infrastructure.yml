@@ -3,6 +3,7 @@ jobs:
     displayName: "🚀 terragrunt apply"
     timeoutInMinutes: 120
     pool:
+      # name: "Azure Pipelines"
       name: "Azure Pipelines Self-hosted"
 
     variables:

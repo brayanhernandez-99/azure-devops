@@ -2,6 +2,7 @@ jobs:
   - job: "sonarqube_infrastructure"
     displayName: "🛡️ sonarqube"
     pool:
+      # name: "Azure Pipelines"
       name: "Azure Pipelines Self-hosted"
 
     variables:
