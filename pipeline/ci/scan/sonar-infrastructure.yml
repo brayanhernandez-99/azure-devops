@@ -1,145 +1,92 @@
-# jobs:
-#   - job: "sonarqube_infrastructure"
-#     displayName: "🛡️ sonarqube"
-#     pool:
-#       name: "Azure Pipelines"
-
-#     variables:
-#       - template: ../../variables/groups-transversal-variables-iac.yml
-
-#     steps:
-#       - task: JavaToolInstaller@0
-#         displayName: "🔧 Install JDK 17"
-#         inputs:
-#           versionSpec: "17"
-#           jdkArchitectureOption: "x64"
-#           jdkSourceOption: "PreInstalled"
-#         condition: succeeded()
-
-#       - task: SonarQubePrepare@7
-#         displayName: "⚙️ Prepare SonarQube Analysis"
-#         inputs:
-#           SonarQube: "SonarQubeConection"
-#           scannerMode: "CLI"
-#           configMode: "manual"
-#           cliProjectKey: "$(Build.Repository.Name)"
-#           cliProjectName: "$(Build.Repository.Name)"
-#           cliSources: "$(System.DefaultWorkingDirectory)"
-#           extraProperties: |
-#             sonar.sources=iac-template-terraform
-#             sonar.inclusions=**/*.tf,**/*.tfvars,**/*.hcl
-#             sonar.terraform.file.suffixes=tf,tfvars,hcl
-#             sonar.exclusions=**/.terraform/**,**/.terragrunt-cache/**,**/terraform.tfstate*,**/*tfplan*,**/terragrunt.hcl.lock*,**/*.lock.hcl,pipeline/**
-#         condition: succeeded()
-
-#       - script: |
-#           response=$(echo $SONARQUBE_SCANNER_PARAMS | sed -E 's#"sonar\.branch\.name":"[^"]+",##g')
-#           json=$(echo "$response" | sed 's/"sonar.token":\*\*\*/"sonar.token":"***"/')
-#           echo "$json" | jq
-#           echo "##vso[task.setvariable variable=SONARQUBE_SCANNER_PARAMS]$response"
-#         displayName: "⚙️ Set Variable — SONARQUBE_SCANNER_PARAMS"
-#         condition: succeeded()
-
-#       - task: SonarQubeAnalyze@7
-#         displayName: "📡 Run Sonar Analysis"
-#         condition: succeeded()
-
-#       - task: SonarQubePublish@7
-#         displayName: "📤 Publish Static Code Analysis Results"
-#         inputs:
-#           pollingTimeoutSec: 400
-#         condition: succeeded()
-
-#       - script: |
-#           echo "🔎 Validando Quality Gate..."
-#           PROJECT_KEY="$(Build.Repository.Name)"
-
-#           # Obtener estado del Quality Gate
-#           status=$(curl -s -u "$SONAR_TOKEN:" "$SONAR_HOST_URL/api/qualitygates/project_status?projectKey=$PROJECT_KEY")
-#           metrics_response=$(curl -s -u "$SONAR_TOKEN:" "$SONAR_HOST_URL/api/measures/component?component=$PROJECT_KEY&metricKeys=coverage,duplicated_lines_density")
-#           project_info=$(curl -s -u "$SONAR_TOKEN:" "$SONAR_HOST_URL/api/components/show?component=$PROJECT_KEY")
-
-#           coverage=$(echo "$metrics_response" | jq -r '.component.measures[] | select(.metric=="coverage") | .value')
-#           duplication=$(echo "$metrics_response" | jq -r '.component.measures[] | select(.metric=="duplicated_lines_density") | .value')
-#           status_code=$(echo "$status" | jq -r '.projectStatus.status')
-
-#           # Obtener Quality Gate Name y Quality Profile Name
-#           quality_gate=$(echo "$status" | jq -r '.projectStatus.qualityGate.name // "N/A"')
-#           quality_profile=$(echo "$project_info" | jq -r '.component.qualityProfile // "N/A"')
-#           language=$(echo "$project_info" | jq -r '.component.language // "N/A"')
-
-#           echo ""
-#           echo "🔹 Proyecto:        $PROJECT_KEY"
-#           echo "🛡️ Quality Gate:    $quality_gate"
-#           echo "🛡️ Quality Profile: $quality_profile"
-#           echo "🧾 Lenguaje Base:   $language"
-#           echo "🟢 Estado:          $status_code"
-#           echo ""
-
-#           echo -e "\n##[command]🌐 URL: $SONAR_HOST_URL/dashboard?id=infrastructure-as-code-invictus"
-
-#           if [[ "$status_code" == "ERROR" ]]; then
-#             echo -e "\n##vso[task.logissue type=error]⚠️ El proyecto no cumple con los Qualitys."
-#             exit 99
-#           else
-#             echo -e "\n✅ El proyecto cumple con los Qualitys."
-#           fi
-#         displayName: "🛡️ Quality Gate Check: $(Build.Repository.Name)"
-#         condition: succeeded()
-#         # continueOnError: true
-#         env:
-#           SONAR_TOKEN: $(SONAR_TOKEN)
-#           SONAR_HOST_URL: $(SONAR_HOST_URL)
-
 jobs:
-  - job: clean_agents
-    displayName: "🧹 Clean All Self Hosted Agents"
-
-    strategy:
-      matrix:
-        agent1:
-          AGENT_NAME: "Azure Pipelines 1"
-
-        agent2:
-          AGENT_NAME: "Azure Pipelines 2"
-
-        agent3:
-          AGENT_NAME: "Azure Pipelines 3"
-
-        agent4:
-          AGENT_NAME: "Azure Pipelines 4"
-
-        agent5:
-          AGENT_NAME: "Azure Pipelines 5"
-
-        agent6:
-          AGENT_NAME: "Azure Pipelines 6"
-
-        agent7:
-          AGENT_NAME: "Azure Pipelines 7"
-
-        agent8:
-          AGENT_NAME: "Azure Pipelines 8"
-
-        agent9:
-          AGENT_NAME: "Azure Pipelines 9"
-
-        agent10:
-          AGENT_NAME: "Azure Pipelines 10"
-
+  - job: "sonarqube_infrastructure"
+    displayName: "🛡️ sonarqube"
     pool:
       name: "Azure Pipelines"
-      demands:
-        - Agent.Name -equals $(AGENT_NAME)
+
+    variables:
+      - template: ../../variables/groups-transversal-variables-iac.yml
 
     steps:
-      - script: |
-          echo "🧹 Cleaning agent: $(AGENT_NAME)"
-
-          sudo rm -rf /opt/terragrunt-cache/*
-          sudo rm -rf /opt/terraform-plugin-cache/*
-          sudo rm -rf /tmp/*
-
-          echo "✅ Cleanup completed"
-        displayName: "🧹 Cleanup Agent"
+      - task: JavaToolInstaller@0
+        displayName: "🔧 Install JDK 17"
+        inputs:
+          versionSpec: "17"
+          jdkArchitectureOption: "x64"
+          jdkSourceOption: "PreInstalled"
         condition: succeeded()
+
+      - task: SonarQubePrepare@7
+        displayName: "⚙️ Prepare SonarQube Analysis"
+        inputs:
+          SonarQube: "SonarQubeConection"
+          scannerMode: "CLI"
+          configMode: "manual"
+          cliProjectKey: "$(Build.Repository.Name)"
+          cliProjectName: "$(Build.Repository.Name)"
+          cliSources: "$(System.DefaultWorkingDirectory)"
+          extraProperties: |
+            sonar.sources=iac-template-terraform
+            sonar.inclusions=**/*.tf,**/*.tfvars,**/*.hcl
+            sonar.terraform.file.suffixes=tf,tfvars,hcl
+            sonar.exclusions=**/.terraform/**,**/.terragrunt-cache/**,**/terraform.tfstate*,**/*tfplan*,**/terragrunt.hcl.lock*,**/*.lock.hcl,pipeline/**
+        condition: succeeded()
+
+      - script: |
+          response=$(echo $SONARQUBE_SCANNER_PARAMS | sed -E 's#"sonar\.branch\.name":"[^"]+",##g')
+          json=$(echo "$response" | sed 's/"sonar.token":\*\*\*/"sonar.token":"***"/')
+          echo "$json" | jq
+          echo "##vso[task.setvariable variable=SONARQUBE_SCANNER_PARAMS]$response"
+        displayName: "⚙️ Set Variable — SONARQUBE_SCANNER_PARAMS"
+        condition: succeeded()
+
+      - task: SonarQubeAnalyze@7
+        displayName: "📡 Run Sonar Analysis"
+        condition: succeeded()
+
+      - task: SonarQubePublish@7
+        displayName: "📤 Publish Static Code Analysis Results"
+        inputs:
+          pollingTimeoutSec: 400
+        condition: succeeded()
+
+      - script: |
+          echo "🔎 Validando Quality Gate..."
+          PROJECT_KEY="$(Build.Repository.Name)"
+
+          # Obtener estado del Quality Gate
+          status=$(curl -s -u "$SONAR_TOKEN:" "$SONAR_HOST_URL/api/qualitygates/project_status?projectKey=$PROJECT_KEY")
+          metrics_response=$(curl -s -u "$SONAR_TOKEN:" "$SONAR_HOST_URL/api/measures/component?component=$PROJECT_KEY&metricKeys=coverage,duplicated_lines_density")
+          project_info=$(curl -s -u "$SONAR_TOKEN:" "$SONAR_HOST_URL/api/components/show?component=$PROJECT_KEY")
+
+          coverage=$(echo "$metrics_response" | jq -r '.component.measures[] | select(.metric=="coverage") | .value')
+          duplication=$(echo "$metrics_response" | jq -r '.component.measures[] | select(.metric=="duplicated_lines_density") | .value')
+          status_code=$(echo "$status" | jq -r '.projectStatus.status')
+
+          # Obtener Quality Gate Name y Quality Profile Name
+          quality_gate=$(echo "$status" | jq -r '.projectStatus.qualityGate.name // "N/A"')
+          quality_profile=$(echo "$project_info" | jq -r '.component.qualityProfile // "N/A"')
+          language=$(echo "$project_info" | jq -r '.component.language // "N/A"')
+
+          echo ""
+          echo "🔹 Proyecto:        $PROJECT_KEY"
+          echo "🛡️ Quality Gate:    $quality_gate"
+          echo "🛡️ Quality Profile: $quality_profile"
+          echo "🧾 Lenguaje Base:   $language"
+          echo "🟢 Estado:          $status_code"
+          echo ""
+
+          echo -e "\n##[command]🌐 URL: $SONAR_HOST_URL/dashboard?id=infrastructure-as-code-invictus"
+
+          if [[ "$status_code" == "ERROR" ]]; then
+            echo -e "\n##vso[task.logissue type=error]⚠️ El proyecto no cumple con los Qualitys."
+            exit 99
+          else
+            echo -e "\n✅ El proyecto cumple con los Qualitys."
+          fi
+        displayName: "🛡️ Quality Gate Check: $(Build.Repository.Name)"
+        condition: succeeded()
+        # continueOnError: true
+        env:
+          SONAR_TOKEN: $(SONAR_TOKEN)
+          SONAR_HOST_URL: $(SONAR_HOST_URL)
