@@ -14,7 +14,7 @@ jobs:
           versionSpec: "17"
           jdkArchitectureOption: "x64"
           jdkSourceOption: "PreInstalled"
-        condition: succeeded()
+        condition: and(succeeded(), eq(variables['Agent.OS'], 'ecs-azure-agent'))
 
       - task: SonarQubePrepare@7
         displayName: "⚙️ Prepare SonarQube Analysis"
