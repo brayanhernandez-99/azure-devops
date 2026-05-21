@@ -163,6 +163,8 @@ jobs:
 
       - script: |
           set -e
+          echo "💾 Guardando nombre del agente..."
+          echo "Agent actual: $(Agent.Name)"
           echo "##vso[task.setvariable variable=PLAN_AGENT;isOutput=true]$(Agent.Name)"
         name: saveAgent
         displayName: "💾 Save Agent"
