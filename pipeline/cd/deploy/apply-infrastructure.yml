@@ -1,5 +1,5 @@
 jobs:
-  - job: w${{ parameters.region }}
+  - job: apply_infrastructure_${{ parameters.region }}
     displayName: "🚀 terragrunt apply"
     timeoutInMinutes: 120
     pool:
