@@ -2,8 +2,7 @@ jobs:
   - job: "checkov_infrastructure"
     displayName: "🛡️ checkov"
     pool:
-      name: "Azure Pipelines"
-      VmImage: ubuntu-22.04
+      name: "Azure Pipelines Self-hosted"
 
     variables:
       - template: ../../variables/groups-transversal-variables-iac.yml
