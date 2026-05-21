@@ -115,14 +115,9 @@ jobs:
           # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds/aws-service-iam-role
           # terragrunt plan --all --non-interactive -no-color
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds/aws-service-proxy
-          # terragrunt plan --all --non-interactive -no-color
-
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/metabase
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds/aws-service-proxy
           terragrunt plan --all --non-interactive -no-color
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/trino
-          terragrunt plan --all --non-interactive -no-color
+
 
 
           # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-assets
@@ -130,9 +125,7 @@ jobs:
           # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-assets-policy
           # terragrunt plan --all --non-interactive -no-color
 
-
           # find $(Build.SourcesDirectory) -type d -name ".terragrunt-cache" -exec rm -rf {} +
-          echo "##vso[task.setvariable variable=PLAN_AGENT;isOutput=true]$(Agent.Name)"
         displayName: "🧩 Plan Infrastructure"
         timeoutInMinutes: 120
         condition: succeeded()
