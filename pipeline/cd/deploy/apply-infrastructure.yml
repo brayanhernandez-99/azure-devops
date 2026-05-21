@@ -122,26 +122,12 @@ jobs:
 
 
 
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-apigateway-iam-rol
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/metabase
           terragrunt plan --all --non-interactive -no-color
           terragrunt apply --all --non-interactive -no-color
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-apigateway-domain-names-metabase
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/trino
           terragrunt plan --all --non-interactive -no-color
           terragrunt apply --all --non-interactive -no-color
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-apigateway-metabase
-          terragrunt plan --all --non-interactive -no-color
-          terragrunt apply --all --non-interactive -no-color
-
-
-
-
-
-
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/metabase
-          # terragrunt apply --all --non-interactive -no-color
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/trino
-          # terragrunt apply --all --non-interactive -no-color
 
 
 
