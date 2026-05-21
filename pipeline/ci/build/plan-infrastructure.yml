@@ -3,8 +3,7 @@ jobs:
     displayName: "🧩 terragrunt plan"
     timeoutInMinutes: 120
     pool:
-      name: "Azure Pipelines"
-      VmImage: ubuntu-22.04
+      name: "Azure Pipelines Self-hosted"
 
     variables:
       - template: ../../variables/groups-transversal-variables-iac.yml
@@ -74,24 +73,15 @@ jobs:
 
       - script: |
           set -e
-          echo "🔧 Setup Terragrunt cache"
-          mkdir -p $TG_DOWNLOAD_DIR
-          echo "TG_DOWNLOAD_DIR=$TG_DOWNLOAD_DIR"
 
-          echo "📊 Disk usage before:"
-          du -sh $(Build.SourcesDirectory) || true
-          echo "🚀 Running plan..."
+          echo "test"
 
 
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds/aws-service-iam-role
-          terragrunt run-all plan --non-interactive
-
-          # cd $(Build.SourcesDirectory)
-          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds/aws-service-iam-role
+          # terragrunt plan --all --non-interactive -no-color
 
           # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds/aws-service-proxy
-          # terragrunt run-all plan --non-interactive
+          # terragrunt plan --all --non-interactive -no-color
 
 
 
@@ -118,25 +108,17 @@ jobs:
 
 
 
-
-          # cd $(Build.SourcesDirectory)
-          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
           # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-assets
           # terragrunt plan --all --non-interactive -no-color
           # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-assets-policy
           # terragrunt plan --all --non-interactive -no-color
 
 
-          # cd $(Build.SourcesDirectory)
-          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
-
-          echo "📊 Cache usage:"
-          du -sh $TG_DOWNLOAD_DIR || true
+          # find $(Build.SourcesDirectory) -type d -name ".terragrunt-cache" -exec rm -rf {} +
         displayName: "🧩 Plan Infrastructure"
         timeoutInMinutes: 120
         condition: succeeded()
         env:
-          TG_DOWNLOAD_DIR: /home/vsts/.terragrunt-cache
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
