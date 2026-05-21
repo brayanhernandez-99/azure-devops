@@ -8,13 +8,13 @@ jobs:
       - template: ../../variables/groups-transversal-variables-iac.yml
 
     steps:
-      # - task: JavaToolInstaller@0
-      #   displayName: "🔧 Install JDK 17"
-      #   inputs:
-      #     versionSpec: "17"
-      #     jdkArchitectureOption: "x64"
-      #     jdkSourceOption: "PreInstalled"
-      #   condition: succeeded()
+      - task: JavaToolInstaller@0
+        displayName: "🔧 Install JDK 17"
+        inputs:
+          versionSpec: "17"
+          jdkArchitectureOption: "x64"
+          jdkSourceOption: "PreInstalled"
+        condition: succeeded()
 
       - task: SonarQubePrepare@7
         displayName: "⚙️ Prepare SonarQube Analysis"
