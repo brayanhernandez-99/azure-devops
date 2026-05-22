@@ -18,10 +18,10 @@ jobs:
         value: "0.84.1"
 
       - name: TF_PLUGIN_CACHE_DIR
-        value: "$(Pipeline.Workspace)/terraform-plugin-cache/$(Agent.OS)/$(terraformVersion)"
+        value: "$(Agent.TempDirectory)/terraform-plugin-cache"
 
       - name: TG_DOWNLOAD_DIR
-        value: "$(Pipeline.Workspace)/terragrunt-cache/$(Agent.OS)/$(terraformVersion)"
+        value: "$(Agent.TempDirectory)/terragrunt-cache"
 
     steps:
       - script: |
@@ -80,8 +80,8 @@ jobs:
 
           mkdir -p "$(TF_PLUGIN_CACHE_DIR)"
           mkdir -p "$(TG_DOWNLOAD_DIR)"
-          chmod -R 755 "$(TF_PLUGIN_CACHE_DIR)"
-          chmod -R 755 "$(TG_DOWNLOAD_DIR)"
+          chmod -R 775 "$(TF_PLUGIN_CACHE_DIR)"
+          chmod -R 775 "$(TG_DOWNLOAD_DIR)"
 
           cat > ~/.terraformrc <<EOF
           plugin_cache_dir = "$(TF_PLUGIN_CACHE_DIR)"
@@ -100,14 +100,13 @@ jobs:
         condition: succeeded()
 
       - script: |
-          echo "🧹 Limpiando local .terraform directorios..."
+          echo "🧹 Limpiando local Terraform/Terragrunt cache..."
 
           find . -type d -name ".terraform" -prune -exec rm -rf {} + || true
-          find "$(TG_DOWNLOAD_DIR)" -type d -name ".terraform" -prune -exec rm -rf {} + || true
+          find . -type d -name ".terragrunt-cache" -prune -exec rm -rf {} + || true
 
           echo "✅ Limpieza completa"
-        displayName: "🧹 Clean Terraform Working Dirs"
-        condition: succeeded()
+        displayName: "🧹 Clean Terraform/Terragrunt Cache"
 
       - script: |
           set -e
@@ -122,11 +121,11 @@ jobs:
 
 
 
-          # cd $(Build.SourcesDirectory)
-          # find . -type d -name ".terragrunt-cache" -exec rm -rf {} +
           # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-assets
+          # terragrunt plan --all --non-interactive -no-color
           # terragrunt apply --all --non-interactive -no-color
           # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-assets-policy
+          # terragrunt plan --all --non-interactive -no-color
           # terragrunt apply --all --non-interactive -no-color
 
           # find $(Build.SourcesDirectory) -type d -name ".terragrunt-cache" -exec rm -rf {} +
