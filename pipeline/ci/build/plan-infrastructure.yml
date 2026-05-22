@@ -111,50 +111,106 @@ jobs:
 
       - script: |
           set -e
+          echo "🔍 Buscando módulos Terraform/Terragrunt..."
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds/aws-service-iam-role
-          terragrunt plan --all --non-interactive -no-color
+          MODULES=$(find $(Build.SourcesDirectory)/iac-terragrunt \
+            \( -name "*.tf" -o -name "terragrunt.hcl" \) \
+            -type f \
+            -exec dirname {} \; | sort -u)
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds/aws-service-proxy
-          # terragrunt plan --all --non-interactive -no-color
+          echo "$MODULES" | while read dir; do
+            echo ""
+            echo "=================================================="
+            echo "📁 Procesando: $dir"
+            echo "=================================================="
 
+            cd "$dir"
 
+            echo "🧹 Limpiando archivos anteriores..."
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-assets
-          # terragrunt plan --all --non-interactive -no-color
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-assets-policy
-          # terragrunt plan --all --non-interactive -no-color
+            rm -rf .terraform || true
+            rm -f .terraform.lock.hcl || true
 
-          # find $(Build.SourcesDirectory) -type d -name ".terragrunt-cache" -exec rm -rf {} +
-        displayName: "🧩 Plan Infrastructure"
-        timeoutInMinutes: 120
-        condition: succeeded()
+            echo "🚀 Terraform init..."
+
+            terraform init \
+              -backend=false \
+              -input=false \
+              -no-color
+
+            echo "🔐 Generando nuevo lock multi-platform..."
+
+            terraform providers lock \
+              -platform=linux_amd64 \
+              -platform=windows_amd64 \
+              -platform=darwin_amd64
+
+            echo "✅ Lock generado:"
+            ls -la .terraform.lock.hcl
+          done
+        displayName: "🔐 Regenerate Terraform Lock Files"
         env:
-          TG_DOWNLOAD_DIR: $(TG_DOWNLOAD_DIR)
-          TF_PLUGIN_CACHE_DIR: $(TF_PLUGIN_CACHE_DIR)
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
 
       - script: |
-          echo "🔍 Verificando archivos .terraform.lock.hcl..."
+          set -e
 
-          LOCK_FILES=$(find $(Build.SourcesDirectory) -name ".terraform.lock.hcl" -type f)
+          LOCK_OUTPUT_DIR="$(Build.ArtifactStagingDirectory)/terraform-lock-files"
 
-          if [ -z "$LOCK_FILES" ]; then
-            echo "⚠️ No se encontraron archivos .terraform.lock.hcl"
-          else
-            echo "✅ Archivos encontrados:"
-            echo "$LOCK_FILES"
-            echo ""
-            echo "📄 Contenido de los archivos:"
-            echo "$LOCK_FILES" | while read file; do
-              echo "---"
-              echo "Archivo: $file"
-              echo "---"
-              cat "$file"
-              echo ""
-            done
-          fi
-        displayName: "🔍 Show Terraform Lock Files (.terraform.lock.hcl)"
-        condition: succeeded()
+          mkdir -p "$LOCK_OUTPUT_DIR"
+
+          echo "📦 Recolectando lock files..."
+
+          find $(Build.SourcesDirectory)/iac-terragrunt \
+            -type f \
+            -name ".terraform.lock.hcl" | while read file; do
+
+              RELATIVE_PATH=$(dirname "${file#$(Build.SourcesDirectory)/}")
+
+              mkdir -p "$LOCK_OUTPUT_DIR/$RELATIVE_PATH"
+
+              cp "$file" "$LOCK_OUTPUT_DIR/$RELATIVE_PATH/"
+
+              echo "✅ Copiado: $file"
+
+          done
+
+          echo ""
+          echo "📂 Archivos listos:"
+          find "$LOCK_OUTPUT_DIR" -type f
+
+        displayName: "📦 Collect Terraform Lock Files"
+
+      - task: PublishBuildArtifacts@1
+        inputs:
+          PathtoPublish: "$(Build.ArtifactStagingDirectory)/terraform-lock-files"
+          ArtifactName: "terraform-lock-files"
+          publishLocation: "Container"
+        displayName: "🚀 Publish Terraform Lock Files"
+
+      # - script: |
+      #     set -e
+
+      #     cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds/aws-service-iam-role
+      #     terragrunt plan --all --non-interactive -no-color
+
+      #     # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds/aws-service-proxy
+      #     # terragrunt plan --all --non-interactive -no-color
+
+      #     # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-assets
+      #     # terragrunt plan --all --non-interactive -no-color
+      #     # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-assets-policy
+      #     # terragrunt plan --all --non-interactive -no-color
+
+      #     # find $(Build.SourcesDirectory) -type d -name ".terragrunt-cache" -exec rm -rf {} +
+      #   displayName: "🧩 Plan Infrastructure"
+      #   timeoutInMinutes: 120
+      #   condition: succeeded()
+      #   env:
+      #     TG_DOWNLOAD_DIR: $(TG_DOWNLOAD_DIR)
+      #     TF_PLUGIN_CACHE_DIR: $(TF_PLUGIN_CACHE_DIR)
+      #     AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+      #     AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
+      #     AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
