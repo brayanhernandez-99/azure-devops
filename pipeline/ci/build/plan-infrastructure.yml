@@ -112,11 +112,11 @@ jobs:
       - script: |
           set -e
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds/aws-service-iam-role
-          # terragrunt plan --all --non-interactive -no-color
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds/aws-service-proxy
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds/aws-service-iam-role
           terragrunt plan --all --non-interactive -no-color
+
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds/aws-service-proxy
+          # terragrunt plan --all --non-interactive -no-color
 
 
 
@@ -135,3 +135,26 @@ jobs:
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
+
+      - script: |
+          echo "🔍 Verificando archivos .terraform.lock.hcl..."
+
+          LOCK_FILES=$(find $(Build.SourcesDirectory) -name ".terraform.lock.hcl" -type f)
+
+          if [ -z "$LOCK_FILES" ]; then
+            echo "⚠️ No se encontraron archivos .terraform.lock.hcl"
+          else
+            echo "✅ Archivos encontrados:"
+            echo "$LOCK_FILES"
+            echo ""
+            echo "📄 Contenido de los archivos:"
+            echo "$LOCK_FILES" | while read file; do
+              echo "---"
+              echo "Archivo: $file"
+              echo "---"
+              cat "$file"
+              echo ""
+            done
+          fi
+        displayName: "🔍 Show Terraform Lock Files (.terraform.lock.hcl)"
+        condition: succeeded()
