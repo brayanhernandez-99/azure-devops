@@ -111,15 +111,15 @@ jobs:
       - script: |
           set -e
 
-          echo "🔍 Buscando directorios con terragrunt.hcl..."
+          echo "🔍 Buscando primeros 5 directorios con terragrunt.hcl..."
 
           MODULES=$(find $(Build.SourcesDirectory)/iac-terragrunt \
             -type f \
             -name "terragrunt.hcl" \
-            -exec dirname {} \; | sort -u)
+            -exec dirname {} \; | sort -u | head -5)
 
           echo ""
-          echo "📦 Modulos encontrados:"
+          echo "📦 Modulos seleccionados:"
           echo "$MODULES"
 
           echo "$MODULES" | while read dir; do
@@ -131,33 +131,26 @@ jobs:
 
             cd "$dir"
 
-            echo "🧹 Limpiando modulo..."
-
             rm -rf .terraform || true
             rm -rf .terragrunt-cache || true
             rm -f .terraform.lock.hcl || true
-
-            echo "🚀 Terragrunt init..."
 
             terragrunt init \
               --terragrunt-non-interactive \
               -backend=false \
               -no-color
 
-            echo "🔐 Generando lock file multi-platform..."
-
             terragrunt providers lock \
               -platform=linux_amd64 \
               -platform=windows_amd64 \
               -platform=darwin_amd64
 
-            echo ""
-            echo "📄 Lock generado:"
+            echo "✅ Lock generado:"
             ls -la .terraform.lock.hcl
 
           done
 
-        displayName: "🔐 Generate Terragrunt Lock Files"
+        displayName: "🔐 Generate First 5 Terragrunt Lock Files"
         env:
           TG_DOWNLOAD_DIR: $(TG_DOWNLOAD_DIR)
           TF_PLUGIN_CACHE_DIR: $(TF_PLUGIN_CACHE_DIR)
