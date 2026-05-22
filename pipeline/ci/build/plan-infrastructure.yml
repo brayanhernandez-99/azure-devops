@@ -18,10 +18,10 @@ jobs:
         value: "0.84.1"
 
       - name: TF_PLUGIN_CACHE_DIR
-        value: "$(Pipeline.Workspace)/terraform-plugin-cache/$(Agent.OS)/$(terraformVersion)"
+        value: "$(Agent.TempDirectory)/terraform-plugin-cache"
 
       - name: TG_DOWNLOAD_DIR
-        value: "$(Pipeline.Workspace)/terragrunt-cache/$(Agent.OS)/$(terraformVersion)"
+        value: "$(Agent.TempDirectory)/terragrunt-cache"
 
     steps:
       - script: |
@@ -100,25 +100,30 @@ jobs:
         condition: succeeded()
 
       - script: |
-          echo "🧹 Limpiando local .terraform directorios..."
+          echo "🧹 Limpiando local Terraform/Terragrunt cache..."
 
           find . -type d -name ".terraform" -prune -exec rm -rf {} + || true
-          find "$(TG_DOWNLOAD_DIR)" -type d -name ".terraform" -prune -exec rm -rf {} + || true
+          find . -type d -name ".terragrunt-cache" -prune -exec rm -rf {} + || true
 
           echo "✅ Limpieza completa"
-        displayName: "🧹 Clean Terraform Working Dirs"
-        condition: succeeded()
+        displayName: "🧹 Clean Terraform/Terragrunt Cache"
 
       - script: |
           set -e
-          echo "🔍 Buscando módulos Terraform/Terragrunt..."
+
+          echo "🔍 Buscando directorios con terragrunt.hcl..."
 
           MODULES=$(find $(Build.SourcesDirectory)/iac-terragrunt \
-            \( -name "*.tf" -o -name "terragrunt.hcl" \) \
             -type f \
+            -name "terragrunt.hcl" \
             -exec dirname {} \; | sort -u)
 
+          echo ""
+          echo "📦 Modulos encontrados:"
+          echo "$MODULES"
+
           echo "$MODULES" | while read dir; do
+
             echo ""
             echo "=================================================="
             echo "📁 Procesando: $dir"
@@ -126,30 +131,36 @@ jobs:
 
             cd "$dir"
 
-            echo "🧹 Limpiando archivos anteriores..."
+            echo "🧹 Limpiando modulo..."
 
             rm -rf .terraform || true
+            rm -rf .terragrunt-cache || true
             rm -f .terraform.lock.hcl || true
 
-            echo "🚀 Terraform init..."
+            echo "🚀 Terragrunt init..."
 
-            terraform init \
+            terragrunt init \
+              --terragrunt-non-interactive \
               -backend=false \
-              -input=false \
               -no-color
 
-            echo "🔐 Generando nuevo lock multi-platform..."
+            echo "🔐 Generando lock file multi-platform..."
 
-            terraform providers lock \
+            terragrunt providers lock \
               -platform=linux_amd64 \
               -platform=windows_amd64 \
               -platform=darwin_amd64
 
-            echo "✅ Lock generado:"
+            echo ""
+            echo "📄 Lock generado:"
             ls -la .terraform.lock.hcl
+
           done
-        displayName: "🔐 Regenerate Terraform Lock Files"
+
+        displayName: "🔐 Generate Terragrunt Lock Files"
         env:
+          TG_DOWNLOAD_DIR: $(TG_DOWNLOAD_DIR)
+          TF_PLUGIN_CACHE_DIR: $(TF_PLUGIN_CACHE_DIR)
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
