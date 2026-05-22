@@ -111,42 +111,60 @@ jobs:
       - script: |
           set -e
 
-          echo "🔍 Buscando primeros 5 directorios con terragrunt.hcl..."
+          echo "🔍 Validando locks específicos..."
 
-          MODULES=$(find $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure \
-            -type f \
-            -name "terragrunt.hcl" \
-            -exec dirname {} \; | sort -u | head -5)
+          BASE_PATH="$(Build.SourcesDirectory)/iac-terragrunt/<TU_RUTA>/initial-infrastructure"
 
-          echo ""
-          echo "📦 Modulos seleccionados:"
-          echo "$MODULES"
+          MODULES=(
+            "aws-service-apigateway-administration"
+            "aws-service-apigateway-integration"
+            "aws-service-apigateway-metabase"
+            "aws-service-apigateway-seller"
+          )
 
-          echo "$MODULES" | while read dir; do
+          for module_name in "${MODULES[@]}"; do
+
+            module_path="$BASE_PATH/$module_name"
 
             echo ""
             echo "=================================================="
-            echo "📁 Procesando: $dir"
+            echo "📁 Procesando: $module_path"
             echo "=================================================="
 
-            cd "$dir"
+            if [ ! -d "$module_path" ]; then
+              echo "❌ No existe: $module_path"
+              continue
+            fi
 
-            rm -rf .terraform || true
-            rm -rf .terragrunt-cache || true
-            rm -f .terraform.lock.hcl || true
+            cd "$module_path" || exit 1
 
+            echo "🚀 terragrunt init..."
             terragrunt init \
-              --terragrunt-non-interactive \
-              -backend=false \
-              -no-color
+              -reconfigure \
+              --non-interactive
 
+            if [ $? -ne 0 ]; then
+              echo "❌ Error en init"
+              continue
+            fi
+
+            echo "🔐 Generando lock..."
             terragrunt providers lock \
               -platform=linux_amd64 \
               -platform=windows_amd64 \
               -platform=darwin_amd64
 
+            if [ $? -ne 0 ]; then
+              echo "❌ Error generando lock"
+              continue
+            fi
+
             echo "✅ Lock generado:"
-            ls -la .terraform.lock.hcl
+            ls -lah .terraform.lock.hcl
+
+            echo ""
+            echo "📄 HASHES:"
+            grep "h1:" .terraform.lock.hcl || true
 
           done
 
