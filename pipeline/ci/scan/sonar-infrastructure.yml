@@ -90,3 +90,54 @@ jobs:
         env:
           SONAR_TOKEN: $(SONAR_TOKEN)
           SONAR_HOST_URL: $(SONAR_HOST_URL)
+
+  # - job: clean_agents
+  #   displayName: "🧹 Clean All Self Hosted Agents"
+
+  #   strategy:
+  #     matrix:
+  #       agent1:
+  #         AGENT_NAME: "Azure Pipelines 1"
+
+  #       agent2:
+  #         AGENT_NAME: "Azure Pipelines 2"
+
+  #       agent3:
+  #         AGENT_NAME: "Azure Pipelines 3"
+
+  #       agent4:
+  #         AGENT_NAME: "Azure Pipelines 4"
+
+  #       agent5:
+  #         AGENT_NAME: "Azure Pipelines 5"
+
+  #       agent6:
+  #         AGENT_NAME: "Azure Pipelines 6"
+
+  #       agent7:
+  #         AGENT_NAME: "Azure Pipelines 7"
+
+  #       agent8:
+  #         AGENT_NAME: "Azure Pipelines 8"
+
+  #       agent9:
+  #         AGENT_NAME: "Azure Pipelines 9"
+
+  #       agent10:
+  #         AGENT_NAME: "Azure Pipelines 10"
+
+  #   pool:
+  #     name: "Azure Pipelines"
+  #     demands:
+  #       - Agent.Name -equals $(AGENT_NAME)
+
+  #   steps:
+  #     - script: |
+  #         echo "🧹 Cleaning agent: $(AGENT_NAME)"
+  #         sudo rm -rf /opt/terragrunt-cache/*
+  #         sudo rm -rf /opt/terraform-plugin-cache/*
+  #         sudo rm -rf /tmp/*
+
+  #         echo "✅ Cleanup completed"
+  #       displayName: "🧹 Cleanup Agent"
+  #       condition: succeeded()
