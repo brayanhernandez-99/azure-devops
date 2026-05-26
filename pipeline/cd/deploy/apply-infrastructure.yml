@@ -87,10 +87,6 @@ jobs:
           chmod -R 775 "$(TF_PLUGIN_CACHE_DIR)"
           chmod -R 775 "$(TG_DOWNLOAD_DIR)"
 
-          cat > ~/.terraformrc <<EOF
-          plugin_cache_dir = "$(TF_PLUGIN_CACHE_DIR)"
-          EOF
-
           echo ""
           echo "✅ TF_PLUGIN_CACHE_DIR=$(TF_PLUGIN_CACHE_DIR)"
           echo "✅ TG_DOWNLOAD_DIR=$(TG_DOWNLOAD_DIR)"
