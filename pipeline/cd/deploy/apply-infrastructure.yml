@@ -115,6 +115,18 @@ jobs:
 
       - script: |
           set -e
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/metabase/aws-service-ssm-parameter
+          terragrunt init --all --terragrunt-parallelism=1 --non-interactive -no-color
+          terragrunt plan --all --non-interactive -no-color
+          terragrunt apply --all --non-interactive -no-color
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/trino/aws-service-ssm-parameter
+          terragrunt init --all --terragrunt-parallelism=1 --non-interactive -no-color
+          terragrunt plan --all --non-interactive -no-color
+          terragrunt apply --all --non-interactive -no-color
+
+
+
+
 
 
 
@@ -146,15 +158,15 @@ jobs:
 
 
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds/aws-service-iam-role
-          terragrunt init --all --terragrunt-parallelism=1 --non-interactive -no-color
-          terragrunt plan --all --non-interactive -no-color
-          terragrunt apply --all --non-interactive -no-color
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds/aws-service-iam-role
+          # terragrunt init --all --terragrunt-parallelism=1 --non-interactive -no-color
+          # terragrunt plan --all --non-interactive -no-color
+          # terragrunt apply --all --non-interactive -no-color
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds/aws-service-proxy
-          terragrunt init --all --terragrunt-parallelism=1 --non-interactive -no-color
-          terragrunt plan --all --non-interactive -no-color
-          terragrunt apply --all --non-interactive -no-color
+          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds/aws-service-proxy
+          # terragrunt init --all --terragrunt-parallelism=1 --non-interactive -no-color
+          # terragrunt plan --all --non-interactive -no-color
+          # terragrunt apply --all --non-interactive -no-color
 
 
 
