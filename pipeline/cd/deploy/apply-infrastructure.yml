@@ -116,37 +116,20 @@ jobs:
       - script: |
           set -e
 
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/event-bridge-iam-role
-          terragrunt init --all --terragrunt-parallelism=1 --non-interactive -no-color
-          terragrunt plan --all --non-interactive -no-color
-          terragrunt apply --all --non-interactive -no-color
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/parameter-store-rule
-          terragrunt init --all --terragrunt-parallelism=1 --non-interactive -no-color
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-kinesis-cmk
+          terragrunt init --all --terragrunt-parallelism=1 --non-interactive -no-color 
           terragrunt plan --all --non-interactive -no-color
           terragrunt apply --all --non-interactive -no-color
 
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/mock
-          # terragrunt init --all --terragrunt-parallelism=1 --non-interactive -no-color
-          # terragrunt plan --all --non-interactive -no-color
-          # terragrunt apply --all --non-interactive -no-color
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-apigateway-mock
-          # terragrunt init --all --terragrunt-parallelism=1 --non-interactive -no-color
-          # terragrunt plan --all --non-interactive -no-colorF
-          # terragrunt apply --all --non-interactive -no-color
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-apigateway-domain-names-mock
-          # terragrunt init --all --terragrunt-parallelism=1 --non-interactive -no-color
-          # terragrunt plan --all --non-interactive -no-color
-          # terragrunt apply --all --non-interactive -no-color
 
 
 
-
-
-
+          ###
+          ### ECS Role
+          ###
           # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-iam-role/ecs-task-execution-role
-          # terragrunt init --all --terragrunt-parallelism=1 --non-interactive -no-color
+          # terragrunt init --all --terragrunt-parallelism=1 --non-interactive -no-color 
           # terragrunt plan --all --non-interactive -no-color
           # terragrunt apply --all --non-interactive -no-color
           # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-iam-role/ecs-task-role
@@ -155,29 +138,16 @@ jobs:
           # terragrunt apply --all --non-interactive -no-color
 
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/bff-administration/aws-service-iam-profile
-          # terragrunt init --all --terragrunt-parallelism=1 --non-interactive -no-color
-          # terragrunt plan --all --non-interactive -no-color
-          # terragrunt destroy --all --non-interactive -no-color
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/bff-integration/aws-service-iam-profile
-          # terragrunt init --all --terragrunt-parallelism=1 --non-interactive -no-color
-          # terragrunt plan --all --non-interactive -no-color
-          # terragrunt destroy --all --non-interactive -no-color
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/bff-sellers/aws-service-iam-profile
-          # terragrunt init --all --terragrunt-parallelism=1 --non-interactive -no-color
-          # terragrunt plan --all --non-interactive -no-color
-          # terragrunt destroy --all --non-interactive -no-color
 
 
 
-
-
-
+          ###
+          ### RDS Proxy
+          ###
           # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds/aws-service-iam-role
           # terragrunt init --all --terragrunt-parallelism=1 --non-interactive -no-color
           # terragrunt plan --all --non-interactive -no-color
           # terragrunt apply --all --non-interactive -no-color
-
           # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds/aws-service-proxy
           # terragrunt init --all --terragrunt-parallelism=1 --non-interactive -no-color
           # terragrunt plan --all --non-interactive -no-color
@@ -187,8 +157,9 @@ jobs:
 
 
 
-
-
+          ###
+          ### Cloudfront Assets
+          ###
           # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-assets
           # terragrunt init --all --terragrunt-parallelism=1 --non-interactive -no-color
           # terragrunt plan --all --non-interactive -no-color
