@@ -144,7 +144,7 @@ jobs:
           targetType: inline
           script: |
             set -e
-            CURRENT_BRANCH=$(echo $(Build.SourceBranch))
+            CURRENT_BRANCH="$(Build.SourceBranch)"
             echo -e "\nℹ️ id repositorio $(Build.Repository.Name): $(repoID)"
             echo "Branch Actual: $CURRENT_BRANCH"
 
@@ -200,7 +200,7 @@ jobs:
           targetType: inline
           script: |
             set -e
-            CURRENT_BRANCH=$(echo $(Build.SourceBranch))
+            CURRENT_BRANCH="$(Build.SourceBranch)"
             echo -e "\nℹ️ Branch Actual: $CURRENT_BRANCH"
 
             if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|master|staging|feature/.+|hotfix/.+)$ ]]; then
@@ -339,6 +339,18 @@ jobs:
                 echo "🚀 Próxima versión : $NEXT_VERSION"
               fi
 
+              if [[ "$CURRENT_BRANCH" == refs/heads/hotfix/* ]]; then
+                git checkout version/$clean_branch
+                VERSION_ACTUAL_MASTER=$(jq -r .VERSION env.json)
+
+                NEXT_BASE_VERSION=$(bump_version "$VERSION_ACTUAL_MASTER" "$RELEASE_TYPE")
+                NEXT_VERSION="$NEXT_BASE_VERSION"
+
+                echo -e "\n🔎 Versiones Detectadas"
+                echo "📌 Anterior versión : $VERSION_ACTUAL_MASTER"
+                echo "🚀 Próxima versión : $NEXT_VERSION"
+              fi
+
               mkdir -p $(Build.ArtifactStagingDirectory)/flutter
               touch $(Build.ArtifactStagingDirectory)/flutter/version.json
               echo "{ \"release\": \"flutter\", \"version\": \"$NEXT_VERSION\" }" > $(Build.ArtifactStagingDirectory)/flutter/version.json
@@ -353,7 +365,7 @@ jobs:
           targetType: inline
           script: |
             set -e
-            CURRENT_BRANCH=$(echo $(Build.SourceBranch))
+            CURRENT_BRANCH="$(Build.SourceBranch)"
             echo -e "\nℹ️ Branch Actual: $CURRENT_BRANCH"
 
             if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|master|staging|feature/.+)$ ]]; then
