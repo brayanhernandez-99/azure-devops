@@ -36,6 +36,8 @@ jobs:
 
           declare -A SERVICES=(
             #[scheduler]="microservice-scheduler-$ENVIRONMENT"
+            # [raspa]="microservice-raspa-$ENVIRONMENT"
+            [shopping-cart]="microservice-shopping-cart-$ENVIRONMENT" 
 
             [astro]="microservice-astro-$ENVIRONMENT"
             [awards]="microservice-awards-$ENVIRONMENT"
@@ -65,7 +67,6 @@ jobs:
             [products]="microservice-products-$ENVIRONMENT"
             [promotional]="microservice-promotional-$ENVIRONMENT"
             [raffles]="microservice-raffles-$ENVIRONMENT"
-            [raspa]="microservice-raspa-$ENVIRONMENT"
             [recharges]="microservice-recharges-$ENVIRONMENT"
             [remittances]="microservice-remittances-$ENVIRONMENT"
             [security]="microservice-security-$ENVIRONMENT"
