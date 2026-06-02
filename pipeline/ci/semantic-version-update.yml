@@ -35,9 +35,13 @@ jobs:
           fi
 
           declare -A SERVICES=(
-            #[scheduler]="microservice-scheduler-$ENVIRONMENT"
-            # [raspa]="microservice-raspa-$ENVIRONMENT"
-            [shopping-cart]="microservice-shopping-cart-$ENVIRONMENT" 
+            # Estan en develop y staging pero no en las redes
+            [scheduler]="microservice-scheduler-$ENVIRONMENT"
+            [raspa]="microservice-raspa-$ENVIRONMENT"
+            [credits]="microservice-credits-$ENVIRONMENT"
+            
+            # Se va a eliminar en la redes
+            # [shopping-cart]="microservice-shopping-cart-$ENVIRONMENT" 
 
             [astro]="microservice-astro-$ENVIRONMENT"
             [awards]="microservice-awards-$ENVIRONMENT"
@@ -47,7 +51,6 @@ jobs:
             [biometrics]="microservice-biometrics-$ENVIRONMENT"
             [collected]="microservice-collected-$ENVIRONMENT"
             [conciliation]="microservice-conciliation-$ENVIRONMENT"
-            [credits]="microservice-credits-$ENVIRONMENT"
             [dynamic-storage]="microservice-dynamic-storage-$ENVIRONMENT"
             [external-wager]="microservice-external-wager-$ENVIRONMENT"
             [generic-services]="microservice-generic-services-$ENVIRONMENT"
