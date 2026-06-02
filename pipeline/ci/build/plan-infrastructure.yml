@@ -117,19 +117,6 @@ jobs:
           set -e
 
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/raspa/aws-service-ecs
-          terragrunt init --all --terragrunt-parallelism=1 --non-interactive -no-color
-          terragrunt plan --all --non-interactive -no-color
-
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/credits/aws-service-ecs
-          terragrunt init --all --terragrunt-parallelism=1 --non-interactive -no-color
-          terragrunt plan --all --non-interactive -no-color
-
-
-
-
-
-
           # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-kinesis-cmk
           # terragrunt init --all --terragrunt-parallelism=1 --non-interactive -no-color 
           # terragrunt plan --all --non-interactive -no-color
