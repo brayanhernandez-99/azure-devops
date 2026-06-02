@@ -117,7 +117,7 @@ jobs:
           set -e
 
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-kinesis-cmk
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/event-bridge-iam-role
           terragrunt init --all --terragrunt-parallelism=1 --non-interactive -no-color 
           terragrunt plan --all --non-interactive -no-color
 
