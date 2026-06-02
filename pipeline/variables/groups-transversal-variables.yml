@@ -13,6 +13,6 @@ variables:
     #   - group: trasversal-aws-tolima
     #   - group: trasversal-aws-huila
     #   - group: trasversal-aws-cauca
-      - group: trasversal-aws-boyaca
-    #   - group: trasversal-aws-santander
+    #   - group: trasversal-aws-boyaca
+      - group: trasversal-aws-santander
     #   - group: trasversal-aws-putumayo
