@@ -3,7 +3,6 @@ jobs:
     displayName: "📦 build repository configuration"
     pool:
       name: "Azure Pipelines"
-      VmImage: ubuntu-22.04
 
     steps:
       - task: Bash@3

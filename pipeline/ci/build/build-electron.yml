@@ -6,7 +6,6 @@ jobs:
     displayName: "📦 build linux"
     pool:
       name: "Azure Pipelines"
-      VmImage: ubuntu-22.04
 
     variables:
       - template: ../../variables/groups-transversal-variables-electron.yml
