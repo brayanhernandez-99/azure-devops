@@ -224,7 +224,7 @@ jobs:
               echo -e "\n##vso[task.logissue type=error]⚠️ Error: No se generó el build o la carpeta dist está vacía." 
               exit 99
             else
-              CURRENT_BRANCH=$(echo $(Build.SourceBranch))
+              CURRENT_BRANCH="$(Build.SourceBranch)"
               if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|staging)$ ]]; then
                 mkdir -p "$(Build.ArtifactStagingDirectory)/dists/$environments"
                 cp -R $DIST_PATH $(Build.ArtifactStagingDirectory)/dists/$environments/$(msName)

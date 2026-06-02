@@ -168,7 +168,7 @@ jobs:
           targetType: inline
           script: |
             set -e
-            CURRENT_BRANCH=$(echo $(Build.SourceBranch))
+            CURRENT_BRANCH="$(Build.SourceBranch)"
             echo -e "\nℹ️ id repositorio $(Build.Repository.Name): $(repoID)"
             echo "Branch Actual: $CURRENT_BRANCH"
 
@@ -265,7 +265,7 @@ jobs:
           script: |
             set -e
             cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
-            CURRENT_BRANCH=$(echo $(Build.SourceBranch))
+            CURRENT_BRANCH="$(Build.SourceBranch)"
             echo -e "\nℹ️ Branch Actual: $CURRENT_BRANCH"
 
             if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|master|staging|feature/.+|hotfix/.+)$ ]]; then
