@@ -89,8 +89,9 @@ jobs:
             npmrcPath="$(file)/$(msName)/.npmrc"
             echo -e "\n📁 Generando archivo .npmrc en: $npmrcPath"
             cat <<EOF > "$npmrcPath"
+            registry=https://registry.npmjs.org/
+            @matrixtech:registry=$REPO_URL
             //$REPO_DOMAIN/$REPO_PATH/:_authToken=$token
-            registry=$REPO_URL
             EOF
 
             echo -e "\n✅ .npmrc generado"
