@@ -88,7 +88,7 @@ jobs:
                 apps=$(echo "$changed_files" | grep -E "^apps/|^app-legacy/" | cut -d '/' -f1,2 | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u || true)
 
                 if [[ -n "$packages_changed" ]]; then
-                  apps=$(printf "%sinvictus" "$apps" | sort -u)
+                  apps=$(printf "%s\ninvictus\n" "$apps" | grep -v '^$' | sort -u)
                 fi
 
                 if [[ -z "$apps" ]]; then
@@ -166,7 +166,7 @@ jobs:
                   apps=$(echo "$changed_files" | grep -E "^apps/|^app-legacy/" | cut -d '/' -f1,2 | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u || true)
 
                   if [[ -n "$packages_changed" ]]; then
-                    apps=$(printf "%sinvictus" "$apps" | sort -u)
+                    apps=$(printf "%s\ninvictus\n" "$apps" | grep -v '^$' | sort -u)
                   fi
 
                   if [[ -z "$apps" ]]; then
