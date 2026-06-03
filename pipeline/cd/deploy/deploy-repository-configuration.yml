@@ -25,8 +25,8 @@ jobs:
             aws s3 sync . s3://configuration-$(ACCOUNT_ID_INVICTUS) \
               --exclude ".git/*" \
               --exclude ".gitignore" \
-              --exclude "pipeline/*" \
-              --delete
+              --exclude "pipeline/*"
+
             echo -e "\n✅ Se finalizo la carga al Bucket S3"
         displayName: "📤 Upload Configuration to S3"
         condition: succeeded()
