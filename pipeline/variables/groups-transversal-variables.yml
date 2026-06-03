@@ -8,7 +8,7 @@ variables:
       - group: trasversal-aws-staging
 
   - ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
-    #   - group: trasversal-aws-antioquia
+      - group: trasversal-aws-antioquia
     #   - group: trasversal-aws-antioquia-cap
     #   - group: trasversal-aws-tolima
     #   - group: trasversal-aws-huila
