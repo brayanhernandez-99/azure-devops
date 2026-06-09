@@ -20,8 +20,8 @@ stages:
 
   - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
       - ${{ each environment in parameters.environments_staging }}:
-          - stage: deploy_microservices
-            displayName: "🚀 Reload Microservices"
+          - stage: deploy_microservices_${{ environment }}
+            displayName: "🚀 Reload Microservices ${{ environment }}"
             dependsOn: semantic_version_microservices
             jobs:
               - template: ../cd/deployment.yml
