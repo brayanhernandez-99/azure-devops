@@ -37,7 +37,9 @@ stages:
   - ${{ if and(eq(parameters.release, 'update'), in(variables['Build.SourceBranchName'], 'develop', 'staging', 'master')) }}:
       - template: pipelines/pipeline-update-ecs.yml
         parameters:
+          red: ${{ parameters.red }}
           release: ${{ parameters.release }}
+          environments_staging: ${{ parameters.environments_staging }}
 
   #
   # RELOAD MICROSERVICE ECS ACCOUNTS
@@ -45,7 +47,5 @@ stages:
   - ${{ if and(eq(parameters.release, 'reload'), in(variables['Build.SourceBranchName'], 'develop', 'staging')) }}:
       - template: pipelines/pipeline-reload-ecs.yml
         parameters:
-          red: ${{ parameters.red }}
           release: ${{ parameters.release }}
           services: ${{ parameters.services }}
-          environments_staging: ${{ parameters.environments_staging }}
