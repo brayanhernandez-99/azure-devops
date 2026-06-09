@@ -1,7 +1,6 @@
 jobs:
-  - ${{ if or(eq(variables['Build.SourceBranchName'], 'develop'), eq(variables['Build.SourceBranchName'], 'staging')) }}:
-      - ${{ if eq(parameters.release, 'reload') }}:
-          - template: ./deploy/reload-version-ecs.yml
-            parameters:
-              release: ${{ parameters.release }}
-              services: ${{ parameters.services }}
+  - ${{ if eq(parameters.release, 'reload') }}:
+      - template: ./deploy/reload-version-ecs.yml
+        parameters:
+          release: ${{ parameters.release }}
+          services: ${{ parameters.services }}
