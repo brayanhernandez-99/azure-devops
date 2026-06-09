@@ -10,6 +10,7 @@ jobs:
           environment: "Deploy master"
         pool:
           name: "Azure Pipelines"
+          vmImage: ubuntu-latest
         strategy:
           runOnce:
             deploy:

@@ -3,7 +3,7 @@ jobs:
     displayName: "🐳 build docker image"
     pool:
       name: "Azure Pipelines"
-      VmImage: "ubuntu-22.04"
+      vmImage: ubuntu-latest
 
     variables:
       - template: ../../variables/groups-transversal-variables-backend.yml
