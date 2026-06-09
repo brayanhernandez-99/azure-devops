@@ -1,0 +1,8 @@
+variables:
+  - group: trasversal-aws-deployment
+
+  - ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}:
+      - group: trasversal-aws-develop
+
+  - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
+      - group: trasversal-aws-staging
