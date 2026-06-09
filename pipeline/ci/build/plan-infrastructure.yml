@@ -4,6 +4,7 @@ jobs:
     timeoutInMinutes: 120
     pool:
       name: "Azure Pipelines"
+      vmImage: ubuntu-latest
 
     variables:
       - template: ../../variables/groups-transversal-variables-iac.yml
