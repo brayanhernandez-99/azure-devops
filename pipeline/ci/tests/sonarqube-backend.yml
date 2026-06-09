@@ -3,7 +3,7 @@ jobs:
     displayName: "🛡️ sonarqube microservice"
     pool:
       name: "Azure Pipelines"
-      vmImage: "ubuntu-22.04"
+      vmImage: ubuntu-latest
 
     variables:
       - template: ../../variables/groups-transversal-variables-backend.yml
