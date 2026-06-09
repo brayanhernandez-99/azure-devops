@@ -33,8 +33,7 @@ jobs:
             aws ecs update-service \
               --cluster "$CLUSTER" \
               --service "$SERVICE" \
-              --force-new-deployment
-              # --force-new-deployment > /dev/null 2>&1
+              --force-new-deployment > /dev/null 2>&1
 
             echo "✅ $SERVICE reiniciado correctamente"
             echo -e "---------------------------------------------\n"
