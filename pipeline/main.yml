@@ -6,6 +6,23 @@ parameters:
     type: string
     default: "[]"
 
+  - name: environments_staging
+    type: object
+    default:
+      - staging
+      - staging_nacional
+
+  - name: red
+    type: object
+    default:
+      - cap
+      - tolima
+      - huila
+      - cauca
+      - boyaca
+      - santander
+      - putumayo
+
 resources:
   repositories:
     - repository: self
@@ -28,5 +45,7 @@ stages:
   - ${{ if and(eq(parameters.release, 'reload'), in(variables['Build.SourceBranchName'], 'develop', 'staging')) }}:
       - template: pipelines/pipeline-reload-ecs.yml
         parameters:
+          red: ${{ parameters.red }}
           release: ${{ parameters.release }}
           services: ${{ parameters.services }}
+          environments_staging: ${{ parameters.environments_staging }}

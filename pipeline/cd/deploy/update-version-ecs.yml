@@ -3,12 +3,13 @@ jobs:
     displayName: "🚀 update microservices"
     pool:
       name: "Azure Pipelines"
-      VmImage: ubuntu-22.04
 
     variables:
       - template: ../../variables/groups-transversal-variables.yml
         parameters:
+          region: ${{ parameters.region }}
           release: ${{ parameters.release }}
+          environment: ${{ parameters.environment }}
 
     steps:
       - task: DownloadBuildArtifacts@0

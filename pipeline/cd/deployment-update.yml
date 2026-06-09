@@ -9,7 +9,6 @@ jobs:
       environment: "Deploy master"
     pool:
       name: "Azure Pipelines"
-      VmImage: ubuntu-22.04
     strategy:
       runOnce:
         deploy:
@@ -22,4 +21,6 @@ jobs:
   - ${{ if eq(parameters.release, 'update') }}:
       - template: ./deploy/update-version-ecs.yml
         parameters:
+          region: ${{ parameters.region }}
           release: ${{ parameters.release }}
+          environment: ${{ parameters.environment }}
