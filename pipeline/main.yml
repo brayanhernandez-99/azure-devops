@@ -49,3 +49,4 @@ stages:
         parameters:
           release: ${{ parameters.release }}
           services: ${{ parameters.services }}
+          environments_staging: ${{ parameters.environments_staging }}
