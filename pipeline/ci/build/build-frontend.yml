@@ -1,8 +1,9 @@
 jobs:
-  - job: build_microfrontend_${{ parameters.region }}
+  - job: build_microfrontend
     displayName: "📦 build"
     pool:
       name: "Azure Pipelines"
+      vmImage: ubuntu-latest
 
     variables:
       - template: ../../variables/groups-transversal-variables-frontend.yml
