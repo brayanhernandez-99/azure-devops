@@ -3,6 +3,7 @@ jobs:
     displayName: "🏷️ version microservices"
     pool:
       name: "Azure Pipelines"
+      vmImage: ubuntu-latest
 
     variables:
       - template: ../variables/groups-transversal-variables.yml
