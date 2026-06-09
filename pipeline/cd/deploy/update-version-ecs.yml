@@ -5,10 +5,9 @@ jobs:
       name: "Azure Pipelines"
 
     variables:
-      - template: ../../variables/groups-transversal-variables-update.yml
+      - template: ../../variables/groups-transversal-variables.yml
         parameters:
           region: ${{ parameters.region }}
-          release: ${{ parameters.release }}
           environment: ${{ parameters.environment }}
 
     steps:

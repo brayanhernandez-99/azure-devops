@@ -5,10 +5,10 @@ jobs:
       name: "Azure Pipelines"
 
     variables:
-      - template: ../../variables/groups-transversal-variables-reload.yml
+      - template: ../../variables/groups-transversal-variables.yml
         parameters:
-          release: ${{ parameters.release }}
           services: ${{ parameters.services }}
+          environment: ${{ parameters.environment }}
 
     steps:
       - task: DownloadBuildArtifacts@0

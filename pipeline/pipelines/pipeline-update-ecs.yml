@@ -3,8 +3,6 @@ stages:
     displayName: "🏷️ Semantic Version Microservices"
     jobs:
       - template: ../ci/semantic-version-update.yml
-        parameters:
-          release: ${{ parameters.release }}
 
   #####################################################################
 
@@ -14,7 +12,7 @@ stages:
             displayName: "🚀 Deploy Microservices ${{ region }}"
             dependsOn: semantic_version_microservices
             jobs:
-              - template: ../cd/deployment-update.yml
+              - template: ../cd/deployment.yml
                 parameters:
                   region: ${{ region }}
                   release: ${{ parameters.release }}
@@ -26,7 +24,7 @@ stages:
         displayName: "🚀 Deploy Microservices"
         dependsOn: semantic_version_microservices
         jobs:
-          - template: ../cd/deployment-update.yml
+          - template: ../cd/deployment.yml
             parameters:
               release: ${{ parameters.release }}
 
@@ -38,7 +36,7 @@ stages:
             displayName: "🚀 Deploy Microservices ${{ environment }}"
             dependsOn: semantic_version_microservices
             jobs:
-              - template: ../cd/deployment-update.yml
+              - template: ../cd/deployment.yml
                 parameters:
                   environment: ${{ environment }}
                   release: ${{ parameters.release }}

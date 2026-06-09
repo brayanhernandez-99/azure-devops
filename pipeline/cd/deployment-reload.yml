@@ -1,6 +1,0 @@
-jobs:
-  - ${{ if eq(parameters.release, 'reload') }}:
-      - template: ./deploy/reload-version-ecs.yml
-        parameters:
-          release: ${{ parameters.release }}
-          services: ${{ parameters.services }}

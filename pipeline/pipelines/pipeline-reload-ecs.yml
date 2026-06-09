@@ -3,17 +3,29 @@ stages:
     displayName: "🏷️ Semantic Version Microservices"
     jobs:
       - template: ../ci/semantic-version-reload.yml
-        parameters:
-          release: ${{ parameters.release }}
-          services: ${{ parameters.services }}
 
   #####################################################################
 
-  - stage: deploy_microservices
-    displayName: "🚀 Reload Microservices"
-    dependsOn: semantic_version_microservices
-    jobs:
-      - template: ../cd/deployment-reload.yml
-        parameters:
-          release: ${{ parameters.release }}
-          services: ${{ parameters.services }}
+  - ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}:
+      - stage: deploy_microservices
+        displayName: "🚀 Reload Microservices"
+        dependsOn: semantic_version_microservices
+        jobs:
+          - template: ../cd/deployment.yml
+            parameters:
+              release: ${{ parameters.release }}
+              services: ${{ parameters.services }}
+
+  #####################################################################
+
+  - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
+      - ${{ each environment in parameters.environments_staging }}:
+          - stage: deploy_microservices
+            displayName: "🚀 Reload Microservices"
+            dependsOn: semantic_version_microservices
+            jobs:
+              - template: ../cd/deployment.yml
+                parameters:
+                  environment: ${{ environment }}
+                  release: ${{ parameters.release }}
+                  services: ${{ parameters.services }}

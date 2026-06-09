@@ -5,10 +5,7 @@ jobs:
       name: "Azure Pipelines"
 
     variables:
-      - template: ../variables/groups-transversal-variables-reload.yml
-        parameters:
-          release: ${{ parameters.release }}
-          services: ${{ parameters.services }}
+      - template: ../variables/groups-transversal-variables.yml
 
     steps:
       - checkout: self
