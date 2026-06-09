@@ -16,8 +16,6 @@ jobs:
             - script: echo "✅ Aprobación recibida. Iniciando el despliegue..."
               displayName: "🔓 Awaiting Approval"
 
-  #####################################################################
-
   - ${{ if eq(parameters.release, 'iac') }}:
       - template: ./deploy/apply-infrastructure.yml
         parameters:
