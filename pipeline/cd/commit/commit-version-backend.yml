@@ -44,15 +44,3 @@ jobs:
                   echo "##vso[build.updatebuildnumber]$cleanNEXT_VERSION"
               displayName: "⚡ Commit Version & Push — $(Build.Repository.Name)"
               condition: succeeded()
-
-  - ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
-      - job: "create_publish_versioning"
-        displayName: "⚡ create & publish version"
-        dependsOn: "deploy_microservice"
-        pool:
-          vmImage: "ubuntu-22.04"
-        steps:
-          - task: git-tag-on-release-task@9
-            continueOnError: true
-            displayName: "⚡ Create and Publish Versioning Tag"
-            condition: succeeded()
