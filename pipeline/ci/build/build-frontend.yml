@@ -68,69 +68,47 @@ jobs:
           targetType: inline
           script: |
             set -e
+            echo -e "\n🔐 Obteniendo tokens de AWS CodeArtifact..."
 
-            echo "🔐 Obteniendo token MatrixTech..."
-            mt_token=$(aws codeartifact get-authorization-token \
+            token_matrix=$(aws codeartifact get-authorization-token \
               --domain matrixtech-npm-repository \
               --domain-owner "$ACCOUNT_ID_DEPLOY" \
               --region "$AWS_DEFAULT_REGION" \
               --query authorizationToken \
               --output text)
 
-            echo "🔐 Obteniendo token UX..."
-            ux_token=$(aws codeartifact get-authorization-token \
+            token_ux=$(aws codeartifact get-authorization-token \
               --domain ux \
               --domain-owner "$ACCOUNT_ID_DEPLOY" \
               --region "$AWS_DEFAULT_REGION" \
               --query authorizationToken \
               --output text)
 
-            MT_DOMAIN="matrixtech-npm-repository-$ACCOUNT_ID_DEPLOY.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com"
-            MT_REPO="matrixtech-npm-repository"
-            MT_URL="https://$MT_DOMAIN/npm/$MT_REPO/"
+            REPO_DOMAIN_MATRIX="matrixtech-npm-repository-$ACCOUNT_ID_DEPLOY.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com"
+            REPO_PATH_MATRIX="npm/matrixtech-npm-repository"
+            REPO_URL_MATRIX="https://$REPO_DOMAIN_MATRIX/$REPO_PATH_MATRIX"
 
-            UX_DOMAIN="ux-$ACCOUNT_ID_DEPLOY.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com"
-            UX_REPO="ux"
-            UX_URL="https://$UX_DOMAIN/npm/$UX_REPO/"
+            REPO_DOMAIN_UX="ux-$ACCOUNT_ID_DEPLOY.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com"
+            REPO_PATH_UX="npm/ux"
+            REPO_URL_UX="https://$REPO_DOMAIN_UX/$REPO_PATH_UX"
 
-            echo "⚙️ Configurando ~/.npmrc global"
+            echo "⚙️ Configurando npm global..."
+            npm config set registry "https://registry.npmjs.org/"
 
-            cat > ~/.npmrc <<EOF
-            registry=https://registry.npmjs.org/
+            echo "⚙️ Configurando npm MATRIX..."
+            npm config set "//$REPO_DOMAIN_MATRIX/$REPO_PATH_MATRIX/:_authToken" "$token_matrix"
+            npm config set "@matrixtech:registry" "$REPO_URL_MATRIX"
 
-            @matrixtech:registry=$MT_URL
-            //$MT_DOMAIN/npm/$MT_REPO/:_authToken=$mt_token
+            echo "⚙️ Configurando npm UX..."
+            npm config set "//$REPO_DOMAIN_UX/$REPO_PATH_UX/:_authToken" "$token_ux"
+            npm config set "@ux:registry" "$REPO_URL_UX"
 
-            @ux:registry=$UX_URL
-            //$UX_DOMAIN/npm/$UX_REPO/:_authToken=$ux_token
+            npm config set always-auth true
 
-            always-auth=true
-            EOF
-
-            echo "✅ ~/.npmrc generado"
+            echo -e "\n✅ ~/.npmrc generado"
             cat ~/.npmrc
 
-            npmrcPath="$(file)/$(msName)/.npmrc"
-
-            echo "⚙️ Generando .npmrc local: $npmrcPath"
-
-            cat > "$npmrcPath" <<EOF
-            registry=https://registry.npmjs.org/
-
-            @matrixtech:registry=$MT_URL
-            //$MT_DOMAIN/npm/$MT_REPO/:_authToken=$mt_token
-
-            @ux:registry=$UX_URL
-            //$UX_DOMAIN/npm/$UX_REPO/:_authToken=$ux_token
-
-            always-auth=true
-            EOF
-
-            echo "✅ .npmrc local generado"
-            ls -l "$npmrcPath"
-            cat "$npmrcPath"
-
-            echo "🔍 Verificando identidad AWS"
+            echo -e "\n🔍 Verificando identidad AWS..."
             aws sts get-caller-identity
         displayName: "🔐 Setup CodeArtifact & npm config"
         condition: succeeded()
