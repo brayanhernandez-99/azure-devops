@@ -82,7 +82,7 @@ jobs:
             npm config set "@ux:registry" "$REPO_URL_UX"
 
             echo -e "\n✅ ~/.npmrc generado"
-            cat ~/.npmrc
+            cat ~/.npmrc | sed -E 's#(:_authToken=).*#\1****#'
 
             echo -e "\n🔍 Verificando identidad AWS..."
             aws sts get-caller-identity
