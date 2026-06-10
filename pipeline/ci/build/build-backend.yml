@@ -85,6 +85,8 @@ jobs:
             npm config set "//$REPO_DOMAIN_UX/$REPO_PATH_UX/:_authToken" "$token_ux"
             npm config set "@ux:registry" "$REPO_URL_UX"
 
+            cp ~/.npmrc "$(Build.Repository.Name)/.npmrc"
+
             echo -e "\n✅ ~/.npmrc generado"
             cat ~/.npmrc | sed -E 's#(:_authToken=).*#\1****#'
 
