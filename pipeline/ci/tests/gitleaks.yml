@@ -33,7 +33,7 @@ jobs:
               zricethezav/gitleaks:latest \
               detect \
               --source=/repo/$(Build.Repository.Name) \
-              --config=/repo/pipelines-templates/gitleaks.toml \
+              --config=/repo/pipelines-templates/pipeline/config/gitleaks.toml \
               --log-opts="origin/master..HEAD" \
               --verbose \
               --redact \
