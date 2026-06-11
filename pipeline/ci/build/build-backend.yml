@@ -207,7 +207,7 @@ jobs:
               exit 99
             fi
         displayName: "🔎 Verify ECR Repository Exists"
-        condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+        condition: and(succeeded(), in(variables['Build.SourceBranchName'], 'develop', 'staging', 'master'))
         env:
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
@@ -221,4 +221,4 @@ jobs:
             latest
             $(version)
         displayName: "🚀 Push Docker Image $(Build.Repository.Name)"
-        condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+        condition: and(succeeded(), in(variables['Build.SourceBranchName'], 'develop', 'staging', 'master'))
