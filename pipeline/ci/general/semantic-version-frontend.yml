@@ -494,29 +494,3 @@ jobs:
             git push origin version/$clean_branch
         displayName: "⚡commit & push version"
         condition: succeeded()
-
-      - task: Bash@3
-        inputs:
-          targetType: inline
-          script: |
-            set -e
-            git config user.name "pipeline"
-            git config user.email "pipelineUX@ux.technology"
-            git fetch --tags
-
-            for file in "$(Pipeline.Workspace)"/versions/*/version.json; do
-              MS=$(jq -r .ms "$file")
-              VERSION=$(jq -r .version "$file")
-              TAG="${MS}-v${VERSION}"
-              echo "🏷️ Tag a crear: ${TAG}"
-
-              if git rev-parse "${TAG}" >/dev/null 2>&1; then
-                echo "##vso[task.logissue type=warning]⚠️ El tag ${TAG} ya existe"
-              else
-                git tag -a "${TAG}" -m "Release ${TAG}"
-                git push origin "${TAG}"
-                echo "✅ Tag publicado: ${TAG}"
-              fi
-            done
-        displayName: "🏷️ Create Tag Version"
-        condition: succeeded()
