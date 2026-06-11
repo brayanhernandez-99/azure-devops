@@ -68,5 +68,6 @@ jobs:
             fi
         displayName: "🔎 Validate Feature or Hotfix Branch is Up to Date"
         condition: and(succeeded(), or(
+          eq(variables['Build.Reason'], 'PullRequest'),
           startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'),
           startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
