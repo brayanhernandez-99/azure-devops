@@ -118,8 +118,10 @@ jobs:
           set -e
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-vpc-link
-          terragrunt init --all --parallelism=1 --non-interactive -no-color
-          terragrunt plan --all --non-interactive -no-color
+          terragrunt init --all --parallelism=1 --non-interactive
+          terragrunt plan --all --non-interactive
+          # terragrunt init --all --parallelism=1 --non-interactive -no-color
+          # terragrunt plan --all --non-interactive -no-color
 
 
           # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds/aws-service-iam-role
