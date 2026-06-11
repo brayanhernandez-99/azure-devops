@@ -168,6 +168,7 @@ jobs:
         inputs:
           command: "build"
           Dockerfile: "$(Build.Repository.Name)/Dockerfile"
+          buildContext: "$(Build.Repository.Name)"
           repository: "$(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/$(ecr_repository)"
           tags: |
             latest
