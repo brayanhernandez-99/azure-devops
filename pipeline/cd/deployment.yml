@@ -28,9 +28,7 @@ jobs:
           environments: ${{ parameters.environments }}
 
       - ${{ if eq(parameters.region, 'antioquia') }}:
-          - template: ./commit/commit-version-frontend.yml
-            parameters:
-              apps: ${{ parameters.apps }}
+          - template: ./tags/tag-version-frontend.yml
 
   #####################################################################
 
@@ -41,7 +39,7 @@ jobs:
           environment_staging: ${{ parameters.environment_staging }}
 
       - ${{ if eq(parameters.region, 'antioquia') }}:
-          - template: ./commit/commit-version-backend.yml
+          - template: ./tags/tag-version-backend.yml
 
   #####################################################################
 
@@ -52,7 +50,7 @@ jobs:
           environment_staging: ${{ parameters.environment_staging }}
 
       - ${{ if eq(parameters.region, 'antioquia') }}:
-          - template: ./commit/commit-version-flutter.yml
+          - template: ./tags/tag-version-flutter.yml
 
   #####################################################################
 
@@ -63,7 +61,7 @@ jobs:
           environment_staging: ${{ parameters.environment_staging }}
 
       - ${{ if eq(parameters.region, 'antioquia') }}:
-          - template: ./commit/commit-version-electron.yml
+          - template: ./tags/tag-version-electron.yml
 
   #####################################################################
 

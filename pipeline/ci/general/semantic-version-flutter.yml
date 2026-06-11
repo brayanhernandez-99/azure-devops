@@ -208,18 +208,18 @@ jobs:
 
               if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
                 clean_branch=develop
-                echo $clean_branch
+                echo "Branch: $clean_branch"
               fi
 
               if [[ "$CURRENT_BRANCH" == refs/heads/hotfix/* ]]; then
                 clean_branch=master
-                echo $clean_branch
+                echo "Branch: $clean_branch"
               fi
 
               if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|staging|master)$ ]]; then
                 raw_branch=$(Build.SourceBranch)
                 clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
-                echo $clean_branch
+                echo "Branch: $clean_branch"
               fi
 
               if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
@@ -280,7 +280,9 @@ jobs:
               else
                 RELEASE_TYPE="patch" 
               fi
-              echo $RELEASE_TYPE
+              echo "ℹ️ Tipo versionamiento"
+              echo "type: $RELEASE_TYPE"
+              echo ""
 
               bump_version() {
                 IFS='.' read -r MAJOR MINOR PATCH <<< "$1"
@@ -442,23 +444,26 @@ jobs:
             git fetch origin version/$clean_branch
             git checkout -B version/$clean_branch origin/version/$clean_branch
 
-            echo "🔧 Actualizando versión $(cleanNEXT_VERSION) en el pubspec.yaml"
+            echo "🔧 Actualizando versión"
+            echo "flutter → $(cleanNEXT_VERSION)+$(NEXT_VERSION_PUB)"
+
+            jq --arg version "$(cleanNEXT_VERSION)" '.VERSION = $version' env.json > tmp.json && mv tmp.json env.json
             sed -i "s/^version: .*/version: $(cleanNEXT_VERSION)+$(NEXT_VERSION_PUB)/" pubspec.yaml
 
             echo -e "\n📁 File pubspec.yaml:"
             cat pubspec.yaml
-            jq --arg version "$(cleanNEXT_VERSION)" '.VERSION = $version' env.json > tmp.json && mv tmp.json env.json
 
             echo -e "\n📁 File env.json:"
             cat env.json
 
             git add env.json pubspec.yaml
-            git commit -m "chore Flutter: bump version to $(cleanNEXT_VERSION)"
+            git commit -m "chore: update version to $(cleanNEXT_VERSION)+$(NEXT_VERSION_PUB)"
             git push origin version/$clean_branch
+
             echo "##vso[build.updatebuildnumber]$(cleanNEXT_VERSION)"
-        displayName: "⚡ Commit Version & Push — $(Build.Repository.Name)"
+        displayName: "⚡Commit Version & Push"
         condition: and(succeeded(),
-          ne(variables['Build.SourceBranchName'], 'master'),
+          ne(variables['Build.Reason'], 'PullRequest'),
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
 

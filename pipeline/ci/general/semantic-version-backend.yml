@@ -236,12 +236,12 @@ jobs:
 
               if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
                 clean_branch=develop
-                echo $clean_branch
+                echo "Branch: $clean_branch"
               fi
 
               if [[ "$CURRENT_BRANCH" == refs/heads/hotfix/* ]]; then
                 clean_branch=master
-                echo $clean_branch
+                echo "Branch: $clean_branch"
               fi
 
               if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|staging|master)$ ]]; then
@@ -251,7 +251,7 @@ jobs:
                   raw_branch=$(Build.SourceBranch)
                 fi
                 clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
-                echo $clean_branch
+                echo "Branch: $clean_branch"
               fi
 
               if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
@@ -312,7 +312,9 @@ jobs:
               else
                 RELEASE_TYPE="patch" 
               fi
-              echo $RELEASE_TYPE
+              echo "ℹ️ Tipo versionamiento"
+              echo "type: $RELEASE_TYPE"
+              echo ""
 
               bump_version() {
                 IFS='.' read -r MAJOR MINOR PATCH <<< "$1"
@@ -402,20 +404,25 @@ jobs:
 
             git config user.name "pipeline"
             git config user.email "pipelineUX@ux.technology"
-
-            echo "🔧 Actualizando versión en $(Build.Repository.Name)/package.json a $(cleanNEXT_VERSION)"
-            jq --arg version "$(cleanNEXT_VERSION)" '.version = $version' package.json > tmp.json && mv tmp.json package.json
-
             git fetch origin version/$clean_branch
             git checkout -B version/$clean_branch origin/version/$clean_branch
+
+            echo "🔧 Actualizando versión"
+            msName=$(echo "$(Build.Repository.wName)" | sed -E 's/^microservice-//; s/-invictus$//')
+            echo "$msName → $(cleanNEXT_VERSION)"
+
+            jq --arg version "$(cleanNEXT_VERSION)" '.version = $version' package.json > tmp.json && mv tmp.json package.json
+            echo -e "\n📁 File package.json:"
+            cat package.json
+
             git add package.json
-            git commit -m "chore($(Build.Repository.Name)): bump version to $(cleanNEXT_VERSION)"
+            git commit -m "chore: update version to $(cleanNEXT_VERSION)"
             git push origin version/$clean_branch
+
             echo "##vso[build.updatebuildnumber]$(cleanNEXT_VERSION)"
-        displayName: "⚡ Commit Version & Push — $(Build.Repository.Name)"
+        displayName: "⚡Commit Version & Push"
         condition: and(succeeded(),
           ne(variables['Build.Reason'], 'PullRequest'),
-          ne(variables['Build.SourceBranchName'], 'master'),
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
 
