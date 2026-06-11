@@ -461,7 +461,7 @@ jobs:
             git push origin version/$clean_branch
 
             echo "##vso[build.updatebuildnumber]$(cleanNEXT_VERSION)"
-        displayName: "⚡Commit Version & Push"
+        displayName: "⚡Commit & Push Version"
         condition: and(succeeded(),
           ne(variables['Build.Reason'], 'PullRequest'),
           not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),

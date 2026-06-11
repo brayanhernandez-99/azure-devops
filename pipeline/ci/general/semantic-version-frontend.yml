@@ -439,7 +439,7 @@ jobs:
         condition: succeeded()
 
   - job: "commit_version_microfrontend"
-    displayName: "⚡commit version & push"
+    displayName: "⚡commit & push version"
     dependsOn:
       - semantic_version_microfrontend
     condition: and(succeeded(),
@@ -492,5 +492,5 @@ jobs:
 
             git commit -m "chore: update version microfrontend"
             git push origin version/$clean_branch
-        displayName: "⚡Commit Version & Push"
+        displayName: "⚡commit & push version"
         condition: succeeded()
