@@ -1,86 +1,92 @@
 # Plantillas de Azure Pipelines
 
-Este repositorio contiene plantillas YAML reutilizables para la definición de pipelines en Azure DevOps, orientadas a proyectos que utilizan Node.js, Flutter y despliegues en AWS (S3, ECS) o generación de APKs.
+Este repositorio contiene plantillas YAML reutilizables para la definición de pipelines en Azure DevOps, orientadas a proyectos **Microfrontend**, **MicroServices**, **Flutter**, **Electron** y **Repository Configuration** con despliegues en AWS (S3 + CloudFront, ECS) o generación de APKs/EXEs.
 
 ## Estructura del repositorio
 
 ```
-
-pipelines-templates/
-├── main.yml
-├── cd/
-│   ├── deployment.yml
-│   ├── commit/
-│   │   ├── commit-version-backend.yml
-│   │   ├── commit-version-electron.yml
-│   │   ├── commit-version-electron-new.yml
-│   │   ├── commit-version-flutter.yml
-│   │   ├── commit-version-frontend.yml
-│   │   └── commit-version-frontend-new.yml
-│   └── deploy/
-│       ├── deploy-backend.yml
-│       ├── deploy-electron.yml
-│       ├── deploy-electron-new.yml
-│       ├── deploy-flutter.yml
-│       ├── deploy-frontend.yml
-│       └── deploy-repository-configuration.yml
+pipeline/
+├── main.yml                              ← Entry point (via extends:)
+├── pipelines/
+│   ├── pipeline-microfrontend.yml        ← aws-s3 (Vue, S3 + CloudFront)
+│   ├── pipeline-microservices.yml        ← aws-ecs (Backend, ECS)
+│   ├── pipeline-flutter.yml              ← apk (Flutter)
+│   ├── pipeline-electron.yml             ← app (Electron)
+│   ├── pipeline-repository-configuration.yml  ← rpc (Config)
+│   └── pipeline-pre-build.yml            ← Pre-build Microfrontend
 ├── ci/
-│   ├── semantic-version-integration.yml
+│   ├── semantic-version-integration.yml  ← Orquesta versionado por release
 │   ├── build/
-│   │   ├── build-backend.yml
-│   │   ├── build-electron.yml
-│   │   ├── build-electron-new.yml
-│   │   ├── build-flutter.yml
 │   │   ├── build-frontend.yml
-│   │   ├── build-frontend-new.yml
+│   │   ├── build-backend.yml
+│   │   ├── build-flutter.yml
+│   │   ├── build-electron.yml
 │   │   └── build-repository-configuration.yml
 │   ├── general/
-│   │   ├── semantic-version-backend.yml
-│   │   ├── semantic-version-electron.yml
-│   │   ├── semantic-version-electron-new.yml
-│   │   ├── semantic-version-flutter.yml
 │   │   ├── semantic-version-frontend.yml
-│   │   ├── semantic-version-frontend-new.yml
+│   │   ├── semantic-version-backend.yml
+│   │   ├── semantic-version-flutter.yml
+│   │   ├── semantic-version-electron.yml
 │   │   └── semantic-version-repository-configuration.yml
+│   ├── pre-build/
+│   │   ├── changes-files-frontend.yml
+│   │   └── check-build-frontend.yml
 │   └── tests/
-│       └── sonarqube.yml
-├── docker/
-│   └── Dockerfile
-├── pipelines/
-│   ├── pipeline-electron.yml
-│   ├── pipeline-flutter.yml
-│   ├── pipeline-microfrontend.yml
-│   ├── pipeline-microfrontend-electron.yml
-│   ├── pipeline-microservices.yml
-│   └── pipeline-repository-configuration.yml
-└── variables/
-    ├── groups-transversal-variables-backend.yml
-    ├── groups-transversal-variables-electron.yml
-    ├── groups-transversal-variables-electron-new.yml
-    ├── groups-transversal-variables-flutter.yml
-    ├── groups-transversal-variables-frontend.yml
-    ├── groups-transversal-variables-frontend-new.yml
-    └── groups-transversal-variables-rpc.yml
+│       ├── sonarqube-backend.yml
+│       ├── sonarqube-frontend.yml
+│       └── gitleaks.yml
+├── cd/
+│   ├── deployment.yml                    ← Approval gate + deploy dispatch
+│   ├── deploy/
+│   │   ├── deploy-frontend.yml
+│   │   ├── deploy-backend.yml
+│   │   ├── deploy-flutter.yml
+│   │   ├── deploy-electron.yml
+│   │   └── deploy-repository-configuration.yml
+│   └── commit/
+│       ├── commit-version-frontend.yml
+│       ├── commit-version-backend.yml
+│       ├── commit-version-flutter.yml
+│       └── commit-version-electron.yml
+├── variables/
+│   ├── groups-transversal-variables-backend.yml
+│   ├── groups-transversal-variables-frontend.yml
+│   ├── groups-transversal-variables-flutter.yml
+│   ├── groups-transversal-variables-electron.yml
+│   ├── groups-transversal-variables-rpc.yml
+│   └── groups-transversal-variables-pre-build.yml
+├── config/
+│   ├── vitest.config.mts
+│   └── gitleaks.toml
+└── docker/
+    └── Dockerfile
 ```
 
 ## Descripción general
 
 - **main.yml**: Pipeline principal que orquesta los procesos de build y release según el tipo de proyecto, rama y entorno.
-- **build/**: Plantillas para los distintos escenarios de construcción (build) de aplicaciones.
-- **release/**: Plantillas para la gestión y despliegue de artefactos.
+- **pipelines/**: Templates por tipo de release (aws-s3, aws-ecs, apk, app, rpc), cada uno con stages de semantic version, scan, build y deploy.
+- **ci/**: Jobs de versionado semántico, builds, análisis estático (SonarQube, Gitleaks) y pre-build (detección de cambios).
+- **cd/**: Deploy con approval gate (solo master), despliegue por plataforma y commit de versión.
+- **variables/**: Grupos de variables por plataforma y entorno (develop, staging, staging_nacional, master por región).
 
 ## Parámetros principales
 
-- `release`: Tipo de release (`aws-s3`, `aws-ecs`, `apk`, `app`, `rpc`).
-- `red`: Lista de regiones para despliegue (por defecto: antioquia, cap, tolima, huila, cauca, boyaca).
-- `apps`: Objeto para definir aplicaciones específicas.
+| Parámetro | Tipo | Descripción |
+|-----------|------|-------------|
+| `release` | string | Tipo de release: `aws-s3`, `aws-ecs`, `apk`, `app`, `rpc` |
+| `apps` | object | Lista de apps para microfrontend |
+| `red` | object | Regiones para deploy en master (`antioquia`, `cap`, `tolima`, ...) |
+| `environments_staging` | object | Entornos staging (`staging`, `staging_nacional`) |
+| `pr_id` | number | ID del Pull Request (0 si no aplica) |
 
 ## Flujos soportados
 
-- **Build y Release** para ramas `feature/`, `hotfix/`, `develop`, `staging`, `master` y tags.
-- **Soporte por región**: En ramas como `master`, los builds y despliegues pueden ejecutarse por cada región definida en el parámetro `red`.
-- **Soporte multiplataforma**: Node.js backend, Node.js frontend y Flutter.
-- **Despliegue en AWS**: S3, ECS y generación de APKs.
+- **feature/* y hotfix/***: Scan (SonarQube + Gitleaks) + Build. Sin deploy.
+- **develop**: Build + Deploy directo (sin approval).
+- **staging**: Build + Deploy a `staging` y `staging_nacional`.
+- **master**: Build + Deploy a todas las regiones con **approval gate** manual.
+- **PullRequest**: Scan + Build + Check build (solo microfrontend).
 
 ## Uso
 
@@ -94,17 +100,8 @@ trigger:
       - feature/*
       - hotfix/*
       - develop
-      - master
       - staging
-    exclude:
-      - version/*
-
-pr:
-  branches:
-    include:
-      - develop
       - master
-      - staging
 
 resources:
   repositories:
@@ -116,7 +113,10 @@ resources:
 extends:
   template: pipeline/main.yml@templates
   parameters:
-    release: <release>
+    release: aws-s3     # aws-s3 | aws-ecs | apk | app | rpc
+    apps:               # solo para aws-s3
+      - app-administration-vue2
+      - app-sellers-vue2
 ```
 
 Ajusta los parámetros según tu proyecto y necesidades.
