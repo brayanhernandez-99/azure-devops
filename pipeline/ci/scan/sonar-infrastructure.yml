@@ -10,15 +10,14 @@ jobs:
 
     steps:
       - task: JavaToolInstaller@0
-        displayName: "🔧 Install JDK 17"
         inputs:
           versionSpec: "17"
           jdkArchitectureOption: "x64"
           jdkSourceOption: "PreInstalled"
+        displayName: "🔧 Install JDK 17"
         condition: succeeded()
 
       - task: SonarQubePrepare@7
-        displayName: "⚙️ Prepare SonarQube Analysis"
         inputs:
           SonarQube: "SonarQubeConection"
           scannerMode: "CLI"
@@ -31,13 +30,17 @@ jobs:
             sonar.inclusions=**/*.tf,**/*.tfvars,**/*.hcl
             sonar.terraform.file.suffixes=tf,tfvars,hcl
             sonar.exclusions=**/.terraform/**,**/.terragrunt-cache/**,**/terraform.tfstate*,**/*tfplan*,**/terragrunt.hcl.lock*,**/*.lock.hcl,pipeline/**
+        displayName: "⚙️ Prepare SonarQube Analysis"
         condition: succeeded()
 
-      - script: |
-          response=$(echo $SONARQUBE_SCANNER_PARAMS | sed -E 's#"sonar\.branch\.name":"[^"]+",##g')
-          json=$(echo "$response" | sed 's/"sonar.token":\*\*\*/"sonar.token":"***"/')
-          echo "$json" | jq
-          echo "##vso[task.setvariable variable=SONARQUBE_SCANNER_PARAMS]$response"
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            response=$(echo $SONARQUBE_SCANNER_PARAMS | sed -E 's#"sonar\.branch\.name":"[^"]+",##g')
+            json=$(echo "$response" | sed 's/"sonar.token":\*\*\*/"sonar.token":"***"/')
+            echo "$json" | jq
+            echo "##vso[task.setvariable variable=SONARQUBE_SCANNER_PARAMS]$response"
         displayName: "⚙️ Set Variable — SONARQUBE_SCANNER_PARAMS"
         condition: succeeded()
 
@@ -46,45 +49,48 @@ jobs:
         condition: succeeded()
 
       - task: SonarQubePublish@7
-        displayName: "📤 Publish Static Code Analysis Results"
         inputs:
           pollingTimeoutSec: 400
+        displayName: "📤 Publish Static Code Analysis Results"
         condition: succeeded()
 
-      - script: |
-          echo "🔎 Validando Quality Gate..."
-          PROJECT_KEY="$(Build.Repository.Name)"
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            echo "🔎 Validando Quality Gate..."
+            PROJECT_KEY="$(Build.Repository.Name)"
 
-          # Obtener estado del Quality Gate
-          status=$(curl -s -u "$SONAR_TOKEN:" "$SONAR_HOST_URL/api/qualitygates/project_status?projectKey=$PROJECT_KEY")
-          metrics_response=$(curl -s -u "$SONAR_TOKEN:" "$SONAR_HOST_URL/api/measures/component?component=$PROJECT_KEY&metricKeys=coverage,duplicated_lines_density")
-          project_info=$(curl -s -u "$SONAR_TOKEN:" "$SONAR_HOST_URL/api/components/show?component=$PROJECT_KEY")
+            # Obtener estado del Quality Gate
+            status=$(curl -s -u "$SONAR_TOKEN:" "$SONAR_HOST_URL/api/qualitygates/project_status?projectKey=$PROJECT_KEY")
+            metrics_response=$(curl -s -u "$SONAR_TOKEN:" "$SONAR_HOST_URL/api/measures/component?component=$PROJECT_KEY&metricKeys=coverage,duplicated_lines_density")
+            project_info=$(curl -s -u "$SONAR_TOKEN:" "$SONAR_HOST_URL/api/components/show?component=$PROJECT_KEY")
 
-          coverage=$(echo "$metrics_response" | jq -r '.component.measures[] | select(.metric=="coverage") | .value')
-          duplication=$(echo "$metrics_response" | jq -r '.component.measures[] | select(.metric=="duplicated_lines_density") | .value')
-          status_code=$(echo "$status" | jq -r '.projectStatus.status')
+            coverage=$(echo "$metrics_response" | jq -r '.component.measures[] | select(.metric=="coverage") | .value')
+            duplication=$(echo "$metrics_response" | jq -r '.component.measures[] | select(.metric=="duplicated_lines_density") | .value')
+            status_code=$(echo "$status" | jq -r '.projectStatus.status')
 
-          # Obtener Quality Gate Name y Quality Profile Name
-          quality_gate=$(echo "$status" | jq -r '.projectStatus.qualityGate.name // "N/A"')
-          quality_profile=$(echo "$project_info" | jq -r '.component.qualityProfile // "N/A"')
-          language=$(echo "$project_info" | jq -r '.component.language // "N/A"')
+            # Obtener Quality Gate Name y Quality Profile Name
+            quality_gate=$(echo "$status" | jq -r '.projectStatus.qualityGate.name // "N/A"')
+            quality_profile=$(echo "$project_info" | jq -r '.component.qualityProfile // "N/A"')
+            language=$(echo "$project_info" | jq -r '.component.language // "N/A"')
 
-          echo ""
-          echo "🔹 Proyecto:        $PROJECT_KEY"
-          echo "🛡️ Quality Gate:    $quality_gate"
-          echo "🛡️ Quality Profile: $quality_profile"
-          echo "🧾 Lenguaje Base:   $language"
-          echo "🟢 Estado:          $status_code"
-          echo ""
+            echo ""
+            echo "🔹 Proyecto:        $PROJECT_KEY"
+            echo "🛡️ Quality Gate:    $quality_gate"
+            echo "🛡️ Quality Profile: $quality_profile"
+            echo "🧾 Lenguaje Base:   $language"
+            echo "🟢 Estado:          $status_code"
+            echo ""
 
-          echo -e "\n##[command]🌐 URL: $SONAR_HOST_URL/dashboard?id=infrastructure-as-code-invictus"
+            echo -e "\n##[command]🌐 URL: $SONAR_HOST_URL/dashboard?id=infrastructure-as-code-invictus"
 
-          if [[ "$status_code" == "ERROR" ]]; then
-            echo -e "\n##vso[task.logissue type=error]⚠️ El proyecto no cumple con los Qualitys."
-            exit 99
-          else
-            echo -e "\n✅ El proyecto cumple con los Qualitys."
-          fi
+            if [[ "$status_code" == "ERROR" ]]; then
+              echo -e "\n##vso[task.logissue type=error]⚠️ El proyecto no cumple con los Qualitys."
+              exit 99
+            else
+              echo -e "\n✅ El proyecto cumple con los Qualitys."
+            fi
         displayName: "🛡️ Quality Gate Check: $(Build.Repository.Name)"
         condition: succeeded()
         # continueOnError: true
