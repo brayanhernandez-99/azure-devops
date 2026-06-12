@@ -154,6 +154,7 @@ jobs:
 
             env | sort > env.txt
             wc -l env.txt
+            cat env.txt
         displayName: "ANSI Test"
         condition: succeeded()
 
