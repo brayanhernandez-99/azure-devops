@@ -117,8 +117,20 @@ jobs:
       - script: |
           set -e
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-iam-role/user-iot
-          terragrunt init --non-interactive
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-apigateway-administration
+          terragrunt init --all --parallelism=1 --non-interactive
+          terragrunt plan --all --non-interactive
+          terragrunt apply --all --non-interactive
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/apigateway-sellers
+          terragrunt init --all --parallelism=1 --non-interactive
+          terragrunt plan --all --non-interactive
+          terragrunt apply --all --non-interactive
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/apigateway-integration
+          terragrunt init --all --parallelism=1 --non-interactive
+          terragrunt plan --all --non-interactive
+          terragrunt apply --all --non-interactive
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/apigateway-metabase
+          terragrunt init --all --parallelism=1 --non-interactive
           terragrunt plan --all --non-interactive
           terragrunt apply --all --non-interactive
 
