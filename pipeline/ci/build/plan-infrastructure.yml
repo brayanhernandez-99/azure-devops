@@ -151,6 +151,9 @@ jobs:
             echo "32"
             echo "34"
             echo "0"
+
+            env | sort > env.txt
+            wc -l env.txt
         displayName: "ANSI Test"
         condition: succeeded()
 
