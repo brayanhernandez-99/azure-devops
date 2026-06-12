@@ -10,7 +10,6 @@ jobs:
 
     steps:
       - task: Bash@3
-        displayName: "🔎 Checkov Scan"
         inputs:
           targetType: "inline"
           script: |
@@ -45,3 +44,5 @@ jobs:
               --skip-check CKV_AWS_91 \
               --skip-check CKV_AWS_324 \
               --quiet
+        displayName: "🔎 Checkov Scan"
+        condition: succeeded()

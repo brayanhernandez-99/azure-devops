@@ -25,76 +25,91 @@ jobs:
         value: "$(Agent.TempDirectory)/terragrunt-cache"
 
     steps:
-      - script: |
-          set -e
-          echo -e "\n📋 Variables disponibles:"
-          printenv | sort | grep -i "aws_" || true
+      - task: Bash@3
+        inputs:
+          targetType: "inline"
+          script: |
+            set -e
+            echo -e "\n📋 Variables disponibles:"
+            printenv | sort | grep -i "aws_" || true
 
-          echo -e "\n📋 Parametros disponibles:"
-          printenv | sort | grep -i "parameter_" || true
+            echo -e "\n📋 Parametros disponibles:"
+            printenv | sort | grep -i "parameter_" || true
         displayName: "📋 Environment variables"
         condition: succeeded()
 
-      - script: |
-          set -e
-          echo "📦 Configurando Terraform/Terragrunt cache..."
+      - task: Bash@3
+        inputs:
+          targetType: "inline"
+          script: |
+            set -e
+            echo "📦 Configurando Terraform/Terragrunt cache..."
 
-          mkdir -p "$(TF_PLUGIN_CACHE_DIR)"
-          mkdir -p "$(TG_DOWNLOAD_DIR)"
-          chmod -R 775 "$(TF_PLUGIN_CACHE_DIR)"
-          chmod -R 775 "$(TG_DOWNLOAD_DIR)"
+            mkdir -p "$(TF_PLUGIN_CACHE_DIR)"
+            mkdir -p "$(TG_DOWNLOAD_DIR)"
+            chmod -R 775 "$(TF_PLUGIN_CACHE_DIR)"
+            chmod -R 775 "$(TG_DOWNLOAD_DIR)"
 
-          echo ""
-          echo "✅ TF_PLUGIN_CACHE_DIR=$(TF_PLUGIN_CACHE_DIR)"
-          echo "✅ TG_DOWNLOAD_DIR=$(TG_DOWNLOAD_DIR)"
+            echo ""
+            echo "✅ TF_PLUGIN_CACHE_DIR=$(TF_PLUGIN_CACHE_DIR)"
+            echo "✅ TG_DOWNLOAD_DIR=$(TG_DOWNLOAD_DIR)"
 
-          echo -e "\n📂 Terraform Plugin Cache:"
-          ls -ltra "$(TF_PLUGIN_CACHE_DIR)" || true
+            echo -e "\n📂 Terraform Plugin Cache:"
+            ls -ltra "$(TF_PLUGIN_CACHE_DIR)" || true
 
-          echo -e "\n📂 Terragrunt Cache:"
-          ls -ltra "$(TG_DOWNLOAD_DIR)" || true
+            echo -e "\n📂 Terragrunt Cache:"
+            ls -ltra "$(TG_DOWNLOAD_DIR)" || true
         displayName: "📦 Configure Cache"
         condition: succeeded()
 
-      - script: |
-          set -e
-          echo "🧹 Limpiando Terraform/Terragrunt cache..."
+      - task: Bash@3
+        inputs:
+          targetType: "inline"
+          script: |
+            set -e
+            echo "🧹 Limpiando Terraform/Terragrunt cache..."
 
-          rm -rf "$(TF_PLUGIN_CACHE_DIR)"/* || true
-          rm -rf "$(TG_DOWNLOAD_DIR)"/* || true
+            rm -rf "$(TF_PLUGIN_CACHE_DIR)"/* || true
+            rm -rf "$(TG_DOWNLOAD_DIR)"/* || true
 
-          find . -type d -name ".terraform" -prune -exec rm -rf {} + || true
-          find . -type d -name ".terragrunt-cache" -prune -exec rm -rf {} + || true
+            find . -type d -name ".terraform" -prune -exec rm -rf {} + || true
+            find . -type d -name ".terragrunt-cache" -prune -exec rm -rf {} + || true
 
-          echo "✅ Limpieza completa"
+            echo "✅ Limpieza completa"
         displayName: "🧹 Clean Terraform/Terragrunt Cache"
         condition: succeeded()
 
-      - script: |
-          set -e
-          echo "📥 Descargando Terragrunt 0.84.1..."
-          curl -L "https://github.com/gruntwork-io/terragrunt/releases/download/v$(terragruntVersion)/terragrunt_linux_amd64" -o terragrunt
+      - task: Bash@3
+        inputs:
+          targetType: "inline"
+          script: |
+            set -e
+            echo "📥 Descargando Terragrunt 0.84.1..."
+            curl -L "https://github.com/gruntwork-io/terragrunt/releases/download/v$(terragruntVersion)/terragrunt_linux_amd64" -o terragrunt
 
-          chmod +x terragrunt
-          sudo mv terragrunt /usr/local/bin/terragrunt
+            chmod +x terragrunt
+            sudo mv terragrunt /usr/local/bin/terragrunt
 
-          echo "🚀 Terragrunt instalado:"
-          terragrunt --version
+            echo "🚀 Terragrunt instalado:"
+            terragrunt --version
         displayName: "🛠️ Install Terragrunt 0.84.1"
         condition: succeeded()
 
-      - script: |
-          set -e
-          echo "📥 Descargando Terraform 1.12.0..."
-          curl -L "https://releases.hashicorp.com/terraform/$(terraformVersion)/terraform_$(terraformVersion)_linux_amd64.zip" -o terraform.zip
+      - task: Bash@3
+        inputs:
+          targetType: "inline"
+          script: |
+            set -e
+            echo "📥 Descargando Terraform 1.12.0..."
+            curl -L "https://releases.hashicorp.com/terraform/$(terraformVersion)/terraform_$(terraformVersion)_linux_amd64.zip" -o terraform.zip
 
-          unzip terraform.zip
-          chmod +x terraform
-          sudo mv terraform /usr/local/bin/terraform
-          rm -rf terraform.zip
+            unzip terraform.zip
+            chmod +x terraform
+            sudo mv terraform /usr/local/bin/terraform
+            rm -rf terraform.zip
 
-          echo "🚀 Terraform instalado:"
-          terraform --version
+            echo "🚀 Terraform instalado:"
+            terraform --version
         displayName: "🛠️ Install Terraform 1.12.0"
         condition: succeeded()
 
@@ -114,199 +129,202 @@ jobs:
         displayName: "⚙️ Replace Tokens"
         condition: succeeded()
 
-      - script: |
-          set -e
+      - task: Bash@3
+        inputs:
+          targetType: "inline"
+          script: |
+            set -e
 
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-apigateway/aws-service-apigateway-custom-domain-administration
-          terragrunt init --all --parallelism=1 --non-interactive
-          terragrunt plan --all --non-interactive
-          terragrunt apply --all --non-interactive
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-apigateway/aws-service-apigateway-custom-domain-integration
-          terragrunt init --all --parallelism=1 --non-interactive
-          terragrunt plan --all --non-interactive
-          terragrunt apply --all --non-interactive
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-apigateway/aws-service-apigateway-custom-domain-metabase
-          terragrunt init --all --parallelism=1 --non-interactive
-          terragrunt plan --all --non-interactive
-          terragrunt apply --all --non-interactive
-          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-apigateway/aws-service-apigateway-custom-domain-seller
-          terragrunt init --all --parallelism=1 --non-interactive
-          terragrunt plan --all --non-interactive
-          terragrunt apply --all --non-interactive
-
-
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds/aws-service-iam-role
-          # terragrunt init --all --parallelism=1 --non-interactive
-          # terragrunt plan --all --non-interactive
-          # terragrunt apply --all --non-interactive
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds/aws-service-proxy
-          # terragrunt init --all --parallelism=1 --non-interactive
-          # terragrunt plan --all --non-interactive
-          # terragrunt apply --all --non-interactive
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-apigateway/aws-service-apigateway-custom-domain-administration
+            terragrunt init --all --parallelism=1 --non-interactive
+            terragrunt plan --all --non-interactive
+            terragrunt apply --all --non-interactive
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-apigateway/aws-service-apigateway-custom-domain-integration
+            terragrunt init --all --parallelism=1 --non-interactive
+            terragrunt plan --all --non-interactive
+            terragrunt apply --all --non-interactive
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-apigateway/aws-service-apigateway-custom-domain-metabase
+            terragrunt init --all --parallelism=1 --non-interactive
+            terragrunt plan --all --non-interactive
+            terragrunt apply --all --non-interactive
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-apigateway/aws-service-apigateway-custom-domain-seller
+            terragrunt init --all --parallelism=1 --non-interactive
+            terragrunt plan --all --non-interactive
+            terragrunt apply --all --non-interactive
 
 
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/astro/aws-service-secret-manager
-          # terragrunt init --all --parallelism=1 --non-interactive
-          # terragrunt plan --all --non-interactive
-          # terragrunt apply --all --non-interactive
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/awards/aws-service-secret-manager
-          # terragrunt init --all --parallelism=1 --non-interactive
-          # terragrunt plan --all --non-interactive
-          # terragrunt apply --all --non-interactive
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/biometrics/aws-service-secret-manager
-          # terragrunt init --all --parallelism=1 --non-interactive
-          # terragrunt plan --all --non-interactive
-          # terragrunt apply --all --non-interactive
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/collected/aws-service-secret-manager
-          # terragrunt init --all --parallelism=1 --non-interactive
-          # terragrunt plan --all --non-interactive
-          # terragrunt apply --all --non-interactive
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/conciliation/aws-service-secret-manager
-          # terragrunt init --all --parallelism=1 --non-interactive
-          # terragrunt plan --all --non-interactive
-          # terragrunt apply --all --non-interactive
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/credits/aws-service-secret-manager
-          # terragrunt init --all --parallelism=1 --non-interactive
-          # terragrunt plan --all --non-interactive
-          # terragrunt apply --all --non-interactive
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/dynamic-storage/aws-service-secret-manager
-          # terragrunt init --all --parallelism=1 --non-interactive
-          # terragrunt plan --all --non-interactive
-          # terragrunt apply --all --non-interactive
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/external-wager/aws-service-secret-manager
-          # terragrunt init --all --parallelism=1 --non-interactive
-          # terragrunt plan --all --non-interactive
-          # terragrunt apply --all --non-interactive
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/generic-services/aws-service-secret-manager
-          # terragrunt init --all --parallelism=1 --non-interactive
-          # terragrunt plan --all --non-interactive
-          # terragrunt apply --all --non-interactive
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/hierarchies/aws-service-secret-manager
-          # terragrunt init --all --parallelism=1 --non-interactive
-          # terragrunt plan --all --non-interactive
-          # terragrunt apply --all --non-interactive
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/lotteries-games-admin/aws-service-secret-manager
-          # terragrunt init --all --parallelism=1 --non-interactive
-          # terragrunt plan --all --non-interactive
-          # terragrunt apply --all --non-interactive
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/lotteries-games/aws-service-secret-manager
-          # terragrunt init --all --parallelism=1 --non-interactive
-          # terragrunt plan --all --non-interactive
-          # terragrunt apply --all --non-interactive
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/lotteries/aws-service-secret-manager
-          # terragrunt init --all --parallelism=1 --non-interactive
-          # terragrunt plan --all --non-interactive
-          # terragrunt apply --all --non-interactive
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/metabase/aws-service-secret-manager
-          # terragrunt init --all --parallelism=1 --non-interactive
-          # terragrunt plan --all --non-interactive
-          # terragrunt apply --all --non-interactive
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/millonario/aws-service-secret-manager
-          # terragrunt init --all --parallelism=1 --non-interactive
-          # terragrunt plan --all --non-interactive
-          # terragrunt apply --all --non-interactive
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/money-control/aws-service-secret-manager
-          # terragrunt init --all --parallelism=1 --non-interactive
-          # terragrunt plan --all --non-interactive
-          # terragrunt apply --all --non-interactive
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/notifications/aws-service-secret-manager
-          # terragrunt init --all --parallelism=1 --non-interactive
-          # terragrunt plan --all --non-interactive
-          # terragrunt apply --all --non-interactive
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/online-games/aws-service-secret-manager
-          # terragrunt init --all --parallelism=1 --non-interactive
-          # terragrunt plan --all --non-interactive
-          # terragrunt apply --all --non-interactive
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/papelery/aws-service-secret-manager
-          # terragrunt init --all --parallelism=1 --non-interactive
-          # terragrunt plan --all --non-interactive
-          # terragrunt apply --all --non-interactive
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/payment-voucher/aws-service-secret-manager
-          # terragrunt init --all --parallelism=1 --non-interactive
-          # terragrunt plan --all --non-interactive
-          # terragrunt apply --all --non-interactive
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/payments/aws-service-secret-manager
-          # terragrunt init --all --parallelism=1 --non-interactive
-          # terragrunt plan --all --non-interactive
-          # terragrunt apply --all --non-interactive
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/products/aws-service-secret-manager
-          # terragrunt init --all --parallelism=1 --non-interactive
-          # terragrunt plan --all --non-interactive
-          # terragrunt apply --all --non-interactive
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/promotional/aws-service-secret-manager
-          # terragrunt init --all --parallelism=1 --non-interactive
-          # terragrunt plan --all --non-interactive
-          # terragrunt apply --all --non-interactive
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/raffles/aws-service-secret-manager
-          # terragrunt init --all --parallelism=1 --non-interactive
-          # terragrunt plan --all --non-interactive
-          # terragrunt apply --all --non-interactive
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/raspa/aws-service-secret-manager
-          # terragrunt init --all --parallelism=1 --non-interactive
-          # terragrunt plan --all --non-interactive
-          # terragrunt apply --all --non-interactive
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges/aws-service-secret-manager
-          # terragrunt init --all --parallelism=1 --non-interactive
-          # terragrunt plan --all --non-interactive
-          # terragrunt apply --all --non-interactive
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/remittances/aws-service-secret-manager
-          # terragrunt init --all --parallelism=1 --non-interactive
-          # terragrunt plan --all --non-interactive
-          # terragrunt apply --all --non-interactive
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/scheduler/aws-service-secret-manager
-          # terragrunt init --all --parallelism=1 --non-interactive
-          # terragrunt plan --all --non-interactive
-          # terragrunt apply --all --non-interactive
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/security/aws-service-secret-manager
-          # terragrunt init --all --parallelism=1 --non-interactive
-          # terragrunt plan --all --non-interactive
-          # terragrunt apply --all --non-interactive
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/sellers/aws-service-secret-manager
-          # terragrunt init --all --parallelism=1 --non-interactive
-          # terragrunt plan --all --non-interactive
-          # terragrunt apply --all --non-interactive
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/shopping-cart/aws-service-secret-manager
-          # terragrunt init --all --parallelism=1 --non-interactive
-          # terragrunt plan --all --non-interactive
-          # terragrunt apply --all --non-interactive
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/wiretransfer/aws-service-secret-manager
-          # terragrunt init --all --parallelism=1 --non-interactive
-          # terragrunt plan --all --non-interactive
-          # terragrunt apply --all --non-interactive
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds/aws-service-iam-role
+            # terragrunt init --all --parallelism=1 --non-interactive
+            # terragrunt plan --all --non-interactive
+            # terragrunt apply --all --non-interactive
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds/aws-service-proxy
+            # terragrunt init --all --parallelism=1 --non-interactive
+            # terragrunt plan --all --non-interactive
+            # terragrunt apply --all --non-interactive
 
 
-
-
-
-          ###
-          ### RDS Proxy
-          ###
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds/aws-service-iam-role
-          # terragrunt init --all --parallelism=1 --non-interactive
-          # terragrunt plan --all --non-interactive
-          # terragrunt apply --all --non-interactive
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds/aws-service-proxy
-          # terragrunt init --all --parallelism=1 --non-interactive
-          # terragrunt plan --all --non-interactive
-          # terragrunt apply --all --non-interactive
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/astro/aws-service-secret-manager
+            # terragrunt init --all --parallelism=1 --non-interactive
+            # terragrunt plan --all --non-interactive
+            # terragrunt apply --all --non-interactive
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/awards/aws-service-secret-manager
+            # terragrunt init --all --parallelism=1 --non-interactive
+            # terragrunt plan --all --non-interactive
+            # terragrunt apply --all --non-interactive
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/biometrics/aws-service-secret-manager
+            # terragrunt init --all --parallelism=1 --non-interactive
+            # terragrunt plan --all --non-interactive
+            # terragrunt apply --all --non-interactive
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/collected/aws-service-secret-manager
+            # terragrunt init --all --parallelism=1 --non-interactive
+            # terragrunt plan --all --non-interactive
+            # terragrunt apply --all --non-interactive
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/conciliation/aws-service-secret-manager
+            # terragrunt init --all --parallelism=1 --non-interactive
+            # terragrunt plan --all --non-interactive
+            # terragrunt apply --all --non-interactive
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/credits/aws-service-secret-manager
+            # terragrunt init --all --parallelism=1 --non-interactive
+            # terragrunt plan --all --non-interactive
+            # terragrunt apply --all --non-interactive
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/dynamic-storage/aws-service-secret-manager
+            # terragrunt init --all --parallelism=1 --non-interactive
+            # terragrunt plan --all --non-interactive
+            # terragrunt apply --all --non-interactive
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/external-wager/aws-service-secret-manager
+            # terragrunt init --all --parallelism=1 --non-interactive
+            # terragrunt plan --all --non-interactive
+            # terragrunt apply --all --non-interactive
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/generic-services/aws-service-secret-manager
+            # terragrunt init --all --parallelism=1 --non-interactive
+            # terragrunt plan --all --non-interactive
+            # terragrunt apply --all --non-interactive
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/hierarchies/aws-service-secret-manager
+            # terragrunt init --all --parallelism=1 --non-interactive
+            # terragrunt plan --all --non-interactive
+            # terragrunt apply --all --non-interactive
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/lotteries-games-admin/aws-service-secret-manager
+            # terragrunt init --all --parallelism=1 --non-interactive
+            # terragrunt plan --all --non-interactive
+            # terragrunt apply --all --non-interactive
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/lotteries-games/aws-service-secret-manager
+            # terragrunt init --all --parallelism=1 --non-interactive
+            # terragrunt plan --all --non-interactive
+            # terragrunt apply --all --non-interactive
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/lotteries/aws-service-secret-manager
+            # terragrunt init --all --parallelism=1 --non-interactive
+            # terragrunt plan --all --non-interactive
+            # terragrunt apply --all --non-interactive
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/metabase/aws-service-secret-manager
+            # terragrunt init --all --parallelism=1 --non-interactive
+            # terragrunt plan --all --non-interactive
+            # terragrunt apply --all --non-interactive
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/millonario/aws-service-secret-manager
+            # terragrunt init --all --parallelism=1 --non-interactive
+            # terragrunt plan --all --non-interactive
+            # terragrunt apply --all --non-interactive
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/money-control/aws-service-secret-manager
+            # terragrunt init --all --parallelism=1 --non-interactive
+            # terragrunt plan --all --non-interactive
+            # terragrunt apply --all --non-interactive
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/notifications/aws-service-secret-manager
+            # terragrunt init --all --parallelism=1 --non-interactive
+            # terragrunt plan --all --non-interactive
+            # terragrunt apply --all --non-interactive
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/online-games/aws-service-secret-manager
+            # terragrunt init --all --parallelism=1 --non-interactive
+            # terragrunt plan --all --non-interactive
+            # terragrunt apply --all --non-interactive
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/papelery/aws-service-secret-manager
+            # terragrunt init --all --parallelism=1 --non-interactive
+            # terragrunt plan --all --non-interactive
+            # terragrunt apply --all --non-interactive
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/payment-voucher/aws-service-secret-manager
+            # terragrunt init --all --parallelism=1 --non-interactive
+            # terragrunt plan --all --non-interactive
+            # terragrunt apply --all --non-interactive
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/payments/aws-service-secret-manager
+            # terragrunt init --all --parallelism=1 --non-interactive
+            # terragrunt plan --all --non-interactive
+            # terragrunt apply --all --non-interactive
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/products/aws-service-secret-manager
+            # terragrunt init --all --parallelism=1 --non-interactive
+            # terragrunt plan --all --non-interactive
+            # terragrunt apply --all --non-interactive
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/promotional/aws-service-secret-manager
+            # terragrunt init --all --parallelism=1 --non-interactive
+            # terragrunt plan --all --non-interactive
+            # terragrunt apply --all --non-interactive
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/raffles/aws-service-secret-manager
+            # terragrunt init --all --parallelism=1 --non-interactive
+            # terragrunt plan --all --non-interactive
+            # terragrunt apply --all --non-interactive
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/raspa/aws-service-secret-manager
+            # terragrunt init --all --parallelism=1 --non-interactive
+            # terragrunt plan --all --non-interactive
+            # terragrunt apply --all --non-interactive
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges/aws-service-secret-manager
+            # terragrunt init --all --parallelism=1 --non-interactive
+            # terragrunt plan --all --non-interactive
+            # terragrunt apply --all --non-interactive
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/remittances/aws-service-secret-manager
+            # terragrunt init --all --parallelism=1 --non-interactive
+            # terragrunt plan --all --non-interactive
+            # terragrunt apply --all --non-interactive
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/scheduler/aws-service-secret-manager
+            # terragrunt init --all --parallelism=1 --non-interactive
+            # terragrunt plan --all --non-interactive
+            # terragrunt apply --all --non-interactive
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/security/aws-service-secret-manager
+            # terragrunt init --all --parallelism=1 --non-interactive
+            # terragrunt plan --all --non-interactive
+            # terragrunt apply --all --non-interactive
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/sellers/aws-service-secret-manager
+            # terragrunt init --all --parallelism=1 --non-interactive
+            # terragrunt plan --all --non-interactive
+            # terragrunt apply --all --non-interactive
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/shopping-cart/aws-service-secret-manager
+            # terragrunt init --all --parallelism=1 --non-interactive
+            # terragrunt plan --all --non-interactive
+            # terragrunt apply --all --non-interactive
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/wiretransfer/aws-service-secret-manager
+            # terragrunt init --all --parallelism=1 --non-interactive
+            # terragrunt plan --all --non-interactive
+            # terragrunt apply --all --non-interactive
 
 
 
 
 
-          ###
-          ### Cloudfront Assets
-          ###
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-assets
-          # terragrunt init --all --parallelism=1 --non-interactive
-          # terragrunt plan --all --non-interactive
-          # terragrunt apply --all --non-interactive
-          # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-assets-policy
-          # terragrunt init --all --parallelism=1 --non-interactive
-          # terragrunt plan --all --non-interactive
-          # terragrunt apply --all --non-interactive
+            ###
+            ### RDS Proxy
+            ###
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds/aws-service-iam-role
+            # terragrunt init --all --parallelism=1 --non-interactive
+            # terragrunt plan --all --non-interactive
+            # terragrunt apply --all --non-interactive
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds/aws-service-proxy
+            # terragrunt init --all --parallelism=1 --non-interactive
+            # terragrunt plan --all --non-interactive
+            # terragrunt apply --all --non-interactive
 
-          # find $(Build.SourcesDirectory) -type d -name ".terragrunt-cache" -exec rm -rf {} +
+
+
+
+
+            ###
+            ### Cloudfront Assets
+            ###
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-cloudfront/cloudfront-assets
+            # terragrunt init --all --parallelism=1 --non-interactive
+            # terragrunt plan --all --non-interactive
+            # terragrunt apply --all --non-interactive
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/apps/aws-service-s3-policy/s3-assets-policy
+            # terragrunt init --all --parallelism=1 --non-interactive
+            # terragrunt plan --all --non-interactive
+            # terragrunt apply --all --non-interactive
+
+            # find $(Build.SourcesDirectory) -type d -name ".terragrunt-cache" -exec rm -rf {} +
         displayName: "🚀 Apply Infrastructure"
         condition: succeeded()
         env:
