@@ -117,6 +117,9 @@ jobs:
       - script: |
           set -e
 
+          cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-apigateway-iam-rol
+          terragrunt init --all --parallelism=1 --non-interactive
+          terragrunt plan --all --non-interactive
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-apigateway-administration
           terragrunt init --all --parallelism=1 --non-interactive
           terragrunt plan --all --non-interactive
