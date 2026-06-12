@@ -115,6 +115,13 @@ jobs:
         condition: succeeded()
 
       - script: |
+          echo $TERM
+          tty
+          env | grep -E "TERM|CI"
+        displayName: "test color"
+        condition: succeeded()
+
+      - script: |
           set -e
 
           cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-apigateway/aws-service-apigateway-custom-domain-administration
