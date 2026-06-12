@@ -1,7 +1,7 @@
 jobs:
   - job: plan_infrastructure_${{ parameters.region }}
     displayName: "🧩 terragrunt plan"
-    timeoutInMinutes: 120
+    # timeoutInMinutes: 120
     pool:
       name: "Azure Pipelines"
       vmImage: ubuntu-latest
@@ -118,6 +118,22 @@ jobs:
           echo $TERM
           tty
           env | grep -E "TERM|CI"
+
+          echo "===== TERM ====="
+          echo "$TERM"
+
+          echo "===== TERRAFORM ====="
+          terraform version
+
+          echo "===== TERRAGRUNT ====="
+          terragrunt --version
+
+          echo "===== COLORS ====="
+          env | sort | grep -Ei 'color|ansi|term|tf_cli|terragrunt'
+
+          echo "===== TEST ANSI ====="
+          printf '\033[31mRED\033[0m\n'
+
         displayName: "test color"
         condition: succeeded()
 
