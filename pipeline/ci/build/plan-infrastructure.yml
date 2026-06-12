@@ -156,6 +156,14 @@ jobs:
 
       - task: Bash@3
         inputs:
+          targetType: inline
+          script: |
+            echo "SYSTEM_DEBUG=$(System.Debug)"
+            env | grep -i debug
+        displayName: debug test
+
+      - task: Bash@3
+        inputs:
           targetType: "inline"
           script: |
             export TERM=xterm-256color
