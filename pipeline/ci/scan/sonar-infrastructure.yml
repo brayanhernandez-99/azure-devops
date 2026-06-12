@@ -91,3 +91,10 @@ jobs:
         env:
           SONAR_TOKEN: $(SONAR_TOKEN)
           SONAR_HOST_URL: $(SONAR_HOST_URL)
+
+      - script: |
+          echo $TERM
+          tty
+          env | grep -E "TERM|CI"
+        displayName: "test color"
+        condition: succeeded()
