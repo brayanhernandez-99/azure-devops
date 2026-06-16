@@ -164,25 +164,10 @@ jobs:
           script: |
             set -e
 
-            export TERM=xterm-256color
-            export CLICOLOR=1
-            export FORCE_COLOR=1
-
-            echo "TERM=$TERM"
-
-
-
-
-            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-apigateway/aws-service-apigateway-custom-domain-administration
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-apigateway/aws-service-iot-policies
             terragrunt init --all --parallelism=1 --non-interactive
             terragrunt plan --all --non-interactive
-            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-apigateway/aws-service-apigateway-custom-domain-integration
-            terragrunt init --all --parallelism=1 --non-interactive
-            terragrunt plan --all --non-interactive
-            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-apigateway/aws-service-apigateway-custom-domain-metabase
-            terragrunt init --all --parallelism=1 --non-interactive
-            terragrunt plan --all --non-interactive
-            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-apigateway/aws-service-apigateway-custom-domain-seller
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-apigateway/aws-service-kinesis-cmk
             terragrunt init --all --parallelism=1 --non-interactive
             terragrunt plan --all --non-interactive
 
