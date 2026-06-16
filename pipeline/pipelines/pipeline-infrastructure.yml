@@ -28,7 +28,7 @@ stages:
 
   #####################################################################
 
-  - ${{ if or(startsWith(variables['Build.SourceBranchName'], 'feature/'), startsWith(variables['Build.SourceBranchName'], 'hotfix/'))}}:
+  - ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')) }}:
       - stage: plan_infrastructure
         displayName: "🧩 Plan Infrastructure"
         dependsOn: scan_infrastructure
