@@ -129,26 +129,26 @@ jobs:
         displayName: "⚙️ Replace Tokens"
         condition: succeeded()
 
-      - task: Bash@3
-        inputs:
-          targetType: "inline"
-          script: |
-            export TERM=xterm-256color
+      # - task: Bash@3
+      #   inputs:
+      #     targetType: "inline"
+      #     script: |
+      #       export TERM=xterm-256color
 
-            echo -e "\e[31mRED\e[0m"
-            echo -e "\e[32mGREEN\e[0m"
-            echo -e "\e[34mBLUE\e[0m"
+      #       echo -e "\e[31mRED\e[0m"
+      #       echo -e "\e[32mGREEN\e[0m"
+      #       echo -e "\e[34mBLUE\e[0m"
 
-            echo "31"
-            echo "32"
-            echo "34"
-            echo "0"
+      #       echo "31"
+      #       echo "32"
+      #       echo "34"
+      #       echo "0"
 
-            env | sort > env.txt
-            wc -l env.txt
-            cat env.txt
-        displayName: "ANSI Test"
-        condition: succeeded()
+      #       env | sort > env.txt
+      #       wc -l env.txt
+      #       cat env.txt
+      #   displayName: "ANSI Test"
+      #   condition: succeeded()
 
       - task: Bash@3
         inputs:
