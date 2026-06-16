@@ -28,6 +28,15 @@ stages:
 
   #####################################################################
 
+  - ${{ if or(startsWith(variables['Build.SourceBranchName'], 'feature/'), startsWith(variables['Build.SourceBranchName'], 'hotfix/'))}}:
+      - stage: plan_infrastructure
+        displayName: "🧩 Plan Infrastructure"
+        dependsOn: scan_infrastructure
+        jobs:
+          - template: ../ci/build/plan-infrastructure.yml
+
+  #####################################################################
+
   - ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}:
       - stage: plan_infrastructure
         displayName: "🧩 Plan Infrastructure"
