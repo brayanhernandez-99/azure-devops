@@ -3,7 +3,7 @@ variables:
   - group: trasversal-aws-deployment
 
   # Feature branches
-  - ${{ if or(eq(variables['Build.SourceBranchName'], 'develop'), startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')) }}:
+  - ${{ if or(eq(variables['Build.SourceBranchName'], 'develop'), startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')) }}:
       - group: trasversal-aws-develop
       - group: infrastructure-develop
       - group: cloudfront-infrastructure-develop
