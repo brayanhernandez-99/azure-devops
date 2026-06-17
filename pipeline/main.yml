@@ -12,12 +12,12 @@ parameters:
     type: object
     default:
       # - antioquia
-      - cap
-      - tolima
-      - huila
-      - cauca
-      - boyaca
-      - santander
+      # - cap
+      # - tolima
+      # - huila
+      # - cauca
+      # - boyaca
+      # - santander
       - putumayo
 
 resources:
