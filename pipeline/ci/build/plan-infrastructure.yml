@@ -156,25 +156,6 @@ jobs:
           script: |
             set -e
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-s3-repository-configuration
-            terragrunt init --all --parallelism=1 --non-interactive --no-color
-            terragrunt plan --all --non-interactive --no-color
-            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/products/aws-service-s3
-            terragrunt init --all --parallelism=1 --non-interactive --no-color
-            terragrunt plan --all --non-interactive --no-color
-            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/products/aws-service-s3-policy
-            terragrunt init --all --parallelism=1 --non-interactive --no-color
-            terragrunt plan --all --non-interactive --no-color
-
-
-
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds/aws-service-iam-role
-            # terragrunt init --all --parallelism=1 --non-interactive
-            # terragrunt plan --all --non-interactive
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds/aws-service-proxy
-            # terragrunt init --all --parallelism=1 --non-interactive
-            # terragrunt plan --all --non-interactive
-
 
             # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/astro/aws-service-secret-manager
             # terragrunt init --all --parallelism=1 --non-interactive
@@ -280,12 +261,12 @@ jobs:
             ###
             ### RDS Proxy
             ###
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds/aws-service-iam-role
-            # terragrunt init --all --parallelism=1 --non-interactive
-            # terragrunt plan --all --non-interactive
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds/aws-service-proxy
-            # terragrunt init --all --parallelism=1 --non-interactive
-            # terragrunt plan --all --non-interactive
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds/aws-service-iam-role
+            terragrunt init --all --parallelism=1 --non-interactive
+            terragrunt plan --all --non-interactive
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds/aws-service-proxy
+            terragrunt init --all --parallelism=1 --non-interactive
+            terragrunt plan --all --non-interactive
 
 
 
