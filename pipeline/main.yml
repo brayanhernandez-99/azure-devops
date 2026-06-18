@@ -18,7 +18,7 @@ parameters:
       - cauca
       - boyaca
       - santander
-      - putumayo
+      # - putumayo
 
 resources:
   repositories:
