@@ -24,12 +24,13 @@ variables:
 
       - ${{ if eq(parameters.environment, 'staging_nacional') }}:
           - group: trasversal-aws-staging-nacional
-          - group: infrastructure-staging-nacional
-          - group: cloudfront-infrastructure-staging-nacional
-          - group: parameters-infrastructure-staging-nacional
-          - group: secrets-infrastructure-staging-nacional
-          - group: autoscaling-infrastructure-staging-nacional
-          - group: ftp-infrastructure-staging-nacional
+          - group: infrastructure-staging-nacional-west
+        #   - group: infrastructure-staging-nacional
+        #   - group: cloudfront-infrastructure-staging-nacional
+        #   - group: parameters-infrastructure-staging-nacional
+        #   - group: secrets-infrastructure-staging-nacional
+        #   - group: autoscaling-infrastructure-staging-nacional
+        #   - group: ftp-infrastructure-staging-nacional
 
   # Master branch → por región
   - ${{ if and(eq(parameters.region, 'antioquia'), eq(variables['Build.SourceBranchName'], 'master')) }}:

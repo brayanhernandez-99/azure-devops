@@ -5,19 +5,19 @@ parameters:
   - name: environments_staging
     type: object
     default:
-      - staging
+      # - staging
       - staging_nacional
 
   - name: red
     type: object
     default:
       # - antioquia
-      # - cap
-      # - tolima
-      - huila
-      - cauca
-      - boyaca
-      - santander
+      - cap
+      - tolima
+      # - huila
+      # - cauca
+      # - boyaca
+      # - santander
       # - putumayo
 
 resources:
