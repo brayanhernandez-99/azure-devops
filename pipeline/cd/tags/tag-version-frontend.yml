@@ -10,18 +10,28 @@ jobs:
         fetchDepth: 0
         persistCredentials: true
 
+      - task: DownloadBuildArtifacts@0
+        inputs:
+          artifactName: "versions"
+          downloadPath: "$(Pipeline.Workspace)/version-downloaded"
+        displayName: "📥 Download Version"
+        condition: succeeded()
+
       - task: Bash@3
         inputs:
           targetType: inline
           script: |
             set -e
+            shopt -s nullglob globstar
+
             git config user.name "pipeline"
             git config user.email "pipelineUX@ux.technology"
             git fetch --tags
 
-            for file in "$(Pipeline.Workspace)"/versions/*/version.json; do
+            FILES=$(echo "$(Pipeline.Workspace)/version-downloaded/versions"/**/version.json)
+            for file in $FILES; do
               MS=$(jq -r .ms "$file")
-              VERSION=$(jq -r .version "$file")
+              VERSION=$(jq -r .version "$file")                      
               TAG="${MS}-v${VERSION}"
               echo "🏷️ Tag a crear: ${TAG}"
 
