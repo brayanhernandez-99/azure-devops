@@ -10,6 +10,13 @@ jobs:
         fetchDepth: 0
         persistCredentials: true
 
+      - task: DownloadBuildArtifacts@0
+        inputs:
+          artifactName: "versions"
+          downloadPath: "$(Pipeline.Workspace)/version-downloaded"
+        displayName: "📥 Download Version"
+        condition: succeeded()
+
       - task: Bash@3
         inputs:
           targetType: inline
@@ -19,7 +26,7 @@ jobs:
             git config user.email "pipelineUX@ux.technology"
             git fetch --tags
 
-            file="$(Pipeline.Workspace)/versions/electron/version.json"
+            file="$(Pipeline.Workspace)/version-downloaded/versions/electron/version.json"
             VERSION=$(jq -r .version "$file")
             TAG="v${VERSION}"
             echo "🏷️ Tag a crear: ${TAG}"
