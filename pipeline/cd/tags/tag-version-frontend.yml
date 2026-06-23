@@ -31,7 +31,7 @@ jobs:
             FILES=$(echo "$(Pipeline.Workspace)/version-downloaded/versions"/**/version.json)
             for file in $FILES; do
               MS=$(jq -r .ms "$file")
-              VERSION=$(jq -r .version "$file")                      
+              VERSION=$(jq -r .version "$file")
               TAG="${MS}-v${VERSION}"
               echo "🏷️ Tag a crear: ${TAG}"
 
