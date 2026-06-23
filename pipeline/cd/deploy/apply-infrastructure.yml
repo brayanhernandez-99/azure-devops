@@ -136,15 +136,39 @@ jobs:
             set -e
 
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds/aws-service-cmk
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-apigateway/aws-service-apigateway-iam-rol
             terragrunt init --all --parallelism=1 --non-interactive --no-color
             terragrunt plan --all --non-interactive --no-color
             terragrunt apply --all --non-interactive --no-color
-            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds/aws-service-sg
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-apigateway/aws-service-apigateway-administration
             terragrunt init --all --parallelism=1 --non-interactive --no-color
             terragrunt plan --all --non-interactive --no-color
             terragrunt apply --all --non-interactive --no-color
-            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds/aws-service-rds
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-apigateway/aws-service-apigateway-seller
+            terragrunt init --all --parallelism=1 --non-interactive --no-color
+            terragrunt plan --all --non-interactive --no-color
+            terragrunt apply --all --non-interactive --no-color
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-apigateway/aws-service-apigateway-integration
+            terragrunt init --all --parallelism=1 --non-interactive --no-color
+            terragrunt plan --all --non-interactive --no-color
+            terragrunt apply --all --non-interactive --no-color
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-apigateway/aws-service-apigateway-metabase
+            terragrunt init --all --parallelism=1 --non-interactive --no-color
+            terragrunt plan --all --non-interactive --no-color
+            terragrunt apply --all --non-interactive --no-color
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-apigateway/aws-service-apigateway-custom-domain-administration
+            terragrunt init --all --parallelism=1 --non-interactive --no-color
+            terragrunt plan --all --non-interactive --no-color
+            terragrunt apply --all --non-interactive --no-color
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-apigateway/aws-service-apigateway-custom-domain-seller
+            terragrunt init --all --parallelism=1 --non-interactive --no-color
+            terragrunt plan --all --non-interactive --no-color
+            terragrunt apply --all --non-interactive --no-color
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-apigateway/aws-service-apigateway-custom-domain-integration
+            terragrunt init --all --parallelism=1 --non-interactive --no-color
+            terragrunt plan --all --non-interactive --no-color
+            terragrunt apply --all --non-interactive --no-color
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-apigateway/aws-service-apigateway-custom-domain-metabase
             terragrunt init --all --parallelism=1 --non-interactive --no-color
             terragrunt plan --all --non-interactive --no-color
             terragrunt apply --all --non-interactive --no-color
