@@ -24,13 +24,12 @@ variables:
 
       - ${{ if eq(parameters.environment, 'staging_nacional') }}:
           - group: trasversal-aws-staging-nacional
-          - group: infrastructure-staging-nacional-west
-        #   - group: infrastructure-staging-nacional
-        #   - group: cloudfront-infrastructure-staging-nacional
-        #   - group: parameters-infrastructure-staging-nacional
-        #   - group: secrets-infrastructure-staging-nacional
-        #   - group: autoscaling-infrastructure-staging-nacional
-        #   - group: ftp-infrastructure-staging-nacional
+          - group: infrastructure-staging-nacional
+          - group: cloudfront-infrastructure-staging-nacional
+          - group: parameters-infrastructure-staging-nacional
+          - group: secrets-infrastructure-staging-nacional
+          - group: autoscaling-infrastructure-staging-nacional
+          - group: ftp-infrastructure-staging-nacional
 
   # Master branch → por región
   - ${{ if and(eq(parameters.region, 'antioquia'), eq(variables['Build.SourceBranchName'], 'master')) }}:
@@ -44,12 +43,13 @@ variables:
 
   - ${{ if and(eq(parameters.region, 'cap'), eq(variables['Build.SourceBranchName'], 'master')) }}:
       - group: trasversal-aws-antioquia-cap
-      - group: infrastructure-antioquia-cap
-      - group: cloudfront-infrastructure-antioquia-cap
-      - group: parameters-infrastructure-antioquia-cap
-      - group: secrets-infrastructure-antioquia-cap
-      - group: autoscaling-infrastructure-antioquia-cap
-      - group: ftp-infrastructure-antioquia-cap
+      - group: infrastructure-antioquia-cap-west
+    #   - group: infrastructure-antioquia-cap
+    #   - group: cloudfront-infrastructure-antioquia-cap
+    #   - group: parameters-infrastructure-antioquia-cap
+    #   - group: secrets-infrastructure-antioquia-cap
+    #   - group: autoscaling-infrastructure-antioquia-cap
+    #   - group: ftp-infrastructure-antioquia-cap
 
   - ${{ if and(eq(parameters.region, 'tolima'), eq(variables['Build.SourceBranchName'], 'master')) }}:
       - group: trasversal-aws-tolima
