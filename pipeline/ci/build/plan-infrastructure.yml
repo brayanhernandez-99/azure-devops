@@ -156,8 +156,23 @@ jobs:
           script: |
             set -e
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-iam-role
-            terragrunt init --all --parallelism=1 --non-interactive --no-color
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-iam-role/ecs-task-execution-role
+            terragrunt init -reconfigure
+            terragrunt import aws_iam_role.role invictus-ecs-task-execution-role
+            terragrunt import aws_iam_role_policy.policy[0] invictus-ecs-task-execution-role:invictus-ecs-task-execution-role
+            terragrunt plan --all --non-interactive --no-color
+
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-iam-role/ecs-task-role
+            terragrunt init -reconfigure
+            terragrunt import aws_iam_role.role invictus-ecs-task-role
+            terragrunt import aws_iam_role_policy.policy[0] invictus-ecs-task-role:invictus-ecs-task-role
+            terragrunt plan --all --non-interactive --no-color
+
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-iam-role/user-iot
+            terragrunt init -reconfigure
+            terragrunt import aws_iam_user.user iot-connect
+            terragrunt import aws_iam_user_policy_attachment.attach-user iot-connect/arn:aws:iam::aws:policy/AWSIoTDataAccess
+            terragrunt import aws_iam_access_key.user_key AKIA3W5VJX6PBWHP2M4O
             terragrunt plan --all --non-interactive --no-color
 
 
