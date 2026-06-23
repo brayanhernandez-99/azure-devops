@@ -10,6 +10,13 @@ jobs:
         fetchDepth: 0
         persistCredentials: true
 
+      - task: DownloadBuildArtifacts@0
+        inputs:
+          artifactName: "versions"
+          downloadPath: "$(Pipeline.Workspace)/version-downloaded"
+        displayName: "📥 Download Version"
+        condition: succeeded()
+
       - task: Bash@3
         inputs:
           targetType: inline
@@ -19,9 +26,9 @@ jobs:
             git config user.email "pipelineUX@ux.technology"
             git fetch --tags
 
-            file_version="$(Pipeline.Workspace)/versions/flutter/version.json"
-            file_pubspec="$(Pipeline.Workspace)/versions/pubspec/version.json"
-            VERSION=$(jq -r .version "$file_flutter")
+            file_version="$(Pipeline.Workspace)/version-downloaded/versions/flutter/version.json"
+            file_pubspec="$(Pipeline.Workspace)/version-downloaded/versions/pubspec/version.json"
+            VERSION=$(jq -r .version "$file_version")
             PUBSPEC=$(jq -r .version "$file_pubspec")
             TAG="v${VERSION}+${PUBSPEC}"
             echo "🏷️ Tag a crear: ${TAG}"
