@@ -13,7 +13,7 @@ parameters:
     default:
       # - antioquia
       # - cap
-      - cap-west
+      - cap_west
       # - tolima
       # - huila
       # - cauca
