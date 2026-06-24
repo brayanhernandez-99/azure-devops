@@ -32,7 +32,7 @@ variables:
           - group: ftp-infrastructure-staging-nacional
 
   # Master branch → por región
-  - ${{ if and(eq(parameters.region, 'antioquia'), eq(variables['Build.SourceBranchName'], 'master')) }}:
+  - ${{ if and(eq(parameters.region, 'antioquia_west'), eq(variables['Build.SourceBranchName'], 'master')) }}:
       - group: trasversal-aws-antioquia
       - group: infrastructure-antioquia-west
     #       - group: secrets-infrastructure-antioquia-west
@@ -54,7 +54,7 @@ variables:
       - group: trasversal-aws-antioquia-cap
       - group: infrastructure-antioquia-cap-west
       - group: secrets-infrastructure-antioquia-cap-west
-    #   - group: parameters-infrastructure-antioquia-cap-west
+      - group: parameters-infrastructure-antioquia-cap-west
     #   - group: cloudfront-infrastructure-antioquia-cap-west
     #   - group: autoscaling-infrastructure-antioquia-cap-west
     #   - group: ftp-infrastructure-antioquia-cap-west
