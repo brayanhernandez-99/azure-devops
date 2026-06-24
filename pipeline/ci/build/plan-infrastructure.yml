@@ -156,10 +156,13 @@ jobs:
           script: |
             set -e
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-systems-manager
-            terragrunt init --all --parallelism=1 --non-interactive --no-color
-            terragrunt plan --all --non-interactive --no-color
-            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-ssm-parameter
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-systems-manager
+            # terragrunt init --all --parallelism=1 --non-interactive --no-color
+            # terragrunt plan --all --non-interactive --no-color
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-ssm-parameter
+            # terragrunt init --all --parallelism=1 --non-interactive --no-color
+            # terragrunt plan --all --non-interactive --no-color
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-elasticache-serverless
             terragrunt init --all --parallelism=1 --non-interactive --no-color
             terragrunt plan --all --non-interactive --no-color
 
