@@ -129,166 +129,141 @@ jobs:
         displayName: "⚙️ Replace Tokens"
         condition: succeeded()
 
-      # - task: Bash@3
-      #   inputs:
-      #     targetType: "inline"
-      #     script: |
-      #       export TERM=xterm-256color
-
-      #       echo -e "\e[31mRED\e[0m"
-      #       echo -e "\e[32mGREEN\e[0m"
-      #       echo -e "\e[34mBLUE\e[0m"
-
-      #       echo "31"
-      #       echo "32"
-      #       echo "34"
-      #       echo "0"
-
-      #       env | sort > env.txt
-      #       wc -l env.txt
-      #       cat env.txt
-      #   displayName: "ANSI Test"
-      #   condition: succeeded()
-
       - task: Bash@3
         inputs:
           targetType: "inline"
           script: |
             set -e
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-cloudmap
-            terragrunt init --all --parallelism=1 --non-interactive --no-color
-            terragrunt plan --all --non-interactive --no-color
-            terragrunt apply --all --non-interactive --no-color
 
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/astro/aws-service-ecs
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/astro//
             # terragrunt init --all --parallelism=1 --non-interactive --no-color
             # terragrunt plan --all --non-interactive --no-color
             # terragrunt apply --all --non-interactive --no-color
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/awards/aws-service-ecs
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/awards//
             # terragrunt init --all --parallelism=1 --non-interactive --no-color
             # terragrunt plan --all --non-interactive --no-color
             # terragrunt apply --all --non-interactive --no-color
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/biometrics/aws-service-ecs
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/biometrics//
             # terragrunt init --all --parallelism=1 --non-interactive --no-color
             # terragrunt plan --all --non-interactive --no-color
             # terragrunt apply --all --non-interactive --no-color
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/collected/aws-service-ecs
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/collected//
             # terragrunt init --all --parallelism=1 --non-interactive --no-color
             # terragrunt plan --all --non-interactive --no-color
             # terragrunt apply --all --non-interactive --no-color
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/conciliation/aws-service-ecs
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/conciliation//
             # terragrunt init --all --parallelism=1 --non-interactive --no-color
             # terragrunt plan --all --non-interactive --no-color
             # terragrunt apply --all --non-interactive --no-color
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/dynamic-storage/aws-service-ecs
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/dynamic-storage//
             # terragrunt init --all --parallelism=1 --non-interactive --no-color
             # terragrunt plan --all --non-interactive --no-color
             # terragrunt apply --all --non-interactive --no-color
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/external-wager/aws-service-ecs
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/external-wager//
             # terragrunt init --all --parallelism=1 --non-interactive --no-color
             # terragrunt plan --all --non-interactive --no-color
             # terragrunt apply --all --non-interactive --no-color
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/generic-services/aws-service-ecs
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/generic-services//
             # terragrunt init --all --parallelism=1 --non-interactive --no-color
             # terragrunt plan --all --non-interactive --no-color
             # terragrunt apply --all --non-interactive --no-color
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/hierarchies/aws-service-ecs
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/hierarchies//
             # terragrunt init --all --parallelism=1 --non-interactive --no-color
             # terragrunt plan --all --non-interactive --no-color
             # terragrunt apply --all --non-interactive --no-color
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/lotteries-games-admin/aws-service-ecs
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/lotteries-games-admin//
             # terragrunt init --all --parallelism=1 --non-interactive --no-color
             # terragrunt plan --all --non-interactive --no-color
             # terragrunt apply --all --non-interactive --no-color
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/lotteries-games/aws-service-ecs
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/lotteries-games//
             # terragrunt init --all --parallelism=1 --non-interactive --no-color
             # terragrunt plan --all --non-interactive --no-color
             # terragrunt apply --all --non-interactive --no-color
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/lotteries/aws-service-ecs
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/lotteries//
             # terragrunt init --all --parallelism=1 --non-interactive --no-color
             # terragrunt plan --all --non-interactive --no-color
             # terragrunt apply --all --non-interactive --no-color
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/metabase/aws-service-ecs
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/metabase//
             # terragrunt init --all --parallelism=1 --non-interactive --no-color
             # terragrunt plan --all --non-interactive --no-color
             # terragrunt apply --all --non-interactive --no-color
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/millonario/aws-service-ecs
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/millonario//
             # terragrunt init --all --parallelism=1 --non-interactive --no-color
             # terragrunt plan --all --non-interactive --no-color
             # terragrunt apply --all --non-interactive --no-color
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/money-control/aws-service-ecs
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/money-control//
             # terragrunt init --all --parallelism=1 --non-interactive --no-color
             # terragrunt plan --all --non-interactive --no-color
             # terragrunt apply --all --non-interactive --no-color
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/notifications/aws-service-ecs
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/notifications//
             # terragrunt init --all --parallelism=1 --non-interactive --no-color
             # terragrunt plan --all --non-interactive --no-color
             # terragrunt apply --all --non-interactive --no-color
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/online-games/aws-service-ecs
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/online-games//
             # terragrunt init --all --parallelism=1 --non-interactive --no-color
             # terragrunt plan --all --non-interactive --no-color
             # terragrunt apply --all --non-interactive --no-color
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/papelery/aws-service-ecs
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/papelery//
             # terragrunt init --all --parallelism=1 --non-interactive --no-color
             # terragrunt plan --all --non-interactive --no-color
             # terragrunt apply --all --non-interactive --no-color
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/payment-voucher/aws-service-ecs
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/payment-voucher//
             # terragrunt init --all --parallelism=1 --non-interactive --no-color
             # terragrunt plan --all --non-interactive --no-color
             # terragrunt apply --all --non-interactive --no-color
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/payments/aws-service-ecs
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/payments//
             # terragrunt init --all --parallelism=1 --non-interactive --no-color
             # terragrunt plan --all --non-interactive --no-color
             # terragrunt apply --all --non-interactive --no-color
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/products/aws-service-ecs
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/products//
             # terragrunt init --all --parallelism=1 --non-interactive --no-color
             # terragrunt plan --all --non-interactive --no-color
             # terragrunt apply --all --non-interactive --no-color
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/promotional/aws-service-ecs
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/promotional//
             # terragrunt init --all --parallelism=1 --non-interactive --no-color
             # terragrunt plan --all --non-interactive --no-color
             # terragrunt apply --all --non-interactive --no-color
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/raffles/aws-service-ecs
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/raffles//
             # terragrunt init --all --parallelism=1 --non-interactive --no-color
             # terragrunt plan --all --non-interactive --no-color
             # terragrunt apply --all --non-interactive --no-color
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges/aws-service-ecs
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges//
             # terragrunt init --all --parallelism=1 --non-interactive --no-color
             # terragrunt plan --all --non-interactive --no-color
             # terragrunt apply --all --non-interactive --no-color
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/remittances/aws-service-ecs
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/remittances//
             # terragrunt init --all --parallelism=1 --non-interactive --no-color
             # terragrunt plan --all --non-interactive --no-color
             # terragrunt apply --all --non-interactive --no-color
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/security/aws-service-ecs
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/security//
             # terragrunt init --all --parallelism=1 --non-interactive --no-color
             # terragrunt plan --all --non-interactive --no-color
             # terragrunt apply --all --non-interactive --no-color
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/sellers/aws-service-ecs
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/sellers//
             # terragrunt init --all --parallelism=1 --non-interactive --no-color
             # terragrunt plan --all --non-interactive --no-color
             # terragrunt apply --all --non-interactive --no-color
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/trino/aws-service-ecs
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/trino//
             # terragrunt init --all --parallelism=1 --non-interactive --no-color
             # terragrunt plan --all --non-interactive --no-color
             # terragrunt apply --all --non-interactive --no-color
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/wiretransfer/aws-service-ecs
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/wiretransfer//
             # terragrunt init --all --parallelism=1 --non-interactive --no-color
             # terragrunt plan --all --non-interactive --no-color
             # terragrunt apply --all --non-interactive --no-color
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/shopping-cart/aws-service-ecs
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/shopping-cart//
             # terragrunt init --all --parallelism=1 --non-interactive --no-color
             # terragrunt plan --all --non-interactive --no-color
             # terragrunt apply --all --non-interactive --no-color
 
 
             ### DEV - QA ###
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/raspa/aws-service-ecs
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/raspa//
             # terragrunt init --all --parallelism=1 --non-interactive --no-color
             # terragrunt plan --all --non-interactive --no-color
             # terragrunt apply --all --non-interactive --no-color
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/credits/aws-service-ecs
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/credits//
             # terragrunt init --all --parallelism=1 --non-interactive --no-color
             # terragrunt plan --all --non-interactive --no-color
             # terragrunt apply --all --non-interactive --no-color
