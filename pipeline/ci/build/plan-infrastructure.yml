@@ -136,126 +136,126 @@ jobs:
             set -e
 
 
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/astro//
-            # terragrunt init --all --parallelism=1 --non-interactive --no-color
-            # terragrunt plan --all --non-interactive --no-color
-            # terragrunt apply --all --non-interactive --no-color
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/awards//
-            # terragrunt init --all --parallelism=1 --non-interactive --no-color
-            # terragrunt plan --all --non-interactive --no-color
-            # terragrunt apply --all --non-interactive --no-color
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/biometrics//
-            # terragrunt init --all --parallelism=1 --non-interactive --no-color
-            # terragrunt plan --all --non-interactive --no-color
-            # terragrunt apply --all --non-interactive --no-color
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/collected//
-            # terragrunt init --all --parallelism=1 --non-interactive --no-color
-            # terragrunt plan --all --non-interactive --no-color
-            # terragrunt apply --all --non-interactive --no-color
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/conciliation//
-            # terragrunt init --all --parallelism=1 --non-interactive --no-color
-            # terragrunt plan --all --non-interactive --no-color
-            # terragrunt apply --all --non-interactive --no-color
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/dynamic-storage//
-            # terragrunt init --all --parallelism=1 --non-interactive --no-color
-            # terragrunt plan --all --non-interactive --no-color
-            # terragrunt apply --all --non-interactive --no-color
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/external-wager//
-            # terragrunt init --all --parallelism=1 --non-interactive --no-color
-            # terragrunt plan --all --non-interactive --no-color
-            # terragrunt apply --all --non-interactive --no-color
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/generic-services//
-            # terragrunt init --all --parallelism=1 --non-interactive --no-color
-            # terragrunt plan --all --non-interactive --no-color
-            # terragrunt apply --all --non-interactive --no-color
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/hierarchies//
-            # terragrunt init --all --parallelism=1 --non-interactive --no-color
-            # terragrunt plan --all --non-interactive --no-color
-            # terragrunt apply --all --non-interactive --no-color
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/lotteries-games-admin//
-            # terragrunt init --all --parallelism=1 --non-interactive --no-color
-            # terragrunt plan --all --non-interactive --no-color
-            # terragrunt apply --all --non-interactive --no-color
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/lotteries-games//
-            # terragrunt init --all --parallelism=1 --non-interactive --no-color
-            # terragrunt plan --all --non-interactive --no-color
-            # terragrunt apply --all --non-interactive --no-color
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/lotteries//
-            # terragrunt init --all --parallelism=1 --non-interactive --no-color
-            # terragrunt plan --all --non-interactive --no-color
-            # terragrunt apply --all --non-interactive --no-color
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/metabase//
-            # terragrunt init --all --parallelism=1 --non-interactive --no-color
-            # terragrunt plan --all --non-interactive --no-color
-            # terragrunt apply --all --non-interactive --no-color
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/millonario//
-            # terragrunt init --all --parallelism=1 --non-interactive --no-color
-            # terragrunt plan --all --non-interactive --no-color
-            # terragrunt apply --all --non-interactive --no-color
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/money-control//
-            # terragrunt init --all --parallelism=1 --non-interactive --no-color
-            # terragrunt plan --all --non-interactive --no-color
-            # terragrunt apply --all --non-interactive --no-color
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/notifications//
-            # terragrunt init --all --parallelism=1 --non-interactive --no-color
-            # terragrunt plan --all --non-interactive --no-color
-            # terragrunt apply --all --non-interactive --no-color
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/online-games//
-            # terragrunt init --all --parallelism=1 --non-interactive --no-color
-            # terragrunt plan --all --non-interactive --no-color
-            # terragrunt apply --all --non-interactive --no-color
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/papelery//
-            # terragrunt init --all --parallelism=1 --non-interactive --no-color
-            # terragrunt plan --all --non-interactive --no-color
-            # terragrunt apply --all --non-interactive --no-color
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/payment-voucher//
-            # terragrunt init --all --parallelism=1 --non-interactive --no-color
-            # terragrunt plan --all --non-interactive --no-color
-            # terragrunt apply --all --non-interactive --no-color
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/payments//
-            # terragrunt init --all --parallelism=1 --non-interactive --no-color
-            # terragrunt plan --all --non-interactive --no-color
-            # terragrunt apply --all --non-interactive --no-color
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/products//
-            # terragrunt init --all --parallelism=1 --non-interactive --no-color
-            # terragrunt plan --all --non-interactive --no-color
-            # terragrunt apply --all --non-interactive --no-color
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/promotional//
-            # terragrunt init --all --parallelism=1 --non-interactive --no-color
-            # terragrunt plan --all --non-interactive --no-color
-            # terragrunt apply --all --non-interactive --no-color
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/raffles//
-            # terragrunt init --all --parallelism=1 --non-interactive --no-color
-            # terragrunt plan --all --non-interactive --no-color
-            # terragrunt apply --all --non-interactive --no-color
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges//
-            # terragrunt init --all --parallelism=1 --non-interactive --no-color
-            # terragrunt plan --all --non-interactive --no-color
-            # terragrunt apply --all --non-interactive --no-color
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/remittances//
-            # terragrunt init --all --parallelism=1 --non-interactive --no-color
-            # terragrunt plan --all --non-interactive --no-color
-            # terragrunt apply --all --non-interactive --no-color
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/security//
-            # terragrunt init --all --parallelism=1 --non-interactive --no-color
-            # terragrunt plan --all --non-interactive --no-color
-            # terragrunt apply --all --non-interactive --no-color
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/sellers//
-            # terragrunt init --all --parallelism=1 --non-interactive --no-color
-            # terragrunt plan --all --non-interactive --no-color
-            # terragrunt apply --all --non-interactive --no-color
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/trino//
-            # terragrunt init --all --parallelism=1 --non-interactive --no-color
-            # terragrunt plan --all --non-interactive --no-color
-            # terragrunt apply --all --non-interactive --no-color
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/wiretransfer//
-            # terragrunt init --all --parallelism=1 --non-interactive --no-color
-            # terragrunt plan --all --non-interactive --no-color
-            # terragrunt apply --all --non-interactive --no-color
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/shopping-cart//
-            # terragrunt init --all --parallelism=1 --non-interactive --no-color
-            # terragrunt plan --all --non-interactive --no-color
-            # terragrunt apply --all --non-interactive --no-color
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/astro//
+            terragrunt init --all --parallelism=1 --non-interactive --no-color
+            terragrunt plan --all --non-interactive --no-color
+            terragrunt apply --all --non-interactive --no-color
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/awards//
+            terragrunt init --all --parallelism=1 --non-interactive --no-color
+            terragrunt plan --all --non-interactive --no-color
+            terragrunt apply --all --non-interactive --no-color
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/biometrics//
+            terragrunt init --all --parallelism=1 --non-interactive --no-color
+            terragrunt plan --all --non-interactive --no-color
+            terragrunt apply --all --non-interactive --no-color
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/collected//
+            terragrunt init --all --parallelism=1 --non-interactive --no-color
+            terragrunt plan --all --non-interactive --no-color
+            terragrunt apply --all --non-interactive --no-color
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/conciliation//
+            terragrunt init --all --parallelism=1 --non-interactive --no-color
+            terragrunt plan --all --non-interactive --no-color
+            terragrunt apply --all --non-interactive --no-color
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/dynamic-storage//
+            terragrunt init --all --parallelism=1 --non-interactive --no-color
+            terragrunt plan --all --non-interactive --no-color
+            terragrunt apply --all --non-interactive --no-color
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/external-wager//
+            terragrunt init --all --parallelism=1 --non-interactive --no-color
+            terragrunt plan --all --non-interactive --no-color
+            terragrunt apply --all --non-interactive --no-color
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/generic-services//
+            terragrunt init --all --parallelism=1 --non-interactive --no-color
+            terragrunt plan --all --non-interactive --no-color
+            terragrunt apply --all --non-interactive --no-color
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/hierarchies//
+            terragrunt init --all --parallelism=1 --non-interactive --no-color
+            terragrunt plan --all --non-interactive --no-color
+            terragrunt apply --all --non-interactive --no-color
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/lotteries-games-admin//
+            terragrunt init --all --parallelism=1 --non-interactive --no-color
+            terragrunt plan --all --non-interactive --no-color
+            terragrunt apply --all --non-interactive --no-color
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/lotteries-games//
+            terragrunt init --all --parallelism=1 --non-interactive --no-color
+            terragrunt plan --all --non-interactive --no-color
+            terragrunt apply --all --non-interactive --no-color
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/lotteries//
+            terragrunt init --all --parallelism=1 --non-interactive --no-color
+            terragrunt plan --all --non-interactive --no-color
+            terragrunt apply --all --non-interactive --no-color
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/metabase//
+            terragrunt init --all --parallelism=1 --non-interactive --no-color
+            terragrunt plan --all --non-interactive --no-color
+            terragrunt apply --all --non-interactive --no-color
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/millonario//
+            terragrunt init --all --parallelism=1 --non-interactive --no-color
+            terragrunt plan --all --non-interactive --no-color
+            terragrunt apply --all --non-interactive --no-color
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/money-control//
+            terragrunt init --all --parallelism=1 --non-interactive --no-color
+            terragrunt plan --all --non-interactive --no-color
+            terragrunt apply --all --non-interactive --no-color
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/notifications//
+            terragrunt init --all --parallelism=1 --non-interactive --no-color
+            terragrunt plan --all --non-interactive --no-color
+            terragrunt apply --all --non-interactive --no-color
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/online-games//
+            terragrunt init --all --parallelism=1 --non-interactive --no-color
+            terragrunt plan --all --non-interactive --no-color
+            terragrunt apply --all --non-interactive --no-color
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/papelery//
+            terragrunt init --all --parallelism=1 --non-interactive --no-color
+            terragrunt plan --all --non-interactive --no-color
+            terragrunt apply --all --non-interactive --no-color
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/payment-voucher//
+            terragrunt init --all --parallelism=1 --non-interactive --no-color
+            terragrunt plan --all --non-interactive --no-color
+            terragrunt apply --all --non-interactive --no-color
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/payments//
+            terragrunt init --all --parallelism=1 --non-interactive --no-color
+            terragrunt plan --all --non-interactive --no-color
+            terragrunt apply --all --non-interactive --no-color
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/products//
+            terragrunt init --all --parallelism=1 --non-interactive --no-color
+            terragrunt plan --all --non-interactive --no-color
+            terragrunt apply --all --non-interactive --no-color
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/promotional//
+            terragrunt init --all --parallelism=1 --non-interactive --no-color
+            terragrunt plan --all --non-interactive --no-color
+            terragrunt apply --all --non-interactive --no-color
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/raffles//
+            terragrunt init --all --parallelism=1 --non-interactive --no-color
+            terragrunt plan --all --non-interactive --no-color
+            terragrunt apply --all --non-interactive --no-color
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/recharges//
+            terragrunt init --all --parallelism=1 --non-interactive --no-color
+            terragrunt plan --all --non-interactive --no-color
+            terragrunt apply --all --non-interactive --no-color
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/remittances//
+            terragrunt init --all --parallelism=1 --non-interactive --no-color
+            terragrunt plan --all --non-interactive --no-color
+            terragrunt apply --all --non-interactive --no-color
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/security//
+            terragrunt init --all --parallelism=1 --non-interactive --no-color
+            terragrunt plan --all --non-interactive --no-color
+            terragrunt apply --all --non-interactive --no-color
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/sellers//
+            terragrunt init --all --parallelism=1 --non-interactive --no-color
+            terragrunt plan --all --non-interactive --no-color
+            terragrunt apply --all --non-interactive --no-color
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/trino//
+            terragrunt init --all --parallelism=1 --non-interactive --no-color
+            terragrunt plan --all --non-interactive --no-color
+            terragrunt apply --all --non-interactive --no-color
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/wiretransfer//
+            terragrunt init --all --parallelism=1 --non-interactive --no-color
+            terragrunt plan --all --non-interactive --no-color
+            terragrunt apply --all --non-interactive --no-color
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/shopping-cart//
+            terragrunt init --all --parallelism=1 --non-interactive --no-color
+            terragrunt plan --all --non-interactive --no-color
+            terragrunt apply --all --non-interactive --no-color
 
 
             ### DEV - QA ###
