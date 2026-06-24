@@ -156,11 +156,16 @@ jobs:
           script: |
             set -e
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-iam-role/user-iot
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-secret-manager-aes
             terragrunt init --all --parallelism=1 --non-interactive --no-color
             terragrunt plan --all --non-interactive --no-color
-            terragrunt apply --all --non-interactive --no-color
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-secret-manager-funds
+            terragrunt init --all --parallelism=1 --non-interactive --no-color
+            terragrunt plan --all --non-interactive --no-color
             cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-secret-manager-iot
+            terragrunt init --all --parallelism=1 --non-interactive --no-color
+            terragrunt plan --all --non-interactive --no-color
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-secret-manager-mipos
             terragrunt init --all --parallelism=1 --non-interactive --no-color
             terragrunt plan --all --non-interactive --no-color
 
