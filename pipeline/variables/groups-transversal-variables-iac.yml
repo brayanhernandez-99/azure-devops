@@ -50,7 +50,7 @@ variables:
       - group: autoscaling-infrastructure-antioquia-cap
       - group: ftp-infrastructure-antioquia-cap
 
-  - ${{ if and(eq(parameters.region, 'cap-west'), eq(variables['Build.SourceBranchName'], 'master')) }}:
+  - ${{ if and(eq(parameters.region, 'cap_west'), eq(variables['Build.SourceBranchName'], 'master')) }}:
       - group: trasversal-aws-antioquia-cap
       - group: infrastructure-antioquia-cap-west
       - group: secrets-infrastructure-antioquia-cap-west
