@@ -19,6 +19,15 @@ jobs:
           targetType: inline
           script: |
             set -e
+            echo "Testing connectivity..."
+
+            telnet https://sonardeveloper.ux.technology 9000
+
+            curl -v \
+              --connect-timeout 10 \
+              https://sonardeveloper.ux.technology/api/system/status
+
+
             if [[ "$(Build.Reason)" == "PullRequest" ]]; then
               CURRENT_BRANCH="$(System.PullRequest.SourceBranch)"
             else
