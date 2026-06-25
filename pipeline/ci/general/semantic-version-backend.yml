@@ -21,7 +21,7 @@ jobs:
             set -e
             echo "Testing connectivity..."
 
-            telnet https://sonardeveloper.ux.technology 9000
+            #telnet https://sonardeveloper.ux.technology 9000
 
             curl -v \
               --connect-timeout 10 \
