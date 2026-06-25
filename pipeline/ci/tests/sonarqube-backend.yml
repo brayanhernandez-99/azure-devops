@@ -175,6 +175,15 @@ jobs:
           targetType: inline
           script: |
             set -e
+            echo "Testing connectivity..."
+
+            ping -c 3 10.150.0.211 || true
+
+            curl -v \
+              --connect-timeout 10 \
+              http://10.150.0.211:9000/api/system/status
+
+
             SONAR_URL="$SONAR_HOST_URL"
             TOKEN="$SONAR_TOKEN"
             PROJECT_KEY="$(Build.Repository.Name)"
