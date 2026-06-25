@@ -135,30 +135,15 @@ jobs:
           script: |
             set -e
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/astro/aws-service-sqs-dlq
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/bff-administration
             terragrunt init --all --parallelism=1 --non-interactive --no-color
             terragrunt plan --all --non-interactive --no-color
-            terragrunt destroy --all --non-interactive --no-color
-            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/astro/aws-service-sqs
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/bff-integration
             terragrunt init --all --parallelism=1 --non-interactive --no-color
             terragrunt plan --all --non-interactive --no-color
-            terragrunt destroy --all --non-interactive --no-color
-            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/astro/aws-service-ssm-parameter
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/bff-sellers
             terragrunt init --all --parallelism=1 --non-interactive --no-color
             terragrunt plan --all --non-interactive --no-color
-            terragrunt destroy --all --non-interactive --no-color
-            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/astro/aws-service-secret-manager
-            terragrunt init --all --parallelism=1 --non-interactive --no-color
-            terragrunt plan --all --non-interactive --no-color
-            terragrunt destroy --all --non-interactive --no-color
-            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/astro/aws-service-secret-manager-betplay
-            terragrunt init --all --parallelism=1 --non-interactive --no-color
-            terragrunt plan --all --non-interactive --no-color
-            terragrunt destroy --all --non-interactive --no-color
-            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/astro/aws-service-ecs
-            terragrunt init --all --parallelism=1 --non-interactive --no-color
-            terragrunt plan --all --non-interactive --no-color
-            terragrunt destroy --all --non-interactive --no-color
 
 
             # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/astro/aws-service-secret-manager
