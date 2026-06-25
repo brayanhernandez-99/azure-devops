@@ -135,6 +135,17 @@ jobs:
           script: |
             set -e
 
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds/aws-service-cmk
+            terragrunt init --all --parallelism=1 --non-interactive --no-color
+            terragrunt plan --all --non-interactive --no-color
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds/aws-service-sg
+            terragrunt init --all --parallelism=1 --non-interactive --no-color
+            terragrunt plan --all --non-interactive --no-color
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-rds/aws-service-rds
+            terragrunt init --all --parallelism=1 --non-interactive --no-color
+            terragrunt plan --all --non-interactive --no-color
+
+            
 
             # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/astro/aws-service-secret-manager
             # terragrunt init --all --parallelism=1 --non-interactive --no-color
