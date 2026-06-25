@@ -136,23 +136,23 @@ jobs:
             set -e
 
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/papelery
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/payments/aws-service-ssm-parameter
             terragrunt init --all --parallelism=1 --non-interactive --no-color
             terragrunt plan --all --non-interactive --no-color
             terragrunt apply --all --non-interactive --no-color
-            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/biometrics/aws-service-ssm-parameter
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/payments/aws-service-secret-manager
             terragrunt init --all --parallelism=1 --non-interactive --no-color
             terragrunt plan --all --non-interactive --no-color
             terragrunt apply --all --non-interactive --no-color
-            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/biometrics/aws-service-secret-manager
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/payments/aws-service-sqs-dlq
             terragrunt init --all --parallelism=1 --non-interactive --no-color
             terragrunt plan --all --non-interactive --no-color
             terragrunt apply --all --non-interactive --no-color
-            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/biometrics/aws-service-sqs
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/payments/aws-service-sqs
             terragrunt init --all --parallelism=1 --non-interactive --no-color
             terragrunt plan --all --non-interactive --no-color
             terragrunt apply --all --non-interactive --no-color
-            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/biometrics/aws-service-ecs
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/payments/aws-service-ecs
             terragrunt init --all --parallelism=1 --non-interactive --no-color
             terragrunt plan --all --non-interactive --no-color
             terragrunt apply --all --non-interactive --no-color
