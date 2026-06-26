@@ -125,10 +125,10 @@ jobs:
             else
               echo "⚠️ Dockerfile no encontrado, copiando..."
               if [[ "$(Build.Repository.Name)" == *"conciliation"* ]]; then
-                echo "📦 Repositorio de Conciliation detectado."
+                echo "📦 Repositorio conciliation detectado."
                 cp pipelines-templates/pipeline/docker/Dockerfile-conciliation "$DOCKER_FILE"
               else
-                echo "📦 Repositorio estándar detectado."
+                echo "📦 Repositorio estandar detectado."
                 cp pipelines-templates/pipeline/docker/Dockerfile "$DOCKER_FILE"
               fi
               echo "✅ Dockerfile copiado exitosamente"
