@@ -170,61 +170,61 @@ jobs:
         displayName: "🔧 Install JDK 17"
         condition: succeeded()
 
-      # - task: Bash@3
-      #   inputs:
-      #     targetType: inline
-      #     script: |
-      #       set -e
-      #       SONAR_URL="$SONAR_HOST_URL"
-      #       TOKEN="$SONAR_TOKEN"
-      #       PROJECT_KEY="$(Build.Repository.Name)"
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            set -e
+            SONAR_URL="$SONAR_HOST_URL"
+            TOKEN="$SONAR_TOKEN"
+            PROJECT_KEY="$(Build.Repository.Name)"
 
-      #       echo -e "\nℹ️ Obteniendo listado análisis '$PROJECT_KEY'..."
+            echo -e "\nℹ️ Obteniendo listado análisis '$PROJECT_KEY'..."
 
-      #       RESPONSE=$(curl -s -u "$TOKEN:" \
-      #         "$SONAR_URL/api/project_analyses/search?project=$PROJECT_KEY&ps=100")
+            RESPONSE=$(curl -s -u "$TOKEN:" \
+              "$SONAR_URL/api/project_analyses/search?project=$PROJECT_KEY&ps=100")
 
-      #       if ! echo "$RESPONSE" | jq . >/dev/null 2>&1; then
-      #         echo -e "\n##vso[task.logissue type=error]⚠️ Error consultando SonarQube"
-      #         echo "$RESPONSE"
-      #         exit 99
-      #       fi
+            if ! echo "$RESPONSE" | jq . >/dev/null 2>&1; then
+              echo -e "\n##vso[task.logissue type=error]⚠️ Error consultando SonarQube"
+              echo "$RESPONSE"
+              exit 99
+            fi
 
-      #       ANALYSIS=$(echo "$RESPONSE" | jq -r '.paging.total // 0')
-      #       if [[ "$ANALYSIS" -eq 0 ]]; then
-      #         echo -e "\nℹ️ No existen análisis previos en SonarQube para '$PROJECT_KEY'. Continuando..."
-      #         exit 0
-      #       fi
+            ANALYSIS=$(echo "$RESPONSE" | jq -r '.paging.total // 0')
+            if [[ "$ANALYSIS" -eq 0 ]]; then
+              echo -e "\nℹ️ No existen análisis previos en SonarQube para '$PROJECT_KEY'. Continuando..."
+              exit 0
+            fi
 
-      #       echo -e "\n📋 Análisis encontrados:"
-      #       echo "$RESPONSE" | jq -r '.analyses[]? | "KEY=\(.key) DATE=\(.date)"'
-      #       echo ""
-      #       INDEX=0
+            echo -e "\n📋 Análisis encontrados:"
+            echo "$RESPONSE" | jq -r '.analyses[]? | "KEY=\(.key) DATE=\(.date)"'
+            echo ""
+            INDEX=0
 
-      #       for ANALYSIS_KEY in $(echo "$RESPONSE" | jq -r '.analyses[].key'); do
-      #         INDEX=$((INDEX+1))
+            for ANALYSIS_KEY in $(echo "$RESPONSE" | jq -r '.analyses[].key'); do
+              INDEX=$((INDEX+1))
 
-      #         if [ "$INDEX" -le 2 ]; then
-      #           echo "✅ Manteniendo análisis: $ANALYSIS_KEY"
-      #           continue
-      #         fi
+              if [ "$INDEX" -le 2 ]; then
+                echo "✅ Manteniendo análisis: $ANALYSIS_KEY"
+                continue
+              fi
 
-      #         echo -e "\n🗑️ Borrando análisis $ANALYSIS_KEY..."
-      #         DELETE_RESPONSE=$(curl -s -X POST -u "$TOKEN:" \
-      #           "$SONAR_URL/api/project_analyses/delete?analysis=$ANALYSIS_KEY")
+              echo -e "\n🗑️ Borrando análisis $ANALYSIS_KEY..."
+              DELETE_RESPONSE=$(curl -s -X POST -u "$TOKEN:" \
+                "$SONAR_URL/api/project_analyses/delete?analysis=$ANALYSIS_KEY")
 
-      #         if [[ -z "$DELETE_RESPONSE" ]]; then
-      #           echo "✅ Eliminado correctamente"
-      #         else
-      #           echo -e "\n##vso[task.logissue type=error]⚠️ Error eliminando análisis de SonarQube"
-      #           echo "$DELETE_RESPONSE"
-      #         fi
-      #       done
-      #   displayName: "📝 Delete Before execution"
-      #   condition: succeeded()
-      #   env:
-      #     SONAR_TOKEN: $(SONAR_TOKEN)
-      #     SONAR_HOST_URL: $(SONAR_HOST_URL)
+              if [[ -z "$DELETE_RESPONSE" ]]; then
+                echo "✅ Eliminado correctamente"
+              else
+                echo -e "\n##vso[task.logissue type=error]⚠️ Error eliminando análisis de SonarQube"
+                echo "$DELETE_RESPONSE"
+              fi
+            done
+        displayName: "📝 Delete Before execution"
+        condition: succeeded()
+        env:
+          SONAR_TOKEN: $(SONAR_TOKEN)
+          SONAR_HOST_URL: $(SONAR_HOST_URL)
 
       - task: SonarQubePrepare@7
         inputs:
@@ -243,29 +243,29 @@ jobs:
         displayName: "⚙️ Prepare SonarQube Analysis"
         condition: succeeded()
 
-      # - task: Bash@3
-      #   inputs:
-      #     targetType: inline
-      #     script: |
-      #       set -e
-      #       response=$(echo $SONARQUBE_SCANNER_PARAMS | sed -E 's#"sonar\.branch\.name":"[^"]+",##g')
-      #       json=$(echo "$response" | sed 's/"sonar.token":\*\*\*/"sonar.token":"***"/')
-      #       echo "$json" | jq
-      #       echo "##vso[task.setvariable variable=SONARQUBE_SCANNER_PARAMS]$response"
-      #   displayName: "⚙️ Set Variable — SONARQUBE_SCANNER_PARAMS"
-      #   condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            set -e
+            response=$(echo $SONARQUBE_SCANNER_PARAMS | sed -E 's#"sonar\.branch\.name":"[^"]+",##g')
+            json=$(echo "$response" | sed 's/"sonar.token":\*\*\*/"sonar.token":"***"/')
+            echo "$json" | jq
+            echo "##vso[task.setvariable variable=SONARQUBE_SCANNER_PARAMS]$response"
+        displayName: "⚙️ Set Variable — SONARQUBE_SCANNER_PARAMS"
+        condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
 
-      # - task: Bash@3
-      #   inputs:
-      #     targetType: inline
-      #     script: |
-      #       set -e
-      #       response=$(echo $SONARQUBE_SCANNER_PARAMS | sed -E 's#"sonar\.pullrequest\.[^"]+":"[^"]+",##g')
-      #       json=$(echo "$response" | sed 's/"sonar.token":\*\*\*/"sonar.token":"***"/')
-      #       echo "$json" | jq
-      #       echo "##vso[task.setvariable variable=SONARQUBE_SCANNER_PARAMS]$response"
-      #   displayName: "⚙️ Set Variable — SONARQUBE_SCANNER_PARAMS"
-      #   condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'))
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            set -e
+            response=$(echo $SONARQUBE_SCANNER_PARAMS | sed -E 's#"sonar\.pullrequest\.[^"]+":"[^"]+",##g')
+            json=$(echo "$response" | sed 's/"sonar.token":\*\*\*/"sonar.token":"***"/')
+            echo "$json" | jq
+            echo "##vso[task.setvariable variable=SONARQUBE_SCANNER_PARAMS]$response"
+        displayName: "⚙️ Set Variable — SONARQUBE_SCANNER_PARAMS"
+        condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'))
 
       - task: Bash@3
         inputs:
