@@ -124,7 +124,7 @@ jobs:
               echo "✅ Dockerfile existe"
             else
               echo "⚠️ Dockerfile no encontrado, copiando..."
-              if [[ "$REPO_NAME" == *"conciliation"* ]]; then
+              if [[ "$(Build.Repository.Name)" == *"conciliation"* ]]; then
                 echo "📦 Repositorio de Conciliation detectado."
                 cp pipelines-templates/pipeline/docker/Dockerfile-conciliation "$DOCKER_FILE"
               else
