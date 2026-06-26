@@ -12,8 +12,8 @@ parameters:
     type: object
     default:
       # - antioquia_west
-      - cap
-      # - cap_west
+      # - cap
+      - cap_west
       # - tolima
       # - huila
       # - cauca
