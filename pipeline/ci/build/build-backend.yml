@@ -123,13 +123,19 @@ jobs:
             if [[ -f "$DOCKER_FILE" ]]; then
               echo "✅ Dockerfile existe"
             else
-              echo "⚠️ No existe, copiando..."
-              cp pipelines-templates/pipeline/docker/Dockerfile "$DOCKER_FILE"
+              echo "⚠️ Dockerfile no encontrado, copiando..."
+              if [[ "$REPO_NAME" == *"conciliation"* ]]; then
+                echo "📦 Repositorio de Conciliation detectado."
+                cp pipelines-templates/pipeline/docker/Dockerfile-conciliation "$DOCKER_FILE"
+              else
+                echo "📦 Repositorio estándar detectado."
+                cp pipelines-templates/pipeline/docker/Dockerfile "$DOCKER_FILE"
+              fi
               echo "✅ Dockerfile copiado exitosamente"
             fi
 
-            echo -e "\n📁 Files:"
-            ls -la "$(Build.Repository.Name)"
+            echo -e "\n📁 File: $DOCKER_FILE"
+            cat $DOCKER_FILE
         displayName: "🔎 Validate Dockerfile"
         condition: succeeded()
 
