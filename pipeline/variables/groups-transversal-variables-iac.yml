@@ -35,10 +35,10 @@ variables:
   - ${{ if and(eq(parameters.region, 'antioquia_west'), eq(variables['Build.SourceBranchName'], 'master')) }}:
       - group: trasversal-aws-antioquia
       - group: infrastructure-antioquia-west
-    #       - group: secrets-infrastructure-antioquia-west
-    #       - group: parameters-infrastructure-antioquia-west
-    #       - group: cloudfront-infrastructure-antioquia-west
-    #       - group: autoscaling-infrastructure-antioquia-west
+      - group: secrets-infrastructure-antioquia-west
+      - group: parameters-infrastructure-antioquia-west
+      #       - group: cloudfront-infrastructure-antioquia-west
+      - group: autoscaling-infrastructure-antioquia-west
     #       - group: ftp-infrastructure-antioquia-west
 
   - ${{ if and(eq(parameters.region, 'cap'), eq(variables['Build.SourceBranchName'], 'master')) }}:
@@ -55,7 +55,7 @@ variables:
       - group: infrastructure-antioquia-cap-west
       - group: secrets-infrastructure-antioquia-cap-west
       - group: parameters-infrastructure-antioquia-cap-west
-    #   - group: cloudfront-infrastructure-antioquia-cap-west
+      #   - group: cloudfront-infrastructure-antioquia-cap-west
       - group: autoscaling-infrastructure-antioquia-cap-west
     #   - group: ftp-infrastructure-antioquia-cap-west
 
