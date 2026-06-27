@@ -1,9 +1,9 @@
 stages:
-  # - stage: scan_infrastructure
-  #   displayName: "🛡️ Scan Infrastructure"
-  #   jobs:
-  #     - template: ../ci/scan/sonar-infrastructure.yml
-  #     # - template: ../ci/scan/checkov-infrastructure.yml
+  - stage: scan_infrastructure
+    displayName: "🛡️ Scan Infrastructure"
+    jobs:
+      - template: ../ci/scan/sonar-infrastructure.yml
+      # - template: ../ci/scan/checkov-infrastructure.yml
 
   #####################################################################
 
@@ -11,7 +11,7 @@ stages:
       - ${{ each region in parameters.red }}:
           - stage: plan_infrastructure_${{ region }}
             displayName: "🧩 Plan Infrastructure ${{ region }}"
-            # dependsOn: scan_infrastructure
+            dependsOn: scan_infrastructure
             jobs:
               - template: ../ci/build/plan-infrastructure.yml
                 parameters:
@@ -31,7 +31,7 @@ stages:
   - ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')) }}:
       - stage: plan_infrastructure
         displayName: "🧩 Plan Infrastructure"
-        # dependsOn: scan_infrastructure
+        dependsOn: scan_infrastructure
         jobs:
           - template: ../ci/build/plan-infrastructure.yml
 
@@ -40,7 +40,7 @@ stages:
   - ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}:
       - stage: plan_infrastructure
         displayName: "🧩 Plan Infrastructure"
-        # dependsOn: scan_infrastructure
+        dependsOn: scan_infrastructure
         jobs:
           - template: ../ci/build/plan-infrastructure.yml
 
@@ -58,7 +58,7 @@ stages:
       - ${{ each environment in parameters.environments_staging }}:
           - stage: plan_infrastructure_${{ environment }}
             displayName: "🧩 Plan Infrastructure ${{ environment }}"
-            # dependsOn: scan_infrastructure
+            dependsOn: scan_infrastructure
             jobs:
               - template: ../ci/build/plan-infrastructure.yml
                 parameters:
