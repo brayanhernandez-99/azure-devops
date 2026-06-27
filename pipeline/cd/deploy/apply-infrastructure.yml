@@ -268,6 +268,37 @@ jobs:
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            ######### Pendiente Poxy CAP - TOLIMA
+
             # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/awards/aws-service-secret-manager
             # terragrunt init --all --parallelism=1 --non-interactive --no-color
             # terragrunt plan --all --non-interactive --no-color
