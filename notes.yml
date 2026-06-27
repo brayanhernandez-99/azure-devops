@@ -10,3 +10,12 @@ terragrunt import 'aws_rds_cluster_instance.rds_cluster_instances["1"]' invictus
 terragrunt state list -no-color
 terragrunt plan --all --non-interactive -no-color
 terragrunt apply --all --non-interactive -no-color
+
+
+################## Import Role ##################
+
+terragrunt init -reconfigure
+terragrunt import aws_iam_role.role SchedulerTask
+terragrunt import 'aws_iam_role_policy.policy[0]' SchedulerTask:SchedulerTask
+terragrunt plan --all --non-interactive --no-color
+
