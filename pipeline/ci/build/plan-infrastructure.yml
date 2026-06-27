@@ -135,6 +135,11 @@ jobs:
           script: |
             set -e
 
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/event-bridge-iam-role
+            terragrunt init
+            terragrunt state list
+
+
 
 
             # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/astro/aws-service-secret-manager
