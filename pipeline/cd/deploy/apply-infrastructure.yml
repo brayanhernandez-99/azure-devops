@@ -139,7 +139,8 @@ jobs:
             cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/event-bridge-iam-role
             terragrunt init -reconfigure
             terragrunt import aws_iam_role.role SchedulerTask
-            terragrunt import aws_iam_role_policy.policy SchedulerTask:SchedulerTask
+            terragrunt import 'aws_iam_role_policy.policy[0]' SchedulerTask:SchedulerTask
+            terragrunt plan --all --non-interactive --no-color
 
             # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-secrets-cmk
             # terragrunt init --all --parallelism=1 --non-interactive --no-color
