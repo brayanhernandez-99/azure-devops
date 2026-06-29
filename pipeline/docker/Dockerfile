@@ -19,7 +19,7 @@ COPY . .
 
 # Uninstall minimal packages for docker image
 RUN rm -rf .npmrc && \
-    rm -f THIRD-PARTY-LICENSES.txt \
+    rm -f THIRD-PARTY-LICENSES.txt && \
     rm -f LICENSE
 
 ENV OPENSSL_CONF=/etc/ssl/

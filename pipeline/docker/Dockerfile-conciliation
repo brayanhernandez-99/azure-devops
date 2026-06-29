@@ -12,22 +12,24 @@ RUN sed -i 's|https://dl-cdn.alpinelinux.org|http://dl-cdn.alpinelinux.org|g' /e
     apk add --no-cache openssl ca-certificates && \
     sed -i 's|http://dl-cdn.alpinelinux.org|https://dl-cdn.alpinelinux.org|g' /etc/apk/repositories
 
-# Descargar e importar el certificado de sivical.supersalud.gov.co
-RUN echo | openssl s_client \
+# Descargar la cadena completa de sivical.supersalud.gov.co
+RUN openssl s_client \
     -connect sivical.supersalud.gov.co:443 \
     -servername sivical.supersalud.gov.co \
-    | openssl x509 -outform PEM \
-    > /usr/local/share/ca-certificates/supersalud.crt 2>/dev/null;
+    -showcerts </dev/null 2>/dev/null \
+    | awk '/-----BEGIN CERTIFICATE-----/,/-----END CERTIFICATE-----/' \
+    > /usr/local/share/ca-certificates/supersalud-chain.crt
 
-# Descargar e importar el certificado de b2csupersalud.b2clogin.com
-RUN echo | openssl s_client \
+# Descargar la cadena completa de b2csupersalud.b2clogin.com
+RUN openssl s_client \
     -connect b2csupersalud.b2clogin.com:443 \
     -servername b2csupersalud.b2clogin.com \
-    | openssl x509 -outform PEM \
-    > /usr/local/share/ca-certificates/b2csupersalud.crt 2>/dev/null;
+    -showcerts </dev/null 2>/dev/null \
+    | awk '/-----BEGIN CERTIFICATE-----/,/-----END CERTIFICATE-----/' \
+    > /usr/local/share/ca-certificates/b2csupersalud-chain.crt
 
-# Actualizar el almacén de certificados de confianza
-RUN update-ca-certificates || true
+# Actualizar el almacén de certificados
+RUN update-ca-certificates
 
 # Copy files npm to docker
 COPY package.json .
@@ -41,7 +43,7 @@ COPY . .
 
 # Uninstall minimal packages for docker image
 RUN rm -rf .npmrc && \
-    rm -f THIRD-PARTY-LICENSES.txt \
+    rm -f THIRD-PARTY-LICENSES.txt && \
     rm -f LICENSE
 
 ENV OPENSSL_CONF=/etc/ssl/
