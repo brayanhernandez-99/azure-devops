@@ -6,7 +6,7 @@ jobs:
       vmImage: ubuntu-latest
 
     variables:
-      - template: ../../variables/groups-transversal-variables-frontend.yml
+      - template: ../../variables/groups-variables-frontend.yml
         parameters:
           region: ${{ parameters.region }}
           environment_staging: ${{ parameters.environment_staging }}

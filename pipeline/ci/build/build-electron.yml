@@ -9,7 +9,7 @@ jobs:
       vmImage: ubuntu-latest
 
     variables:
-      - template: ../../variables/groups-transversal-variables-electron.yml
+      - template: ../../variables/groups-variables-electron.yml
         parameters:
           region: ${{ parameters.region }}
           environment_staging: ${{ parameters.environment_staging }}
@@ -310,7 +310,7 @@ jobs:
       vmImage: "windows-latest"
 
     variables:
-      - template: ../../variables/groups-transversal-variables-electron.yml
+      - template: ../../variables/groups-variables-electron.yml
         parameters:
           region: ${{ parameters.region }}
           environment_staging: ${{ parameters.environment_staging }}
