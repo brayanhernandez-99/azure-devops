@@ -321,24 +321,40 @@ jobs:
             echo "Environment : $(environment)"
             echo "Build       : $(Build.BuildNumber)"
             echo "User        : $(Build.RequestedFor)"
-            echo "DeployTime  : $DEPLOY_TIME"
+            echo "Deployed    : $DEPLOY_TIME"
             echo ""
 
             payload=$(cat <<EOF
             {
-              "text": 
-              "
-                ✅ Deployment exitoso $(Build.SourceBranchName)
-                \n\n**Pipeline**  : $(Build.DefinitionName)
-                \n**Environment** : $(environment)
-                \n**Build**       : $(Build.BuildNumber)
-                \n**User**        : $(Build.RequestedFor)
-                \n**Deploy time** : $DEPLOY_TIME
-              "
+              "type":"message",
+              "attachments":[{
+                "contentType":"application/vnd.microsoft.card.adaptive",
+                "content":{
+                  "\$schema":"http://adaptivecards.io/schemas/adaptive-card.json",
+                  "type":"AdaptiveCard",
+                  "version":"1.5",
+                  "body":[
+                    {"type":"TextBlock","text":"✅ Despliegue exitoso","weight":"Bolder","size":"Large","color":"Good"},
+                    {"type":"FactSet","facts":[
+                      {"title":"Pipeline","value":"$(Build.DefinitionName)"},
+                      {"title":"Environment","value":"$(environment)"},
+                      {"title":"Build","value":"$(Build.BuildNumber)"},
+                      {"title":"Usuario","value":"$(Build.RequestedFor)"},
+                      {"title":"Deployed","value":"$DEPLOY_TIME"}
+                    ]}
+                  ],
+                  "actions":[
+                    {"type":"Action.OpenUrl","title":"🔍 Ver Pipeline","url":"$(System.TeamFoundationCollectionUri)$(System.TeamProject)/_build/results?buildId=$(Build.BuildId)"}
+                  ]
+                }
+              }]
             }
             EOF
             )
 
-            curl -fsS -H "Content-Type: application/json" -d "$payload" "$(URL_WEBHOOK_TEAMS)"
+            curl --fail-with-body \
+              -H "Content-Type: application/json" \
+              -d "$payload" \
+              "$(URL_WEBHOOK_TEAMS)"
         displayName: "📢 Post message to Teams"
         condition: succeeded()
