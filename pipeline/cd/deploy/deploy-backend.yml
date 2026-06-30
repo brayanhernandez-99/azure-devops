@@ -326,29 +326,19 @@ jobs:
 
             payload=$(cat <<EOF
             {
-              "@type": "MessageCard",
-              "@context": "http://schema.org/extensions",
-              "summary": "Deployment successful",
-              "themeColor": "00FF00",
-              "title": "✅ Deployment exitoso $(Build.SourceBranchName)",
-              "sections": [
-                {
-                  "facts": [
-                    { "name": "Pipeline", "value": "$(Build.DefinitionName)" },
-                    { "name": "Environment", "value": "$(environment)" },
-                    { "name": "Build", "value": "$(Build.BuildNumber)" },
-                    { "name": "Merged by", "value": "$(Build.RequestedFor)" },
-                    { "name": "Deploy time", "value": "$DEPLOY_TIME" }
-                  ],
-                  "markdown": true
-                }
-              ]
+              "text": 
+              "
+                ✅ Deployment exitoso $(Build.SourceBranchName)
+                \n\n**Pipeline**  : $(Build.DefinitionName)
+                \n**Environment** : $(environment)
+                \n**Build**       : $(Build.BuildNumber)
+                \n**User**        : $(Build.RequestedFor)
+                \n**Deploy time** : $DEPLOY_TIME
+              "
             }
             EOF
             )
 
-            curl -H "Content-Type: application/json" \
-                -d "$payload" \
-                "$(URL_WEBHOOK_TEAMS)"
+            curl -fsS -H "Content-Type: application/json" -d "$payload" "$(URL_WEBHOOK_TEAMS)"
         displayName: "📢 Post message to Teams"
         condition: succeeded()
