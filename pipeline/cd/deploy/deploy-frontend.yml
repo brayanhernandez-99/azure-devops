@@ -9,7 +9,7 @@ jobs:
       - template: ../../variables/groups-transversal-variables-frontend.yml
         parameters:
           region: ${{ parameters.region }}
-          environment_staging: ${{ parameters.environments }}
+          environment_staging: ${{ parameters.environment_staging }}
 
     strategy:
       matrix:
@@ -51,12 +51,33 @@ jobs:
           targetType: inline
           script: |
             set -e
+            CURRENT_BRANCH="$(Build.SourceBranchName)"
+            case "$CURRENT_BRANCH" in 
+              staging) environment="$environment_staging" ;;
+              master) environment="$region" ;;
+              *) environment="develop" ;;
+            esac
+
+            echo "##vso[task.setvariable variable=environment]$environment"
+            echo -e "\n✅ Environment asignado exitosamente"
+            echo "Environment: $environment"
+        displayName: "⚙️ Generate environment"
+        condition: succeeded()
+        env:
+          region: ${{ parameters.region }}
+          environment_staging: ${{ parameters.environment_staging }}
+
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            set -e
             if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
-              fileselect=app-legacy
+              fileselect="app-legacy"
               echo -e "\nℹ️ Ruta de archivo del microfrontend: $fileselect"
               echo "##vso[task.setvariable variable=file]$fileselect"
             else
-              fileselect=apps
+              fileselect="apps"
               echo -e "\nℹ️ Ruta de archivo del microfrontend: $fileselect"
               echo "##vso[task.setvariable variable=file]$fileselect"
             fi
@@ -75,15 +96,8 @@ jobs:
           targetType: inline
           script: |
             set -e
-            echo -e "\n📦 Cargando al Bucket S3..."
-
-            CURRENT_BRANCH="$(Build.SourceBranch)"
-            if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|staging)$ ]]; then
-              BASE_PATH="$(Pipeline.Workspace)/downloaded-dists/$environments/$(msName)"
-            else
-              BASE_PATH="$(Pipeline.Workspace)/downloaded-dists/$region/$(msName)"
-            fi
-
+            BASE_PATH="$(Pipeline.Workspace)/downloaded-dists/$(environment)/$(msName)"
+            echo "📦 Cargando al Bucket S3..."
             echo -e "\n📂 Archivos a cargar: $BASE_PATH"
             ls -l "$BASE_PATH"
 
@@ -99,7 +113,6 @@ jobs:
         condition: succeeded()
         env:
           region: ${{ parameters.region }}
-          environments: ${{ parameters.environments }}
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
@@ -236,21 +249,15 @@ jobs:
           script: |
             set -e
             DEPLOY_TIME=$(date -d "$BUILD_FINISHTIME -5 hours" "+%Y-%m-%d %I:%M %p")
-            BRANCH_NAME_MULTI=$environments
-            BRANCH_NAME="$(Build.SourceBranchName)"
 
-            if [[ "$BRANCH_NAME" == "master" ]]; then
-              BRANCH_DEPLOY="${red:-red}"
-
-            elif [[ "$BRANCH_NAME" == "develop" && "$BRANCH_NAME_MULTI" == "develop" ]]; then
-              BRANCH_DEPLOY="develop"
-
-            elif [[ "$BRANCH_NAME" == "staging" && "$BRANCH_NAME_MULTI" == "staging" ]]; then
-              BRANCH_DEPLOY="staging"
-
-            else
-              BRANCH_DEPLOY="$BRANCH_NAME_MULTI"
-            fi
+            echo -e "\n📢 Generando notificación para Teams..."
+            echo "Pipeline      : $(Build.DefinitionName)"
+            echo "Environment   : $(environment)"
+            echo "Microfrontend : $(msName)"
+            echo "Build         : $(Build.BuildNumber)"
+            echo "User          : $(Build.RequestedFor)"
+            echo "DeployTime    : $DEPLOY_TIME"
+            echo ""
 
             payload=$(cat <<EOF
             {
@@ -263,8 +270,8 @@ jobs:
                 {
                   "facts": [
                     { "name": "Pipeline", "value": "$(Build.DefinitionName)" },
+                    { "name": "Environment", "value": "$(environment)" },
                     { "name": "Microfrontend", "value": "$(msName)" },
-                    { "name": "Branch", "value": "$BRANCH_DEPLOY" },
                     { "name": "Build", "value": "$(Build.BuildNumber)" },
                     { "name": "Merged by", "value": "$(Build.RequestedFor)" },
                     { "name": "Deploy time", "value": "$DEPLOY_TIME" }
@@ -280,6 +287,4 @@ jobs:
                 -d "$payload" \
                 $(URL_WEBHOOK_TEAMS)
         displayName: "📢 Post message to Teams"
-        env:
-          red: ${{ parameters.region }}
-          environments: ${{ parameters.environments }}
+        condition: succeeded()

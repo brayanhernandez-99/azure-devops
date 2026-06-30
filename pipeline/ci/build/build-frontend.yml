@@ -9,7 +9,7 @@ jobs:
       - template: ../../variables/groups-transversal-variables-frontend.yml
         parameters:
           region: ${{ parameters.region }}
-          environment_staging: ${{ parameters.environments }}
+          environment_staging: ${{ parameters.environment_staging }}
 
     strategy:
       matrix:
@@ -51,12 +51,33 @@ jobs:
           targetType: inline
           script: |
             set -e
+            CURRENT_BRANCH="$(Build.SourceBranchName)"
+            case "$CURRENT_BRANCH" in 
+              staging) environment="$environment_staging" ;;
+              master) environment="$region" ;;
+              *) environment="develop" ;;
+            esac
+
+            echo "##vso[task.setvariable variable=environment]$environment"
+            echo -e "\n✅ Environment asignado exitosamente"
+            echo "Environment: $environment"
+        displayName: "⚙️ Generate environment"
+        condition: succeeded()
+        env:
+          region: ${{ parameters.region }}
+          environment_staging: ${{ parameters.environment_staging }}
+
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            set -e
             if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
-              fileselect=app-legacy
+              fileselect="app-legacy"
               echo -e "\nℹ️ Ruta de archivo del microfrontend: $fileselect"
               echo "##vso[task.setvariable variable=file]$fileselect"
             else
-              fileselect=apps
+              fileselect="apps"
               echo -e "\nℹ️ Ruta de archivo del microfrontend: $fileselect"
               echo "##vso[task.setvariable variable=file]$fileselect"
             fi
@@ -238,22 +259,13 @@ jobs:
               echo -e "\n##vso[task.logissue type=error]⚠️ Error: No se generó el build o la carpeta dist está vacía." 
               exit 99
             else
-              CURRENT_BRANCH="$(Build.SourceBranch)"
-              if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|staging)$ ]]; then
-                mkdir -p "$(Build.ArtifactStagingDirectory)/dists/$environments"
-                cp -R $DIST_PATH $(Build.ArtifactStagingDirectory)/dists/$environments/$(msName)
-              else
-                mkdir -p "$(Build.ArtifactStagingDirectory)/dists/$region"
-                cp -R $DIST_PATH $(Build.ArtifactStagingDirectory)/dists/$region/$(msName)
-              fi
+              mkdir -p "$(Build.ArtifactStagingDirectory)/dists/$(environment)"
+              cp -R $DIST_PATH $(Build.ArtifactStagingDirectory)/dists/$(environment)/$(msName)
               echo -e "\n✅ Build generado correctamente en: $DIST_PATH"
               ls -l "$DIST_PATH"
             fi
         displayName: "📦 Build $(msName)"
         condition: succeeded()
-        env:
-          region: ${{ parameters.region }}
-          environments: ${{ parameters.environments }}
 
       - task: PublishBuildArtifacts@1
         inputs:
