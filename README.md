@@ -49,12 +49,12 @@ pipeline/
 │       ├── commit-version-flutter.yml
 │       └── commit-version-electron.yml
 ├── variables/
-│   ├── groups-transversal-variables-backend.yml
-│   ├── groups-transversal-variables-frontend.yml
-│   ├── groups-transversal-variables-flutter.yml
-│   ├── groups-transversal-variables-electron.yml
-│   ├── groups-transversal-variables-rpc.yml
-│   └── groups-transversal-variables-pre-build.yml
+│   ├── groups-variables-backend.yml
+│   ├── groups-variables-frontend.yml
+│   ├── groups-variables-flutter.yml
+│   ├── groups-variables-electron.yml
+│   ├── groups-variables-rpc.yml
+│   └── groups-variables-pre-build.yml
 ├── config/
 │   ├── vitest.config.mts
 │   └── gitleaks.toml

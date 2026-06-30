@@ -6,7 +6,7 @@ jobs:
       vmImage: ubuntu-latest
 
     variables:
-      - template: ../../variables/groups-transversal-variables-backend.yml
+      - template: ../../variables/groups-variables-backend.yml
         parameters:
           region: ${{ parameters.region }}
           environment_staging: ${{ parameters.environment_staging }}
@@ -349,6 +349,6 @@ jobs:
 
             curl -H "Content-Type: application/json" \
                 -d "$payload" \
-                $(URL_WEBHOOK_TEAMS)
+                "$(URL_WEBHOOK_TEAMS)"
         displayName: "📢 Post message to Teams"
         condition: succeeded()
