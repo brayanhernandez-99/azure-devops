@@ -62,7 +62,7 @@ jobs:
             echo "##vso[task.setvariable variable=environment]$environment"
             echo -e "\n✅ Environment asignado exitosamente"
             echo "Environment: $environment"
-        displayName: "⚙️ Generate .env"
+        displayName: "⚙️ Generate environment"
         condition: succeeded()
         env:
           region: ${{ parameters.region }}
