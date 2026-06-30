@@ -6,7 +6,7 @@ jobs:
       vmImage: ubuntu-latest
 
     variables:
-      - template: ../../variables/groups-transversal-variables-flutter.yml
+      - template: ../../variables/groups-variables-flutter.yml
         parameters:
           region: ${{ parameters.region }}
           environment_staging: ${{ parameters.environment_staging }}
@@ -202,7 +202,7 @@ jobs:
 
             curl -H "Content-Type: application/json" \
                 -d "$payload" \
-                $(URL_WEBHOOK_TEAMS)
+                "$(URL_WEBHOOK_TEAMS)"
         displayName: "📢 Post message to Teams"
         env:
           red: ${{ parameters.region }}

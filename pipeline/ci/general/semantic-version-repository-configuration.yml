@@ -6,7 +6,7 @@ jobs:
       vmImage: ubuntu-latest
 
     variables:
-      - template: ../../variables/groups-transversal-variables-rpc.yml
+      - template: ../../variables/groups-variables-rpc.yml
 
     steps:
       - checkout: self

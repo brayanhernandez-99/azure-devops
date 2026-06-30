@@ -25,7 +25,7 @@ jobs:
         parameters:
           apps: ${{ parameters.apps }}
           region: ${{ parameters.region }}
-          environments: ${{ parameters.environments }}
+          environment_staging: ${{ parameters.environment_staging }}
 
       - ${{ if eq(parameters.region, 'antioquia') }}:
           - template: ./tags/tag-version-frontend.yml
