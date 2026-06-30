@@ -94,7 +94,7 @@ jobs:
                     { "name": "Pipeline", "value": "$(Build.DefinitionName)" },
                     { "name": "Environment", "value": "$environment" },
                     { "name": "Build", "value": "$(Build.BuildNumber)" },
-                    { "name": "Merged by", "value": "$(Build.RequestedFor)" },
+                    { "name": "User", "value": "$(Build.RequestedFor)" },
                     { "name": "Deploy time", "value": "$DEPLOY_TIME" }
                   ],
                   "markdown": true
