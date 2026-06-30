@@ -156,34 +156,40 @@ jobs:
             echo "Environment : $(environment)"
             echo "Build       : $(Build.BuildNumber)"
             echo "User        : $(Build.RequestedFor)"
-            echo "DeployTime  : $DEPLOY_TIME"
+            echo "Deployed    : $DEPLOY_TIME"
             echo ""
 
             payload=$(cat <<EOF
             {
-              "@type": "MessageCard",
-              "@context": "http://schema.org/extensions",
-              "summary": "Deployment successful",
-              "themeColor": "00FF00",
-              "title": "✅ Deployment exitoso $(Build.SourceBranchName)",
-              "sections": [
-                {
-                  "facts": [
-                    { "name": "Pipeline", "value": "$(Build.DefinitionName)" },
-                    { "name": "Environment", "value": "$(environment)" },
-                    { "name": "Build", "value": "$(Build.BuildNumber)" },
-                    { "name": "User", "value": "$(Build.RequestedFor)" },
-                    { "name": "Deploy time", "value": "$DEPLOY_TIME" }
+              "type":"message",
+              "attachments":[{
+                "contentType":"application/vnd.microsoft.card.adaptive",
+                "content":{
+                  "\$schema":"http://adaptivecards.io/schemas/adaptive-card.json",
+                  "type":"AdaptiveCard",
+                  "version":"1.5",
+                  "body":[
+                    {"type":"TextBlock","text":"✅ Despliegue exitoso","weight":"Bolder","size":"Large","color":"Good"},
+                    {"type":"FactSet","facts":[
+                      {"title":"Pipeline","value":"$(Build.DefinitionName)"},
+                      {"title":"Environment","value":"$(environment)"},
+                      {"title":"Build","value":"$(Build.BuildNumber)"},
+                      {"title":"Usuario","value":"$(Build.RequestedFor)"},
+                      {"title":"Deployed","value":"$DEPLOY_TIME"}
+                    ]}
                   ],
-                  "markdown": true
+                  "actions":[
+                    {"type":"Action.OpenUrl","title":"🔍 Ver Pipeline","url":"$(System.TeamFoundationCollectionUri)$(System.TeamProject)/_build/results?buildId=$(Build.BuildId)"}
+                  ]
                 }
-              ]
+              }]
             }
             EOF
             )
 
-            curl -H "Content-Type: application/json" \
-                -d "$payload" \
-                "$(URL_WEBHOOK_TEAMS)"
+            curl --fail-with-body \
+              -H "Content-Type: application/json" \
+              -d "$payload" \
+              "$(URL_WEBHOOK_TEAMS)"
         displayName: "📢 Post message to Teams"
         condition: succeeded()
