@@ -193,7 +193,6 @@ jobs:
             ANALYSIS=$(echo "$RESPONSE" | jq -r '.paging.total // 0')
             if [[ "$ANALYSIS" -eq 0 ]]; then
               echo -e "\nℹ️ No existen análisis previos en SonarQube para '$PROJECT_KEY'. Continuando..."
-              exit 99
             fi
 
             echo -e "\n📋 Análisis encontrados:"
