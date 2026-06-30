@@ -76,7 +76,6 @@ stages:
         jobs:
           - template: ../ci/build/build-frontend.yml
             parameters:
-              environments: develop
               apps: ${{ parameters.apps }}
 
       - stage: deploy_microfrontend_develop
@@ -85,29 +84,28 @@ stages:
         jobs:
           - template: ../cd/deployment.yml
             parameters:
-              environments: develop
               apps: ${{ parameters.apps }}
               release: ${{ parameters.release }}
 
   #####################################################################
 
   - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
-      - ${{ each environments in parameters.environments_staging }}:
-          - stage: build_microfrontend_${{ environments }}
-            displayName: "📦 Build MicroFrontend ${{ environments }}"
+      - ${{ each environment_staging in parameters.environments_staging }}:
+          - stage: build_microfrontend_${{ environment_staging }}
+            displayName: "📦 Build MicroFrontend ${{ environment_staging }}"
             dependsOn: semantic_version_microfrontend
             jobs:
               - template: ../ci/build/build-frontend.yml
                 parameters:
-                  environments: ${{ environments }}
                   apps: ${{ parameters.apps }}
+                  environment_staging: ${{ environment_staging }}
 
-          - stage: deploy_microfrontend_${{ environments }}
-            displayName: "🚀 Deploy MicroFrontend ${{ environments }}"
-            dependsOn: build_microfrontend_${{ environments }}
+          - stage: deploy_microfrontend_${{ environment_staging }}
+            displayName: "🚀 Deploy MicroFrontend ${{ environment_staging }}"
+            dependsOn: build_microfrontend_${{ environment_staging }}
             jobs:
               - template: ../cd/deployment.yml
                 parameters:
-                  environments: ${{ environments }}
                   apps: ${{ parameters.apps }}
                   release: ${{ parameters.release }}
+                  environment_staging: ${{ environment_staging }}
