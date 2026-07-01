@@ -45,7 +45,7 @@ jobs:
             if [[ -f "$VERSION_FILE" ]]; then
               VERSION=$(jq -r '.version' $VERSION_FILE)
               echo -e "\n🚀 Versión detectada para $(msName): $VERSION"
-              echo "##vso[task.setvariable variable=msVersion]$VERSION"
+              echo "##vso[task.setvariable variable=version]$VERSION"
             else
               echo -e "\n##vso[task.logissue type=error]⚠️ No se encontró archivo de versión para: $(msName)" 
               exit 99
@@ -226,8 +226,8 @@ jobs:
           cliProjectName: "microfrontend-$(msName)-invictus"
           cliSources: "$(Build.Repository.Name)/$(file)/$(msName)"
           extraProperties: |
-            sonar.projectVersion=$(msVersion)
-            sonar.projectTags=invictus
+            sonar.projectVersion=$(version)
+            sonar.newCode.referenceBranch=master
             sonar.javascript.lcov.reportPaths=$(Build.Repository.Name)/$(file)/$(msName)/coverage/lcov.info
             sonar.exclusions=**/test/**,**/coverage/**,**/.nyc_output/**,**/reports/**,sured-plugin/**,**/reports_bck/**,**/node_modules/**,**/dist/**,*.cjs,*mts,**/main.ts,**/config/**,**/config.*,**/**.config.*
         displayName: "⚙️ Prepare SonarQube Analysis"
