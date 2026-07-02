@@ -14,12 +14,12 @@ parameters:
       # - antioquia_west
       - cap
       # - cap_west
-      - tolima
-      - huila
-      - cauca
-      - boyaca
-      - santander
-      - putumayo
+      # - tolima
+      # - huila
+      # - cauca
+      # - boyaca
+      # - santander
+      # - putumayo
 
 resources:
   repositories:
