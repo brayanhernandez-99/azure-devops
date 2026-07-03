@@ -136,11 +136,22 @@ jobs:
             set -e
 
 
-            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/raspa
-            # terragrunt init --all --parallelism=1 --non-interactive --no-color
-            # terragrunt plan --all --non-interactive --no-color
-            # terragrunt apply --all --non-interactive --no-color
-
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/raspa/aws-service-ecs
+            terragrunt init --all --parallelism=1 --non-interactive --no-color
+            terragrunt plan --all --non-interactive --no-color
+            terragrunt apply --all --non-interactive --no-color
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/raspa/aws-service-secret-manager-raspalisto
+            terragrunt init --all --parallelism=1 --non-interactive --no-color
+            terragrunt plan --all --non-interactive --no-color
+            terragrunt apply --all --non-interactive --no-color
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/raspa/aws-service-sqs
+            terragrunt init --all --parallelism=1 --non-interactive --no-color
+            terragrunt plan --all --non-interactive --no-color
+            terragrunt apply --all --non-interactive --no-color
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/raspa/aws-service-ssm-parameter
+            terragrunt init --all --parallelism=1 --non-interactive --no-color
+            terragrunt plan --all --non-interactive --no-color
+            terragrunt apply --all --non-interactive --no-color
 
 
 
