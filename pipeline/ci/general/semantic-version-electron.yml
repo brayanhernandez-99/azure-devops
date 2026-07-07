@@ -184,11 +184,12 @@ jobs:
             COMMITS=$(curl -s -u ":$AZURE_DEVOPS_CLI_PAT" \
               "https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories/$(repoID)/pullRequests/$(ultimoPR)/commits?api-version=7.0" \
               | jq -r '.value // [] | .[].comment' \
-              | grep -E 'feat:|fix:|!' || true)
+              | grep -E 'feat:|fix:|!' \
+              | sed "s/'//g" \
+              | sed 's/"//g' \
+              || true)
 
             SAFE_COMMITS=$(printf '%s' "$COMMITS" | tr '\n' '|')
-            SAFE_COMMITS=${SAFE_COMMITS//\"/\\\"}
-            SAFE_COMMITS=${SAFE_COMMITS//\'/\\\'}
             echo $SAFE_COMMITS
             echo "##vso[task.setvariable variable=filteredCommits]$SAFE_COMMITS"
         displayName: "📌 Pull Request Commit Details"
