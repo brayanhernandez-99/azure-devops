@@ -227,7 +227,7 @@ jobs:
               RAW_COMMITS=""
             else
               CURRENT_BRANCH="$(Build.SourceBranch)"
-              RAW_COMMITS='$(filteredCommits)'
+              RAW_COMMITS="$(filteredCommits)"
             fi
 
             echo -e "\nℹ️ Branch Actual: $CURRENT_BRANCH"
@@ -269,21 +269,21 @@ jobs:
               fi
 
               if [[ "$CURRENT_BRANCH" == refs/heads/develop ]]; then
-                # RAW_COMMITS='$(filteredCommits)'
+                # RAW_COMMITS="$(filteredCommits)"
                 COMMITS=$(printf '%s' "$RAW_COMMITS" | tr '|' '\n')
                 echo "📝 Commits de la rama: $clean_branch"
                 echo $COMMITS
               fi
 
               if [[ "$CURRENT_BRANCH" == refs/heads/staging ]]; then
-                # RAW_COMMITS='$(filteredCommits)'
+                # RAW_COMMITS="$(filteredCommits)"
                 COMMITS=$(printf '%s' "$RAW_COMMITS" | tr '|' '\n')
                 echo "📝 Commits de la rama: $clean_branch"
                 echo $COMMITS
               fi
 
               if [[ "$CURRENT_BRANCH" == refs/heads/master ]]; then
-                # RAW_COMMITS='$(filteredCommits)'
+                # RAW_COMMITS="$(filteredCommits)"
                 COMMITS=$(printf '%s' "$RAW_COMMITS" | tr '|' '\n')
                 echo "📝 Commits de la rama: $clean_branch"
                 echo $COMMITS
