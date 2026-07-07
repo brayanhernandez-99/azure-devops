@@ -302,7 +302,7 @@ jobs:
                 echo "📝 Commits de la rama: $clean_branch"
                 echo $COMMITS
               fi
-              
+
               if [[ "$CURRENT_BRANCH" == refs/heads/develop ]]; then
                 RAW_COMMITS="$(filteredCommits)"
                 COMMITS=$(printf '%s' "$RAW_COMMITS" | tr '|' '\n')
@@ -375,7 +375,7 @@ jobs:
                 git checkout version/master
                 VERSION_ACTUAL_MASTER=$(jq -r .version package.json)
                 echo "versión base master: $VERSION_ACTUAL_MASTER"
-                
+
                 git checkout version/$clean_branch
 
                 if [[ "$BASE_VERSION_BRANCH" == "$VERSION_ACTUAL_MASTER" ]]; then

@@ -239,28 +239,28 @@ jobs:
               CLUSTER="${CLUSTERS_ARRAY[$i]}"
               SERVICE="${SERVICES_ARRAY[$i]}"
               TASK_DEF_ARN="${ARNS_ARRAY[$i]}"
-              
+
               echo ""
               echo "🛡️ Cluster: $CLUSTER"
               echo "📦 Service: $SERVICE"
               echo "📝 ARN    : $TASK_DEF_ARN"
-              
+
               # Obtener definición completa
               TASKDEF_JSON=$(aws ecs describe-task-definition --task-definition "$TASK_DEF_ARN" --query "taskDefinition" --output json)
-              
+
               # Limpiar campos innecesarios
               TASKDEF_CLEAN=$(echo "$TASKDEF_JSON" | jq 'del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .registeredBy)')
-              
+
               # Obtener nombre del contenedor
               CONTAINER_NAME=$(echo "$TASKDEF_JSON" | jq -r '.containerDefinitions[0].name')
-              
+
               # Actualizar imagen
               NEW_TASKDEF=$(echo "$TASKDEF_CLEAN" | jq -c --arg img "$ACCOUNT_ID_DEPLOY.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$(ecr_repository):$NEW_VERSION" --arg container "$CONTAINER_NAME" '.containerDefinitions |= map(if .name == $container then .image = $img else . end)')
-              
+
               # Registrar nueva task definition
               REGISTERED_OUTPUT=$(aws ecs register-task-definition --cli-input-json "$NEW_TASKDEF" --region "$AWS_DEFAULT_REGION")
               NEW_TASKDEF_ARN=$(echo "$REGISTERED_OUTPUT" | jq -r '.taskDefinition.taskDefinitionArn')
-              
+
               echo "✅ New ARN: $NEW_TASKDEF_ARN"
               new_taskdef_arns_array+=("$NEW_TASKDEF_ARN")
             done
@@ -290,12 +290,12 @@ jobs:
               CLUSTER="${CLUSTERS_ARRAY[$i]}"
               SERVICE="${SERVICES_ARRAY[$i]}"
               NEW_TASKDEF_ARN="${NEW_TASKDEF_ARNS_ARRAY[$i]}"
-              
+
               echo ""
               echo "🛡️ Cluster: $CLUSTER"
               echo "📦 Service: $SERVICE"
               echo "📝 New ARN: $NEW_TASKDEF_ARN"
-              
+
               UPDATED_OUTPUT=$(aws ecs update-service --cluster "$CLUSTER" --service "$SERVICE" --task-definition "$NEW_TASKDEF_ARN" --force-new-deployment)
               IMAGE=$(aws ecs describe-task-definition --task-definition "$NEW_TASKDEF_ARN" --query "taskDefinition.containerDefinitions[0].image" --output text)
 
