@@ -209,10 +209,14 @@ jobs:
             echo -e "\nℹ️ Pull Request ID recuperado: $(ultimoPR)"
             echo "id del repositorio $(Build.Repository.Name) = $(repoID)"
 
-            COMMITS=$(curl -s -u ":$AZURE_DEVOPS_CLI_PAT" "https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories/$(repoID)/pullRequests/$(ultimoPR)/commits?api-version=7.0" \
+            COMMITS=$(curl -s -u ":$AZURE_DEVOPS_CLI_PAT" \
+              "https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories/$(repoID)/pullRequests/$(ultimoPR)/commits?api-version=7.0" \
               | jq -r '.value // [] | .[].comment' \
               | grep -E 'feat:|fix:|!' || true)
-            SAFE_COMMITS=$(echo "$COMMITS" | tr '\n' '|')
+
+            SAFE_COMMITS=$(printf '%s' "$COMMITS" | tr '\n' '|')
+            SAFE_COMMITS=${SAFE_COMMITS//\"/\\\"}
+            SAFE_COMMITS=${SAFE_COMMITS//\'/\\\'}
             echo $SAFE_COMMITS
             echo "##vso[task.setvariable variable=filteredCommits]$SAFE_COMMITS"
         displayName: "📌 Pull Request Commit Details"
@@ -302,7 +306,7 @@ jobs:
                 echo "📝 Commits de la rama: $clean_branch"
                 echo $COMMITS
               fi
-              
+
               if [[ "$CURRENT_BRANCH" == refs/heads/develop ]]; then
                 RAW_COMMITS="$(filteredCommits)"
                 COMMITS=$(printf '%s' "$RAW_COMMITS" | tr '|' '\n')
@@ -345,7 +349,7 @@ jobs:
               elif [[ $IS_PATCH -eq 1 ]]; then
                 RELEASE_TYPE="patch"
               else
-                RELEASE_TYPE="patch" 
+                RELEASE_TYPE="patch"
               fi
               echo "ℹ️ Tipo versionamiento"
               echo "type: $RELEASE_TYPE"
@@ -375,7 +379,7 @@ jobs:
                 git checkout version/master
                 VERSION_ACTUAL_MASTER=$(jq -r .version package.json)
                 echo "versión base master: $VERSION_ACTUAL_MASTER"
-                
+
                 git checkout version/$clean_branch
 
                 if [[ "$BASE_VERSION_BRANCH" == "$VERSION_ACTUAL_MASTER" ]]; then
