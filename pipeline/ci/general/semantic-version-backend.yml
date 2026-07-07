@@ -310,7 +310,7 @@ jobs:
               elif [[ $IS_PATCH -eq 1 ]]; then
                 RELEASE_TYPE="patch"
               else
-                RELEASE_TYPE="patch" 
+                RELEASE_TYPE="patch"
               fi
               echo "ℹ️ Tipo versionamiento"
               echo "type: $RELEASE_TYPE"
