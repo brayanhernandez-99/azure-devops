@@ -136,9 +136,7 @@ jobs:
             echo "##vso[task.setvariable variable=repoID]$REPO_ID"
             echo "ℹ️ id del repositorio $REPO_NAME: $REPO_ID"
         displayName: "📌 Set Repository ID"
-        condition: and(succeeded(),
-          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
-          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
+        condition: and(succeeded(), in(variables['Build.SourceBranchName'], 'develop', 'staging', 'master'))
         env:
           AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
 
@@ -171,9 +169,7 @@ jobs:
             touch $(Build.ArtifactStagingDirectory)/idpr/idpr.json
             echo "{\"idpr\": \"$PR_ID\" }" > $(Build.ArtifactStagingDirectory)/idpr/idpr.json
         displayName: "📌 Set Pull Request ID"
-        condition: and(succeeded(),
-          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
-          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
+        condition: and(succeeded(), in(variables['Build.SourceBranchName'], 'develop', 'staging', 'master'))
         env:
           AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
 
@@ -196,9 +192,7 @@ jobs:
             echo $SAFE_COMMITS
             echo "##vso[task.setvariable variable=filteredCommits]$SAFE_COMMITS"
         displayName: "📌 Pull Request Commit Details"
-        condition: and(succeeded(),
-          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
-          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
+        condition: and(succeeded(), in(variables['Build.SourceBranchName'], 'develop', 'staging', 'master'))
         env:
           AZURE_DEVOPS_CLI_PAT: $(PAT-AZ)
 
@@ -243,21 +237,21 @@ jobs:
               fi
 
               if [[ "$CURRENT_BRANCH" == refs/heads/develop ]]; then
-                RAW_COMMITS="$(filteredCommits)"
+                RAW_COMMITS='$(filteredCommits)'
                 COMMITS=$(printf '%s' "$RAW_COMMITS" | tr '|' '\n')
                 echo "📝 Commits de la rama: $clean_branch"
                 echo $COMMITS
               fi
 
               if [[ "$CURRENT_BRANCH" == refs/heads/staging ]]; then
-                RAW_COMMITS="$(filteredCommits)"
+                RAW_COMMITS='$(filteredCommits)'
                 COMMITS=$(printf '%s' "$RAW_COMMITS" | tr '|' '\n')
                 echo "📝 Commits de la rama: $clean_branch"
                 echo $COMMITS
               fi
 
               if [[ "$CURRENT_BRANCH" == refs/heads/master ]]; then
-                RAW_COMMITS="$(filteredCommits)"
+                RAW_COMMITS='$(filteredCommits)'
                 COMMITS=$(printf '%s' "$RAW_COMMITS" | tr '|' '\n')
                 echo "📝 Commits de la rama: $clean_branch"
                 echo $COMMITS
@@ -395,10 +389,7 @@ jobs:
 
             echo "##vso[build.updatebuildnumber]$(cleanNEXT_VERSION)"
         displayName: "⚡Commit & Push Version"
-        condition: and(succeeded(),
-          ne(variables['Build.Reason'], 'PullRequest'),
-          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')),
-          not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
+        condition: and(succeeded(), in(variables['Build.SourceBranchName'], 'develop', 'staging', 'master'))
 
       - task: PublishBuildArtifacts@1
         inputs:
