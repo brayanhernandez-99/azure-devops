@@ -477,14 +477,14 @@ jobs:
             if (Test-Path $filePath) {
                 $bytes = [System.IO.File]::ReadAllBytes($filePath)
                 if ($bytes.Length -ge 3 -and $bytes[0] -eq 0xEF -and $bytes[1] -eq 0xBB -and $bytes[2] -eq 0xBF) {
-                    [System.IO.File]::WriteAllBytes($filePath, $bytes[3..($bytes.Length-1)])
-                    Write-Host "`n⚠️ BOM removed from package.json"
+                  [System.IO.File]::WriteAllBytes($filePath, $bytes[3..($bytes.Length-1)])
+                  Write-Host "`n⚠️ BOM removed from package.json"
                 } else {
-                    Write-Host "`n✅ package.json no contiene BOM"
+                  Write-Host "`n✅ package.json no contiene BOM"
                 }
             } else {
-                Write-Output "`n##vso[task.logissue type=error]⚠️ Error: package.json no se encontró en $filePath"
-                exit 99
+              Write-Output "`n##vso[task.logissue type=error]⚠️ Error: package.json no se encontró en $filePath"
+              exit 99
             }
         displayName: "🧹 Remove BOM from package.json"
         condition: succeeded()
