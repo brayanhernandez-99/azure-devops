@@ -96,7 +96,7 @@ jobs:
                   echo -e "\n##vso[task.logissue type=error]⚠️ No se detectaron cambios en apps. Cancelando ejecución del pipeline."
                   exit 99
                 fi
-                
+
                 echo "🔎 Apps modificadas detectadas:"
                 echo "${apps[@]}"
                 apps_json=$(printf '%s\n' "${apps[@]}" | jq -R . | jq -s .)
@@ -110,7 +110,7 @@ jobs:
                     --output json)
                   echo "$pipeline_output" | jq
 
-                  run_id=$(echo "$pipeline_output" | jq -r '.id')              
+                  run_id=$(echo "$pipeline_output" | jq -r '.id')
                   echo -e "\n##[command]🌐 Build Results: https://dev.azure.com/ux-technology/Invictus/_build/results?buildId=$run_id"
                 fi
 
@@ -187,7 +187,7 @@ jobs:
                     --output json)
                   echo "$pipeline_output" | jq
 
-                  run_id=$(echo "$pipeline_output" | jq -r '.id')              
+                  run_id=$(echo "$pipeline_output" | jq -r '.id')
                   echo -e "\n##[command]🌐 Build Results: https://dev.azure.com/ux-technology/Invictus/_build/results?buildId=$run_id"
                 ;;
               *)
