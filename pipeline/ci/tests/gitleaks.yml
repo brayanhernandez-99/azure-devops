@@ -16,12 +16,13 @@ jobs:
         fetchDepth: 1
         persistCredentials: true
 
-      # - task: Gitleaks@3
-      #   inputs:
-      #     scanType: repo
-      #   continueOnError: true
-      #   displayName: "🔎 Gitleaks (feature)"
-      #   condition: succeeded()
+      - task: Gitleaks@3
+        inputs:
+          scanType: repo
+        continueOnError: true
+        displayName: "🔎 Gitleaks (feature)"
+        # continueOnError: true
+        condition: succeeded()
 
       - task: Bash@3
         inputs:
@@ -38,6 +39,6 @@ jobs:
               --verbose \
               --redact \
               --report-format json
-        continueOnError: true
+        # continueOnError: true
         displayName: "🔎 Gitleaks full repo scan"
         condition: succeeded()
