@@ -37,30 +37,6 @@ stages:
 
   #####################################################################
 
-  - ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
-      - ${{ each region in parameters.red }}:
-          - stage: build_microfrontend_${{ region }}
-            displayName: "📦 Build MicroFrontend ${{ region }}"
-            dependsOn: semantic_version_microfrontend
-            jobs:
-              - template: ../ci/build/build-frontend.yml
-                parameters:
-                  region: ${{ region }}
-                  apps: ${{ parameters.apps }}
-                  pr_id: ${{ parameters.pr_id }}
-
-          - stage: deploy_microfrontend_${{ region }}
-            displayName: "🚀 Deploy MicroFrontend ${{ region }}"
-            dependsOn: build_microfrontend_${{ region }}
-            jobs:
-              - template: ../cd/deployment.yml
-                parameters:
-                  region: ${{ region }}
-                  apps: ${{ parameters.apps }}
-                  release: ${{ parameters.release }}
-
-  #####################################################################
-
   - ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}:
       - stage: scan_microfrontend
         displayName: "🛡️ Scan MicroFrontend"
@@ -109,3 +85,27 @@ stages:
                   apps: ${{ parameters.apps }}
                   release: ${{ parameters.release }}
                   environment_staging: ${{ environment_staging }}
+
+  #####################################################################
+
+  - ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
+      - ${{ each region in parameters.red }}:
+          - stage: build_microfrontend_${{ region }}
+            displayName: "📦 Build MicroFrontend ${{ region }}"
+            dependsOn: semantic_version_microfrontend
+            jobs:
+              - template: ../ci/build/build-frontend.yml
+                parameters:
+                  region: ${{ region }}
+                  apps: ${{ parameters.apps }}
+                  pr_id: ${{ parameters.pr_id }}
+
+          - stage: deploy_microfrontend_${{ region }}
+            displayName: "🚀 Deploy MicroFrontend ${{ region }}"
+            dependsOn: build_microfrontend_${{ region }}
+            jobs:
+              - template: ../cd/deployment.yml
+                parameters:
+                  region: ${{ region }}
+                  apps: ${{ parameters.apps }}
+                  release: ${{ parameters.release }}
