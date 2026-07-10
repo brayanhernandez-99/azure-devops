@@ -172,7 +172,7 @@ jobs:
 
       - task: SonarQubePrepare@7
         inputs:
-          SonarQube: "SonarQubeServer"
+          SonarQube: "SonarQubeConection"
           scannerMode: "CLI"
           configMode: "manual"
           cliProjectKey: "$(Build.Repository.Name)"
