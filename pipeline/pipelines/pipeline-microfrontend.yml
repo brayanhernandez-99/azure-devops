@@ -7,17 +7,17 @@ stages:
           apps: ${{ parameters.apps }}
           release: ${{ parameters.release }}
 
+  - stage: scan_microfrontend
+    displayName: "🛡️ Scan MicroFrontend"
+    dependsOn: semantic_version_microfrontend
+    jobs:
+      - template: ../ci/tests/sonarqube-frontend.yml
+        parameters:
+          apps: ${{ parameters.apps }}
+
   #####################################################################
 
   - ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')) }}:
-      - stage: scan_microfrontend
-        displayName: "🛡️ Scan MicroFrontend"
-        dependsOn: semantic_version_microfrontend
-        jobs:
-          - template: ../ci/tests/sonarqube-frontend.yml
-            parameters:
-              apps: ${{ parameters.apps }}
-
       - stage: build_microfrontend
         displayName: "📦 Build MicroFrontend"
         dependsOn: scan_microfrontend
@@ -38,14 +38,6 @@ stages:
   #####################################################################
 
   - ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}:
-      - stage: scan_microfrontend
-        displayName: "🛡️ Scan MicroFrontend"
-        dependsOn: semantic_version_microfrontend
-        jobs:
-          - template: ../ci/tests/sonarqube-frontend.yml
-            parameters:
-              apps: ${{ parameters.apps }}
-
       - stage: build_microfrontend_develop
         displayName: "📦 Build MicroFrontend develop"
         dependsOn: scan_microfrontend
@@ -69,7 +61,7 @@ stages:
       - ${{ each environment_staging in parameters.environments_staging }}:
           - stage: build_microfrontend_${{ environment_staging }}
             displayName: "📦 Build MicroFrontend ${{ environment_staging }}"
-            dependsOn: semantic_version_microfrontend
+            dependsOn: scan_microfrontend
             jobs:
               - template: ../ci/build/build-frontend.yml
                 parameters:
@@ -92,7 +84,7 @@ stages:
       - ${{ each region in parameters.red }}:
           - stage: build_microfrontend_${{ region }}
             displayName: "📦 Build MicroFrontend ${{ region }}"
-            dependsOn: semantic_version_microfrontend
+            dependsOn: scan_microfrontend
             jobs:
               - template: ../ci/build/build-frontend.yml
                 parameters:

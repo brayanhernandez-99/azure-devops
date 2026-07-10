@@ -204,8 +204,7 @@ jobs:
         displayName: "⚙️ Install Dependencies"
         condition: and(succeeded(),
           ne(variables['msName'], 'app-administration-vue2'),
-          ne(variables['msName'], 'app-sellers-vue2'),
-          ne(variables['Build.SourceBranchName'], 'develop'))
+          ne(variables['msName'], 'app-sellers-vue2'))
 
       - task: JavaToolInstaller@0
         inputs:
@@ -233,8 +232,7 @@ jobs:
         displayName: "⚙️ Prepare SonarQube Analysis"
         condition: and(succeeded(),
           ne(variables['msName'], 'app-administration-vue2'),
-          ne(variables['msName'], 'app-sellers-vue2'),
-          ne(variables['Build.SourceBranchName'], 'develop'))
+          ne(variables['msName'], 'app-sellers-vue2'))
 
       - task: Bash@3
         inputs:
@@ -248,15 +246,13 @@ jobs:
         displayName: "🔎 Coverage Analysis: $(msName)"
         condition: and(succeeded(),
           ne(variables['msName'], 'app-administration-vue2'),
-          ne(variables['msName'], 'app-sellers-vue2'),
-          ne(variables['Build.SourceBranchName'], 'develop'))
+          ne(variables['msName'], 'app-sellers-vue2'))
 
       - task: SonarQubeAnalyze@7
         displayName: "📡 Run Sonar Analysis"
         condition: and(succeeded(),
           ne(variables['msName'], 'app-administration-vue2'),
-          ne(variables['msName'], 'app-sellers-vue2'),
-          ne(variables['Build.SourceBranchName'], 'develop'))
+          ne(variables['msName'], 'app-sellers-vue2'))
 
       - task: SonarQubePublish@7
         inputs:
@@ -264,8 +260,7 @@ jobs:
         displayName: "📤 Publish Static Code Analysis Results"
         condition: and(succeeded(),
           ne(variables['msName'], 'app-administration-vue2'),
-          ne(variables['msName'], 'app-sellers-vue2'),
-          ne(variables['Build.SourceBranchName'], 'develop'))
+          ne(variables['msName'], 'app-sellers-vue2'))
 
       - template: sonarqube/job-sonarqube.yml@sonarqube
         parameters:
