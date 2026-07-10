@@ -225,7 +225,6 @@ jobs:
           cliProjectName: "microfrontend-$(msName)-invictus"
           cliSources: "$(Build.Repository.Name)/$(file)/$(msName)"
           extraProperties: |
-            sonar.sourceEncoding=UTF-8
             sonar.projectVersion=$(version)
             sonar.javascript.lcov.reportPaths=$(Build.Repository.Name)/$(file)/$(msName)/coverage/lcov.info
             sonar.exclusions=**/test/**,**/coverage/**,**/.nyc_output/**,**/reports/**,sured-plugin/**,**/reports_bck/**,**/node_modules/**,**/dist/**,*.cjs,*mts,**/main.ts,**/config/**,**/config.*,**/**.config.*
