@@ -136,26 +136,11 @@ jobs:
             set -e
 
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/conciliation/aws-service-sqs-sivical-dlq
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-ssm-parameter
             terragrunt init --all --parallelism=1 --non-interactive --no-color
             terragrunt plan --all --non-interactive --no-color
             terragrunt apply --all --non-interactive --no-color
-            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/conciliation/aws-service-sqs-sivical
-            terragrunt init --all --parallelism=1 --non-interactive --no-color
-            terragrunt plan --all --non-interactive --no-color
-            terragrunt apply --all --non-interactive --no-color
-            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/conciliation/aws-service-sqs-sivical-anulacion
-            terragrunt init --all --parallelism=1 --non-interactive --no-color
-            terragrunt plan --all --non-interactive --no-color
-            terragrunt apply --all --non-interactive --no-color
-            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/conciliation/aws-service-sqs-sivical-400
-            terragrunt init --all --parallelism=1 --non-interactive --no-color
-            terragrunt plan --all --non-interactive --no-color
-            terragrunt apply --all --non-interactive --no-color
-            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/conciliation/aws-service-sqs-sivical-500
-            terragrunt init --all --parallelism=1 --non-interactive --no-color
-            terragrunt plan --all --non-interactive --no-color
-            terragrunt apply --all --non-interactive --no-color
+
 
 
 
