@@ -33,17 +33,6 @@ jobs:
         displayName: "⚙️ Prepare SonarQube Analysis"
         condition: succeeded()
 
-      - task: Bash@3
-        inputs:
-          targetType: inline
-          script: |
-            response=$(echo $SONARQUBE_SCANNER_PARAMS | sed -E 's#"sonar\.branch\.name":"[^"]+",##g')
-            json=$(echo "$response" | sed 's/"sonar.token":\*\*\*/"sonar.token":"***"/')
-            echo "$json" | jq
-            echo "##vso[task.setvariable variable=SONARQUBE_SCANNER_PARAMS]$response"
-        displayName: "⚙️ Set Variable — SONARQUBE_SCANNER_PARAMS"
-        condition: succeeded()
-
       - task: SonarQubeAnalyze@7
         displayName: "📡 Run Sonar Analysis"
         condition: succeeded()
@@ -58,39 +47,51 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            echo "🔎 Validando Quality Gate..."
+            set -e
+            echo "🔎 Validando Quality Gates..."
+
             PROJECT_KEY="$(Build.Repository.Name)"
+            BRANCH_NAME="${BUILD_SOURCEBRANCH#refs/heads/}"
 
-            Obtener estado del Quality Gate
-            status=$(curl -s -u "$SONAR_TOKEN:" "$SONAR_HOST_URL/api/qualitygates/project_status?projectKey=$PROJECT_KEY")
-            metrics_response=$(curl -s -u "$SONAR_TOKEN:" "$SONAR_HOST_URL/api/measures/component?component=$PROJECT_KEY&metricKeys=coverage,duplicated_lines_density")
-            project_info=$(curl -s -u "$SONAR_TOKEN:" "$SONAR_HOST_URL/api/components/show?component=$PROJECT_KEY")
+            if [[ -n "$SYSTEM_PULLREQUEST_PULLREQUESTID" ]]; then
+              query="pullRequest=$SYSTEM_PULLREQUEST_PULLREQUESTID"
+              dashboard_url="$SONAR_HOST_URL/dashboard?id=$PROJECT_KEY&pullRequest=$SYSTEM_PULLREQUEST_PULLREQUESTID"
+            else
+              query="branch=$BRANCH_NAME"
+              dashboard_url="$SONAR_HOST_URL/dashboard?id=$PROJECT_KEY&branch=$BRANCH_NAME"
+            fi
 
-            coverage=$(echo "$metrics_response" | jq -r '.component.measures[] | select(.metric=="coverage") | .value')
-            duplication=$(echo "$metrics_response" | jq -r '.component.measures[] | select(.metric=="duplicated_lines_density") | .value')
+            # Obtener estado del Quality Gate
+            status=$(curl -sf -u "$SONAR_TOKEN:" \
+              "$SONAR_HOST_URL/api/qualitygates/project_status?projectKey=$PROJECT_KEY&$query")
+
+            # Obtener nombre del Quality Gate
+            quality_gate_response=$(curl -sf -u "$SONAR_TOKEN:" \
+              "$SONAR_HOST_URL/api/qualitygates/get_by_project?project=$PROJECT_KEY")
+
             status_code=$(echo "$status" | jq -r '.projectStatus.status')
-
-            Obtener Quality Gate Name y Quality Profile Name
-            quality_gate=$(echo "$status" | jq -r '.projectStatus.qualityGate.name // "N/A"')
-            quality_profile=$(echo "$project_info" | jq -r '.component.qualityProfile // "N/A"')
-            language=$(echo "$project_info" | jq -r '.component.language // "N/A"')
+            quality_gate=$(echo "$quality_gate_response" | jq -r '.qualityGate.name // "N/A"')
 
             echo ""
-            echo "🔹 Proyecto:        $PROJECT_KEY"
-            echo "🛡️ Quality Gate:    $quality_gate"
-            echo "🛡️ Quality Profile: $quality_profile"
-            echo "🧾 Lenguaje Base:   $language"
-            echo "🟢 Estado:          $status_code"
+            echo "📦 Proyecto:         $PROJECT_KEY"
+            echo "🌿 Rama:             $BRANCH_NAME"
+
+            if [[ -n "$SYSTEM_PULLREQUEST_PULLREQUESTID" ]]; then
+              echo "🔀 Pull Request:     $SYSTEM_PULLREQUEST_PULLREQUESTID"
+            fi
+
+            echo "🛡️ Quality Gate:     $quality_gate"
+            echo "🟢 Estado:           $status_code"
             echo ""
 
-            echo -e "\n##[command]🌐 URL: $SONAR_HOST_URL/dashboard?id=infrastructure-as-code-invictus"
+            echo "##[command]🌐 URL: $dashboard_url"
 
-            if [[ "$status_code" == "ERROR" ]]; then
+            if [[ "$status_code" != "OK" ]]; then
               echo -e "\n##vso[task.logissue type=error]⚠️ El proyecto no cumple con los Qualitys."
               exit 99
-            else
-              echo -e "\n✅ El proyecto cumple con los Qualitys."
             fi
+
+            echo "✅ El proyecto cumple con los Qualitys."
         displayName: "🛡️ Quality Gate Check: $(Build.Repository.Name)"
         condition: succeeded()
         continueOnError: true
