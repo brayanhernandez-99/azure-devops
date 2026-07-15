@@ -30,8 +30,8 @@ jobs:
 
             if [[ ! "$BRANCH" =~ $REGEX ]]; then
               echo -e "\n##vso[task.logissue type=error]⚠️ El nombre de la rama '$BRANCH' no cumple el estándar."
-              echo "##vso[task.logissue type=error]  feature/R-0000-descripcion"
-              echo "##vso[task.logissue type=error]  hotfix/I-0000-descripcion"
+              echo "##vso[task.logissue type=error]  feature/R-0000-nombre-rama"
+              echo "##vso[task.logissue type=error]  hotfix/R-0000-nombre-rama"
               exit 99
             fi
             echo "✅ Nombre de la rama es valido"
