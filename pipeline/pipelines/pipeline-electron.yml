@@ -17,27 +17,6 @@ stages:
 
   #####################################################################
 
-  - ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
-      - ${{ each region in parameters.red }}:
-          - stage: build_electron_${{ region }}
-            displayName: "📦 Build Electron ${{ region }}"
-            dependsOn: semantic_version_electron
-            jobs:
-              - template: ../ci/build/build-electron.yml
-                parameters:
-                  region: ${{ region }}
-
-          - stage: deploy_electron_${{ region }}
-            displayName: "🚀 Deploy Electron ${{ region }}"
-            dependsOn: build_electron_${{ region }}
-            jobs:
-              - template: ../cd/deployment.yml
-                parameters:
-                  region: ${{ region }}
-                  release: ${{ parameters.release }}
-
-  #####################################################################
-
   - ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}:
       - stage: build_electron_develop
         displayName: "📦 Build Electron develop"
@@ -73,3 +52,24 @@ stages:
                 parameters:
                   release: ${{ parameters.release }}
                   environment_staging: ${{ environment_staging }}
+
+  #####################################################################
+
+  - ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
+      - ${{ each region in parameters.red }}:
+          - stage: build_electron_${{ region }}
+            displayName: "📦 Build Electron ${{ region }}"
+            dependsOn: semantic_version_electron
+            jobs:
+              - template: ../ci/build/build-electron.yml
+                parameters:
+                  region: ${{ region }}
+
+          - stage: deploy_electron_${{ region }}
+            displayName: "🚀 Deploy Electron ${{ region }}"
+            dependsOn: build_electron_${{ region }}
+            jobs:
+              - template: ../cd/deployment.yml
+                parameters:
+                  region: ${{ region }}
+                  release: ${{ parameters.release }}

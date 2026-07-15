@@ -17,27 +17,6 @@ stages:
 
   #####################################################################
 
-  - ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
-      - ${{ each region in parameters.red }}:
-          - stage: build_flutter_${{ region }}
-            displayName: "📦 Build Flutter ${{ region }}"
-            dependsOn: semantic_version_flutter
-            jobs:
-              - template: ../ci/build/build-flutter.yml
-                parameters:
-                  region: ${{ region }}
-
-          - stage: deploy_flutter_${{ region }}
-            displayName: "🚀 Deploy Flutter ${{ region }}"
-            dependsOn: build_flutter_${{ region }}
-            jobs:
-              - template: ../cd/deployment.yml
-                parameters:
-                  region: ${{ region }}
-                  release: ${{ parameters.release }}
-
-  #####################################################################
-
   - ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}:
       - stage: build_flutter_develop
         displayName: "📦 Build Flutter develop"
@@ -76,3 +55,24 @@ stages:
                 parameters:
                   release: ${{ parameters.release }}
                   environment_staging: ${{ environment_staging }}
+
+  #####################################################################
+
+  - ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
+      - ${{ each region in parameters.red }}:
+          - stage: build_flutter_${{ region }}
+            displayName: "📦 Build Flutter ${{ region }}"
+            dependsOn: semantic_version_flutter
+            jobs:
+              - template: ../ci/build/build-flutter.yml
+                parameters:
+                  region: ${{ region }}
+
+          - stage: deploy_flutter_${{ region }}
+            displayName: "🚀 Deploy Flutter ${{ region }}"
+            dependsOn: build_flutter_${{ region }}
+            jobs:
+              - template: ../cd/deployment.yml
+                parameters:
+                  region: ${{ region }}
+                  release: ${{ parameters.release }}
