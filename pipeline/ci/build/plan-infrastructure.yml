@@ -136,7 +136,7 @@ jobs:
             set -e
 
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-event-bridge/parameter-store-rule
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/notifier/aws-service-ecs
             terragrunt init --all --parallelism=1 --non-interactive --no-color
             terragrunt plan --all --non-interactive --no-color
 
