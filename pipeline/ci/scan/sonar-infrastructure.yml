@@ -9,6 +9,31 @@ jobs:
       - template: ../../variables/groups-transversal-variables-iac.yml
 
     steps:
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            set -e
+            if [[ "$(Build.Reason)" == "PullRequest" ]]; then
+              BRANCH="$(System.PullRequest.SourceBranch)"
+            else
+              BRANCH="$(Build.SourceBranch)"
+            fi
+
+            BRANCH="${BRANCH#refs/heads/}"
+            REGEX='^(feature/R-[0-9]+-[a-zA-Z0-9._-]+|hotfix/I-[0-9]+-[a-zA-Z0-9._-]+|develop|staging|master)$'
+            echo "Validando rama: $BRANCH"
+
+            if [[ ! "$BRANCH" =~ $REGEX ]]; then
+              echo -e "\n##vso[task.logissue type=error]⚠️ El nombre de la rama '$BRANCH' no cumple el estándar."
+              echo "##vso[task.logissue type=error]  feature/R-0000-nombre-rama"
+              echo "##vso[task.logissue type=error]  hotfix/I-0000-nombre-rama"
+              exit 99
+            fi
+            echo "✅ Nombre de la rama es valido"
+        displayName: "🔎 Validate Branch Name"
+        condition: succeeded()
+
       - task: JavaToolInstaller@0
         inputs:
           versionSpec: "17"
