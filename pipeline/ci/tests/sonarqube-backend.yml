@@ -180,8 +180,9 @@ jobs:
           cliSources: "$(System.DefaultWorkingDirectory)"
           extraProperties: |
             sonar.projectVersion=$(version)
+            sonar.tests=test
             sonar.javascript.lcov.reportPaths=$(System.DefaultWorkingDirectory)/coverage/lcov.info
-            sonar.exclusions=**/*.java,**/test/**,**/models/**,**/android/**,**/ios/**,**/coverage/**,**/.nyc_output/**,**/reports/**,**/node_modules/**,**/migrations/**,**/config/**,**/Dockerfile,*.cjs,**/*.spec.ts
+            sonar.exclusions=**/*.java,**/models/**,**/android/**,**/ios/**,**/coverage/**,**/.nyc_output/**,**/reports/**,**/node_modules/**,**/migrations/**,**/config/**,**/Dockerfile,*.cjs
         displayName: "⚙️ Prepare SonarQube Analysis"
         condition: succeeded()
 
