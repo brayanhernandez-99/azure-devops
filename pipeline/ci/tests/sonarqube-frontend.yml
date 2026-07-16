@@ -20,12 +20,37 @@ jobs:
       - checkout: self
         fetchDepth: 1
         persistCredentials: true
+        fetchTags: false
 
       - task: DownloadBuildArtifacts@0
         inputs:
           artifactName: "versions"
           downloadPath: "$(Pipeline.Workspace)/versions-downloaded"
         displayName: "📥 Download Version"
+        condition: succeeded()
+
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            set -e
+            echo "Pipeline.Workspace"
+            ls -ltra $(Pipeline.Workspace)
+
+            echo -e "\n"
+            echo -e "\n"
+            echo -e "\n"
+
+            echo "$(Build.Repository.Name)"  
+
+            echo -e "\n"
+            echo -e "\n"
+            echo -e "\n"
+
+            echo "$(System.DefaultWorkingDirectory)"
+            ls -ltra $(System.DefaultWorkingDirectory)
+
+        displayName: "*** Info"
         condition: succeeded()
 
       - task: Bash@3
