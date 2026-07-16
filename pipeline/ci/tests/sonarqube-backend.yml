@@ -12,6 +12,7 @@ jobs:
       - checkout: self
         fetchDepth: 1
         persistCredentials: true
+        fetchTags: false
 
       - task: DownloadBuildArtifacts@0
         inputs:
@@ -182,7 +183,7 @@ jobs:
             sonar.projectVersion=$(version)
             sonar.tests=test
             sonar.javascript.lcov.reportPaths=$(System.DefaultWorkingDirectory)/coverage/lcov.info
-            sonar.exclusions=**/*.java,**/models/**,**/android/**,**/ios/**,**/coverage/**,**/.nyc_output/**,**/reports/**,**/node_modules/**,**/migrations/**,**/config/**,**/Dockerfile,*.cjs
+            sonar.exclusions=**/test/**,**/*.java,**/models/**,**/android/**,**/ios/**,**/coverage/**,**/.nyc_output/**,**/reports/**,**/node_modules/**,**/migrations/**,**/config/**,**/Dockerfile,*.cjs
         displayName: "⚙️ Prepare SonarQube Analysis"
         condition: succeeded()
 
