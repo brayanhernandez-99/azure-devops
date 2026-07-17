@@ -136,7 +136,7 @@ jobs:
           script: |
             set -e
             echo "Comentando app-legacy/*"
-            cd $(System.DefaultWorkingDirectory)
+            cd $(Build.Repository.Name)
             sed -i '/app-legacy\//s/  -/  # -/' pnpm-workspace.yaml
             cat pnpm-workspace.yaml
         displayName: "💬 Comment app-legacy/*"
@@ -149,19 +149,19 @@ jobs:
           targetType: inline
           script: |
             set -e
-            rm "$(System.DefaultWorkingDirectory)/$(file)/$(msName)/vitest.config.mts"
+            rm "$(Build.Repository.Name)/$(file)/$(msName)/vitest.config.mts"
             echo -e "\n✅ Elimnación archivo vitest.config.mts ..."
 
-            cp pipelines-templates/pipeline/config/vitest.config.mts $(System.DefaultWorkingDirectory)/$(file)/$(msName)
+            cp pipelines-templates/pipeline/config/vitest.config.mts $(Build.Repository.Name)/$(file)/$(msName)
             echo "⚠️ Copiando archivo vitest.config.mts templates..."
 
             echo "✅ vitest.config.mts copiado exitosamente."
             echo -e "\n📁 Files:"
-            ls -la $(System.DefaultWorkingDirectory)/$(file)/$(msName)
+            ls -la $(Build.Repository.Name)/$(file)/$(msName)
             echo -e "\n📁 File: vitest.config.mts"
-            cat $(System.DefaultWorkingDirectory)/$(file)/$(msName)/vitest.config.mts
+            cat $(Build.Repository.Name)/$(file)/$(msName)/vitest.config.mts
 
-            FILE="$(System.DefaultWorkingDirectory)/$(file)/$(msName)/vitest.config.ts"
+            FILE="$(Build.Repository.Name)/$(file)/$(msName)/vitest.config.ts"
             if [[ -f "$FILE" ]]; then
               rm "$FILE"
               echo "❌ Eliminando el archivo vitest.config.ts"
@@ -175,23 +175,23 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            echo -e "\n📁 Generando archivo .pnpmrc en: $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc"
-            cat <<EOF > "$(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc"
+            echo -e "\n📁 Generando archivo .pnpmrc en: $(Build.Repository.Name)/$(file)/$(msName)/.pnpmrc"
+            cat <<EOF > "$(Build.Repository.Name)/$(file)/$(msName)/.pnpmrc"
             node-linker=hoisted
             shamefully-hoist=true
             ignore-scripts=false
             allow-build-script=true
             strict-peer-dependencies=false
             EOF
-            ls -l $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc
-            cat $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc
+            ls -l $(Build.Repository.Name)/$(file)/$(msName)/.pnpmrc
+            cat $(Build.Repository.Name)/$(file)/$(msName)/.pnpmrc
 
             echo -e "\n📌 Versiones:"
             npm install -g pnpm
             echo "Node version: $(node --version)"
             echo "PNPM version: $(pnpm --version)"
 
-            cd $(System.DefaultWorkingDirectory)
+            cd $(Build.Repository.Name)
             echo -e "\n⚙️ Instalando dependencias node..."
             pnpm install
 
@@ -225,12 +225,12 @@ jobs:
           configMode: "manual"
           cliProjectKey: "microfrontend-$(msName)-invictus"
           cliProjectName: "microfrontend-$(msName)-invictus"
-          cliSources: "$(System.DefaultWorkingDirectory)/$(file)/$(msName)"
+          cliSources: "$(Build.Repository.Name)/$(file)/$(msName)"
           extraProperties: |
             sonar.projectVersion=$(version)
             sonar.sourceEncoding=UTF-8
             sonar.tests=test
-            sonar.javascript.lcov.reportPaths=$(System.DefaultWorkingDirectory)/$(file)/$(msName)/coverage/lcov.info
+            sonar.javascript.lcov.reportPaths=$(Build.Repository.Name)/$(file)/$(msName)/coverage/lcov.info
             sonar.exclusions=**/test/**,**/coverage/**,**/.nyc_output/**,**/reports/**,sured-plugin/**,**/reports_bck/**,**/node_modules/**,**/dist/**,*.cjs,*mts,**/main.ts,**/config/**,**/config.*,**/**.config.*
         displayName: "⚙️ Prepare SonarQube Analysis"
         condition: and(succeeded(),
@@ -242,7 +242,7 @@ jobs:
           targetType: inline
           script: |
             set -e
-            cd $(System.DefaultWorkingDirectory)
+            cd $(Build.Repository.Name)
             pnpm coverage --filter=...$(msName)
             ls -l "$(file)/$(msName)/coverage"
         continueOnError: true
