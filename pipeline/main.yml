@@ -31,16 +31,19 @@ parameters:
       - app-sellers-vue2
       - astro
       - awards
+      - betplay
       - biometrics
       - cashier
       - chance
       - commissions
       - conciliation
+      - credits
       - dashboard
       - dynamic-storage
+      - externa
       - external-wager
+      - generic
       - hierarchies
-      - invictus
       - login
       - lotteries
       - millonario
@@ -49,7 +52,9 @@ parameters:
       - papelery
       - promotional
       - raffles
+      - raspa
       - recharges
+      - invictus
       - users
 
 resources:
