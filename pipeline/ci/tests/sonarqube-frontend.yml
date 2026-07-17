@@ -22,6 +22,11 @@ jobs:
         persistCredentials: true
         fetchTags: false
 
+      - checkout: git://DevOps-templates-UX/pipelines-templates
+        fetchDepth: 1
+        persistCredentials: true
+        fetchTags: false
+
       - task: DownloadBuildArtifacts@0
         inputs:
           artifactName: "versions"
