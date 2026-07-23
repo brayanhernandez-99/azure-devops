@@ -63,7 +63,7 @@ jobs:
               transaction-astro|transaction-lotteries-games|transaction-recharges)
                 SERVICE_REPO="microservice-transaction-${ENVIRONMENT}"
                 ;;
-              metabase|metabase-starburst)
+              metabase)
                 SERVICE_REPO="public.ecr.aws/p0a9i7q5/metabase-starburst:latest"
                 ;;
               *)
