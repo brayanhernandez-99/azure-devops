@@ -80,7 +80,8 @@ jobs:
             🔍 Consultando versión para $SERVICE..."
 
             if [[ "$SERVICE" == metabase ]]; then
-              FULL_IMAGE="public.ecr.aws/p0a9i7q5/$SERVICE_REPO:latest"
+              VERSION="latest"
+              FULL_IMAGE="public.ecr.aws/p0a9i7q5/$SERVICE_REPO:$VERSION"
             else
               VERSION=$(aws ecr describe-images --repository-name "$SERVICE_REPO" --region "$AWS_DEFAULT_REGION" --query "reverse(sort_by(imageDetails, &imagePushedAt))[0]" --output json | jq -r '.imageTags // [] | map(select(. != "latest")) | .[0]')
               if [[ -z "$VERSION" || "$VERSION" == "null" ]]; then
