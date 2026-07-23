@@ -26,6 +26,7 @@ stages:
                 parameters:
                   environment_staging: ${{ environment_staging }}
 
+      - ${{ each environment_staging in parameters.environments_staging }}:
           - stage: deploy_microservices_${{ environment_staging }}
             displayName: "🚀 Deploy Microservices ${{ environment_staging }}"
             dependsOn: semantic_version_microservices_${{ environment_staging }}
@@ -46,6 +47,7 @@ stages:
                 parameters:
                   region: ${{ region }}
 
+      - ${{ each region in parameters.red }}:
           - stage: deploy_microservices_${{ region }}
             displayName: "🚀 Deploy Microservices ${{ region }}"
             dependsOn: semantic_version_microservices_${{ region }}
