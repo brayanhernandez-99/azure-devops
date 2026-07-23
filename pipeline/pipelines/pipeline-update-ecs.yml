@@ -22,7 +22,7 @@ stages:
         displayName: "⚙️ Prepare Microservices"
         jobs:
           - job: prepare_microservices_staging
-            displayName: "Prepare Microservices"
+            displayName: "prepare microservices"
             pool:
               name: "Azure Pipelines"
               vmImage: ubuntu-latest
@@ -55,7 +55,7 @@ stages:
         displayName: "⚙️ Prepare Microservices"
         jobs:
           - job: prepare_microservices_master
-            displayName: "Prepare Microservices"
+            displayName: "prepare microservices"
             pool:
               name: "Azure Pipelines"
               vmImage: ubuntu-latest
