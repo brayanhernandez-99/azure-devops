@@ -56,13 +56,24 @@ jobs:
 
           declare -A SERVICES=()
           while IFS= read -r SERVICE_NAME; do
-            SERVICE_REPO="microservice-${SERVICE_NAME}-${ENVIRONMENT}"
+            case "$SERVICE_NAME" in
+              lotteries-games-admin)
+                SERVICE_REPO="microservice-lotteries-games-${ENVIRONMENT}"
+                ;;
+              transaction-astro|transaction-lotteries-games|transaction-recharges)
+                SERVICE_REPO="microservice-transaction-${ENVIRONMENT}"
+                ;;
+              *)
+                SERVICE_REPO="microservice-${SERVICE_NAME}-${ENVIRONMENT}"
+                ;;
+            esac
+
             SERVICES["$SERVICE_NAME"]="$SERVICE_REPO"
           done < service_names.txt
 
           for SERVICE in "${!SERVICES[@]}"; do
             SERVICE_REPO="${SERVICES[$SERVICE]}"
-            echo -e "
+            echo "
             🔍 Consultando versión para $SERVICE..."
 
             VERSION=$(aws ecr describe-images --repository-name "$SERVICE_REPO" --region "$AWS_DEFAULT_REGION" --query "reverse(sort_by(imageDetails, &imagePushedAt))[0]" --output json | jq -r '.imageTags // [] | map(select(. != "latest")) | .[0]')
