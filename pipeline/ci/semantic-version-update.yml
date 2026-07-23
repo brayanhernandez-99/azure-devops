@@ -64,7 +64,7 @@ jobs:
                 SERVICE_REPO="microservice-transaction-${ENVIRONMENT}"
                 ;;
               metabase)
-                SERVICE_REPO="public.ecr.aws/p0a9i7q5/metabase-starburst:latest"
+                SERVICE_REPO="metabase-starburst"
                 ;;
               *)
                 SERVICE_REPO="microservice-${SERVICE_NAME}-${ENVIRONMENT}"
@@ -79,9 +79,8 @@ jobs:
             echo "
             🔍 Consultando versión para $SERVICE..."
 
-            if [[ "$SERVICE_REPO" == public.ecr.aws/* ]]; then
-              FULL_IMAGE="$SERVICE_REPO"
-              echo "Imagen pública: $FULL_IMAGE"
+            if [[ "$SERVICE" == metabase ]]; then
+              FULL_IMAGE="public.ecr.aws/p0a9i7q5/$SERVICE_REPO:latest"
             else
               VERSION=$(aws ecr describe-images --repository-name "$SERVICE_REPO" --region "$AWS_DEFAULT_REGION" --query "reverse(sort_by(imageDetails, &imagePushedAt))[0]" --output json | jq -r '.imageTags // [] | map(select(. != "latest")) | .[0]')
               if [[ -z "$VERSION" || "$VERSION" == "null" ]]; then
@@ -90,13 +89,11 @@ jobs:
               fi
 
               FULL_IMAGE="$ECR_REGISTRY/$SERVICE_REPO:$VERSION"
-              echo "Repo: $SERVICE_REPO → $VERSION"
             fi
 
             SERVICES[$SERVICE]="$FULL_IMAGE"
-
-            echo "Repo: $SERVICE_REPO → $VERSION"
-            echo "Imagen: $FULL_IMAGE"
+            echo "ECR:   $SERVICE_REPO → $VERSION"
+            echo "Image: $FULL_IMAGE"
             echo "------------------------------------------------------------"
           done
 
