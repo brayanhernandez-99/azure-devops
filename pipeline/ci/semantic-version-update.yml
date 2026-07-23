@@ -18,13 +18,12 @@ jobs:
           echo "⚙️ Listando servicios ECS en invictus..."
           export CLUSTER="invictus"
 
-          SERVICE_NAMES=$(aws ecs list-services --cluster "$CLUSTER" --query "serviceArns[]" --output text | awk -F/ '{print $NF}')
-          if [[ -z "$SERVICE_NAMES" ]]; then
+          aws ecs list-services --cluster "$CLUSTER" --query "serviceArns[]" --output text | tr '\t' '\n' | awk -F/ '{print $NF}' > service_names.txt
+          if [[ ! -s service_names.txt ]]; then
             echo -e "\n##vso[task.logissue type=error]⚠️ No se encontraron servicios en el cluster $CLUSTER"
             exit 99
           fi
 
-          printf '%s\n' $SERVICE_NAMES > service_names.txt
           echo -e "📂 File: service_names.txt"
           cat service_names.txt
         displayName: "🔎 Listar servicios ECS"
@@ -80,11 +79,11 @@ jobs:
             echo "------------------------------------------------------------"
           done
 
-          SERVICES_JSON=$(jq -n '{'
-            "$(for k in "${!SERVICES[@]}"; do
-                  echo ""$k": "${SERVICES[$k]}"," 
-                done | sed '$s/,$//')"'
-          }')
+          SERVICES_JSON=$(jq -n '{}')
+          for SERVICE in "${!SERVICES[@]}"; do
+            SERVICES_JSON=$(jq -c --arg key "$SERVICE" --arg value "${SERVICES[$SERVICE]}" '. + {($key): $value}' <<<"$SERVICES_JSON")
+          done
+
           echo "$SERVICES_JSON" > services.json
 
           mkdir -p $(Build.ArtifactStagingDirectory)/microservices
