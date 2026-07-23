@@ -17,7 +17,6 @@ jobs:
           set -e
           echo "⚙️ Procesando microservices..."
 
-          SERVICES_JSON='${{ parameters.services }}'
           echo "$SERVICES_JSON" | jq . > /dev/null
           echo "$SERVICES_JSON" > services.json
 
@@ -28,6 +27,8 @@ jobs:
           jq . services.json
         displayName: "🔎 Generando services.json"
         condition: succeeded()
+        env:
+          SERVICES_JSON: "${{ parameters.services }}"
 
       - task: PublishBuildArtifacts@1
         inputs:

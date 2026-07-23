@@ -19,7 +19,7 @@ stages:
 
   - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
       - ${{ each environment_staging in parameters.environments_staging }}:
-          - stage: "semantic_version_microservices"
+          - stage: "semantic_version_microservices_${{ environment_staging }}"
             displayName: "🏷️ Semantic Version Microservices"
             jobs:
               - template: ../ci/semantic-version-update.yml
@@ -28,7 +28,7 @@ stages:
 
           - stage: deploy_microservices_${{ environment_staging }}
             displayName: "🚀 Deploy Microservices ${{ environment_staging }}"
-            dependsOn: semantic_version_microservices
+            dependsOn: semantic_version_microservices_${{ environment_staging }}
             jobs:
               - template: ../cd/deployment.yml
                 parameters:
@@ -39,7 +39,7 @@ stages:
 
   - ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
       - ${{ each region in parameters.red }}:
-          - stage: "semantic_version_microservices"
+          - stage: "semantic_version_microservices_${{ region }}"
             displayName: "🏷️ Semantic Version Microservices"
             jobs:
               - template: ../ci/semantic-version-update.yml
@@ -48,7 +48,7 @@ stages:
 
           - stage: deploy_microservices_${{ region }}
             displayName: "🚀 Deploy Microservices ${{ region }}"
-            dependsOn: semantic_version_microservices
+            dependsOn: semantic_version_microservices_${{ region }}
             jobs:
               - template: ../cd/deployment.yml
                 parameters:
