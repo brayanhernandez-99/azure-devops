@@ -21,7 +21,7 @@ jobs:
       - template: ./deploy/update-version-ecs.yml
         parameters:
           region: ${{ parameters.region }}
-          environment: ${{ parameters.environment }}
+          environment_staging: ${{ parameters.environment_staging }}
 
   #####################################################################
 
@@ -29,4 +29,4 @@ jobs:
       - template: ./deploy/reload-version-ecs.yml
         parameters:
           services: ${{ parameters.services }}
-          environment: ${{ parameters.environment }}
+          environment_staging: ${{ parameters.environment_staging }}
