@@ -63,6 +63,9 @@ jobs:
               transaction-astro|transaction-lotteries-games|transaction-recharges)
                 SERVICE_REPO="microservice-transaction-${ENVIRONMENT}"
                 ;;
+              metabase|metabase-starburst)
+                SERVICE_REPO="public.ecr.aws/p0a9i7q5/metabase-starburst:latest"
+                ;;
               *)
                 SERVICE_REPO="microservice-${SERVICE_NAME}-${ENVIRONMENT}"
                 ;;
@@ -76,13 +79,20 @@ jobs:
             echo "
             🔍 Consultando versión para $SERVICE..."
 
-            VERSION=$(aws ecr describe-images --repository-name "$SERVICE_REPO" --region "$AWS_DEFAULT_REGION" --query "reverse(sort_by(imageDetails, &imagePushedAt))[0]" --output json | jq -r '.imageTags // [] | map(select(. != "latest")) | .[0]')
-            if [[ -z "$VERSION" || "$VERSION" == "null" ]]; then
-              echo -e "\n##vso[task.logissue type=error]⚠️ No se encontró versión para -> $SERVICE_REPO"
-              exit 99
+            if [[ "$SERVICE_REPO" == public.ecr.aws/* ]]; then
+              FULL_IMAGE="$SERVICE_REPO"
+              echo "Imagen pública: $FULL_IMAGE"
+            else
+              VERSION=$(aws ecr describe-images --repository-name "$SERVICE_REPO" --region "$AWS_DEFAULT_REGION" --query "reverse(sort_by(imageDetails, &imagePushedAt))[0]" --output json | jq -r '.imageTags // [] | map(select(. != "latest")) | .[0]')
+              if [[ -z "$VERSION" || "$VERSION" == "null" ]]; then
+                echo -e "\n##vso[task.logissue type=error]⚠️ No se encontró versión para -> $SERVICE_REPO"
+                exit 99
+              fi
+
+              FULL_IMAGE="$ECR_REGISTRY/$SERVICE_REPO:$VERSION"
+              echo "Repo: $SERVICE_REPO → $VERSION"
             fi
 
-            FULL_IMAGE="$ECR_REGISTRY/$SERVICE_REPO:$VERSION"
             SERVICES[$SERVICE]="$FULL_IMAGE"
 
             echo "Repo: $SERVICE_REPO → $VERSION"
