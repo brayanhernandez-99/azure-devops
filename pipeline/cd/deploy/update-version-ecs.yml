@@ -9,7 +9,7 @@ jobs:
       - template: ../../variables/groups-transversal-variables.yml
         parameters:
           region: ${{ parameters.region }}
-          environment: ${{ parameters.environment }}
+          environment_staging: ${{ parameters.environment_staging }}
 
     steps:
       - task: DownloadBuildArtifacts@0

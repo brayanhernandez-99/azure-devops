@@ -7,6 +7,9 @@ jobs:
 
     variables:
       - template: ../variables/groups-transversal-variables.yml
+        parameters:
+          region: ${{ parameters.region }}
+          environment_staging: ${{ parameters.environment_staging }}
 
     steps:
       - checkout: self
