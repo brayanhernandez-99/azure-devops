@@ -135,7 +135,7 @@ jobs:
           script: |
             set -e
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/mock
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/restrictive-lists
             terragrunt plan --all --non-interactive --no-color
             terragrunt destroy --all --non-interactive --no-color
 
@@ -148,7 +148,6 @@ jobs:
             #   biometrics
             #   collected
             #   conciliation
-            #   credits
             #   dynamic-storage
             #   external-wager
             #   generic-services
@@ -159,7 +158,6 @@ jobs:
             #   lotteries-games-admin
             #   metabase
             #   millonario
-            #   mock
             #   money-control
             #   notifications
             #   notifier
@@ -173,7 +171,6 @@ jobs:
             #   raspa
             #   recharges
             #   remittances
-            #   restrictive-lists
             #   scheduler
             #   security
             #   sellers
