@@ -15,7 +15,28 @@ jobs:
 
       - script: |
           set -e
-          echo "⚙️ Procesando microservices..."
+          echo "⚙️ Listando servicios ECS en invictus..."
+          export CLUSTER="invictus"
+
+          SERVICE_NAMES=$(aws ecs list-services --cluster "$CLUSTER" --query "serviceArns[]" --output text | awk -F/ '{print $NF}')
+          if [[ -z "$SERVICE_NAMES" ]]; then
+            echo -e "\n##vso[task.logissue type=error]⚠️ No se encontraron servicios en el cluster $CLUSTER"
+            exit 99
+          fi
+
+          printf '%s' $SERVICE_NAMES > service_names.txt
+          echo -e "📂 File: service_names.txt"
+          cat service_names.txt
+        displayName: "🔎 Listar servicios ECS"
+        condition: succeeded()
+        env:
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
+          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
+
+      - script: |
+          set -e
+          echo "⚙️ Consultando versiones en ECR..."
           ECR_REGISTRY="861262569826.dkr.ecr.us-east-1.amazonaws.com"
           CURRENT_BRANCH="$(Build.SourceBranch)"
 
@@ -29,26 +50,21 @@ jobs:
               ;;
           esac
 
-          export CLUSTER="invictus"
-          SERVICE_NAMES=$(aws ecs list-services --cluster "$CLUSTER" --query "serviceArns[]" --output text | awk -F/ '{print $NF}')
-          if [[ -z "$SERVICE_NAMES" ]]; then
-            echo -e "\n##vso[task.logissue type=error]⚠️ No se encontraron servicios en el cluster $CLUSTER"
+          if [[ ! -f service_names.txt ]]; then
+            echo -e "\n##vso[task.logissue type=error]⚠️ No se encontró el archivo service_names.txt"
             exit 99
           fi
 
-          echo -e "\n🔍 Consultando servicios..."
           declare -A SERVICES=()
-          for SERVICE_NAME in $SERVICE_NAMES; do
+          while IFS= read -r SERVICE_NAME; do
             SERVICE_REPO="microservice-${SERVICE_NAME}-${ENVIRONMENT}"
             SERVICES["$SERVICE_NAME"]="$SERVICE_REPO"
-
-            echo -e "\nECS: $SERVICE_NAME"
-            echo "ECR: $SERVICE_REPO"
-          done
+          done < service_names.txt
 
           for SERVICE in "${!SERVICES[@]}"; do
             SERVICE_REPO="${SERVICES[$SERVICE]}"
-            echo -e "\n🔍 Consultando version $SERVICE ..."
+            echo -e "
+            🔍 Consultando versión para $SERVICE..."
 
             VERSION=$(aws ecr describe-images --repository-name "$SERVICE_REPO" --region "$AWS_DEFAULT_REGION" --query "reverse(sort_by(imageDetails, &imagePushedAt))[0]" --output json | jq -r '.imageTags // [] | map(select(. != "latest")) | .[0]')
             if [[ -z "$VERSION" || "$VERSION" == "null" ]]; then
@@ -64,10 +80,9 @@ jobs:
             echo "------------------------------------------------------------"
           done
 
-          # Convertir array a JSON
-          SERVICES_JSON=$(jq -n '{
-            '"$(for k in "${!SERVICES[@]}"; do
-                  echo "\"$k\": \"${SERVICES[$k]}\","
+          SERVICES_JSON=$(jq -n '{'
+            "$(for k in "${!SERVICES[@]}"; do
+                  echo ""$k": "${SERVICES[$k]}"," 
                 done | sed '$s/,$//')"'
           }')
           echo "$SERVICES_JSON" > services.json
@@ -75,9 +90,9 @@ jobs:
           mkdir -p $(Build.ArtifactStagingDirectory)/microservices
           cp services.json $(Build.ArtifactStagingDirectory)/microservices/version.json
 
-          echo -e "\n📂 File : ./services.json"
+          echo -e "📂 File: services.json"
           jq . "services.json"
-        displayName: "🔎 Visualizando versiones"
+        displayName: "🔎 Consultar versiones ECR"
         condition: succeeded()
         env:
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
