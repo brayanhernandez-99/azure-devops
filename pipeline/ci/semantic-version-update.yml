@@ -16,86 +16,50 @@ jobs:
       - script: |
           set -e
           echo "⚙️ Procesando microservices..."
-
+          ECR_REGISTRY="861262569826.dkr.ecr.us-east-1.amazonaws.com"
           CURRENT_BRANCH="$(Build.SourceBranch)"
-          ECR="861262569826.dkr.ecr.us-east-1.amazonaws.com"
-          ENVIRONMENT="unknown"
 
           case "$CURRENT_BRANCH" in
             refs/heads/develop)   ENVIRONMENT="develop"; ;;
             refs/heads/staging)   ENVIRONMENT="qa"; ;;
             refs/heads/master)    ENVIRONMENT="prd"; ;;
+            *)
+              echo -e "\n##vso[task.logissue type=error]⚠️ Error: ENVIRONMENT [$CURRENT_BRANCH] no reconocido."
+              exit 99
+              ;;
           esac
 
-          if [[ "$ENVIRONMENT" == "unknown" ]]; then
-            echo -e "\n##vso[task.logissue type=error]⚠️ Error: ENVIRONMENT [$ENVIRONMENT] no reconocido."
+          export CLUSTER="invictus"
+          SERVICE_NAMES=$(aws ecs list-services --cluster "$CLUSTER" --query "serviceArns[]" --output text | awk -F/ '{print $NF}')
+          if [[ -z "$SERVICE_NAMES" ]]; then
+            echo -e "\n##vso[task.logissue type=error]⚠️ No se encontraron servicios en el cluster $CLUSTER"
             exit 99
           fi
 
-          declare -A SERVICES=(
-            # Estan en develop y staging pero no en las redes
-            [scheduler]="microservice-scheduler-$ENVIRONMENT"
-            [raspa]="microservice-raspa-$ENVIRONMENT"
-            [credits]="microservice-credits-$ENVIRONMENT"
-            
-            # Se va a eliminar en la redes
-            # [shopping-cart]="microservice-shopping-cart-$ENVIRONMENT" 
+          echo -e "\n🔍 Consultando servicios..."
+          declare -A SERVICES=()
+          for SERVICE_NAME in $SERVICE_NAMES; do
+            SERVICE_REPO="microservice-${SERVICE_NAME}-${ENVIRONMENT}"
+            SERVICES["$SERVICE_NAME"]="$SERVICE_REPO"
 
-            [astro]="microservice-astro-$ENVIRONMENT"
-            [awards]="microservice-awards-$ENVIRONMENT"
-            [bff-administration]="microservice-bff-administration-$ENVIRONMENT"
-            [bff-integration]="microservice-bff-integration-$ENVIRONMENT"
-            [bff-sellers]="microservice-bff-sellers-$ENVIRONMENT"
-            [biometrics]="microservice-biometrics-$ENVIRONMENT"
-            [collected]="microservice-collected-$ENVIRONMENT"
-            [conciliation]="microservice-conciliation-$ENVIRONMENT"
-            [dynamic-storage]="microservice-dynamic-storage-$ENVIRONMENT"
-            [external-wager]="microservice-external-wager-$ENVIRONMENT"
-            [generic-services]="microservice-generic-services-$ENVIRONMENT"
-            [hierarchies]="microservice-hierarchies-$ENVIRONMENT"
-            [legacy]="microservice-legacy-$ENVIRONMENT"
-            [lotteries]="microservice-lotteries-$ENVIRONMENT"
-            [lotteries-games]="microservice-lotteries-games-$ENVIRONMENT"
-            [lotteries-games-admin]="microservice-lotteries-games-$ENVIRONMENT"
-            [millonario]="microservice-millonario-$ENVIRONMENT"
-            [money-control]="microservice-money-control-$ENVIRONMENT"
-            [notifications]="microservice-notifications-$ENVIRONMENT"
-            [notifier]="microservice-notifier-$ENVIRONMENT"
-            [online-games]="microservice-online-games-$ENVIRONMENT"
-            [papelery]="microservice-papelery-$ENVIRONMENT"
-            [payment-voucher]="microservice-payment-voucher-$ENVIRONMENT"
-            [payments]="microservice-payments-$ENVIRONMENT"
-            [products]="microservice-products-$ENVIRONMENT"
-            [promotional]="microservice-promotional-$ENVIRONMENT"
-            [raffles]="microservice-raffles-$ENVIRONMENT"
-            [recharges]="microservice-recharges-$ENVIRONMENT"
-            [remittances]="microservice-remittances-$ENVIRONMENT"
-            [security]="microservice-security-$ENVIRONMENT"
-            [sellers]="microservice-sellers-$ENVIRONMENT"
-            [siga]="microservice-siga-$ENVIRONMENT"
-            [transaction]="microservice-transaction-$ENVIRONMENT"
-            [transaction-astro]="microservice-transaction-$ENVIRONMENT"
-            [transaction-lotteries-games]="microservice-transaction-$ENVIRONMENT"
-            [transaction-notifier]="microservice-transaction-notifier-$ENVIRONMENT"
-            [transaction-recharges]="microservice-transaction-$ENVIRONMENT"
-            [trino]="microservice-trino-$ENVIRONMENT"
-            [wiretransfer]="microservice-wiretransfer-$ENVIRONMENT"
-          )
+            echo -e "\nECS: $SERVICE_NAME"
+            echo "ECR: $SERVICE_REPO"
+          done
 
           for SERVICE in "${!SERVICES[@]}"; do
-            REPO_NAME="${SERVICES[$SERVICE]}"
-            echo -e "\n🔍 Consultando $SERVICE ..."
+            SERVICE_REPO="${SERVICES[$SERVICE]}"
+            echo -e "\n🔍 Consultando version $SERVICE ..."
 
-            VERSION=$(aws ecr describe-images --repository-name "$REPO_NAME" --region "$AWS_DEFAULT_REGION" --query "reverse(sort_by(imageDetails, &imagePushedAt))[0]" --output json | jq -r '.imageTags // [] | map(select(. != "latest")) | .[0]')
+            VERSION=$(aws ecr describe-images --repository-name "$SERVICE_REPO" --region "$AWS_DEFAULT_REGION" --query "reverse(sort_by(imageDetails, &imagePushedAt))[0]" --output json | jq -r '.imageTags // [] | map(select(. != "latest")) | .[0]')
             if [[ -z "$VERSION" || "$VERSION" == "null" ]]; then
-              echo -e "\n##vso[task.logissue type=error]⚠️ No se encontró versión para -> $REPO_NAME"
+              echo -e "\n##vso[task.logissue type=error]⚠️ No se encontró versión para -> $SERVICE_REPO"
               exit 99
             fi
 
-            FULL_IMAGE="$ECR/$REPO_NAME:$VERSION"
+            FULL_IMAGE="$ECR_REGISTRY/$SERVICE_REPO:$VERSION"
             SERVICES[$SERVICE]="$FULL_IMAGE"
 
-            echo "Repo: $REPO_NAME → $VERSION"
+            echo "Repo: $SERVICE_REPO → $VERSION"
             echo "Imagen: $FULL_IMAGE"
             echo "------------------------------------------------------------"
           done
