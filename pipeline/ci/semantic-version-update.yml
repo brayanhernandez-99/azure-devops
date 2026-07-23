@@ -24,7 +24,7 @@ jobs:
             exit 99
           fi
 
-          printf '%s' $SERVICE_NAMES > service_names.txt
+          printf '%s\n' $SERVICE_NAMES > service_names.txt
           echo -e "📂 File: service_names.txt"
           cat service_names.txt
         displayName: "🔎 Listar servicios ECS"
