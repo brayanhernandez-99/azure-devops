@@ -135,58 +135,78 @@ jobs:
           script: |
             set -e
 
-            DIRS=(
-              astro
-              awards
-              bff-administration
-              bff-integration
-              bff-sellers
-              biometrics
-              collected
-              conciliation
-              dynamic-storage
-              external-wager
-              generic-services
-              hierarchies
-              legacy
-              lotteries
-              lotteries-games
-              lotteries-games-admin
-              metabase
-              millonario
-              money-control
-              notifications
-              notifier
-              online-games
-              papelery
-              payments
-              payment-voucher
-              products
-              promotional
-              raffles
-              raspa
-              recharges
-              remittances
-              scheduler
-              security
-              sellers
-              shopping-cart
-              siga
-              transaction
-              transaction-astro
-              transaction-lotteries-games
-              transaction-notifier
-              transaction-recharges
-              trino
-              wiretransfer
-            )
 
-            for dir in "${DIRS[@]}"; do
-              cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/$dir/aws-service-ecs
-              terragrunt init --all --parallelism=1 --non-interactive --no-color
-              terragrunt plan --all --non-interactive --no-color
-              terragrunt apply --all --non-interactive --no-color
-            done
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/scheduler
+            terragrunt init --all --parallelism=1 --non-interactive --no-color
+            terragrunt plan --all --non-interactive --no-color
+            terragrunt destroy --all --non-interactive --no-color
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            # DIRS=(
+            #   astro
+            #   awards
+            #   bff-administration
+            #   bff-integration
+            #   bff-sellers
+            #   biometrics
+            #   collected
+            #   conciliation
+            #   dynamic-storage
+            #   external-wager
+            #   generic-services
+            #   hierarchies
+            #   legacy
+            #   lotteries
+            #   lotteries-games
+            #   lotteries-games-admin
+            #   metabase
+            #   millonario
+            #   money-control
+            #   notifications
+            #   notifier
+            #   online-games
+            #   papelery
+            #   payments
+            #   payment-voucher
+            #   products
+            #   promotional
+            #   raffles
+            #   raspa
+            #   recharges
+            #   remittances
+            #   scheduler
+            #   security
+            #   sellers
+            #   shopping-cart
+            #   siga
+            #   transaction
+            #   transaction-astro
+            #   transaction-lotteries-games
+            #   transaction-notifier
+            #   transaction-recharges
+            #   trino
+            #   wiretransfer
+            # )
+
+            # for dir in "${DIRS[@]}"; do
+            #   cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/$dir/aws-service-ecs
+            #   terragrunt init --all --parallelism=1 --non-interactive --no-color
+            #   terragrunt plan --all --non-interactive --no-color
+            #   terragrunt apply --all --non-interactive --no-color
+            # done
 
 
 
