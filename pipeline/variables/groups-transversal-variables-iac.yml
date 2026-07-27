@@ -33,7 +33,7 @@ variables:
 
   # Master branch → por región
   - ${{ if and(eq(parameters.region, 'antioquia_west'), eq(variables['Build.SourceBranchName'], 'master')) }}:
-      - group: trasversal-aws-antioquia
+      - group: trasversal-aws-antioquia-west
       - group: infrastructure-antioquia-west
       - group: secrets-infrastructure-antioquia-west
       - group: parameters-infrastructure-antioquia-west
@@ -51,7 +51,7 @@ variables:
       - group: ftp-infrastructure-antioquia-cap
 
   - ${{ if and(eq(parameters.region, 'cap_west'), eq(variables['Build.SourceBranchName'], 'master')) }}:
-      - group: trasversal-aws-antioquia-cap
+      - group: trasversal-aws-antioquia-cap-west
       - group: infrastructure-antioquia-cap-west
       - group: secrets-infrastructure-antioquia-cap-west
       - group: parameters-infrastructure-antioquia-cap-west
