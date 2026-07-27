@@ -163,7 +163,7 @@ jobs:
 
             echo -e "ℹ️ Configurando... \n"
             echo "Environment:    $environment"
-            echo "Micro service:  $msName"
+            echo "Microservice:   $msName"
             echo "ECR Repository: $ECR_REPOSITORY"
 
             echo "##vso[task.setvariable variable=ecr_repository]$ECR_REPOSITORY"
