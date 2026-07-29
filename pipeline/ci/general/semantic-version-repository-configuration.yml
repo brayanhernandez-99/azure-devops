@@ -19,7 +19,13 @@ jobs:
           targetType: inline
           script: |
             set -e
-            BRANCH="${BUILD_SOURCEBRANCH#refs/heads/}"
+            if [[ "$(Build.Reason)" == "PullRequest" ]]; then
+              BRANCH="$(System.PullRequest.SourceBranch)"
+            else
+              BRANCH="$(Build.SourceBranch)"
+            fi
+
+            BRANCH="${BRANCH#refs/heads/}"
             REGEX='^(feature/R-[0-9]+-[a-zA-Z0-9._-]+|hotfix/I-[0-9]+-[a-zA-Z0-9._-]+|develop|staging|master)$'
             echo "Validando rama: $BRANCH"
 
