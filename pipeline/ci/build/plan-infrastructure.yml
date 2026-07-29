@@ -136,11 +136,14 @@ jobs:
             set -e
 
 
-            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-ftp
+            # cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/initial-infrastructure/aws-service-ftp
+            # terragrunt init --all --parallelism=1 --non-interactive --no-color
+            # terragrunt plan --all --non-interactive --no-color
+
+
+            cd $(Build.SourcesDirectory)/iac-terragrunt/invictus/scheduler/aws-service-ecs
             terragrunt init --all --parallelism=1 --non-interactive --no-color
             terragrunt plan --all --non-interactive --no-color
-
-
 
 
             ###
