@@ -8,7 +8,7 @@ stages:
 
   #####################################################################
 
-  - ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')) }}:
+  - ${{ if or(eq(variables['Build.Reason'], 'PullRequest'), startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')) }}:
       - stage: build_electron
         displayName: "📦 Build Electron"
         dependsOn: semantic_version_electron
