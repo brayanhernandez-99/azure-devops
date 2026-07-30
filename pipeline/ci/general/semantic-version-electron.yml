@@ -19,7 +19,13 @@ jobs:
           targetType: inline
           script: |
             set -e
-            BRANCH="${BUILD_SOURCEBRANCH#refs/heads/}"
+            if [[ "$(Build.Reason)" == "PullRequest" ]]; then
+              BRANCH="$(System.PullRequest.SourceBranch)"
+            else
+              BRANCH="$(Build.SourceBranch)"
+            fi
+
+            BRANCH="${BRANCH#refs/heads/}"
             REGEX='^(feature/R-[0-9]+-[a-zA-Z0-9._-]+|hotfix/I-[0-9]+-[a-zA-Z0-9._-]+|develop|staging|master)$'
             echo "Validando rama: $BRANCH"
 
@@ -38,8 +44,15 @@ jobs:
           targetType: inline
           script: |
             set -e
+            if [[ "$(Build.Reason)" == "PullRequest" ]]; then
+              CURRENT_BRANCH="$(System.PullRequest.SourceBranch)"
+            else
+              CURRENT_BRANCH="$(Build.SourceBranch)"
+            fi
+            CURRENT_BRANCH="${CURRENT_BRANCH#refs/heads/}"
+
             echo -e "\n📌 Verificando si feature está actualizada con master y si hay cambios relevantes..."
-            echo "Branch Actual: $(echo $(Build.SourceBranch))"          
+            echo "Branch Actual: $CURRENT_BRANCH"
             git fetch origin master
 
             # Encuentra el punto de bifurcación (base común)
@@ -78,7 +91,12 @@ jobs:
           targetType: inline
           script: |
             set -e
-            sourceBranch="${BUILD_SOURCEBRANCH/refs\/heads\//}"
+            if [[ "$(Build.Reason)" == "PullRequest" ]]; then
+              sourceBranch="$(System.PullRequest.SourceBranch)"
+            else
+              sourceBranch="$(Build.SourceBranch)"
+            fi
+            sourceBranch="${sourceBranch/refs\/heads\//}"
             targetBranch="master"
 
             echo -e "\n🔎 Verificando que no se hayan agregado nuevas sentencias console.* ..."
@@ -202,7 +220,12 @@ jobs:
           targetType: inline
           script: |
             set -e
-            CURRENT_BRANCH="$(Build.SourceBranch)"
+            if [[ "$(Build.Reason)" == "PullRequest" ]]; then
+              CURRENT_BRANCH="$(System.PullRequest.SourceBranch)"
+            else
+              CURRENT_BRANCH="$(Build.SourceBranch)"
+            fi
+
             echo -e "\nℹ️ Branch Actual: $CURRENT_BRANCH"
 
             if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|master|staging|feature/.+|hotfix/.+)$ ]]; then
@@ -218,7 +241,7 @@ jobs:
               fi
 
               if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|staging|master)$ ]]; then
-                raw_branch=$(Build.SourceBranch)
+                raw_branch="$CURRENT_BRANCH"
                 clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
                 echo "Branch: $clean_branch"
               fi
@@ -327,6 +350,7 @@ jobs:
                   # Las bases son diferentes, solo incrementa el prerelease
                   NEXT_VERSION="$BASE_VERSION_BRANCH-$clean_branch.$((CURRENT_PRERELEASE + 1))"
                 fi
+                
                 echo -e "\n🔎 Versiones Detectadas"
                 echo "📌 Anterior versión : $VERSION_ACTUAL"
                 echo "🚀 Próxima versión : $NEXT_VERSION"
@@ -346,7 +370,6 @@ jobs:
               if [[ "$CURRENT_BRANCH" == refs/heads/hotfix/* ]]; then
                 git checkout version/$clean_branch
                 VERSION_ACTUAL_MASTER=$(jq -r .version package.json)
-
                 NEXT_BASE_VERSION=$(bump_version "$VERSION_ACTUAL_MASTER" "$RELEASE_TYPE")
                 NEXT_VERSION="$NEXT_BASE_VERSION"
 
@@ -369,7 +392,11 @@ jobs:
           targetType: inline
           script: |
             set -e
-            raw_branch=$(Build.SourceBranch)
+            if [[ "$(Build.Reason)" == "PullRequest" ]]; then
+              raw_branch="$(System.PullRequest.SourceBranch)"
+            else
+              raw_branch="$(Build.SourceBranch)"
+            fi
             clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
 
             git config user.name "pipeline"

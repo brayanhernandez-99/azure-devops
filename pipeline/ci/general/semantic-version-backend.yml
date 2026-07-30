@@ -240,11 +240,7 @@ jobs:
               fi
 
               if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|staging|master)$ ]]; then
-                if [[ "$(Build.Reason)" == "PullRequest" ]]; then
-                  raw_branch=$(System.PullRequest.SourceBranch)
-                else
-                  raw_branch=$(Build.SourceBranch)
-                fi
+                raw_branch="$CURRENT_BRANCH"
                 clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
                 echo "Branch: $clean_branch"
               fi
@@ -353,6 +349,7 @@ jobs:
                   # Las bases son diferentes, solo incrementa el prerelease
                   NEXT_VERSION="$BASE_VERSION_BRANCH-$clean_branch.$((CURRENT_PRERELEASE + 1))"
                 fi
+                
                 echo -e "\n🔎 Versiones Detectadas"
                 echo "📌 anterior versión : $VERSION_ACTUAL"
                 echo "🚀 Próxima versión : $NEXT_VERSION"
