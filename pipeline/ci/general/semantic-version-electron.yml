@@ -167,15 +167,7 @@ jobs:
             echo -e "\nℹ️ id repositorio $(Build.Repository.Name): $(repoID)"
             echo "Branch Actual: $CURRENT_BRANCH"
 
-            if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
-              CURRENT_BRANCH_PR=refs/heads/feature
-            fi
-
-            if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|staging|master)$ ]]; then
-              CURRENT_BRANCH_PR=$(echo $(Build.SourceBranch))
-            fi
-
-            URL="https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories/$(repoID)/pullrequests?searchCriteria.status=completed&searchCriteria.targetRefName=$CURRENT_BRANCH_PR&api-version=5.0"
+            URL="https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories/$(repoID)/pullrequests?searchCriteria.status=completed&searchCriteria.targetRefName=$CURRENT_BRANCH&api-version=5.0"
             response=$(curl -s -u ":$AZURE_DEVOPS_CLI_PAT" "$URL")
             echo "$response" | jq '.value[0]'
             PR_ID=$(echo "$response" | jq -r '.value[0].pullRequestId')
