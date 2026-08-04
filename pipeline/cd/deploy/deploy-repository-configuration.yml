@@ -75,7 +75,7 @@ jobs:
 
             echo -e "\n📢 Generando notificación para Teams..."
             echo "Pipeline    : $(Build.DefinitionName)"
-            echo "Environment : $(environment)"
+            echo "Environment : $environment"
             echo "Build       : $(Build.BuildNumber)"
             echo "User        : $(Build.RequestedFor)"
             echo "Deployed    : $DEPLOY_TIME"
@@ -94,7 +94,7 @@ jobs:
                     {"type":"TextBlock","text":"✅ Despliegue exitoso","weight":"Bolder","size":"Large","color":"Good"},
                     {"type":"FactSet","facts":[
                       {"title":"Pipeline","value":"$(Build.DefinitionName)"},
-                      {"title":"Environment","value":"$(environment)"},
+                      {"title":"Environment","value":"$environment"},
                       {"title":"Build","value":"$(Build.BuildNumber)"},
                       {"title":"Usuario","value":"$(Build.RequestedFor)"},
                       {"title":"Deployed","value":"$DEPLOY_TIME"}
