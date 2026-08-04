@@ -42,12 +42,39 @@ jobs:
           script: |
             set -e
             echo "🔎 Verificando cambios en carpeta reports/..."
+
             if git diff --name-only HEAD~1 HEAD | grep -q "^reports/"; then 
               echo -e "\n✅ Se detectaron cambios en reports/ y no es develop, enviando mensaje a SQS"; 
-              json_complete='{"event":"migration","streamNotifier":"Notifier","model":{"method":"insert","reports":[{"name":"modelos_invictus","type_card":"model"},{"name":"reportes_invictus","type_card":"question"},{"name":"archivos_cem","type_card":"question"}]}}'; 
+
+              sqs_message='{
+                "event": "migration",
+                "streamNotifier": "Notifier",
+                "model": {
+                  "method": "insert",
+                  "reports": [
+                    {
+                      "name": "modelos_invictus",
+                      "type_card": "model"
+                    },
+                    {
+                      "name": "reportes_invictus",
+                      "type_card": "question"
+                    },
+                    {
+                      "name": "archivos_cem",
+                      "type_card": "question"
+                    }
+                  ]
+                }
+              }'
+
+              echo ""
+              echo "Mensaje a enviar:"
+              echo "$sqs_message"
+              
               aws sqs send-message \
                 --queue-url https://sqs.us-east-1.amazonaws.com/$(ACCOUNT_ID_INVICTUS)/Sellers \
-                --message-body "$json_complete" \
+                --message-body "$sqs_message" \
                 --delay-seconds 0
             else 
               echo -e "\nℹ️ No se enviará mensaje a SQS: no hubo cambios en reports/"
@@ -75,7 +102,7 @@ jobs:
 
             echo -e "\n📢 Generando notificación para Teams..."
             echo "Pipeline    : $(Build.DefinitionName)"
-            echo "Environment : $(environment)"
+            echo "Environment : $environment"
             echo "Build       : $(Build.BuildNumber)"
             echo "User        : $(Build.RequestedFor)"
             echo "Deployed    : $DEPLOY_TIME"
@@ -94,7 +121,7 @@ jobs:
                     {"type":"TextBlock","text":"✅ Despliegue exitoso","weight":"Bolder","size":"Large","color":"Good"},
                     {"type":"FactSet","facts":[
                       {"title":"Pipeline","value":"$(Build.DefinitionName)"},
-                      {"title":"Environment","value":"$(environment)"},
+                      {"title":"Environment","value":"$environment"},
                       {"title":"Build","value":"$(Build.BuildNumber)"},
                       {"title":"Usuario","value":"$(Build.RequestedFor)"},
                       {"title":"Deployed","value":"$DEPLOY_TIME"}
