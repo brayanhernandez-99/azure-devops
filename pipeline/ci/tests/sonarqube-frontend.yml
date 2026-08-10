@@ -138,6 +138,8 @@ jobs:
             echo "Comentando app-legacy/*"
             cd $(Build.Repository.Name)
             sed -i '/app-legacy\//s/  -/  # -/' pnpm-workspace.yaml
+
+            echo -e "\n📁 File:"
             cat pnpm-workspace.yaml
         displayName: "💬 Comment app-legacy/*"
         condition: and(succeeded(),
@@ -149,6 +151,11 @@ jobs:
           targetType: inline
           script: |
             set -e
+
+            ls -ltra
+            pwd
+
+
             echo -e "\n📁 Files:"
             ls -la $(Build.Repository.Name)/$(file)/$(msName)
 
@@ -158,7 +165,7 @@ jobs:
             cp pipelines-templates/pipeline/config/vitest.config.mts $(Build.Repository.Name)/$(file)/$(msName)
             echo "⚠️ Copiando archivo vitest.config.mts templates..."
             echo "✅ vitest.config.mts copiado exitosamente."
-  
+
             echo -e "\n📁 File: vitest.config.mts"
             cat $(Build.Repository.Name)/$(file)/$(msName)/vitest.config.mts
 
