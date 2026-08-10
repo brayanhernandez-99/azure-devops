@@ -151,11 +151,6 @@ jobs:
           targetType: inline
           script: |
             set -e
-
-            ls -ltra
-            pwd
-
-
             echo -e "\n📁 Files:"
             ls -la $(Build.Repository.Name)/$(file)/$(msName)
 
