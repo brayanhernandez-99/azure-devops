@@ -149,21 +149,22 @@ jobs:
           targetType: inline
           script: |
             set -e
-            rm "$(Build.Repository.Name)/$(file)/$(msName)/vitest.config.mts"
-            echo -e "\n✅ Elimnación archivo vitest.config.mts ..."
+            echo -e "\n📁 Files:"
+            ls -la $(Build.Repository.Name)/$(file)/$(msName)
+
+            rm -f "$(Build.Repository.Name)/$(file)/$(msName)/vitest.config.mts"
+            echo -e "\n✅ Eliminación archivo vitest.config.mts ..."
 
             cp pipelines-templates/pipeline/config/vitest.config.mts $(Build.Repository.Name)/$(file)/$(msName)
             echo "⚠️ Copiando archivo vitest.config.mts templates..."
-
             echo "✅ vitest.config.mts copiado exitosamente."
-            echo -e "\n📁 Files:"
-            ls -la $(Build.Repository.Name)/$(file)/$(msName)
+  
             echo -e "\n📁 File: vitest.config.mts"
             cat $(Build.Repository.Name)/$(file)/$(msName)/vitest.config.mts
 
             FILE="$(Build.Repository.Name)/$(file)/$(msName)/vitest.config.ts"
             if [[ -f "$FILE" ]]; then
-              rm "$FILE"
+              rm -f "$FILE"
               echo "❌ Eliminando el archivo vitest.config.ts"
             fi
         displayName: "♻️ Replace vitest.config"
