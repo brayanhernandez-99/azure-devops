@@ -12,14 +12,14 @@ parameters:
     type: object
     default:
       # - antioquia_west
-      # # - cap_west
-      # # - cap
+      # - cap_west
+      - cap
       - tolima
-      # - huila
-      # - cauca
-      # - boyaca
-      # - santander
-      # - putumayo
+      - huila
+      - cauca
+      - boyaca
+      - santander
+      - putumayo
 
 resources:
   repositories:
