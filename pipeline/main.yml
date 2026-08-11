@@ -12,12 +12,12 @@ parameters:
     type: object
     default:
       # - antioquia_west
-      # - cap_west
-      # - cap
-      # - tolima
-      - huila
+      # # - cap_west
+      # # - cap
+      - tolima
+      # - huila
       # - cauca
-      - boyaca
+      # - boyaca
       # - santander
       # - putumayo
 
