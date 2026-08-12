@@ -145,24 +145,24 @@ jobs:
             echo -e "\n📁 Archivo .env.local: app-administration-vue2"
             printenv | grep "^VUE2_" | sed "s/^VUE2_//" > $(System.DefaultWorkingDirectory)/app-legacy/app-administration-vue2/.env.local
             printenv | grep "^ADMIN_" | sed "s/^ADMIN_//" >> $(System.DefaultWorkingDirectory)/app-legacy/app-administration-vue2/.env.local
-            ls -l app-legacy/app-administration-vue2/.env.local
-            cat app-legacy/app-administration-vue2/.env.local
+            ls -l $(System.DefaultWorkingDirectory)/app-legacy/app-administration-vue2/.env.local
+            cat $(System.DefaultWorkingDirectory)/app-legacy/app-administration-vue2/.env.local
 
             echo -e "\n📁 Archivo .env.local: app-sellers-vue2"
             printenv | grep "^VUE2_" | sed "s/^VUE2_//" > $(System.DefaultWorkingDirectory)/app-legacy/app-sellers-vue2/.env.local
             printenv | grep "^SELLERS_" | sed "s/^SELLERS_//" >> $(System.DefaultWorkingDirectory)/app-legacy/app-sellers-vue2/.env.local
-            ls -l app-legacy/app-sellers-vue2/.env.local
-            cat app-legacy/app-sellers-vue2/.env.local
+            ls -l $(System.DefaultWorkingDirectory)/app-legacy/app-sellers-vue2/.env.local
+            cat $(System.DefaultWorkingDirectory)/app-legacy/app-sellers-vue2/.env.local
 
             echo -e "\n📁 Archivo .env: invictus"
             printenv | grep -i "^INVICTUS_" |sed "s/^INVICTUS_//" > $(System.DefaultWorkingDirectory)/apps/invictus/.env
-            ls -l apps/invictus/.env
-            cat apps/invictus/.env
+            ls -l $(System.DefaultWorkingDirectory)/apps/invictus/.env
+            cat $(System.DefaultWorkingDirectory)/apps/invictus/.env
 
             echo -e "\n📁 Archivos .env para el path raiz"
             printenv | grep "^ROOT_" | sed "s/^ROOT_//" > $(System.DefaultWorkingDirectory)/.env
-            ls -l .env
-            cat .env
+            ls -l $(System.DefaultWorkingDirectory)/.env
+            cat $(System.DefaultWorkingDirectory)/.env
         displayName: "⚙️ Generate .env"
         condition: succeeded()
 
@@ -173,7 +173,7 @@ jobs:
             set -e
             echo -e "\n📁 Archivos .env: $(msName)"
             printenv | grep -i "^$(msName)_" | sed -E "s/^($(msName))_//I" > $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.env.tmp
-            cat apps/invictus/.env >> $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.env.tmp
+            cat $(System.DefaultWorkingDirectory)/apps/invictus/.env >> $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.env.tmp
 
             mv $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.env.tmp $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.env
             ls -l $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.env
