@@ -159,7 +159,7 @@ jobs:
             ls -l $(System.DefaultWorkingDirectory)/apps/invictus/.env
             cat $(System.DefaultWorkingDirectory)/apps/invictus/.env
 
-            echo -e "\n📁 Archivos .env para el path raiz"
+            echo -e "\n📁 Archivos .env raiz"
             printenv | grep "^ROOT_" | sed "s/^ROOT_//" > $(System.DefaultWorkingDirectory)/.env
             ls -l $(System.DefaultWorkingDirectory)/.env
             cat $(System.DefaultWorkingDirectory)/.env
@@ -181,7 +181,8 @@ jobs:
         displayName: "⚙️ Generate $(msName) .env"
         condition: and(succeeded(),
           ne(variables['msName'], 'app-administration-vue2'),
-          ne(variables['msName'], 'app-sellers-vue2'))
+          ne(variables['msName'], 'app-sellers-vue2'),
+          ne(variables['msName'], 'invictus'))
 
       - task: Bash@3
         inputs:
