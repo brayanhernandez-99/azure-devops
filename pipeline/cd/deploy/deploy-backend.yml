@@ -82,7 +82,6 @@ jobs:
         condition: succeeded()
         env:
           region: ${{ parameters.region }}
-          environment_staging: ${{ parameters.environments }}
 
       - task: Bash@3
         inputs:

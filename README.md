@@ -43,11 +43,11 @@ pipeline/
 │   │   ├── deploy-flutter.yml
 │   │   ├── deploy-electron.yml
 │   │   └── deploy-repository-configuration.yml
-│   └── commit/
-│       ├── commit-version-frontend.yml
-│       ├── commit-version-backend.yml
-│       ├── commit-version-flutter.yml
-│       └── commit-version-electron.yml
+│   └── tags/
+│       ├── tag-version-frontend.yml
+│       ├── tag-version-backend.yml
+│       ├── tag-version-flutter.yml
+│       └── tag-version-electron.yml
 ├── variables/
 │   ├── groups-variables-backend.yml
 │   ├── groups-variables-frontend.yml
@@ -67,7 +67,7 @@ pipeline/
 - **main.yml**: Pipeline principal que orquesta los procesos de build y release según el tipo de proyecto, rama y entorno.
 - **pipelines/**: Templates por tipo de release (aws-s3, aws-ecs, apk, app, rpc), cada uno con stages de semantic version, scan, build y deploy.
 - **ci/**: Jobs de versionado semántico, builds, análisis estático (SonarQube, Gitleaks) y pre-build (detección de cambios).
-- **cd/**: Deploy con approval gate (solo master), despliegue por plataforma y commit de versión.
+- **cd/**: Deploy con approval gate (solo master), despliegue por plataforma y tag de versión.
 - **variables/**: Grupos de variables por plataforma y entorno (develop, staging, staging_nacional, master por región).
 
 ## Parámetros principales

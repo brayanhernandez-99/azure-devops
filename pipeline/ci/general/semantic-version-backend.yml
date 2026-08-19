@@ -392,7 +392,7 @@ jobs:
             git checkout -B version/$clean_branch origin/version/$clean_branch
 
             echo "🔧 Actualizando versión"
-            msName=$(echo "$(Build.Repository.wName)" | sed -E 's/^microservice-//; s/-invictus$//')
+            msName=$(echo "$(Build.Repository.Name)" | sed -E 's/^microservice-//; s/-invictus$//')
             echo "$msName → $(cleanNEXT_VERSION)"
 
             jq --arg version "$(cleanNEXT_VERSION)" '.version = $version' package.json > tmp.json && mv tmp.json package.json
