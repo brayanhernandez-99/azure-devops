@@ -173,9 +173,12 @@ jobs:
           script: |
             set -e
             echo -e "\nℹ️ Descargando Keystore..."
-            mkdir -p android/app/keystore
+            echo "Cuenta  : $(ACCOUNT_ID_INVICTUS)"
+            echo "KeyAlias: $(KEY_ALIAS)"
 
+            mkdir -p android/app/keystore
             aws s3 cp s3://keystore-$(ACCOUNT_ID_INVICTUS)/keystore/$(KEY_ALIAS).jks android/app/keystore/
+
             if [[ -d "android/app/keystore" ]] && [[ "$(ls -A android/app/keystore/$(KEY_ALIAS).jks)" ]]; then    
               echo -e "\n📁 Keystore descargado:"
               ls -la android/app/keystore/*
@@ -277,7 +280,7 @@ jobs:
             mv build/app/outputs/flutter-apk/app-profile.apk.sha1 build/app/outputs/flutter-apk/invictus-$(environment)-$(version).apk.sha1
 
             mkdir -p "$(Build.ArtifactStagingDirectory)/release/$(environment)"
-            cp -R build/app/outputs/flutter-apk/* $(Build.ArtifactStagingDirectory)/release/$(environment)/
+            cp -R "build/app/outputs/flutter-apk/*" "$(Build.ArtifactStagingDirectory)/release/$(environment)/"
 
             echo -e "\n📁 Files: build/app/outputs/flutter-apk"
             ls -l build/app/outputs/flutter-apk

@@ -60,7 +60,8 @@ jobs:
             esac
 
             echo "##vso[task.setvariable variable=environment]$environment"
-            echo -e "\nℹ️ Environment: $environment"
+            echo -e "\n✅ Environment asignado exitosamente"
+            echo "Environment: $environment"
         displayName: "⚙️ Generate Environment"
         condition: succeeded()
         env:
