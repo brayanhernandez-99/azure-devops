@@ -14,15 +14,15 @@ jobs:
     steps:
       - task: DownloadBuildArtifacts@0
         inputs:
-          artifactName: "flutter"
-          downloadPath: "$(Pipeline.Workspace)/flutter-artifact"
+          artifactName: "release"
+          downloadPath: "$(Pipeline.Workspace)"
         displayName: "📥 Download Flutter Artifact"
         condition: succeeded()
 
       - task: DownloadBuildArtifacts@0
         inputs:
           artifactName: "versions"
-          downloadPath: "$(Pipeline.Workspace)/versions-downloaded"
+          downloadPath: "$(Pipeline.Workspace)"
         displayName: "📥 Download Version"
         condition: succeeded()
 
@@ -31,8 +31,8 @@ jobs:
           targetType: inline
           script: |
             set -e
-            VERSION_FILE="$(Pipeline.Workspace)/versions-downloaded/versions/flutter/version.json"
-            echo -e "\n📁 Archivo version.json:"
+            VERSION_FILE="$(Pipeline.Workspace)/versions/flutter/version.json"
+            echo -e "\n📁 File: version.json"
             ls -la "$VERSION_FILE"
             cat "$VERSION_FILE"
 
@@ -52,49 +52,15 @@ jobs:
           targetType: inline
           script: |
             set -e
-            CURRENT_BRANCH="$(Build.SourceBranch)"
-            environment="unknown"
-
-            case "$CURRENT_BRANCH" in
-              refs/heads/feature/*) environment="dev"; ;;
-              refs/heads/develop)
-                if [[ "$environment_staging" == "develop_new" ]]; then
-                  environment="dev_new"
-                else
-                  environment="dev"
-                fi
-                ;;
-              refs/heads/staging)
-                if [[ "$environment_staging" == "staging_new" ]]; then
-                  environment="qa_new"
-                elif [[ "$environment_staging" == "staging_nacional" ]]; then
-                  environment="qa_nacional"
-                else
-                  environment="qa"
-                fi
-                ;;
-              refs/heads/master) 
-                case "$region" in
-                  "antioquia") environment="prd-gana"; ;;
-                  "cap")       environment="prd-cap"; ;;
-                  "tolima")    environment="prd-seapto"; ;;
-                  "huila")     environment="prd-suchance"; ;;
-                  "cauca")     environment="prd-acertemos"; ;;
-                  "boyaca")    environment="prd-jer"; ;;
-                  "santander") environment="prd-laperla"; ;;
-                  "putumayo")  environment="prd-matrixredes"; ;;
-                esac ;;
+            CURRENT_BRANCH="$(Build.SourceBranchName)"
+            case "$CURRENT_BRANCH" in 
+              staging) environment="$environment_staging" ;;
+              master) environment="$region" ;;
+              *) environment="develop" ;;
             esac
 
-            if [[ "$environment" == "unknown" ]]; then
-              echo -e "\n##vso[task.logissue type=error]⚠️ Environment [$environment] no reconocido"
-              exit 99
-            fi
-
             echo "##vso[task.setvariable variable=environment]$environment"
-
-            echo -e "\nℹ️ Varibles de entorno:"
-            echo "Environment: $environment"
+            echo -e "\nℹ️ Environment: $environment"
         displayName: "⚙️ Generate Environment"
         condition: succeeded()
         env:
@@ -108,25 +74,25 @@ jobs:
             set -e
             echo -e "\n📦 Cargando al Bucket S3..."
             APK_NAME="invictus-$(environment)-$(version).apk"
-            BASE_PATH="$(Pipeline.Workspace)/flutter-artifact/flutter"
+            BASE_PATH="$(Pipeline.Workspace)/release"
 
-            echo "APK: $APK_NAME"
+            echo "APK        : $APK_NAME"
             echo "Environment: $(environment)"
 
             echo -e "\n📁 Archivos a cargar:"
             ls -la $BASE_PATH/*
 
-            aws s3 cp $BASE_PATH/$APK_NAME s3://repository-native/app-seller/android/$(environment)/$APK_NAME --acl public-read
+            aws s3 cp "$BASE_PATH/$APK_NAME" "s3://download-$(ACCOUNT_ID_INVICTUS)/apk/$APK_NAME"
 
             echo -e "\n✅ Archivos subidos exitosamente."
             echo "🔗 APK: $APK_NAME"
-            echo -e "\n##[command]🔗 URL: https://repository-native.s3.us-east-1.amazonaws.com/app-seller/android/$(environment)/$APK_NAME"
+            echo -e "\n##[command]🔗 URL: https://download-$(ACCOUNT_ID_INVICTUS).s3.us-east-1.amazonaws.com/apk/$APK_NAME"
         displayName: "📤 Upload Bucket S3"
         condition: succeeded()
         env:
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
-          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
-          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
+          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
+          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
 
       - task: Bash@3
         inputs:
@@ -161,49 +127,46 @@ jobs:
           script: |
             set -e
             DEPLOY_TIME=$(date -d "$BUILD_FINISHTIME -5 hours" "+%Y-%m-%d %I:%M %p")
-            BRANCH_NAME_MULTI=$environment_staging
-            BRANCH_NAME="$(Build.SourceBranchName)"
 
-            if [[ "$BRANCH_NAME" == "master" ]]; then
-              BRANCH_DEPLOY="${red:-red}"
-
-            elif [[ "$BRANCH_NAME" == "develop" && "$BRANCH_NAME_MULTI" == "develop" ]]; then
-              BRANCH_DEPLOY="develop"
-
-            elif [[ "$BRANCH_NAME" == "staging" && "$BRANCH_NAME_MULTI" == "staging" ]]; then
-              BRANCH_DEPLOY="staging"
-
-            else
-              BRANCH_DEPLOY="$BRANCH_NAME_MULTI"
-            fi
+            echo -e "\n📢 Generando notificación para Teams..."
+            echo "Pipeline    : $(Build.DefinitionName)"
+            echo "Environment : $(environment)"
+            echo "Build       : $(Build.BuildNumber)"
+            echo "User        : $(Build.RequestedFor)"
+            echo "Deployed    : $DEPLOY_TIME"
+            echo ""
 
             payload=$(cat <<EOF
             {
-              "@type": "MessageCard",
-              "@context": "http://schema.org/extensions",
-              "summary": "Deployment successful",
-              "themeColor": "00FF00",
-              "title": "✅ Deployment exitoso $(Build.SourceBranchName)",
-              "sections": [
-                {
-                  "facts": [
-                    { "name": "Pipeline", "value": "$(Build.DefinitionName)" },
-                    { "name": "Branch", "value": "$BRANCH_DEPLOY" },
-                    { "name": "Build", "value": "$(Build.BuildNumber)" },
-                    { "name": "Merged by", "value": "$(Build.RequestedFor)" },
-                    { "name": "Deploy time", "value": "$DEPLOY_TIME" }
+              "type":"message",
+              "attachments":[{
+                "contentType":"application/vnd.microsoft.card.adaptive",
+                "content":{
+                  "\$schema":"http://adaptivecards.io/schemas/adaptive-card.json",
+                  "type":"AdaptiveCard",
+                  "version":"1.5",
+                  "body":[
+                    {"type":"TextBlock","text":"✅ Despliegue exitoso","weight":"Bolder","size":"Large","color":"Good"},
+                    {"type":"FactSet","facts":[
+                      {"title":"Pipeline","value":"$(Build.DefinitionName)"},
+                      {"title":"Environment","value":"$(environment)"},
+                      {"title":"Build","value":"$(Build.BuildNumber)"},
+                      {"title":"Usuario","value":"$(Build.RequestedFor)"},
+                      {"title":"Deployed","value":"$DEPLOY_TIME"}
+                    ]}
                   ],
-                  "markdown": true
+                  "actions":[
+                    {"type":"Action.OpenUrl","title":"🔍 Ver Pipeline","url":"$(System.TeamFoundationCollectionUri)$(System.TeamProject)/_build/results?buildId=$(Build.BuildId)"}
+                  ]
                 }
-              ]
+              }]
             }
             EOF
             )
 
-            curl -H "Content-Type: application/json" \
-                -d "$payload" \
-                "$(URL_WEBHOOK_TEAMS)"
+            curl --fail-with-body \
+              -H "Content-Type: application/json" \
+              -d "$payload" \
+              "$(URL_WEBHOOK_TEAMS)"
         displayName: "📢 Post message to Teams"
-        env:
-          red: ${{ parameters.region }}
-          environment_staging: ${{ parameters.environment_staging }}
+        condition: succeeded()

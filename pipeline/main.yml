@@ -103,7 +103,7 @@ stages:
   #
   # Flutter
   #
-  - ${{ if and(eq(parameters.release, 'apk'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), in(variables['Build.SourceBranchName'], 'develop', 'staging', 'master'))) }}:
+  - ${{ if and(eq(parameters.release, 'apk'), or(eq(variables['Build.Reason'], 'PullRequest'), startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), in(variables['Build.SourceBranchName'], 'develop', 'staging', 'master'))) }}:
       - template: ./pipelines/pipeline-flutter.yml
         parameters:
           red: ${{ parameters.red }}

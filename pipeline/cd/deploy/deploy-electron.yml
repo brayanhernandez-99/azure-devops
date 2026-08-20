@@ -32,7 +32,7 @@ jobs:
           script: |
             set -e
             VERSION_FILE="$(Pipeline.Workspace)/versions/electron/version.json"
-            echo -e "\n📁 Archivo version.json:"
+            echo -e "\n📁 File: version.json"
             ls -la "$VERSION_FILE"
             cat "$VERSION_FILE"
 
