@@ -328,7 +328,7 @@ jobs:
           targetType: inline
           script: |
             $versionFile = "$(Pipeline.Workspace)\versions\electron\version.json"
-            Write-Host "`n📁 Archivo version.json:"
+            Write-Host "`n📁 File: version.json"
             Get-ChildItem -Path $versionFile | Select-Object Mode, LastWriteTime, Length, Name | Format-Table
             Get-Content -Path $versionFile
 

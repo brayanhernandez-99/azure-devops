@@ -74,7 +74,7 @@ jobs:
             set -e
             echo -e "\n📦 Cargando al Bucket S3..."
             APK_NAME="invictus-$(environment)-$(version).apk"
-            BASE_PATH="$(Pipeline.Workspace)/release"
+            BASE_PATH="$(Pipeline.Workspace)/release/$(environment)"
 
             echo "APK        : $APK_NAME"
             echo "Environment: $(environment)"

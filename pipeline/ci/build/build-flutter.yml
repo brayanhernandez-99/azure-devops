@@ -276,8 +276,8 @@ jobs:
             mv build/app/outputs/flutter-apk/app-profile.apk build/app/outputs/flutter-apk/invictus-$(environment)-$(version).apk
             mv build/app/outputs/flutter-apk/app-profile.apk.sha1 build/app/outputs/flutter-apk/invictus-$(environment)-$(version).apk.sha1
 
-            mkdir -p "$(Build.ArtifactStagingDirectory)/flutter-artifact"
-            cp -R build/app/outputs/flutter-apk/* $(Build.ArtifactStagingDirectory)/flutter-artifact/
+            mkdir -p "$(Build.ArtifactStagingDirectory)/release/$(environment)"
+            cp -R build/app/outputs/flutter-apk/* $(Build.ArtifactStagingDirectory)/release/$(environment)/
 
             echo -e "\n📁 Files: build/app/outputs/flutter-apk"
             ls -l build/app/outputs/flutter-apk
