@@ -8,7 +8,7 @@ stages:
 
   #####################################################################
 
-  - ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')) }}:
+  - ${{ if or(eq(variables['Build.Reason'], 'PullRequest'), startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')) }}:
       - stage: build_flutter
         displayName: "📦 Build Flutter"
         dependsOn: semantic_version_flutter
@@ -23,8 +23,6 @@ stages:
         dependsOn: semantic_version_flutter
         jobs:
           - template: ../ci/build/build-flutter.yml
-            parameters:
-              environments: develop
 
       - stage: deploy_flutter_develop
         displayName: "🚀 Deploy Flutter develop"
@@ -33,7 +31,6 @@ stages:
           - template: ../cd/deployment.yml
             parameters:
               release: ${{ parameters.release }}
-              environments: develop
 
   #####################################################################
 
