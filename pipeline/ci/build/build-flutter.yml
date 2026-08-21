@@ -90,6 +90,11 @@ jobs:
             echo -e "\n📁 File: env.json"
             ls -la env.json
             cat env.json
+
+            echo "****" 
+            ls -ltra $ANDROID_HOME/build-tools 
+            echo "****"
+
         displayName: "⚙️ Generate env.json"
         condition: succeeded()
         env:
