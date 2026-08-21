@@ -84,6 +84,7 @@ jobs:
             ls -la $BASE_PATH/*
 
             aws s3 cp "$BASE_PATH/$APK_NAME" "s3://download-$(ACCOUNT_ID_INVICTUS)/apk/$APK_NAME"
+            aws s3 cp "$BASE_PATH/version.json" "s3://download-$(ACCOUNT_ID_INVICTUS)/apk/version.json"
 
             echo -e "\n✅ Archivos subidos exitosamente."
             echo "🔗 APK: $APK_NAME"
