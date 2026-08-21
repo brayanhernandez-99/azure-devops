@@ -69,22 +69,27 @@ jobs:
           targetType: inline
           script: |
             set -e
+
             CURRENT_BRANCH="$(Build.SourceBranchName)"
+
             case "$CURRENT_BRANCH" in 
               staging) environment="$environment_staging" ;;
               master) environment="$region" ;;
               *) environment="develop" ;;
             esac
 
-            jq --arg version "$(version)" \
+            jq -n \
+              --arg version "$(version)" \
               --arg env "$environment" \
               --arg url "$(BASE_URL)" \
               --arg apk "$(APK_URL)" \
-              '.VERSION = $version |
-                .ENVIRONMENT = $env |
-                .BASE_URL = $url |
-                .APK_URL = $apk' \
-              env.json > tmp.json && mv tmp.json env.json
+              '{
+                VERSION: $version,
+                ENVIRONMENT: $env,
+                BASE_URL: $url,
+                APK_URL: $apk
+              }' \
+              > env.json
 
             echo "##vso[task.setvariable variable=environment]$environment"
             echo -e "\n📁 File: env.json"
@@ -283,17 +288,20 @@ jobs:
           targetType: inline
           script: |
             set -e
-            jq --arg version "$(version)" \
+            jq -n \
+              --arg version "$(version)" \
               --arg apk "$(APK_URL)" \
               --arg sha256 "$(SHA256_APK)" \
               --arg releaseNotes "Nuevas features y fixes" \
               --arg cleanCache "false" \
-              '.version = $version |
-                .apkUrl = $apk |
-                .sha256checksum = $sha256 |
-                .releaseNotes = $releaseNotes |
-                .cleanCache = $cleanCache' \
-              version.json > tmp.json && mv tmp.json version.json
+              '{
+                version: $version,
+                apkUrl: $apk,
+                sha256checksum: $sha256,
+                releaseNotes: $releaseNotes,
+                cleanCache: $cleanCache
+              }' \
+              > version.json
 
             echo -e "\n📁 File: version.json"
             ls -la version.json
