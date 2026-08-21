@@ -241,7 +241,7 @@ jobs:
 
             echo -e "\n🌀Ejecutando Build Flutter: flutter --no-color build apk --no-tree-shake-icons --profile"
             flutter --no-color build apk --no-tree-shake-icons --profile
-        displayName: "📦 Flutter Build APK"
+        displayName: "📦 Flutter Build"
         condition: succeeded()
 
       - task: Bash@3
@@ -263,20 +263,21 @@ jobs:
               echo -e "\n🔐 SHA-1 Apk: $SHA1_APK"
               echo "🔐 SHA-1 Flutter: $SHA1_FLUTTER"
               echo "🔐 SHA-1 Certificado:"
-              
-              echo -e "\n\n\n\n"
-              echo "**** $APKSIGNER ****"
-              ls -ltra "$APKSIGNER"
-              "$APKSIGNER" verify --print-certs build/app/outputs/flutter-apk/app-profile.apk | grep -A 5 "Signer #"
-              
+
               echo -e "\n\n\n\n"
               ls -ltra "$ANDROID_HOME/build-tools/37.0.0/apksigner"
               "$ANDROID_HOME/build-tools/37.0.0/apksigner" verify --print-certs build/app/outputs/flutter-apk/app-profile.apk | grep -A 5 "Signer #"
+
+              echo -e "\n\n\n\n"
+              echo "**** $APKSIGNER ****"
+              ls -ltra "$APKSIGNER"
+              "$APKSIGNER" verify --print-certs build/app/outputs/flutter-apk/app-profile.apk
+
             else
               echo -e "\n##vso[task.logissue type=error]⚠️ Error: Apk no encontrado"
               exit 99
             fi
-        displayName: "🔎 Validate APK"
+        displayName: "🔎 Validate Build"
         condition: succeeded()
 
       - task: Bash@3
