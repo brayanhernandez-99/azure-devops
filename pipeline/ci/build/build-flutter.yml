@@ -90,11 +90,6 @@ jobs:
             echo -e "\n📁 File: env.json"
             ls -la env.json
             cat env.json
-
-            echo "****" 
-            ls -ltra $ANDROID_HOME/build-tools 
-            echo "****"
-
         displayName: "⚙️ Generate env.json"
         condition: succeeded()
         env:
@@ -266,7 +261,7 @@ jobs:
               echo -e "\n🔐 SHA-1 Apk: $SHA1_APK"
               echo "🔐 SHA-1 Flutter: $SHA1_FLUTTER"
               echo "🔐 SHA-1 Certificado:"
-              $ANDROID_HOME/build-tools/34.0.0/apksigner verify --print-certs build/app/outputs/flutter-apk/app-profile.apk | grep -A 5 "Signer #"
+              $ANDROID_HOME/build-tools/37.0.0/apksigner verify --print-certs build/app/outputs/flutter-apk/app-profile.apk | grep -A 5 "Signer #"
             else
               echo -e "\n##vso[task.logissue type=error]⚠️ Error: Apk no encontrado"
               exit 99
