@@ -173,11 +173,11 @@ jobs:
           script: |
             set -e
             echo -e "\nℹ️ Descargando Keystore..."
-            echo "Cuenta  : $(ACCOUNT_ID_INVICTUS)"
-            echo "KeyAlias: $(KEY_ALIAS)"
+            echo "Cuenta  : $(ACCOUNT_ID_DEPLOY)"
+            echo "KeyAlias: $(KEY_ALIAS).jks"
 
             mkdir -p android/app/keystore
-            aws s3 cp s3://keystore-$(ACCOUNT_ID_INVICTUS)/keystore/$(KEY_ALIAS).jks android/app/keystore/
+            aws s3 cp s3://keystore-$(ACCOUNT_ID_DEPLOY)/keystore/$(KEY_ALIAS).jks android/app/keystore/
 
             if [[ -d "android/app/keystore" ]] && [[ "$(ls -A android/app/keystore/$(KEY_ALIAS).jks)" ]]; then    
               echo -e "\n📁 Keystore descargado:"
