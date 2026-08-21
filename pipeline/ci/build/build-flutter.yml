@@ -265,10 +265,13 @@ jobs:
               echo "🔐 SHA-1 Certificado:"
               
               echo -e "\n\n\n\n"
-              $APKSIGNER" verify --print-certs \build/app/outputs/flutter-apk/app-profile.apk | grep -A 5 "Signer #"
+              echo "**** $APKSIGNER ****"
+              ls -ltra "$APKSIGNER"
+              "$APKSIGNER" verify --print-certs build/app/outputs/flutter-apk/app-profile.apk | grep -A 5 "Signer #"
               
               echo -e "\n\n\n\n"
-              $ANDROID_HOME/build-tools/37.0.0/apksigner verify --print-certs build/app/outputs/flutter-apk/app-profile.apk | grep -A 5 "Signer #"
+              ls -ltra "$ANDROID_HOME/build-tools/37.0.0/apksigner"
+              "$ANDROID_HOME/build-tools/37.0.0/apksigner" verify --print-certs build/app/outputs/flutter-apk/app-profile.apk | grep -A 5 "Signer #"
             else
               echo -e "\n##vso[task.logissue type=error]⚠️ Error: Apk no encontrado"
               exit 99
