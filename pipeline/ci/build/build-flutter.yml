@@ -248,7 +248,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set +e
+            set -e
             echo -e "\nℹ️ Validando Build Apk..."
 
             if [[ -d "build/app/outputs/flutter-apk" ]] && [[ "$(ls -A build/app/outputs/flutter-apk)" ]]; then
@@ -263,16 +263,7 @@ jobs:
               echo -e "\n🔐 SHA-1 Apk: $SHA1_APK"
               echo "🔐 SHA-1 Flutter: $SHA1_FLUTTER"
               echo "🔐 SHA-1 Certificado:"
-
-              echo -e "\n\n\n\n"
-              ls -ltra "$ANDROID_HOME/build-tools/37.0.0/apksigner"
-              "$ANDROID_HOME/build-tools/37.0.0/apksigner" verify --print-certs build/app/outputs/flutter-apk/app-profile.apk | grep -A 5 "Signer #"
-
-              echo -e "\n\n\n\n"
-              echo "**** $APKSIGNER ****"
-              ls -ltra "$APKSIGNER"
               "$APKSIGNER" verify --print-certs build/app/outputs/flutter-apk/app-profile.apk
-
             else
               echo -e "\n##vso[task.logissue type=error]⚠️ Error: Apk no encontrado"
               exit 99
@@ -285,6 +276,11 @@ jobs:
           targetType: inline
           script: |
             set -e
+
+            echo -e "\n🌳 Estructura del proyecto:"
+            find . -maxdepth 5 -type f | sort
+
+
             echo -e "\nℹ️ Renombrando APK..."
 
             mv build/app/outputs/flutter-apk/app-profile.apk build/app/outputs/flutter-apk/invictus-$(environment)-$(version).apk
