@@ -276,18 +276,19 @@ jobs:
           targetType: inline
           script: |
             set -e
-
-            echo -e "\n🌳 Estructura del proyecto:"
-            find . -maxdepth 5 -type f | sort
-
-
             echo -e "\nℹ️ Renombrando APK..."
 
             mv build/app/outputs/flutter-apk/app-profile.apk build/app/outputs/flutter-apk/invictus-$(environment)-$(version).apk
             mv build/app/outputs/flutter-apk/app-profile.apk.sha1 build/app/outputs/flutter-apk/invictus-$(environment)-$(version).apk.sha1
 
+
+            echo -e "\n🌳 Estructura del proyecto:"
+            find . -maxdepth 5 -type f | sort
+
+
+
             mkdir -p "$(Build.ArtifactStagingDirectory)/release/$(environment)"
-            cp -R "build/app/outputs/flutter-apk/*" "$(Build.ArtifactStagingDirectory)/release/$(environment)/"
+            cp -R build/app/outputs/flutter-apk/* $(Build.ArtifactStagingDirectory)/release/$(environment)/
 
             echo -e "\n📁 Files: build/app/outputs/flutter-apk"
             ls -l build/app/outputs/flutter-apk
