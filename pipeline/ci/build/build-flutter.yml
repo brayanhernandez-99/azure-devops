@@ -258,9 +258,16 @@ jobs:
 
               SHA1_APK=$(shasum -a 1 build/app/outputs/flutter-apk/app-profile.apk | awk '{print $1}')
               SHA1_FLUTTER=$(cut -d ' ' -f1 build/app/outputs/flutter-apk/app-profile.apk.sha1)
+              APKSIGNER=$(find "$ANDROID_HOME/build-tools" -name apksigner -type f | sort -V | tail -1)
+
               echo -e "\n🔐 SHA-1 Apk: $SHA1_APK"
               echo "🔐 SHA-1 Flutter: $SHA1_FLUTTER"
               echo "🔐 SHA-1 Certificado:"
+              
+              echo -e "\n\n\n\n"
+              $APKSIGNER" verify --print-certs \build/app/outputs/flutter-apk/app-profile.apk | grep -A 5 "Signer #"
+              
+              echo -e "\n\n\n\n"
               $ANDROID_HOME/build-tools/37.0.0/apksigner verify --print-certs build/app/outputs/flutter-apk/app-profile.apk | grep -A 5 "Signer #"
             else
               echo -e "\n##vso[task.logissue type=error]⚠️ Error: Apk no encontrado"
