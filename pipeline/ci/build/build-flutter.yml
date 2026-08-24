@@ -288,18 +288,20 @@ jobs:
           targetType: inline
           script: |
             set -e
+            APK_NAME="invictus-$(environment)-$(version).apk"
+
             jq -n \
               --arg version "$(version)" \
               --arg apk "$(APK_URL)" \
+              --arg apkName "$APK_NAME" \
               --arg sha256 "$(SHA256_APK)" \
               --arg releaseNotes "Nuevas features y fixes" \
-              --arg cleanCache "false" \
               '{
                 version: $version,
-                apkUrl: $apk,
+                apkUrl: ($apk + "/" + $apkName),
                 sha256checksum: $sha256,
                 releaseNotes: $releaseNotes,
-                cleanCache: $cleanCache
+                cleanCache: false
               }' \
               > version.json
 
@@ -315,9 +317,10 @@ jobs:
           script: |
             set -e
             echo -e "\nℹ️ Renombrando APK..."
+            APK_NAME="invictus-$(environment)-$(version).apk"
 
-            mv build/app/outputs/flutter-apk/app-profile.apk build/app/outputs/flutter-apk/invictus-$(environment)-$(version).apk
-            mv build/app/outputs/flutter-apk/app-profile.apk.sha1 build/app/outputs/flutter-apk/invictus-$(environment)-$(version).apk.sha1
+            mv build/app/outputs/flutter-apk/app-profile.apk build/app/outputs/flutter-apk/$APK_NAME
+            mv build/app/outputs/flutter-apk/app-profile.apk.sha1 build/app/outputs/flutter-apk/$APK_NAME.sha1
 
             mkdir -p "$(Build.ArtifactStagingDirectory)/release/$(environment)"
             cp -f version.json "$(Build.ArtifactStagingDirectory)/release/$(environment)/"
