@@ -28,7 +28,7 @@ jobs:
           script: |
             set -e
             VERSION_FILE="$(Pipeline.Workspace)/versions/electron/version.json"
-            echo -e "\n📁 Archivo version.json:"
+            echo -e "\n📁 File: version.json"
             ls -la "$VERSION_FILE"
             jq . "$VERSION_FILE"
 
@@ -328,7 +328,7 @@ jobs:
           targetType: inline
           script: |
             $versionFile = "$(Pipeline.Workspace)\versions\electron\version.json"
-            Write-Host "`n📁 Archivo version.json:"
+            Write-Host "`n📁 File: version.json"
             Get-ChildItem -Path $versionFile | Select-Object Mode, LastWriteTime, Length, Name | Format-Table
             Get-Content -Path $versionFile
 

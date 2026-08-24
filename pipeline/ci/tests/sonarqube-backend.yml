@@ -27,7 +27,7 @@ jobs:
           script: |
             set -e
             VERSION_FILE="$(Pipeline.Workspace)/version-downloaded/versions/microservice/version.json"
-            echo -e "\n📁 Archivo version.json:"
+            echo -e "\n📁 File: version.json"
             ls -la "$VERSION_FILE"
             jq . "$VERSION_FILE"
 
