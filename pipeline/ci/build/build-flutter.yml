@@ -292,15 +292,15 @@ jobs:
 
             jq -n \
               --arg version "$(version)" \
+              --arg buildNumber "$(versionPubspec)" \
               --arg apk "$(APK_URL)" \
               --arg apkName "$APK_NAME" \
               --arg sha256 "$(SHA256_APK)" \
-              --arg releaseNotes "Nuevas features y fixes" \
               '{
                 version: $version,
+                buildNumber: $buildNumber,
                 apkUrl: ($apk + "/" + $apkName),
                 sha256checksum: $sha256,
-                releaseNotes: $releaseNotes,
                 cleanCache: false
               }' \
               > version.json
