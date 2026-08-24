@@ -343,31 +343,19 @@ jobs:
                   NEXT_VERSION="$BASE_VERSION_BRANCH-$clean_branch.$((CURRENT_PRERELEASE + 1))"
                 fi
                 echo -e "\n🔎 Versiones Detectadas"
-                echo "📌 Anterior versión : $VERSION_ACTUAL"
-                echo "🚀 Próxima versión : $NEXT_VERSION"
+                echo "📌 Actual versión : $VERSION_ACTUAL"
+                echo "🚀 Próxima versión: $NEXT_VERSION"
               fi
 
-              if [[ "$CURRENT_BRANCH" == refs/heads/master ]]; then
+              if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(master|hotfix/.+)$ ]]; then
                 git checkout version/$clean_branch
                 VERSION_ACTUAL_MASTER=$(jq -r .VERSION env.json)
                 NEXT_BASE_VERSION=$(bump_version "$VERSION_ACTUAL_MASTER" "$RELEASE_TYPE")
                 NEXT_VERSION="$NEXT_BASE_VERSION"
 
                 echo -e "\n🔎 Versiones Detectadas"
-                echo "📌 Anterior versión : $VERSION_ACTUAL_MASTER"
-                echo "🚀 Próxima versión : $NEXT_VERSION"
-              fi
-
-              if [[ "$CURRENT_BRANCH" == refs/heads/hotfix/* ]]; then
-                git checkout version/$clean_branch
-                VERSION_ACTUAL_MASTER=$(jq -r .VERSION env.json)
-
-                NEXT_BASE_VERSION=$(bump_version "$VERSION_ACTUAL_MASTER" "$RELEASE_TYPE")
-                NEXT_VERSION="$NEXT_BASE_VERSION"
-
-                echo -e "\n🔎 Versiones Detectadas"
-                echo "📌 Anterior versión : $VERSION_ACTUAL_MASTER"
-                echo "🚀 Próxima versión : $NEXT_VERSION"
+                echo "📌 Actual versión : $VERSION_ACTUAL_MASTER"
+                echo "🚀 Próxima versión: $NEXT_VERSION"
               fi
 
               mkdir -p $(Build.ArtifactStagingDirectory)/flutter
@@ -392,7 +380,7 @@ jobs:
 
             echo -e "\nℹ️ Branch Actual: $CURRENT_BRANCH"
 
-            if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|master|staging|feature/.+)$ ]]; then
+            if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|master|staging|feature/.+|hotfix/.+)$ ]]; then
 
               if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
                 clean_branch=develop
@@ -410,42 +398,19 @@ jobs:
                 echo $clean_branch
               fi
 
-              if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|staging|feature/.+)$ ]]; then
+              if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|staging|master|feature/.+|hotfix/.+)$ ]]; then
                 git checkout version/$clean_branch
-                VERSION_ACTUAL=$(grep '^version:' pubspec.yaml | cut -d ' ' -f2)
-                echo "versión base actual: $VERSION_ACTUAL"
+                BUILD_NUMBER_VERSION_ACTUAL=$(jq -r '.BUILD_NUMBER // "0"' env.json)
 
-                git checkout version/master
-                VERSION_ACTUAL_MASTER=$(grep '^version:' pubspec.yaml | cut -d ' ' -f2)
-                echo "Versión base master: $VERSION_ACTUAL_MASTER"
-
-                git checkout version/$clean_branch
-                BUILD_NUMBER_VERSION_ACTUAL="${VERSION_ACTUAL#*+}"
-                BUILD_NUMBER_VERSION_MASTER="${VERSION_ACTUAL_MASTER#*+}"
-
-                echo -e "\n🔎 Versiones Detectadas"
-                echo "📌 Actual: $BUILD_NUMBER_VERSION_ACTUAL"
-                echo "📌 Master: $BUILD_NUMBER_VERSION_MASTER"
-
-                if [[ $BUILD_NUMBER_VERSION_ACTUAL == $BUILD_NUMBER_VERSION_MASTER ]]; then 
-                  NEW_BUILD_NUMBER=$((BUILD_NUMBER_VERSION_ACTUAL + 1))
-                elif [[ $BUILD_NUMBER_VERSION_ACTUAL > $BUILD_NUMBER_VERSION_MASTER ]]; then 
-                  NEW_BUILD_NUMBER=$BUILD_NUMBER_VERSION_ACTUAL
-                elif [[ $BUILD_NUMBER_VERSION_ACTUAL < $BUILD_NUMBER_VERSION_MASTER ]]; then 
-                  NEW_BUILD_NUMBER=$((BUILD_NUMBER_VERSION_MASTER + 1))
+                if ! [[ "$BUILD_NUMBER_VERSION_ACTUAL" =~ ^[0-9]+$ ]]; then
+                  echo -e "\n##vso[task.logissue type=error]BUILD_NUMBER inválido en env.json: $BUILD_NUMBER_VERSION_ACTUAL"
+                  exit 99
                 fi
-                echo "🚀 Nuevo Build: +$NEW_BUILD_NUMBER"
-              fi
-
-              if [[ "$CURRENT_BRANCH" == refs/heads/master ]]; then
-                git checkout version/$clean_branch
-                VERSION_ACTUAL_MASTER=$(grep '^version:' pubspec.yaml | cut -d ' ' -f2)
-                BUILD_NUMBER_VERSION_MASTER="${VERSION_ACTUAL_MASTER#*+}"
-                NEW_BUILD_NUMBER=$((BUILD_NUMBER_VERSION_MASTER + 1))
 
                 echo -e "\n🔎 Versiones Detectadas"
-                echo "📌 Anterior versión : +$BUILD_NUMBER_VERSION_MASTER"
-                echo "🚀 Próxima versión : +$NEW_BUILD_NUMBER"
+                NEW_BUILD_NUMBER=$((BUILD_NUMBER_VERSION_ACTUAL + 1))
+                echo "📌 Actual version : +$BUILD_NUMBER_VERSION_ACTUAL"
+                echo "🚀 Próxima versión: +$NEW_BUILD_NUMBER"
               fi
 
               mkdir -p $(Build.ArtifactStagingDirectory)/pubspec
@@ -470,17 +435,22 @@ jobs:
             git fetch origin version/$clean_branch
             git checkout -B version/$clean_branch origin/version/$clean_branch
 
-            echo "🔧 Actualizando versión"
+            echo -e "\n🔧 Actualizando versión"
             echo "flutter → $(cleanNEXT_VERSION)+$(NEXT_VERSION_PUB)"
 
-            jq --arg version "$(cleanNEXT_VERSION)" '.VERSION = $version' env.json > tmp.json && mv tmp.json env.json
+            jq \
+              --arg version "$(cleanNEXT_VERSION)" \
+              --arg buildNumber "$(NEXT_VERSION_PUB)" \
+              '.VERSION = $version | .BUILD_NUMBER = $buildNumber' \
+              env.json > tmp.json && mv tmp.json env.json
             sed -i "s/^version: .*/version: $(cleanNEXT_VERSION)+$(NEXT_VERSION_PUB)/" pubspec.yaml
 
             echo -e "\n📁 File pubspec.yaml:"
             cat pubspec.yaml
 
-            echo -e "\n📁 File env.json:"
+            echo -e "\n\n📁 File env.json:"
             cat env.json
+            echo ""
 
             git add env.json pubspec.yaml
             git commit -m "chore: update version to $(cleanNEXT_VERSION)+$(NEXT_VERSION_PUB)"
