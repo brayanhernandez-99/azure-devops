@@ -3,6 +3,12 @@ jobs:
       - deployment: WaitForApproval
         displayName: "🛡️ waiting approval"
         environment: "Deploy master"
+        # ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}:
+        #   environment: "Deploy develop"
+        # ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
+        #   environment: "Deploy staging"
+        # ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
+        #   environment: "Deploy master"
         pool:
           name: "Azure Pipelines"
           vmImage: ubuntu-latest
