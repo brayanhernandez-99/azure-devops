@@ -86,7 +86,7 @@ jobs:
               --arg apk "$(APK_URL)" \
               '{
                 VERSION: $version,
-                buildNumber: $buildNumber,
+                BUILD_NUMBER: $buildNumber,
                 ENVIRONMENT: $env,
                 BASE_URL: $url,
                 APK_URL: $apk
