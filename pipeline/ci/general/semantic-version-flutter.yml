@@ -448,7 +448,7 @@ jobs:
             echo -e "\n📁 File pubspec.yaml:"
             cat pubspec.yaml
 
-            echo -e "\n\n📁 File env.json:"
+            echo -e "\n📁 File env.json:"
             cat env.json
             echo ""
 
