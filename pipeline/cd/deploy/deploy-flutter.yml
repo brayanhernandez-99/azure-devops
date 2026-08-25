@@ -88,7 +88,7 @@ jobs:
 
             echo -e "\n✅ Archivos subidos exitosamente."
             echo "🔗 APK: $APK_NAME"
-            echo -e "\n##[command]🔗 URL: https://download-$(ACCOUNT_ID_INVICTUS).s3.us-east-1.amazonaws.com/apk/$APK_NAME"
+            echo -e "\n##[command]🔗 URL: https://$(APK_URL)/$APK_NAME"
         displayName: "📤 Upload Bucket S3"
         condition: succeeded()
         env:
