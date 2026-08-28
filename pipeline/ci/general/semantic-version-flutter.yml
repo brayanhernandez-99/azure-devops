@@ -142,7 +142,7 @@ jobs:
       - task: Bash@3
         inputs:
           targetType: inline
-                  diff=$(git --no-pager diff "origin/$targetBranch...HEAD")
+          script: |
             set -e
             REPO_NAME="$(Build.Repository.Name)"          
             RESPONSE=$(curl -s -u ":$AZURE_DEVOPS_CLI_PAT" "https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories?api-version=5.0")
@@ -166,7 +166,7 @@ jobs:
 
             URL="https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories/$(repoID)/pullrequests?searchCriteria.status=completed&searchCriteria.targetRefName=$CURRENT_BRANCH&api-version=5.0"
             response=$(curl -s -u ":$AZURE_DEVOPS_CLI_PAT" "$URL")
-                  if echo "$diff" | grep -qE "^\+.*$pattern"; then
+            echo "$response" | jq '.value[0]'
             PR_ID=$(echo "$response" | jq -r '.value[0].pullRequestId')
 
             echo -e "\nℹ️ id del pr $PR_ID"
@@ -198,7 +198,7 @@ jobs:
 
             SAFE_COMMITS=$(printf '%s' "$COMMITS" | tr '\n' '|')
             echo $SAFE_COMMITS
-                  diff=$(git --no-pager diff "origin/$targetBranch...HEAD")
+            echo "##vso[task.setvariable variable=filteredCommits]$SAFE_COMMITS"
         displayName: "📌 Pull Request Commit Details"
         condition: and(succeeded(), in(variables['Build.SourceBranchName'], 'develop', 'staging', 'master'))
         env:
@@ -222,7 +222,7 @@ jobs:
               if [[ "$CURRENT_BRANCH" == refs/heads/feature/* ]]; then
                 clean_branch=develop
                 echo "Branch: $clean_branch"
-                  if [[ -n "$describe_tests" ]]; then
+              fi
 
               if [[ "$CURRENT_BRANCH" == refs/heads/hotfix/* ]]; then
                 clean_branch=master
