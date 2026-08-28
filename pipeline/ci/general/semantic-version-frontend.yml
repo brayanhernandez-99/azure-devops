@@ -103,14 +103,14 @@ jobs:
             sourceBranch="${BUILD_SOURCEBRANCH/refs\/heads\//}"
             targetBranch="master"
 
-            echo -e "\n🔎 Verificando que no se hayan agregado nuevas sentencias console.log..."
+            echo -e "\n🔎 Verificando que no se hayan agregado nuevas sentencias console.* ..."
             echo "Branch actual: $sourceBranch"
             echo "Branch destino: $targetBranch"
 
             paths="$(file)/$(msName)"
             git fetch origin "$targetBranch"
             diff=$(git --no-pager diff "origin/$targetBranch..origin/$sourceBranch" -- $paths)
-            pattern='console[.]'
+            pattern='console[.](log|error|warn|info|debug)'
 
             console_logs=$(echo "$diff" | awk -v pat="$pattern" '
               /^\+\+\+ b\// {
@@ -133,15 +133,69 @@ jobs:
               /^ / { line++ }
             ')
 
-            if echo "$diff" | grep -qE '^\+.*console\.'; then
-              echo -e "\n🧨 Archivos detectados con console.log en el código de la app $(msName) 🧨"
+            if echo "$diff" | grep -qE "^\+.*$pattern"; then
+              echo -e "\n🧨 Se detectaron console.* en los cambios 🧨"
               echo "$console_logs"
-              echo -e "\n##vso[task.logissue type=error]⚠️ Se encontro 'console.log' en los cambios del MF $(msName)..."
+              echo -e "\n##vso[task.logissue type=error]⚠️ Se detectaron 'console.*' en los cambios..."
               exit 99
-            else
-              echo -e "\n✅ No se encontraron sentencias 'console.log' en los cambios"
             fi
-        displayName: "🔎 Validate for 'console.*' in changes"
+
+            echo -e "\n✅ No se encontraron 'console.*' en los cambios"
+        displayName: "🔎 Validate 'console.*' in changes"
+        condition: and(succeeded(), or(
+          eq(variables['Build.Reason'], 'PullRequest'),
+          startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'),
+          startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
+
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            set -e
+            sourceBranch="${BUILD_SOURCEBRANCH/refs\/heads\//}"
+            targetBranch="master"
+
+            echo -e "\n🔎 Verificando que no se hayan agregado nuevas sentencias describe.* ..."
+            paths="$(file)/$(msName)"
+            git fetch origin "$targetBranch"
+            diff=$(git --no-pager diff "origin/$targetBranch..origin/$sourceBranch" -- $paths)
+            pattern='((describe|it|test|suite|specify)[.]only|fdescribe|fit|ftest)'
+
+            describe_tests=$(echo "$diff" | awk -v pat="$pattern" '
+              /^\+\+\+ b\// {
+                file=$0
+                sub(/^\+\+\+ b\//,"",file)
+              }
+
+              /^@@/ {
+                if (match($0, /\+([0-9]+)/, arr)) {
+                  line=arr[1]
+                } else {
+                  line=0
+                }
+              }
+
+              /^\+/ && !/^\+\+\+/ {
+                if ($0 ~ pat) {
+                  print file ":" line ":" substr($0, 2)
+                }
+                line++
+              }
+
+              /^ / {
+                line++
+              }
+            ')
+
+            if [[ -n "$describe_tests" ]]; then
+              echo -e "\n🧨 Se detectaron describe.* en los cambios 🧨"
+              echo "$describe_tests"
+              echo -e "\n##vso[task.logissue type=error]⚠️ Se detectaron 'describe.*' en los cambios..."
+              exit 99
+            fi
+
+            echo -e "\n✅ No se encontraron 'describe.*' en los cambios"
+        displayName: "🔎 Validate 'describe.*' in changes"
         condition: and(succeeded(), or(
           eq(variables['Build.Reason'], 'PullRequest'),
           startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'),
