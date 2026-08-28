@@ -61,7 +61,7 @@ jobs:
           script: |
             set -e
             echo -e "\n📌 Verificando si feature está actualizada con master y si hay cambios relevantes..."
-            echo "Branch Actual: $(echo $(Build.SourceBranch))"          
+            echo "Branch Actual: $CURRENT_BRANCH"
             git fetch origin master
 
             # Encuentra el punto de bifurcación (base común)
@@ -69,7 +69,7 @@ jobs:
 
             # Verifica si la rama está actualizada
             if [ "$MERGE_BASE" = "$(git rev-parse origin/master)" ]; then
-              echo -e "\n✅ La rama feature está actualizada con master."
+              echo -e "\n✅ La rama feature esta actualizada con master."
             else
               echo -e "\n⚠️ La rama feature NO contiene todos los commits de master. Verificando cambios relevantes en master..."
 
@@ -100,16 +100,17 @@ jobs:
           targetType: inline
           script: |
             set -e
-            sourceBranch="${BUILD_SOURCEBRANCH/refs\/heads\//}"
-            targetBranch="master"
+            if [[ "$(Build.Reason)" == "PullRequest" ]]; then
+              sourceBranch="$(System.PullRequest.SourceBranch)"
+              sourceBranch="${sourceBranch/refs\/heads\//}"
+            else
+              sourceBranch="${BUILD_SOURCEBRANCH/refs\/heads\//}"
+            fi
 
             echo -e "\n🔎 Verificando que no se hayan agregado nuevas sentencias console.* ..."
-            echo "Branch actual: $sourceBranch"
-            echo "Branch destino: $targetBranch"
 
-            paths="$(file)/$(msName)"
-            git fetch origin "$targetBranch"
-            diff=$(git --no-pager diff "origin/$targetBranch..origin/$sourceBranch" -- $paths)
+            git fetch origin master
+            diff=$(git --no-pager diff "origin/master...HEAD")
             pattern='console[.](log|error|warn|info|debug)'
 
             console_logs=$(echo "$diff" | awk -v pat="$pattern" '
@@ -133,15 +134,15 @@ jobs:
               /^ / { line++ }
             ')
 
-            if echo "$diff" | grep -qE "^\+.*$pattern"; then
-              echo -e "\n🧨 Se detectaron console.* en los cambios 🧨"
+            if [[ -n "$console_logs" ]]; then
+              echo -e "$\n🧨 Archivos detectados con console.* en el código 🧨"
               echo "$console_logs"
-              echo -e "\n##vso[task.logissue type=error]⚠️ Se detectaron 'console.*' en los cambios..."
+              echo -e "\n##vso[task.logissue type=error]⚠️ Se encontro 'console.*' en los cambios"
               exit 99
             fi
 
-            echo -e "\n✅ No se encontraron 'console.*' en los cambios"
-        displayName: "🔎 Validate 'console.*' in changes"
+            echo -e "\n✅ No se encontraron sentencias 'console.*' en los cambios"
+        displayName: "🔎 Validate for 'console.*' in changes"
         condition: and(succeeded(), or(
           eq(variables['Build.Reason'], 'PullRequest'),
           startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'),
@@ -152,21 +153,24 @@ jobs:
           targetType: inline
           script: |
             set -e
-            sourceBranch="${BUILD_SOURCEBRANCH/refs\/heads\//}"
-            targetBranch="master"
+            if [[ "$(Build.Reason)" == "PullRequest" ]]; then
+              sourceBranch="$(System.PullRequest.SourceBranch)"
+              sourceBranch="${sourceBranch/refs\/heads\//}"
+            else
+              sourceBranch="${BUILD_SOURCEBRANCH/refs\/heads\//}"
+            fi
 
             echo -e "\n🔎 Verificando que no se hayan agregado nuevas sentencias describe.* ..."
-            paths="$(file)/$(msName)"
-            git fetch origin "$targetBranch"
-            diff=$(git --no-pager diff "origin/$targetBranch..origin/$sourceBranch" -- $paths)
+
+            git fetch origin master
+            diff=$(git --no-pager diff "origin/master...HEAD")
             pattern='((describe|it|test|suite|specify)[.]only|fdescribe|fit|ftest)'
 
-            describe_tests=$(echo "$diff" | awk -v pat="$pattern" '
+            invalid_test_found=$(echo "$diff" | awk -v pat="$pattern" '
               /^\+\+\+ b\// {
                 file=$0
                 sub(/^\+\+\+ b\//,"",file)
               }
-
               /^@@/ {
                 if (match($0, /\+([0-9]+)/, arr)) {
                   line=arr[1]
@@ -174,27 +178,25 @@ jobs:
                   line=0
                 }
               }
-
               /^\+/ && !/^\+\+\+/ {
                 if ($0 ~ pat) {
                   print file ":" line ":" substr($0, 2)
                 }
                 line++
               }
-
               /^ / {
                 line++
               }
             ')
 
-            if [[ -n "$describe_tests" ]]; then
-              echo -e "\n🧨 Se detectaron describe.* en los cambios 🧨"
-              echo "$describe_tests"
-              echo -e "\n##vso[task.logissue type=error]⚠️ Se detectaron 'describe.*' en los cambios..."
+            if [[ -n "$invalid_test_found" ]]; then
+              echo -e "\n🧨 Archivos detectados con describe.* en el código 🧨"
+              echo "$invalid_test_found"
+              echo -e "\n##vso[task.logissue type=error]⚠️ Se detectaron 'describe.*' en los cambios"
               exit 99
             fi
 
-            echo -e "\n✅ No se encontraron 'describe.*' en los cambios"
+            echo -e "\n✅ No se encontraron sentencias 'describe.*' en los cambios"
         displayName: "🔎 Validate 'describe.*' in changes"
         condition: and(succeeded(), or(
           eq(variables['Build.Reason'], 'PullRequest'),
