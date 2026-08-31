@@ -4,17 +4,13 @@ variables:
   - group: trasversal-versions-invictus
   - group: trasversal-microfrontend-vue2
   - group: trasversal-microfrontend
-  #   - group: trasversal-microfrontend-vue2-old      --BORRAR
-  #   - group: trasversal-microfrontend-old           --BORRAR
-  
+
   # Develop - Feature - Hotfix branch
   - ${{ if or(eq(variables['Build.SourceBranchName'], 'develop'), startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')) }}:
       - group: trasversal-aws-develop
       - group: variables-cloudfront-develop
       - group: variables-microfrontend-vue2-develop
       - group: variables-microfrontend-develop
-    #   - group: variables-microfrontend-vue2-develop-old       --BORRAR
-    #   - group: variables-microfrontend-develop-old            --BORRAR
 
   # Staging branch
   - ${{ if and(eq(parameters.environment_staging, 'staging'), eq(variables['Build.SourceBranchName'], 'staging')) }}:
@@ -22,16 +18,12 @@ variables:
       - group: variables-cloudfront-staging
       - group: variables-microfrontend-vue2-staging
       - group: variables-microfrontend-staging
-    #   - group: variables-microfrontend-vue2-staging-old       --BORRAR
-    #   - group: variables-microfrontend-staging-old            --BORRAR
 
   - ${{ if and(eq(parameters.environment_staging, 'staging_nacional'), eq(variables['Build.SourceBranchName'], 'staging')) }}:
       - group: trasversal-aws-staging-nacional
       - group: variables-cloudfront-staging-nacional
       - group: variables-microfrontend-vue2-staging-nacional
       - group: variables-microfrontend-staging-nacional
-    #   - group: variables-microfrontend-vue2-staging-nacional-old       --BORRAR
-    #   - group: variables-microfrontend-staging-nacional-old            --BORRAR
 
   # Master branch → por red
   - ${{ if and(eq(parameters.region, 'antioquia'), eq(variables['Build.SourceBranchName'], 'master')) }}:
@@ -39,61 +31,45 @@ variables:
       - group: variables-cloudfront-antioquia
       - group: variables-microfrontend-vue2-antioquia
       - group: variables-microfrontend-antioquia
-    #   - group: variables-microfrontend-vue2-antioquia-old      --BORRAR
-    #   - group: variables-microfrontend-antioquia-old           --BORRAR
 
   - ${{ if and(eq(parameters.region, 'cap'), eq(variables['Build.SourceBranchName'], 'master')) }}:
       - group: trasversal-aws-antioquia-cap
       - group: variables-cloudfront-antioquia-cap
       - group: variables-microfrontend-vue2-antioquia-cap
       - group: variables-microfrontend-antioquia-cap
-    #   - group: variables-microfrontend-vue2-antioquia-cap-old     --BORRAR
-    #   - group: variables-microfrontend-antioquia-cap-old          --BORRAR
 
   - ${{ if and(eq(parameters.region, 'tolima'), eq(variables['Build.SourceBranchName'], 'master')) }}:
       - group: trasversal-aws-tolima
       - group: variables-cloudfront-tolima
       - group: variables-microfrontend-vue2-tolima
       - group: variables-microfrontend-tolima
-    #   - group: variables-microfrontend-vue2-tolima-old        --BORRAR
-    #   - group: variables-microfrontend-tolima-old             --BORRAR
 
   - ${{ if and(eq(parameters.region, 'huila'), eq(variables['Build.SourceBranchName'], 'master')) }}:
       - group: trasversal-aws-huila
       - group: variables-cloudfront-huila
       - group: variables-microfrontend-vue2-huila
       - group: variables-microfrontend-huila
-    #   - group: variables-microfrontend-vue2-huila-old     --BORRAR
-    #   - group: variables-microfrontend-huila-old          --BORRAR
 
   - ${{ if and(eq(parameters.region, 'cauca'), eq(variables['Build.SourceBranchName'], 'master')) }}:
       - group: trasversal-aws-cauca
       - group: variables-cloudfront-cauca
       - group: variables-microfrontend-vue2-cauca
       - group: variables-microfrontend-cauca
-    #   - group: variables-microfrontend-vue2-cauca-old     --BORRAR
-    #   - group: variables-microfrontend-cauca-old          --BORRAR
 
   - ${{ if and(eq(parameters.region, 'boyaca'), eq(variables['Build.SourceBranchName'], 'master')) }}:
       - group: trasversal-aws-boyaca
       - group: variables-cloudfront-boyaca
       - group: variables-microfrontend-vue2-boyaca
       - group: variables-microfrontend-boyaca
-    #   - group: variables-microfrontend-vue2-boyaca-old    --BORRAR
-    #   - group: variables-microfrontend-boyaca-old         --BORRAR
 
   - ${{ if and(eq(parameters.region, 'santander'), eq(variables['Build.SourceBranchName'], 'master')) }}:
       - group: trasversal-aws-santander
       - group: variables-cloudfront-santander
       - group: variables-microfrontend-vue2-santander
       - group: variables-microfrontend-santander
-    #   - group: variables-microfrontend-vue2-santander-old     --BORRAR
-    #   - group: variables-microfrontend-santander-old          --BORRAR
 
   - ${{ if and(eq(parameters.region, 'putumayo'), eq(variables['Build.SourceBranchName'], 'master')) }}:
       - group: trasversal-aws-putumayo
       - group: variables-cloudfront-putumayo
       - group: variables-microfrontend-vue2-putumayo
       - group: variables-microfrontend-putumayo
-    #   - group: variables-microfrontend-vue2-putumayo-old      --BORRAR
-    #   - group: variables-microfrontend-putumayo-old           --BORRAR
