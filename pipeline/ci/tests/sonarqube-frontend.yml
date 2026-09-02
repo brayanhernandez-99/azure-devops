@@ -251,7 +251,7 @@ jobs:
                 CLEAN_PARAMS=$(echo "$SONARQUBE_SCANNER_PARAMS" | jq -c 'del(.["sonar.branch.name"])')
 
                 echo -e "\n⚙️ Configuración SONARQUBE_SCANNER_PARAMS:"
-                echo "$CLEAN_PARAMS"
+                echo "$CLEAN_PARAMS" | jq '."sonar.token" = "***"'
 
                 # Escapar caracteres especiales para Azure DevOps logging command
                 CLEAN_PARAMS="${CLEAN_PARAMS//'%'/'%AZP25'}"
@@ -264,37 +264,6 @@ jobs:
             condition: and(succeeded(),
               ne(variables['msName'], 'app-administration-vue2'),
               ne(variables['msName'], 'app-sellers-vue2'))
-
-          - task: Bash@3
-            inputs:
-              targetType: inline
-              script: |
-                echo "🔎 Validando JSON que recibirá SonarQubeAnalyze..."
-
-                printf '%s\n' "$SONARQUBE_SCANNER_PARAMS" | jq empty
-
-                echo "✅ JSON válido"
-            displayName: "🧪 Validate Sonar JSON"
-            env:
-              SONARQUBE_SCANNER_PARAMS: $(SONARQUBE_SCANNER_PARAMS)
-
-          - task: Bash@3
-            inputs:
-              targetType: inline
-              script: |
-                echo -e "\n⚙️ SONARQUBE_SCANNER_PARAMS con env:"
-                echo "$SONARQUBE_SCANNER_PARAMS" | jq .
-            displayName: "🔎 Verify Sonar Properties"
-            env:
-              SONARQUBE_SCANNER_PARAMS: $(SONARQUBE_SCANNER_PARAMS)
-
-          - task: Bash@3
-            inputs:
-              targetType: inline
-              script: |
-                echo -e "\n⚙️ SONARQUBE_SCANNER_PARAMS sin env:"
-                echo "$SONARQUBE_SCANNER_PARAMS" | jq .
-            displayName: "🔎 Verify Sonar Properties"
 
       - ${{ if eq(parameters.pr_id, 0) }}:
           - task: SonarQubePrepare@7
