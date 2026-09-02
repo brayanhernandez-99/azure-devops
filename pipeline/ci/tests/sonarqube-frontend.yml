@@ -250,15 +250,11 @@ jobs:
                 echo -e "\n🔎 Eliminando sonar.branch.name de SONARQUBE_SCANNER_PARAMS..."
                 CLEAN_PARAMS=$(echo "$SONARQUBE_SCANNER_PARAMS" | jq 'del(.["sonar.branch.name"])')
 
-                echo -e "\n⚙️ Configuración Sonar después de limpiar:"
+                echo -e "\n⚙️ Configuración SONARQUBE_SCANNER_PARAMS:"
                 echo "$CLEAN_PARAMS" | jq 'del(.["sonar.token"])'
 
-                echo -e "\n📁 env SONARQUBE_SCANNER_PARAMS"
-                echo "$SONARQUBE_SCANNER_PARAMS" |
-                  jq 'del(.["sonar.token"])'
-
                 echo "##vso[task.setvariable variable=SONARQUBE_SCANNER_PARAMS]$CLEAN_PARAMS"
-                echo "✅ sonar.branch.name eliminado"
+                 echo -e "\n✅ sonar.branch.name eliminado"
             displayName: "🧹 Remove sonar.branch.name"
             condition: and(succeeded(),
               ne(variables['msName'], 'app-administration-vue2'),
@@ -281,58 +277,6 @@ jobs:
             condition: and(succeeded(),
               ne(variables['msName'], 'app-administration-vue2'),
               ne(variables['msName'], 'app-sellers-vue2'))
-
-      - task: Bash@3
-        inputs:
-          targetType: inline
-          script: |
-            echo "=========================================="
-            echo "=== SONARQUBE_SCANNER_PARAMS ==="
-            echo "=========================================="
-
-            if [[ -n "${SONARQUBE_SCANNER_PARAMS:-}" ]]; then
-              echo "$SONARQUBE_SCANNER_PARAMS"
-            else
-              echo "SONARQUBE_SCANNER_PARAMS NO EXISTE"
-            fi
-
-            echo ""
-            echo "=========================================="
-            echo "=== ARCHIVOS CON sonar.branch.name ==="
-            echo "=========================================="
-
-            grep -Rni \
-              --exclude-dir=.git \
-              --exclude-dir=node_modules \
-              "sonar.branch.name" \
-              "$(Build.SourcesDirectory)" \
-              "$(Agent.TempDirectory)" \
-              2>/dev/null || true
-
-            echo ""
-            echo "=========================================="
-            echo "=== ARCHIVOS .sonar / .scannerwork ==="
-            echo "=========================================="
-
-            find "$(Build.SourcesDirectory)" \
-              -type f \
-              \( -path "*/.sonar/*" -o -path "*/.scannerwork/*" \) \
-              -print 2>/dev/null || true
-
-            echo ""
-            echo "=========================================="
-            echo "=== AGENT TEMP SONAR ==="
-            echo "=========================================="
-
-            find "$(Agent.TempDirectory)" \
-              -type f \
-              2>/dev/null |
-              grep -Ei 'sonar|scanner' |
-              head -100 || true
-        displayName: "🔎 Debug Sonar Properties"
-        condition: and(succeeded(),
-          ne(variables['msName'], 'app-administration-vue2'),
-          ne(variables['msName'], 'app-sellers-vue2'))
 
       - task: Bash@3
         inputs:
