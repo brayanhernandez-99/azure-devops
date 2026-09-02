@@ -2,6 +2,10 @@ parameters:
   - name: release
     type: string
 
+  - name: apps
+    type: object
+    default: []
+
   - name: pr_id
     type: number
     default: 0
@@ -33,10 +37,6 @@ parameters:
       - boyaca
       - santander
       - putumayo
-
-  - name: apps
-    type: object
-    default: []
 
 resources:
   repositories:
