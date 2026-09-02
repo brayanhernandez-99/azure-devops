@@ -164,7 +164,7 @@ jobs:
 
             git fetch origin master
             diff=$(git --no-pager diff "origin/master...HEAD")
-            pattern='((describe|it|test|suite|specify)[.]only|fdescribe|fit|ftest)'
+            pattern='(describe|it|test|suite|specify)\.(only|fdescribe|fit|ftest)'
 
             invalid_test_found=$(echo "$diff" | awk -v pat="$pattern" '
               /^\+\+\+ b\// {
