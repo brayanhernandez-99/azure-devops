@@ -221,6 +221,23 @@ jobs:
           ne(variables['msName'], 'app-administration-vue2'),
           ne(variables['msName'], 'app-sellers-vue2'))
 
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            echo "=== SONAR ENVIRONMENT ==="
+            env | sort | grep -i sonar || true
+
+            echo "=== SONARQUBE VARIABLES ==="
+            env | grep -i "SONAR" || true
+
+            echo "=== SCANNER WORK ==="
+            find "$(Build.SourcesDirectory)" -name "sonar-project.properties" -o -name "report-task.txt" -o -name "*.properties" 2>/dev/null | head -50
+
+            echo "=== SCANNER CONFIG ==="
+            find "$(Build.SourcesDirectory)/.scannerwork" -type f -maxdepth 2 -print 2>/dev/null || true
+        displayName: "🔍 Debug Sonar Properties"
+
       - ${{ if ne(parameters.pr_id, 0) }}:
           - task: SonarQubePrepare@7
             inputs:
