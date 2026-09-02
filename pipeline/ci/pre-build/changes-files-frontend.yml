@@ -106,7 +106,11 @@ jobs:
                   pipeline_output=$(az pipelines run \
                     --name "$(Build.Repository.Name)" \
                     --branch "$CURRENT_BRANCH" \
-                    --parameters pr_id="$(System.PullRequest.PullRequestId)" apps="$apps_json" \
+                    --parameters \
+                      pr_id="$(System.PullRequest.PullRequestId)" \
+                      pr_source_branch="$SOURCE_BRANCH" \
+                      pr_target_branch="$TARGET_BRANCH" \
+                      apps="$apps_json" \
                     --output json)
                   echo "$pipeline_output" | jq
 
@@ -183,7 +187,11 @@ jobs:
                   pipeline_output=$(az pipelines run \
                     --name "$(Build.Repository.Name)" \
                     --branch "$CURRENT_BRANCH" \
-                    --parameters pr_id="0" apps="$apps_json" \
+                    --parameters \
+                      pr_id="0" \
+                      pr_source_branch="" \
+                      pr_target_branch="" \
+                      apps="$apps_json" \
                     --output json)
                   echo "$pipeline_output" | jq
 
