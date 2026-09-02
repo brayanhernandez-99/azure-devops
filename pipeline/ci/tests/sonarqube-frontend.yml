@@ -18,7 +18,7 @@ jobs:
 
     steps:
       - checkout: self
-        fetchDepth: 1
+        fetchDepth: 0
         persistCredentials: true
         fetchTags: false
 
@@ -221,22 +221,44 @@ jobs:
           ne(variables['msName'], 'app-administration-vue2'),
           ne(variables['msName'], 'app-sellers-vue2'))
 
-      - task: SonarQubePrepare@7
-        inputs:
-          SonarQube: "SonarQubeConection"
-          scannerMode: "CLI"
-          configMode: "manual"
-          cliProjectKey: "microfrontend-$(msName)-invictus"
-          cliProjectName: "microfrontend-$(msName)-invictus"
-          cliSources: "$(Build.Repository.Name)/$(file)/$(msName)"
-          extraProperties: |
-            sonar.projectVersion=$(version)
-            sonar.javascript.lcov.reportPaths=$(Build.Repository.Name)/$(file)/$(msName)/coverage/lcov.info
-            sonar.exclusions=**/test/**,**/coverage/**,**/invictus/src/presentation/router/private/**,**/invictus/src/presentation/router/public/**,**/.nyc_output/**,**/reports/**,sured-plugin/**,**/reports_bck/**,**/node_modules/**,**/dist/**,*.cjs,*mts,**/main.ts,**/config/**,**/config.*,**/**.config.*
-        displayName: "⚙️ Prepare SonarQube Analysis"
-        condition: and(succeeded(),
-          ne(variables['msName'], 'app-administration-vue2'),
-          ne(variables['msName'], 'app-sellers-vue2'))
+      - ${{ if ne(parameters.pr_id, 0) }}:
+          - task: SonarQubePrepare@7
+            inputs:
+              SonarQube: "SonarQubeConection"
+              scannerMode: "CLI"
+              configMode: "manual"
+              cliProjectKey: "microfrontend-$(msName)-invictus"
+              cliProjectName: "microfrontend-$(msName)-invictus"
+              cliSources: "$(Build.Repository.Name)/$(file)/$(msName)"
+              extraProperties: |
+                sonar.pullrequest.key=${{ parameters.pr_id }}
+                sonar.pullrequest.branch=${{ parameters.pr_source_branch }}
+                sonar.pullrequest.base=${{ parameters.pr_target_branch }}
+                sonar.projectVersion=$(version)
+                sonar.javascript.lcov.reportPaths=$(Build.Repository.Name)/$(file)/$(msName)/coverage/lcov.info
+                sonar.exclusions=**/test/**,**/coverage/**,**/invictus/src/presentation/router/private/**,**/invictus/src/presentation/router/public/**,**/.nyc_output/**,**/reports/**,**/sured-plugin/**,**/reports_bck/**,**/node_modules/**,**/dist/**,*.cjs,*.mts,**/main.ts,**/config/**,**/config.*,**/*.config.*,**/*.d.ts
+            displayName: "⚙️ Prepare SonarQube Analysis"
+            condition: and(succeeded(),
+              ne(variables['msName'], 'app-administration-vue2'),
+              ne(variables['msName'], 'app-sellers-vue2'))
+
+      - ${{ if eq(parameters.pr_id, 0) }}:
+          - task: SonarQubePrepare@7
+            inputs:
+              SonarQube: "SonarQubeConection"
+              scannerMode: "CLI"
+              configMode: "manual"
+              cliProjectKey: "microfrontend-$(msName)-invictus"
+              cliProjectName: "microfrontend-$(msName)-invictus"
+              cliSources: "$(Build.Repository.Name)/$(file)/$(msName)"
+              extraProperties: |
+                sonar.projectVersion=$(version)
+                sonar.javascript.lcov.reportPaths=$(Build.Repository.Name)/$(file)/$(msName)/coverage/lcov.info
+                sonar.exclusions=**/test/**,**/coverage/**,**/invictus/src/presentation/router/private/**,**/invictus/src/presentation/router/public/**,**/.nyc_output/**,**/reports/**,**/sured-plugin/**,**/reports_bck/**,**/node_modules/**,**/dist/**,*.cjs,*.mts,**/main.ts,**/config/**,**/config.*,**/*.config.*,**/*.d.ts
+            displayName: "⚙️ Prepare SonarQube Analysis"
+            condition: and(succeeded(),
+              ne(variables['msName'], 'app-administration-vue2'),
+              ne(variables['msName'], 'app-sellers-vue2'))
 
       - task: Bash@3
         inputs:

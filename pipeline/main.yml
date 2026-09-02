@@ -6,6 +6,14 @@ parameters:
     type: number
     default: 0
 
+  - name: pr_source_branch
+    type: string
+    default: ""
+
+  - name: pr_target_branch
+    type: string
+    default: ""
+
   - name: environments_staging
     type: object
     default:
@@ -28,36 +36,7 @@ parameters:
 
   - name: apps
     type: object
-    default:
-      - app-administration-vue2
-      - app-sellers-vue2
-      - astro
-      - awards
-      - betplay
-      - biometrics
-      - cashier
-      - chance
-      - commissions
-      - conciliation
-      - credits
-      - dashboard
-      - dynamic-storage
-      - externa
-      - external-wager
-      - generic
-      - hierarchies
-      - login
-      - lotteries
-      - millonario
-      - money-control
-      - notifications
-      - papelery
-      - promotional
-      - raffles
-      - raspa
-      - recharges
-      - invictus
-      - users
+    default: []
 
 resources:
   repositories:
@@ -87,6 +66,8 @@ stages:
           red: ${{ parameters.red }}
           apps: ${{ parameters.apps }}
           pr_id: ${{ parameters.pr_id }}
+          pr_source_branch: ${{ parameters.pr_source_branch }}
+          pr_target_branch: ${{ parameters.pr_target_branch }}
           release: ${{ parameters.release }}
           environments_staging: ${{ parameters.environments_staging }}
 
