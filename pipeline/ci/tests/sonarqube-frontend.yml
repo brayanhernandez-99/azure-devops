@@ -314,3 +314,4 @@ jobs:
       - template: sonarqube/job-sonarqube.yml@sonarqube
         parameters:
           projectKey: "microfrontend-$(msName)-invictus"
+          prId: "$(System.PullRequest.PullRequestId)"
