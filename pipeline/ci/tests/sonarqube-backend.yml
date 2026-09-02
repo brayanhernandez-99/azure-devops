@@ -218,4 +218,3 @@ jobs:
       - template: sonarqube/job-sonarqube.yml@sonarqube
         parameters:
           projectKey: $(Build.Repository.Name)
-          prId: "$(System.PullRequest.PullRequestId)"
