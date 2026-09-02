@@ -14,6 +14,9 @@ stages:
       - template: ../ci/tests/sonarqube-frontend.yml
         parameters:
           apps: ${{ parameters.apps }}
+          pr_id: ${{ parameters.pr_id }}
+          pr_source_branch: ${{ parameters.pr_source_branch }}
+          pr_target_branch: ${{ parameters.pr_target_branch }}
 
   #####################################################################
 
