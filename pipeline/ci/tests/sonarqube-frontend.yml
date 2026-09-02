@@ -251,7 +251,7 @@ jobs:
                 CLEAN_PARAMS=$(echo "$SONARQUBE_SCANNER_PARAMS" | jq 'del(.["sonar.branch.name"])')
 
                 echo -e "\n⚙️ Configuración SONARQUBE_SCANNER_PARAMS:"
-                echo "$CLEAN_PARAMS" | jq 'del(.["sonar.token"])'
+                echo "$CLEAN_PARAMS" | jq
 
                 echo "##vso[task.setvariable variable=SONARQUBE_SCANNER_PARAMS]$CLEAN_PARAMS"
                  echo -e "\n✅ sonar.branch.name eliminado"
