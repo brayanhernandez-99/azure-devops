@@ -189,8 +189,8 @@ jobs:
                     --branch "$CURRENT_BRANCH" \
                     --parameters \
                       pr_id="0" \
-                      pr_source_branch="" \
-                      pr_target_branch="" \
+                      pr_source_branch="..." \
+                      pr_target_branch="..." \
                       apps="$apps_json" \
                     --output json)
                   echo "$pipeline_output" | jq
