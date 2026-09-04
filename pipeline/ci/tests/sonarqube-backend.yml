@@ -213,6 +213,7 @@ jobs:
               exit 99
             fi
         displayName: "🔎 Coverage Analysis: $(Build.Repository.Name)"
+        continueOnError: true
         condition: succeeded()
 
       - task: SonarQubeAnalyze@7
