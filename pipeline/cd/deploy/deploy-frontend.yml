@@ -99,7 +99,7 @@ jobs:
             BASE_PATH="$(Pipeline.Workspace)/downloaded-dists/$(environment)/$(msName)"
             echo "📦 Cargando al Bucket S3..."
             echo -e "\n📂 Archivos a cargar: $BASE_PATH"
-            ls -l "$BASE_PATH"
+            ls -la "$BASE_PATH"
 
             if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
               msName=$(msName)

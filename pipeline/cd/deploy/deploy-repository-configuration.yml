@@ -23,6 +23,8 @@ jobs:
             set -e
             echo -e "\n📦 Cargando al Bucket S3..."
             ls -la
+
+            echo ""
             aws s3 sync . s3://configuration-$(ACCOUNT_ID_INVICTUS) \
               --exclude ".git/*" \
               --exclude ".gitignore" \
