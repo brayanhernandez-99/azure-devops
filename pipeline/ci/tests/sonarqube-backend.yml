@@ -210,6 +210,7 @@ jobs:
               ls -la $(System.DefaultWorkingDirectory)/coverage
             else
               echo -e "\n##vso[task.logissue type=warning]⚠️ lcov.info no encontrado"
+              exit 99
             fi
         displayName: "🔎 Coverage Analysis: $(Build.Repository.Name)"
         condition: succeeded()
