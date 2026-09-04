@@ -303,6 +303,7 @@ jobs:
               exit 99
             fi
         displayName: "🔎 Coverage Analysis: $(msName)"
+        continueOnError: true
         condition: and(succeeded(),
           ne(variables['msName'], 'app-administration-vue2'),
           ne(variables['msName'], 'app-sellers-vue2'))
