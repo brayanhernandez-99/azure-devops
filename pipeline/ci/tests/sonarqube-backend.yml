@@ -111,7 +111,7 @@ jobs:
             shamefully-hoist=true
             strict-peer-dependencies=false
             EOF
-            ls -l $(System.DefaultWorkingDirectory)/.pnpmrc
+            ls -la $(System.DefaultWorkingDirectory)/.pnpmrc
             cat $(System.DefaultWorkingDirectory)/.pnpmrc
 
             echo -e "\n📌 Versiones:"
@@ -190,8 +190,8 @@ jobs:
         inputs:
           targetType: inline
           script: |
+            set -e
             pnpm run test
-        continueOnError: true
         displayName: "🧪 Run Tests for: $(Build.Repository.Name)"
         condition: succeeded()
 
@@ -199,9 +199,18 @@ jobs:
         inputs:
           targetType: inline
           script: |
+            set -e
+            echo -e "\n🔎 Ejecutando coverage $(Build.Repository.Name)..."
             pnpm run coverage
-            ls -la $(System.DefaultWorkingDirectory)/coverage
-        continueOnError: true
+
+            LCOV_PATH="$(System.DefaultWorkingDirectory)/coverage/lcov.info"
+            if [[ -f "$LCOV_PATH" ]]; then
+              LINES=$(wc -l < "$LCOV_PATH")
+              echo -e "\n✅ lcov.info generado ($LINES líneas)"
+              ls -la $(System.DefaultWorkingDirectory)/coverage
+            else
+              echo -e "\n##vso[task.logissue type=warning]⚠️ lcov.info no encontrado"
+            fi
         displayName: "🔎 Coverage Analysis: $(Build.Repository.Name)"
         condition: succeeded()
 

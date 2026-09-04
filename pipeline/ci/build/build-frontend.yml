@@ -145,23 +145,23 @@ jobs:
             echo -e "\n📁 Archivo .env.local: app-administration-vue2"
             printenv | grep "^VUE2_" | sed "s/^VUE2_//" > $(System.DefaultWorkingDirectory)/app-legacy/app-administration-vue2/.env.local
             printenv | grep "^ADMIN_" | sed "s/^ADMIN_//" >> $(System.DefaultWorkingDirectory)/app-legacy/app-administration-vue2/.env.local
-            ls -l $(System.DefaultWorkingDirectory)/app-legacy/app-administration-vue2/.env.local
+            ls -la $(System.DefaultWorkingDirectory)/app-legacy/app-administration-vue2/.env.local
             cat $(System.DefaultWorkingDirectory)/app-legacy/app-administration-vue2/.env.local
 
             echo -e "\n📁 Archivo .env.local: app-sellers-vue2"
             printenv | grep "^VUE2_" | sed "s/^VUE2_//" > $(System.DefaultWorkingDirectory)/app-legacy/app-sellers-vue2/.env.local
             printenv | grep "^SELLERS_" | sed "s/^SELLERS_//" >> $(System.DefaultWorkingDirectory)/app-legacy/app-sellers-vue2/.env.local
-            ls -l $(System.DefaultWorkingDirectory)/app-legacy/app-sellers-vue2/.env.local
+            ls -la $(System.DefaultWorkingDirectory)/app-legacy/app-sellers-vue2/.env.local
             cat $(System.DefaultWorkingDirectory)/app-legacy/app-sellers-vue2/.env.local
 
             echo -e "\n📁 Archivo .env: invictus"
             printenv | grep -i "^INVICTUS_" |sed "s/^INVICTUS_//" > $(System.DefaultWorkingDirectory)/apps/invictus/.env
-            ls -l $(System.DefaultWorkingDirectory)/apps/invictus/.env
+            ls -la $(System.DefaultWorkingDirectory)/apps/invictus/.env
             cat $(System.DefaultWorkingDirectory)/apps/invictus/.env
 
             echo -e "\n📁 Archivos .env raiz"
             printenv | grep "^ROOT_" | sed "s/^ROOT_//" > $(System.DefaultWorkingDirectory)/.env
-            ls -l $(System.DefaultWorkingDirectory)/.env
+            ls -la $(System.DefaultWorkingDirectory)/.env
             cat $(System.DefaultWorkingDirectory)/.env
         displayName: "⚙️ Generate .env"
         condition: succeeded()
@@ -176,7 +176,7 @@ jobs:
             cat $(System.DefaultWorkingDirectory)/apps/invictus/.env >> $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.env.tmp
 
             mv $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.env.tmp $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.env
-            ls -l $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.env
+            ls -la $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.env
             cat $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.env
         displayName: "⚙️ Generate $(msName) .env"
         condition: and(succeeded(),
@@ -217,7 +217,7 @@ jobs:
             allow-build-script=true
             strict-peer-dependencies=false
             EOF
-            ls -l $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc
+            ls -la $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc
             cat $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc
 
             echo -e "\n📌 Versiones:"
@@ -263,7 +263,7 @@ jobs:
               mkdir -p "$(Build.ArtifactStagingDirectory)/dists/$(environment)"
               cp -R $DIST_PATH $(Build.ArtifactStagingDirectory)/dists/$(environment)/$(msName)
               echo -e "\n✅ Build generado correctamente en: $DIST_PATH"
-              ls -l "$DIST_PATH"
+              ls -la "$DIST_PATH"
             fi
         displayName: "📦 Build $(msName)"
         condition: succeeded()

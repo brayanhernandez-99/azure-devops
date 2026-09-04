@@ -77,7 +77,7 @@ jobs:
 
             BASE_PATH="$(Pipeline.Workspace)/release/$(environment)/linux"
             echo -e "\n📂 Archivos a cargar: $BASE_PATH"
-            ls -l "$BASE_PATH"
+            ls -la "$BASE_PATH"
             echo ""
 
             aws s3 cp "$BASE_PATH" "s3://download-$(ACCOUNT_ID_INVICTUS)/app/linux/" --recursive
@@ -101,7 +101,7 @@ jobs:
 
             BASE_PATH="$(Pipeline.Workspace)/release/$(environment)/windows"
             echo -e "\n📂 Archivos a cargar: $BASE_PATH"
-            ls -l "$BASE_PATH"
+            ls -la "$BASE_PATH"
             echo ""
 
             aws s3 cp "$BASE_PATH" "s3://download-$(ACCOUNT_ID_INVICTUS)/app/windows/" --recursive
