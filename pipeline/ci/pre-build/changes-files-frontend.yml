@@ -19,6 +19,34 @@ jobs:
           targetType: inline
           script: |
             set -e
+            echo "🔎 Validando ejecucion..."
+
+            case "$(Build.Reason)" in
+              "PullRequest")
+                echo -e "\nℹ️ Ejecucion Valida por: PullRequest"
+                echo "Branch: $(echo "$(System.PullRequest.SourceBranch)" | sed 's#refs/heads/##')"
+                echo "Build Reason: $(Build.Reason)"
+                echo "Pull Request: $(System.PullRequest.PullRequestId)"
+                ;;
+              "IndividualCI")
+                echo -e "\nℹ️ Ejecucion Valida por: IndividualCI"
+                echo "Branch: $(echo "$(Build.SourceBranch)" | sed 's#refs/heads/##')"
+                echo "Build Reason: $(Build.Reason)"
+                ;;
+              *)
+                echo -e "\n##vso[task.logissue type=error]⚠️ Ejecucion [$(Build.Reason)] no valida."
+                echo "##vso[task.logissue type=error] Debe ejecutarse solo por PullRequest o IndividualCI."
+                exit 99
+                ;;
+            esac
+        displayName: "🧩 Validate Execution (Auto/Manual)"
+        condition: succeeded()
+
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            set -e
             if [[ "$(Build.Reason)" == "PullRequest" ]]; then
               BRANCH="$(System.PullRequest.SourceBranch)"
             else
@@ -193,34 +221,6 @@ jobs:
           eq(variables['Build.Reason'], 'PullRequest'),
           startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'),
           startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
-
-      - task: Bash@3
-        inputs:
-          targetType: inline
-          script: |
-            set -e
-            echo "🔎 Validando ejecucion..."
-
-            case "$(Build.Reason)" in
-              "PullRequest")
-                echo -e "\nℹ️ Ejecucion Valida por: PullRequest"
-                echo "Branch: $(echo "$(System.PullRequest.SourceBranch)" | sed 's#refs/heads/##')"
-                echo "Build Reason: $(Build.Reason)"
-                echo "Pull Request: $(System.PullRequest.PullRequestId)"
-                ;;
-              "IndividualCI")
-                echo -e "\nℹ️ Ejecucion Valida por: IndividualCI"
-                echo "Branch: $(echo "$(Build.SourceBranch)" | sed 's#refs/heads/##')"
-                echo "Build Reason: $(Build.Reason)"
-                ;;
-              *)
-                echo -e "\n##vso[task.logissue type=error]⚠️ Ejecucion [$(Build.Reason)] no valida."
-                echo "##vso[task.logissue type=error] Debe ejecutarse solo por PullRequest o IndividualCI."
-                exit 99
-                ;;
-            esac
-        displayName: "🧩 Validate Execution (Auto/Manual)"
-        condition: succeeded()
 
       - task: Bash@3
         inputs:
