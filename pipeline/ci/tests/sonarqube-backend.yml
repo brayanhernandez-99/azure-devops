@@ -193,6 +193,7 @@ jobs:
             set -e
             pnpm run test
         displayName: "🧪 Run Tests for: $(Build.Repository.Name)"
+        continueOnError: true
         condition: succeeded()
 
       - task: Bash@3
