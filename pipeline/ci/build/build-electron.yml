@@ -118,7 +118,7 @@ jobs:
 
             echo "##vso[task.setvariable variable=environment]$environment"
             echo -e "\n📁 File: .env"
-            ls -l .env
+            ls -la .env
             cat .env
         displayName: "⚙️ Generate .env"
         condition: succeeded()
@@ -206,7 +206,7 @@ jobs:
             allow-build-script=true
             strict-peer-dependencies=false
             EOF
-            ls -l $(System.DefaultWorkingDirectory)/.pnpmrc
+            ls -la $(System.DefaultWorkingDirectory)/.pnpmrc
             cat $(System.DefaultWorkingDirectory)/.pnpmrc
 
             cat $(System.DefaultWorkingDirectory)/.pnpmrc >> $(System.DefaultWorkingDirectory)/.npmrc
@@ -258,7 +258,7 @@ jobs:
             all_found=true
 
             echo -e "\n📂 Directorio: $BASE_PATH"
-            ls -lt $BASE_PATH
+            ls -la $BASE_PATH
             echo ""
 
             FILES_TO_COPY=(
@@ -287,7 +287,7 @@ jobs:
               cp -R $APP_DIR/* "$(Build.ArtifactStagingDirectory)/release/$(environment)/linux"
 
               echo -e "\n📂 Directorio: $APP_DIR"
-              ls -l $APP_DIR
+              ls -la $APP_DIR
             fi
         displayName: "🔎 Validate Build"
         condition: succeeded()
@@ -327,6 +327,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
+            $ErrorActionPreference = "Stop"
             $versionFile = "$(Pipeline.Workspace)\versions\electron\version.json"
             Write-Host "`n📁 File: version.json"
             Get-ChildItem -Path $versionFile | Select-Object Mode, LastWriteTime, Length, Name | Format-Table
@@ -348,6 +349,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
+            $ErrorActionPreference = "Stop"
             Write-Host "🔐 Obteniendo token de AWS CodeArtifact..."
 
             $token = aws codeartifact get-authorization-token `
@@ -393,6 +395,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
+            $ErrorActionPreference = "Stop"
             $CURRENT_BRANCH="$(Build.SourceBranchName)"
             switch -Wildcard ($CURRENT_BRANCH) {
                 "staging" { $environment = $env:environment_staging }
@@ -422,6 +425,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
+            $ErrorActionPreference = "Stop"
             Write-Host "📥 Descargando certificados..."
             aws s3 cp s3://applications-$(ACCOUNT_ID_INVICTUS)/certs/ ./certs --recursive
 
@@ -451,6 +455,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
+            $ErrorActionPreference = "Stop"
             Write-Host "📦 Modificando versión en package.json: $env:version"
             $packagePath = "$(Build.SourcesDirectory)\package.json"
 
@@ -472,6 +477,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
+            $ErrorActionPreference = "Stop"
             $filePath = "$(Build.SourcesDirectory)\package.json"
 
             if (Test-Path $filePath) {
@@ -493,6 +499,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
+            $ErrorActionPreference = "Stop"
             Write-Host "`n📁 Generando archivo .pnpmrc en: $(System.DefaultWorkingDirectory)\.pnpmrc"
             $filePath = "$(System.DefaultWorkingDirectory)\.pnpmrc"
             $fileContent = @"
@@ -543,6 +550,7 @@ jobs:
         inputs:
           targetType: " inline"
           script: |
+            $ErrorActionPreference = "Stop"
             Write-Host "📝 Validando build electron..."
 
             $BASE_PATH = "$(Build.SourcesDirectory)\release\$($env:version)\windows"
