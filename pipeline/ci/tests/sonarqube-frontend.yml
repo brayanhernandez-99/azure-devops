@@ -322,34 +322,293 @@ jobs:
             BASE="${{ parameters.pr_target_branch }}"
             LCOV="$REPO/$(file)/$(msName)/coverage/lcov.info"
 
-            echo "=== REPOSITORY ==="
-            echo "$REPO"
+            echo ""
+            echo "============================================================"
+            echo "=== SONAR / GIT DEBUG"
+            echo "============================================================"
+            echo ""
 
-            echo "=== CURRENT DIRECTORY ==="
+            echo "=== VARIABLES ==="
+            echo "REPO        = $REPO"
+            echo "BASE        = $BASE"
+            echo "MS NAME     = $(msName)"
+            echo "FILE        = $(file)"
+            echo "LCOV        = $LCOV"
+            echo "PR ID       = ${{ parameters.pr_id }}"
+            echo "SOURCE      = ${{ parameters.pr_source_branch }}"
+            echo "TARGET      = ${{ parameters.pr_target_branch }}"
+            echo ""
+
+            echo "============================================================"
+            echo "=== CURRENT DIRECTORY"
+            echo "============================================================"
             pwd
+            echo ""
 
-            echo "=== BUILD REPOSITORY NAME ==="
-            echo "$(Build.Repository.Name)"
-
-            echo "=== GIT STATUS ==="
+            echo "============================================================"
+            echo "=== REPOSITORY"
+            echo "============================================================"
             cd "$REPO"
+
+            echo "Git root:"
+            git rev-parse --show-toplevel
+
+            echo ""
+            echo "Git status:"
             git status --short --branch
 
-            echo "=== PR DIFF ==="
-            git diff --name-status "origin/$BASE...HEAD"
+            echo ""
+            echo "Remote:"
+            git remote -v
 
-            echo "=== MERGE BASE ==="
-            git merge-base "origin/$BASE" HEAD
+            echo ""
 
-            echo "=== HEAD ==="
+            echo "============================================================"
+            echo "=== BRANCHES / COMMITS"
+            echo "============================================================"
+
+            echo "HEAD:"
             git rev-parse HEAD
 
-            echo "=== LCOV PATH ==="
+            echo ""
+            echo "HEAD branch:"
+            git branch --show-current
+
+            echo ""
+            echo "Origin target branch:"
+            git rev-parse "origin/$BASE"
+
+            echo ""
+
+            echo "============================================================"
+            echo "=== MERGE BASE"
+            echo "============================================================"
+
+            MERGE_BASE="$(git merge-base "origin/$BASE" HEAD)"
+
+            echo "MERGE_BASE=$MERGE_BASE"
+
+            echo ""
+            echo "Merge-base commit:"
+            git show --no-patch --format=fuller "$MERGE_BASE"
+
+            echo ""
+
+            echo "============================================================"
+            echo "=== PR DIFF: THREE DOT"
+            echo "=== origin/$BASE...HEAD"
+            echo "============================================================"
+
+            git diff --name-status "origin/$BASE...HEAD"
+
+            echo ""
+
+            echo "============================================================"
+            echo "=== PR DIFF: TWO DOT"
+            echo "=== origin/$BASE..HEAD"
+            echo "============================================================"
+
+            git diff --name-status "origin/$BASE..HEAD"
+
+            echo ""
+
+            echo "============================================================"
+            echo "=== PR DIFF STAT"
+            echo "============================================================"
+
+            git diff --stat "origin/$BASE...HEAD"
+
+            echo ""
+
+            echo "============================================================"
+            echo "=== CHANGED FILES ONLY"
+            echo "============================================================"
+
+            git diff --name-only "$MERGE_BASE" HEAD | sort -u
+
+            echo ""
+
+            echo "============================================================"
+            echo "=== CHANGED SOURCE FILES ONLY"
+            echo "============================================================"
+
+            git diff --name-only "$MERGE_BASE" HEAD \
+              | grep -vE '(^|/)test(/|/)|\.spec\.[^/]+$|\.test\.[^/]+$' \
+              | sort -u || true
+
+            echo ""
+
+            echo "============================================================"
+            echo "=== FILE COUNT"
+            echo "============================================================"
+
+            echo "Total changed files:"
+            git diff --name-only "$MERGE_BASE" HEAD | sort -u | wc -l
+
+            echo ""
+            echo "Changed source files:"
+            git diff --name-only "$MERGE_BASE" HEAD \
+              | grep -vE '(^|/)test(/|/)|\.spec\.[^/]+$|\.test\.[^/]+$' \
+              | sort -u \
+              | wc -l || true
+
+            echo ""
+
+            echo "============================================================"
+            echo "=== SOURCE DIRECTORY"
+            echo "============================================================"
+
+            SOURCE_DIR="$REPO/$(file)/$(msName)"
+
+            echo "SOURCE_DIR=$SOURCE_DIR"
+
+            if [ -d "$SOURCE_DIR" ]; then
+              echo "Source directory exists: YES"
+            else
+              echo "Source directory exists: NO"
+            fi
+
+            echo ""
+
+            echo "============================================================"
+            echo "=== LCOV"
+            echo "============================================================"
+
+            echo "LCOV path:"
             echo "$LCOV"
 
-            echo "=== LCOV FILES ==="
-            grep "^SF:" "$LCOV" | sort -u
-        displayName: "Debug Git and LCOV"
+            if [ -f "$LCOV" ]; then
+              echo "LCOV exists: YES"
+            else
+              echo "LCOV exists: NO"
+              exit 1
+            fi
+
+            echo ""
+
+            echo "LCOV files:"
+            grep "^SF:" "$LCOV" \
+              | sed 's/^SF://' \
+              | sort -u
+
+            echo ""
+
+            echo "============================================================"
+            echo "=== LCOV FILE COUNT"
+            echo "============================================================"
+
+            echo "Total LCOV files:"
+            grep "^SF:" "$LCOV" \
+              | sed 's/^SF://' \
+              | sort -u \
+              | wc -l
+
+            echo ""
+
+            echo "============================================================"
+            echo "=== LCOV CHANGED FILES"
+            echo "=== Files present in BOTH Git diff and LCOV"
+            echo "============================================================"
+
+            git diff --name-only "$MERGE_BASE" HEAD \
+              | while read -r FILE_PATH; do
+                  LCOV_PATH="${FILE_PATH#$(file)/$(msName)/}"
+                  if grep -q "^SF:${LCOV_PATH}$" "$LCOV"; then
+                    echo "LCOV + GIT: $FILE_PATH"
+                  fi
+                done
+
+            echo ""
+
+            echo "============================================================"
+            echo "=== CHECK AGREEMENTCOLLECTED"
+            echo "============================================================"
+
+            AGREEMENT_FILE="$(file)/$(msName)/src/presentation/components/AgreementCollected/AgreementCollected.ts"
+
+            echo "File:"
+            echo "$AGREEMENT_FILE"
+
+            echo ""
+            echo "Does Git consider it changed?"
+
+            if git diff --quiet "$MERGE_BASE" HEAD -- "$AGREEMENT_FILE"; then
+              echo "NO - Git says this file DID NOT change"
+            else
+              echo "YES - Git says this file CHANGED"
+            fi
+
+            echo ""
+            echo "Git diff for AgreementCollected:"
+            git diff "$MERGE_BASE" HEAD -- "$AGREEMENT_FILE" || true
+
+            echo ""
+
+            echo "============================================================"
+            echo "=== AGREEMENTCOLLECTED HISTORY"
+            echo "============================================================"
+
+            git log --oneline --decorate -20 -- "$AGREEMENT_FILE"
+
+            echo ""
+
+            echo "============================================================"
+            echo "=== AGREEMENTCOLLECTED BLAME"
+            echo "============================================================"
+
+            git blame "$AGREEMENT_FILE" | head -30 || true
+
+            echo ""
+
+            echo "============================================================"
+            echo "=== ALL FILES CHANGED FROM MERGE BASE"
+            echo "============================================================"
+
+            git diff --name-only "$MERGE_BASE" HEAD \
+              | sort -u \
+              | while read -r FILE_PATH; do
+                  echo "$FILE_PATH"
+                done
+
+            echo ""
+
+            echo "============================================================"
+            echo "=== GIT OBJECT / HISTORY VALIDATION"
+            echo "============================================================"
+
+            echo "Is target branch available?"
+            git show-ref "refs/remotes/origin/$BASE" || true
+
+            echo ""
+            echo "Is merge-base ancestor of HEAD?"
+            git merge-base --is-ancestor "$MERGE_BASE" HEAD
+            echo "Result: $?"
+
+            echo ""
+            echo "Is merge-base ancestor of target?"
+            git merge-base --is-ancestor "$MERGE_BASE" "origin/$BASE"
+            echo "Result: $?"
+
+            echo ""
+
+            echo "============================================================"
+            echo "=== FINAL SUMMARY"
+            echo "============================================================"
+
+            echo "Repository : $REPO"
+            echo "Target     : origin/$BASE"
+            echo "HEAD       : $(git rev-parse HEAD)"
+            echo "Merge base : $MERGE_BASE"
+            echo ""
+
+            echo "PR files:"
+            git diff --name-status "$MERGE_BASE" HEAD
+
+            echo ""
+            echo "============================================================"
+            echo "=== END DEBUG"
+            echo "============================================================"
+        displayName: "🔎 Debug Git, PR Diff and LCOV"
         condition: and(succeeded(),
           ne(variables['msName'], 'app-administration-vue2'),
           ne(variables['msName'], 'app-sellers-vue2'))
