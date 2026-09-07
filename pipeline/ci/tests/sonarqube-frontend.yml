@@ -230,13 +230,13 @@ jobs:
               configMode: "manual"
               cliProjectKey: "microfrontend-$(msName)-invictus"
               cliProjectName: "microfrontend-$(msName)-invictus"
-              cliSources: "$(Build.Repository.Name)/$(file)/$(msName)"
+              cliSources: "$(System.DefaultWorkingDirectory)/$(Build.Repository.Name)/$(file)/$(msName)"
               extraProperties: |
                 sonar.pullrequest.key=${{ parameters.pr_id }}
                 sonar.pullrequest.branch=${{ parameters.pr_source_branch }}
                 sonar.pullrequest.base=${{ parameters.pr_target_branch }}
                 sonar.projectVersion=$(version)
-                sonar.javascript.lcov.reportPaths=$(Build.Repository.Name)/$(file)/$(msName)/coverage/lcov.info
+                sonar.javascript.lcov.reportPaths=$(System.DefaultWorkingDirectory)/$(Build.Repository.Name)/$(file)/$(msName)/coverage/lcov.info
                 sonar.exclusions=**/test/**,**/coverage/**,**/invictus/src/presentation/router/private/**,**/invictus/src/presentation/router/public/**,**/.nyc_output/**,**/reports/**,**/sured-plugin/**,**/reports_bck/**,**/node_modules/**,**/dist/**,**/*.cjs,**/*.mts,**/*.mjs,**/main.ts,**/config/**,**/config.*,**/*.config.*,**/*.d.ts
             displayName: "⚙️ Prepare SonarQube Analysis"
             condition: and(succeeded(),
@@ -274,10 +274,10 @@ jobs:
               configMode: "manual"
               cliProjectKey: "microfrontend-$(msName)-invictus"
               cliProjectName: "microfrontend-$(msName)-invictus"
-              cliSources: "$(Build.Repository.Name)/$(file)/$(msName)"
+              cliSources: "$(System.DefaultWorkingDirectory)/$(Build.Repository.Name)/$(file)/$(msName)"
               extraProperties: |
                 sonar.projectVersion=$(version)
-                sonar.javascript.lcov.reportPaths=$(Build.Repository.Name)/$(file)/$(msName)/coverage/lcov.info
+                sonar.javascript.lcov.reportPaths=$(System.DefaultWorkingDirectory)/$(Build.Repository.Name)/$(file)/$(msName)/coverage/lcov.info
                 sonar.exclusions=**/test/**,**/coverage/**,**/invictus/src/presentation/router/private/**,**/invictus/src/presentation/router/public/**,**/.nyc_output/**,**/reports/**,**/sured-plugin/**,**/reports_bck/**,**/node_modules/**,**/dist/**,**/*.cjs,**/*.mts,**/*.mjs,**/main.ts,**/config/**,**/config.*,**/*.config.*,**/*.d.ts
             displayName: "⚙️ Prepare SonarQube Analysis"
             condition: and(succeeded(),
@@ -290,20 +290,40 @@ jobs:
           script: |
             set -e
             echo -e "\n🔎 Ejecutando coverage $(msName)..."
-            cd $(Build.Repository.Name)
+            cd $(System.DefaultWorkingDirectory)/$(Build.Repository.Name)
             pnpm coverage --filter=...$(msName)
 
-            LCOV_PATH="$(Build.Repository.Name)/$(file)/$(msName)/coverage/lcov.info"
+            LCOV_PATH="$(System.DefaultWorkingDirectory)/$(Build.Repository.Name)/$(file)/$(msName)/coverage/lcov.info"
             if [[ -f "$LCOV_PATH" ]]; then
               LINES=$(wc -l < "$LCOV_PATH")
               echo -e "\n✅ lcov.info generado ($LINES líneas)"
-              ls -la "$(file)/$(msName)/coverage"
+              ls -la "$(System.DefaultWorkingDirectory)/$(Build.Repository.Name)/$(file)/$(msName)/coverage"
             else
               echo -e "\n##vso[task.logissue type=warning]⚠️ lcov.info no encontrado"
               exit 99
             fi
         displayName: "🔎 Coverage Analysis: $(msName)"
         continueOnError: true
+        condition: and(succeeded(),
+          ne(variables['msName'], 'app-administration-vue2'),
+          ne(variables['msName'], 'app-sellers-vue2'))
+
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            echo "=== PR DIFF ==="
+            git diff --name-status origin/develop...HEAD
+
+            echo "=== MERGE BASE ==="
+            git merge-base origin/develop HEAD
+
+            echo "=== HEAD ==="
+            git rev-parse HEAD
+
+            echo "=== LCOV FILES ==="
+            grep "^SF:" $(System.DefaultWorkingDirectory)/$(Build.Repository.Name)/apps/generic/coverage/lcov.info | sort -u
+        displayName: "Debug Git and LCOV"
         condition: and(succeeded(),
           ne(variables['msName'], 'app-administration-vue2'),
           ne(variables['msName'], 'app-sellers-vue2'))
