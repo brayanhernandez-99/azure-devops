@@ -316,17 +316,39 @@ jobs:
         inputs:
           targetType: inline
           script: |
+            set -e
+
+            REPO="$(System.DefaultWorkingDirectory)/$(Build.Repository.Name)"
+            BASE="${{ parameters.pr_target_branch }}"
+            LCOV="$REPO/$(file)/$(msName)/coverage/lcov.info"
+
+            echo "=== REPOSITORY ==="
+            echo "$REPO"
+
+            echo "=== CURRENT DIRECTORY ==="
+            pwd
+
+            echo "=== BUILD REPOSITORY NAME ==="
+            echo "$(Build.Repository.Name)"
+
+            echo "=== GIT STATUS ==="
+            cd "$REPO"
+            git status --short --branch
+
             echo "=== PR DIFF ==="
-            git diff --name-status origin/develop...HEAD
+            git diff --name-status "origin/$BASE...HEAD"
 
             echo "=== MERGE BASE ==="
-            git merge-base origin/develop HEAD
+            git merge-base "origin/$BASE" HEAD
 
             echo "=== HEAD ==="
             git rev-parse HEAD
 
+            echo "=== LCOV PATH ==="
+            echo "$LCOV"
+
             echo "=== LCOV FILES ==="
-            grep "^SF:" $(System.DefaultWorkingDirectory)/$(Build.Repository.Name)/apps/generic/coverage/lcov.info | sort -u
+            grep "^SF:" "$LCOV" | sort -u
         displayName: "Debug Git and LCOV"
         condition: and(succeeded(),
           ne(variables['msName'], 'app-administration-vue2'),
