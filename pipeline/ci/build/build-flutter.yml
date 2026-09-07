@@ -141,8 +141,8 @@ jobs:
           mode: "auto"
           channel: "stable"
           version: "custom"
-          customVersion: $(flutterVersion)
-        displayName: "🔧 Install Flutter $(flutterVersion)"
+          customVersion: $(flutter-3.47.1)
+        displayName: "🔧 Install Flutter $(flutter-3.47.1)"
         condition: succeeded()
 
       - task: Bash@3
