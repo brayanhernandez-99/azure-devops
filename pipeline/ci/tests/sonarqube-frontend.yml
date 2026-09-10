@@ -267,7 +267,7 @@ jobs:
 
                 echo "##vso[task.setvariable variable=SONARQUBE_SCANNER_PARAMS]$CLEAN_PARAMS"
                 echo -e "\n✅ sonar.branch.name eliminado"
-            displayName: "🧹 Remove sonar.branch.name"
+            displayName: "🧹 Clean SonarQube Parameters"
             condition: and(succeeded(),
               ne(variables['msName'], 'app-administration-vue2'),
               ne(variables['msName'], 'app-sellers-vue2'))
@@ -287,6 +287,18 @@ jobs:
                 sonar.javascript.lcov.reportPaths=$(System.DefaultWorkingDirectory)/$(Build.Repository.Name)/$(file)/$(msName)/coverage/lcov.info
                 sonar.exclusions=**/test/**,**/coverage/**,**/invictus/src/presentation/router/private/**,**/invictus/src/presentation/router/public/**,**/.nyc_output/**,**/reports/**,**/sured-plugin/**,**/reports_bck/**,**/node_modules/**,**/dist/**,**/*.cjs,**/*.mts,**/*.mjs,**/main.ts,**/config/**,**/config.*,**/*.config.*,**/*.d.ts
             displayName: "⚙️ Prepare SonarQube Analysis"
+            condition: and(succeeded(),
+              ne(variables['msName'], 'app-administration-vue2'),
+              ne(variables['msName'], 'app-sellers-vue2'))
+
+          - task: Bash@3
+            inputs:
+              targetType: inline
+              script: |
+                set -e
+                echo -e "\n⚙️ Configuración SONARQUBE_SCANNER_PARAMS:"
+                echo "$SONARQUBE_SCANNER_PARAMS" | jq '."sonar.token" = "***"'
+            displayName: "🔎 View SonarQube Parameters"
             condition: and(succeeded(),
               ne(variables['msName'], 'app-administration-vue2'),
               ne(variables['msName'], 'app-sellers-vue2'))
