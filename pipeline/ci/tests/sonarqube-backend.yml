@@ -180,6 +180,7 @@ jobs:
           cliProjectName: "$(Build.Repository.Name)"
           cliSources: "$(System.DefaultWorkingDirectory)"
           extraProperties: |
+            sonar.projectBaseDir=$(System.DefaultWorkingDirectory)
             sonar.projectVersion=$(version)
             sonar.javascript.lcov.reportPaths=$(System.DefaultWorkingDirectory)/coverage/lcov.info
             sonar.exclusions=**/test/**,**/*.spec.ts,**/*.java,**/models/**,**/android/**,**/ios/**,**/coverage/**,**/.nyc_output/**,**/reports/**,**/node_modules/**,**/migrations/**,**/config/**,**/Dockerfile,**/*.cjs,**/*.mjs,**/run.sh
