@@ -128,7 +128,7 @@ jobs:
           targetType: inline
           script: |
             set -euo pipefail
-            DEPLOY_TIME=$(date -d "$BUILD_FINISHTIME -5 hours" "+%Y-%m-%d %I:%M %p")
+            DEPLOY_TIME=$(TZ="America/Bogota" date "+%Y-%m-%d %I:%M %p")
 
             echo -e "\n📢 Generando notificación para Teams..."
             echo "Pipeline    : $(Build.DefinitionName)"
