@@ -25,7 +25,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             VERSION_FILE="$(Pipeline.Workspace)/version-downloaded/versions/microservice/version.json"
             echo -e "\n📁 File: version.json"
             ls -la "$VERSION_FILE"
@@ -46,7 +46,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             echo -e "\n🔐 Obteniendo tokens de AWS CodeArtifact..."
 
             token_matrix=$(aws codeartifact get-authorization-token \
@@ -104,7 +104,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             echo -e "\n📁 Generando archivo .pnpmrc en: $(System.DefaultWorkingDirectory)/.pnpmrc"
             cat <<EOF > "$(System.DefaultWorkingDirectory)/.pnpmrc"
             node-linker=hoisted
@@ -137,7 +137,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             echo "🔎 Checking for outdated npm dependencies..."
             REPORT=$(npx npm-check-updates)
 
@@ -154,7 +154,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             echo "🔧 Actualizando versión en package.json: $(version)"
             jq --arg version "$(version)" '.version = $version' package.json > tmp.json && mv tmp.json package.json
 
@@ -191,7 +191,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             echo -e "\n⚙️ Configuración SONARQUBE_SCANNER_PARAMS:"
             echo "$SONARQUBE_SCANNER_PARAMS" | jq '."sonar.token" = "***"'
         displayName: "🔎 View SonarQube Parameters"
@@ -203,7 +203,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             pnpm run test
         displayName: "🧪 Run Tests for: $(Build.Repository.Name)"
         continueOnError: true
@@ -213,7 +213,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             echo -e "\n🔎 Ejecutando coverage $(Build.Repository.Name)..."
             pnpm run coverage
 

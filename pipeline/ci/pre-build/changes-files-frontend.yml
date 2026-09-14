@@ -18,7 +18,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             echo "🔎 Validando ejecucion..."
 
             case "$(Build.Reason)" in
@@ -46,7 +46,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             if [[ "$(Build.Reason)" == "PullRequest" ]]; then
               BRANCH="$(System.PullRequest.SourceBranch)"
             else
@@ -71,7 +71,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             if [[ "$(Build.Reason)" == "PullRequest" ]]; then
               CURRENT_BRANCH="$(System.PullRequest.SourceBranch)"
             else
@@ -118,7 +118,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             if [[ "$(Build.Reason)" == "PullRequest" ]]; then
               sourceBranch="$(System.PullRequest.SourceBranch)"
               sourceBranch="${sourceBranch/refs\/heads\//}"
@@ -171,7 +171,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             if [[ "$(Build.Reason)" == "PullRequest" ]]; then
               sourceBranch="$(System.PullRequest.SourceBranch)"
               sourceBranch="${sourceBranch/refs\/heads\//}"
@@ -226,7 +226,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             az devops configure --defaults organization='$(System.TeamFoundationCollectionUri)' project='$(System.TeamProject)' --use-git-aliases true
         displayName: "📌 Set Azure DevOps organization"
         condition: succeeded()
@@ -235,7 +235,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             echo "⚙️ Configurando organización y proyecto por defecto"
             az devops configure --defaults organization=https://dev.azure.com/ux-technology project=$(System.TeamProject)
 

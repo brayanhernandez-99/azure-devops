@@ -26,7 +26,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             VERSION_FILE="$(Pipeline.Workspace)/versions/electron/version.json"
             echo -e "\n📁 File: version.json"
             ls -la "$VERSION_FILE"
@@ -47,7 +47,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             echo -e "\n🔐 Obteniendo tokens de AWS CodeArtifact..."
 
             token_matrix=$(aws codeartifact get-authorization-token \
@@ -100,7 +100,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             CURRENT_BRANCH="$(Build.SourceBranchName)"
             case "$CURRENT_BRANCH" in 
               staging) environment="$environment_staging" ;;
@@ -132,7 +132,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             echo "📥 Descargando certificados..."
             aws s3 cp s3://applications-$(ACCOUNT_ID_INVICTUS)/certs/ ./certs --recursive
 
@@ -149,7 +149,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             echo -e "\n🔐 Importando GPG key..."
             mkdir -p ~/.gnupg
             chmod 700 ~/.gnupg
@@ -177,7 +177,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             echo -e "\n📦 Modificando versión en package.json: $(version)"
             PACKAGE_PATH="$(Build.SourcesDirectory)/package.json"
 
@@ -197,7 +197,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             echo -e "\n📁 Generando archivo .pnpmrc en: $(System.DefaultWorkingDirectory)/.pnpmrc"
             cat <<EOF > "$(System.DefaultWorkingDirectory)/.pnpmrc"
             node-linker=hoisted
@@ -240,7 +240,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             echo -e "\n📦 Build Electron..."
             pnpm run build
         displayName: "📦 Build Electron Linux"
@@ -250,7 +250,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             echo -e "\n📝 Validando build electron..."
             BASE_PATH="$(Build.SourcesDirectory)/release/$(version)/linux"
             APP_DIR="$BASE_PATH/app"
