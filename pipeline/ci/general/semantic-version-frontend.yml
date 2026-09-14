@@ -24,7 +24,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             BRANCH="${BUILD_SOURCEBRANCH#refs/heads/}"
             REGEX='^(feature/R-[0-9]+-[a-zA-Z0-9._-]+|hotfix/I-[0-9]+-[a-zA-Z0-9._-]+|develop|staging|master)$'
 
@@ -42,7 +42,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
               fileselect=app-legacy
               echo -e "\nℹ️ Ruta de archivo del microfrontend: $fileselect"
@@ -59,7 +59,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             echo -e "\n📌 Verificando si feature está actualizada con master y si hay cambios relevantes..."
             echo "Branch Actual: $CURRENT_BRANCH"
             git fetch origin master
@@ -99,7 +99,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             if [[ "$(Build.Reason)" == "PullRequest" ]]; then
               sourceBranch="$(System.PullRequest.SourceBranch)"
               sourceBranch="${sourceBranch/refs\/heads\//}"
@@ -152,7 +152,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             if [[ "$(Build.Reason)" == "PullRequest" ]]; then
               sourceBranch="$(System.PullRequest.SourceBranch)"
               sourceBranch="${sourceBranch/refs\/heads\//}"
@@ -207,7 +207,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             REPO_NAME="$(Build.Repository.Name)"          
             RESPONSE=$(curl -s -u ":$AZURE_DEVOPS_CLI_PAT" "https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories?api-version=5.0")
             REPO_ID=$(echo "$RESPONSE" | jq -r --arg repo "$REPO_NAME" '.value[] | select(.name == $repo).id')
@@ -223,7 +223,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             CURRENT_BRANCH="$(Build.SourceBranch)"
             echo -e "\nℹ️ id repositorio $(Build.Repository.Name): $(repoID)"
             echo "Branch Actual: $CURRENT_BRANCH"
@@ -248,7 +248,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             echo -e "\nℹ️ Pull Request ID recuperado: $(ultimoPR)"
             echo "id del repositorio $(Build.Repository.Name) = $(repoID)"
 
@@ -272,7 +272,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             git config user.name "pipeline"
             git config user.email "pipelineUX@ux.technology"
 
@@ -312,7 +312,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
             CURRENT_BRANCH="$(Build.SourceBranch)"
             echo -e "\nℹ️ Branch Actual: $CURRENT_BRANCH"
@@ -497,7 +497,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             raw_branch=$(Build.SourceBranch)
             clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
 

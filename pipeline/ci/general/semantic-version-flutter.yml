@@ -18,7 +18,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             if [[ "$(Build.Reason)" == "PullRequest" ]]; then
               BRANCH="$(System.PullRequest.SourceBranch)"
             else
@@ -43,7 +43,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             if [[ "$(Build.Reason)" == "PullRequest" ]]; then
               CURRENT_BRANCH="$(System.PullRequest.SourceBranch)"
             else
@@ -90,7 +90,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             if [[ "$(Build.Reason)" == "PullRequest" ]]; then
               sourceBranch="$(System.PullRequest.SourceBranch)"
               sourceBranch="${sourceBranch/refs\/heads\//}"
@@ -143,7 +143,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             REPO_NAME="$(Build.Repository.Name)"          
             RESPONSE=$(curl -s -u ":$AZURE_DEVOPS_CLI_PAT" "https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories?api-version=5.0")
             REPO_ID=$(echo "$RESPONSE" | jq -r --arg repo "$REPO_NAME" '.value[] | select(.name == $repo).id')
@@ -159,7 +159,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             CURRENT_BRANCH="$(Build.SourceBranch)"
             echo -e "\nℹ️ id repositorio $(Build.Repository.Name): $(repoID)"
             echo "Branch Actual: $CURRENT_BRANCH"
@@ -184,7 +184,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             echo -e "\nℹ️ Pull Request ID recuperado: $(ultimoPR)"
             echo "id del repositorio $(Build.Repository.Name) = $(repoID)"
 
@@ -208,7 +208,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             if [[ "$(Build.Reason)" == "PullRequest" ]]; then
               CURRENT_BRANCH="$(System.PullRequest.SourceBranch)"
             else
@@ -368,7 +368,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             if [[ "$(Build.Reason)" == "PullRequest" ]]; then
               CURRENT_BRANCH="$(System.PullRequest.SourceBranch)"
             else
@@ -423,7 +423,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             raw_branch=$(Build.SourceBranch)
             clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
 

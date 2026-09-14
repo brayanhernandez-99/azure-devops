@@ -28,7 +28,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             VERSION_FILE="$(Pipeline.Workspace)/version-downloaded/versions/microservice/version.json"
             echo -e "\n📁 File: version.json"
             ls -la "$VERSION_FILE"
@@ -49,7 +49,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             echo -e "\n🔐 Obteniendo tokens de AWS CodeArtifact..."
 
             token_matrix=$(aws codeartifact get-authorization-token \
@@ -102,7 +102,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             aws ecr get-login-password --region $AWS_DEFAULT_REGION | \
             docker login --username AWS --password-stdin $ACCOUNT_ID_DEPLOY.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
         displayName: "🔐 Login to AWS ECR"
@@ -116,7 +116,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             DOCKER_FILE="$(Build.Repository.Name)/Dockerfile"
             echo -e "\n🔎 Validando DockerFile en: $DOCKER_FILE"
 
@@ -143,7 +143,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             if [[ "$(Build.Reason)" == "PullRequest" ]]; then
               CURRENT_BRANCH="$(System.PullRequest.SourceBranch)"
               CURRENT_BRANCH="${CURRENT_BRANCH/refs\/heads\//}"
@@ -186,7 +186,7 @@ jobs:
       #   inputs:
       #     targetType: inline
       #     script: |
-      #       set -e
+      #       set -euo pipefail
       #       docker run --rm \
       #         -v /var/run/docker.sock:/var/run/docker.sock \
       #         aquasec/trivy:latest \
@@ -202,7 +202,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             echo -e "\nℹ️ Verificando..."
             echo "Id Cuenta:   $(ACCOUNT_ID_DEPLOY)"
             echo "Repositorio: $(ecr_repository)"
