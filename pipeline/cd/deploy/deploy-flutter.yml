@@ -30,7 +30,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             VERSION_FILE="$(Pipeline.Workspace)/versions/flutter/version.json"
             echo -e "\n📁 File: version.json"
             ls -la "$VERSION_FILE"
@@ -51,7 +51,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             CURRENT_BRANCH="$(Build.SourceBranchName)"
             case "$CURRENT_BRANCH" in 
               staging) environment="$environment_staging" ;;
@@ -72,7 +72,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             echo -e "\n📦 Cargando al Bucket S3..."
             APK_NAME="invictus-$(environment)-$(version).apk"
             BASE_PATH="$(Pipeline.Workspace)/release/$(environment)"
@@ -100,7 +100,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             echo -e "\nℹ️ Enviando Mensaje a SQS..."
             echo "Cuenta : $(ACCOUNT_ID_INVICTUS)"
             echo "Version: $(version)"
@@ -127,7 +127,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             DEPLOY_TIME=$(date -d "$BUILD_FINISHTIME -5 hours" "+%Y-%m-%d %I:%M %p")
 
             echo -e "\n📢 Generando notificación para Teams..."

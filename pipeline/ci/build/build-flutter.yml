@@ -26,7 +26,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             VERSION_FILE="$(Pipeline.Workspace)/versions/flutter/version.json"
             echo -e "\n📁 File: version.json"
             ls -la "$VERSION_FILE"
@@ -47,7 +47,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             VERSION_FILE="$(Pipeline.Workspace)/versions/pubspec/version.json"
             echo -e "\n📁 File: version.json"
             ls -la "$VERSION_FILE"
@@ -68,7 +68,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
 
             CURRENT_BRANCH="$(Build.SourceBranchName)"
 
@@ -107,7 +107,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             echo -e "\nℹ️ Actualizando version"
             echo "Version APK     : $(version)"
             echo "Version Pubspec : $(versionPubspec)"
@@ -124,7 +124,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             echo -e "\nℹ️ Actualizando App ID"
             echo "APP ID: $(APP_ID)"
 
@@ -149,7 +149,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             echo "🔎 Verificando entorno Flutter y Android SDK..."
             echo -e "\n📦 ANDROID_HOME: $ANDROID_HOME" && ls -la "$ANDROID_HOME"
             echo -e "\n🌀 Flutter versión:" && flutter --version
@@ -162,7 +162,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             echo -e "\nℹ️ Verificando carpeta assets..."
             if [[ -d "assets" ]] && [[ "$(ls -A assets)" ]]; then
               echo -e "\n📁 Assets encontrados:"
@@ -178,7 +178,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             echo -e "\nℹ️ Descargando Keystore..."
             echo "Cuenta  : $(ACCOUNT_ID_DEPLOY)"
             echo "KeyAlias: $(KEY_ALIAS).jks"
@@ -204,7 +204,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             escape_value() {
             local raw="$1"
             printf '%s' "$raw" | sed \
@@ -242,7 +242,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             echo -e "\n☕ JAVA_HOME: $JAVA_HOME" && java -version
             echo -e "\n🌀 Flutter versión:" && flutter --version
 
@@ -255,7 +255,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             echo -e "\nℹ️ Validando Build APK..."
 
             APK_PATH="build/app/outputs/flutter-apk/app-profile.apk"
@@ -289,7 +289,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             APK_NAME="invictus-$(environment)-$(version).apk"
 
             jq -n \
@@ -317,7 +317,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             echo -e "\nℹ️ Renombrando APK..."
             APK_NAME="invictus-$(environment)-$(version).apk"
 

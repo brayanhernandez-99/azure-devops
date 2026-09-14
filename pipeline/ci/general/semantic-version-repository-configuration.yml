@@ -18,7 +18,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             if [[ "$(Build.Reason)" == "PullRequest" ]]; then
               BRANCH="$(System.PullRequest.SourceBranch)"
             else
@@ -43,7 +43,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             echo -e "\n📌 Verificando si feature está actualizada con master y si hay cambios relevantes..."
             echo "Branch Actual: $(echo $(Build.SourceBranch))"          
             git fetch origin master

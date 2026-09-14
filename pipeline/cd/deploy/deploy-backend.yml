@@ -23,7 +23,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             VERSION_FILE="$(Pipeline.Workspace)/version-downloaded/versions/microservice/version.json"
             echo -e "\n📁 File: version.json"
             ls -la "$VERSION_FILE"
@@ -44,7 +44,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             echo -e "\n🔐 Logging in to ECR..."
             aws ecr get-login-password --region $AWS_DEFAULT_REGION | \
             docker login --username AWS --password-stdin $ACCOUNT_ID_DEPLOY.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
@@ -59,7 +59,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             case "$(Build.SourceBranchName)" in 
               staging) environment="qa" ;;
               master) environment="prd" ;;
@@ -87,7 +87,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             echo "🔍 Verificando imagen..."
             echo "Repositorio: $(ecr_repository)"
             echo "Imagen:      $(version)"
@@ -109,7 +109,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             ecs_cluster_array=()
             ecs_service_array=()
             ecs_taskdef_arn_array=()
@@ -222,7 +222,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             IFS=',' read -ra CLUSTERS_ARRAY <<< "$(ecs_clusters)"
             IFS=',' read -ra SERVICES_ARRAY <<< "$(ecs_services)"
             IFS=',' read -ra ARNS_ARRAY <<< "$(ecs_taskdef_arns)"
@@ -276,7 +276,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             IFS=',' read -ra CLUSTERS_ARRAY <<< "$(ecs_clusters)"
             IFS=',' read -ra SERVICES_ARRAY <<< "$(ecs_services)"
             IFS=',' read -ra NEW_TASKDEF_ARNS_ARRAY <<< "$(new_taskdef_arns)"
@@ -312,7 +312,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             DEPLOY_TIME=$(date -d "$BUILD_FINISHTIME -5 hours" "+%Y-%m-%d %I:%M %p")
 
             echo -e "\n📢 Generando notificación para Teams..."

@@ -29,7 +29,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             VERSION_FILE="$(Pipeline.Workspace)/versions-downloaded/versions/$(msName)/version.json"
             echo -e "\n📁 File: version.json"
             ls -la "$VERSION_FILE"
@@ -50,7 +50,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             CURRENT_BRANCH="$(Build.SourceBranchName)"
             case "$CURRENT_BRANCH" in 
               staging) environment="$environment_staging" ;;
@@ -71,7 +71,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
               fileselect="app-legacy"
               echo -e "\nℹ️ Ruta de archivo del microfrontend: $fileselect"
@@ -88,7 +88,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             echo -e "\n🔐 Obteniendo tokens de AWS CodeArtifact..."
 
             token_matrix=$(aws codeartifact get-authorization-token \
@@ -141,7 +141,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             echo -e "\n📁 Archivo .env.local: app-administration-vue2"
             printenv | grep "^VUE2_" | sed "s/^VUE2_//" > $(System.DefaultWorkingDirectory)/app-legacy/app-administration-vue2/.env.local
             printenv | grep "^ADMIN_" | sed "s/^ADMIN_//" >> $(System.DefaultWorkingDirectory)/app-legacy/app-administration-vue2/.env.local
@@ -170,7 +170,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             echo -e "\n📁 Archivos .env: $(msName)"
             printenv | grep -i "^$(msName)_" | sed -E "s/^($(msName))_//I" > $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.env.tmp
             cat $(System.DefaultWorkingDirectory)/apps/invictus/.env >> $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.env.tmp
@@ -188,7 +188,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             cd $(System.DefaultWorkingDirectory)/$(file)/$(msName)
             echo "🔧 Actualizando versión en $(file)/$(msName)/package.json: $(msVersion)"
             jq --arg version "$(msVersion)" '.version = $version' package.json > tmp.json && mv tmp.json package.json
@@ -208,7 +208,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             echo -e "\n📁 Generando archivo .pnpmrc en: $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc"
             cat <<EOF > "$(System.DefaultWorkingDirectory)/$(file)/$(msName)/.pnpmrc"
             node-linker=hoisted
@@ -244,7 +244,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             echo -e "\n📦 Build MicroFrontend..."
 
             if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
