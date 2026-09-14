@@ -303,7 +303,7 @@ jobs:
                 echo "ℹ️ Se creó el MF  $(file) en la rama version/$br"
 
               else
-                  echo "ℹ️ $ms ya existe en version/$br"
+                  echo "ℹ️ $(msName) ya existe en version/$br"
               fi
             done
         displayName: "🔎 Validate Micro-Frontend Exists in version/master"
