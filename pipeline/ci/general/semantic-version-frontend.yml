@@ -61,7 +61,8 @@ jobs:
           script: |
             set -euo pipefail
             echo -e "\n📌 Verificando si feature está actualizada con master y si hay cambios relevantes..."
-            echo "Branch Actual: $CURRENT_BRANCH"
+            CURRENT_BRANCH="$(Build.SourceBranch)"
+            echo "Branch Actual: ${CURRENT_BRANCH#refs/heads/}"
             git fetch origin master
 
             # Encuentra el punto de bifurcación (base común)
