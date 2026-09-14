@@ -87,7 +87,7 @@ jobs:
 
             echo -e "\n✅ ~/.npmrc generado"
             cp ~/.npmrc "$(Build.Repository.Name)/.npmrc"
-            cat .npmrc | sed -E 's#(:_authToken=).*#\1****#'
+            cat "$(Build.Repository.Name)/.npmrc" | sed -E 's#(:_authToken=).*#\1****#'
 
             echo -e "\n🔍 Verificando identidad AWS..."
             aws sts get-caller-identity
