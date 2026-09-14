@@ -287,10 +287,8 @@ jobs:
               pkg="$(System.DefaultWorkingDirectory)/$(file)/$(msName)/package.json"
 
               if [[ ! -f "$pkg" ]]; then
-                echo "🆕 Bootstrap MF: $ms no existe"
-
+                echo "🆕 Bootstrap MF: $(msName) no existe"
                 mkdir -p "$(dirname "$pkg")"
-
                 cat > "$pkg" <<EOF
             {
               "name": "$(msName)",
@@ -300,10 +298,9 @@ jobs:
                 git add "$pkg"
                 git commit -m "chore: bootstrap new micro-frontends"
                 git push origin version/$br
-                echo "ℹ️ Se creó el MF  $(file) en la rama version/$br"
-
+                echo "ℹ️ Se creó el MF $(msName) en la rama version/$br"
               else
-                  echo "ℹ️ $ms ya existe en version/$br"
+                echo "ℹ️ $(msName) ya existe en version/$br"
               fi
             done
         displayName: "🔎 Validate Micro-Frontend Exists in version/master"
