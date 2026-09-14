@@ -21,7 +21,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             git config user.name "pipeline"
             git config user.email "pipelineUX@ux.technology"
             git fetch --tags

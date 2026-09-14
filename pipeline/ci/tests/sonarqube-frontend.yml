@@ -38,7 +38,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             VERSION_FILE="$(Pipeline.Workspace)/versions-downloaded/versions/$(msName)/version.json"
             echo -e "\n📁 File: version.json"
             ls -la "$VERSION_FILE"
@@ -59,7 +59,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             if [[ "$(msName)" == "app-administration-vue2" || "$(msName)" == "app-sellers-vue2" ]]; then
               fileselect=app-legacy
               echo -e "\nℹ️ Ruta de archivo del micro frontend: $fileselect"
@@ -76,7 +76,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             echo -e "\n🔐 Obteniendo tokens de AWS CodeArtifact..."
 
             token_matrix=$(aws codeartifact get-authorization-token \
@@ -134,7 +134,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             echo "Comentando app-legacy/*"
             cd $(Build.Repository.Name)
             sed -i '/app-legacy\//s/  -/  # -/' pnpm-workspace.yaml
@@ -150,7 +150,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             echo -e "\n📁 Files:"
             ls -la $(Build.Repository.Name)/$(file)/$(msName)
 
@@ -178,7 +178,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             echo -e "\n📁 Generando archivo .pnpmrc en: $(Build.Repository.Name)/$(file)/$(msName)/.pnpmrc"
             cat <<EOF > "$(Build.Repository.Name)/$(file)/$(msName)/.pnpmrc"
             node-linker=hoisted
@@ -253,7 +253,7 @@ jobs:
             inputs:
               targetType: inline
               script: |
-                set -e
+                set -euo pipefail
                 echo -e "\n🔎 Eliminando sonar.branch.name de SONARQUBE_SCANNER_PARAMS..."
                 CLEAN_PARAMS=$(echo "$SONARQUBE_SCANNER_PARAMS" | jq -c 'del(.["sonar.branch.name"])')
 
@@ -295,7 +295,7 @@ jobs:
             inputs:
               targetType: inline
               script: |
-                set -e
+                set -euo pipefail
                 echo -e "\n⚙️ Configuración SONARQUBE_SCANNER_PARAMS:"
                 echo "$SONARQUBE_SCANNER_PARAMS" | jq '."sonar.token" = "***"'
             displayName: "🔎 View SonarQube Parameters"
@@ -307,7 +307,7 @@ jobs:
         inputs:
           targetType: inline
           script: |
-            set -e
+            set -euo pipefail
             echo -e "\n🔎 Ejecutando coverage $(msName)..."
             cd $(System.DefaultWorkingDirectory)/$(Build.Repository.Name)
             pnpm coverage --filter=...$(msName)
