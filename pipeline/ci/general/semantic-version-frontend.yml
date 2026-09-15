@@ -504,7 +504,7 @@ jobs:
             git fetch origin version/$clean_branch
             git checkout -B version/$clean_branch origin/version/$clean_branch
 
-            echo "🔧 Actualizando versión"
+            echo -e "\n🔧 Actualizando versión"
             for files in $(Pipeline.Workspace)/versions/*/version.json; do
               ms=$(jq -r .ms "$files")
               version=$(jq -r .version "$files")
@@ -521,6 +521,7 @@ jobs:
               git add "$dir/$ms/package.json"
             done
 
+            echo ""
             git commit -m "chore: update version microfrontend"
             git push origin version/$clean_branch
         displayName: "⚡commit & push version"
