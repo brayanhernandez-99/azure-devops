@@ -382,7 +382,7 @@ jobs:
             git fetch origin version/$clean_branch
             git checkout -B version/$clean_branch origin/version/$clean_branch
 
-            echo "🔧 Actualizando versión"
+            echo -e "\n🔧 Actualizando versión"
             echo "electron → $(cleanNEXT_VERSION)"
 
             jq --arg version "$(cleanNEXT_VERSION)" '.version = $version' package.json > tmp.json && mv tmp.json package.json
