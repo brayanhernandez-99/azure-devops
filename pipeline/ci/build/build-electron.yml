@@ -83,9 +83,13 @@ jobs:
             npm config set "//$REPO_DOMAIN_UX/$REPO_PATH_UX/:_authToken" "$token_ux"
             npm config set "@ux:registry" "$REPO_URL_UX"
 
+            echo "⚙️ Configurando npm INVICTUS..."
+            npm config set "//$REPO_DOMAIN_MATRIX/$REPO_PATH_MATRIX/:_authToken" "$token_matrix"
+            npm config set "@invictus:registry" "$REPO_URL_MATRIX"
+
             echo -e "\n✅ ~/.npmrc generado"
-            cp ~/.npmrc "$(Build.SourcesDirectory)/.npmrc"
-            cat .npmrc | sed -E 's#(:_authToken=).*#\1****#'
+            cp ~/.npmrc "$(System.DefaultWorkingDirectory)/.pnpmrc"
+            cat "$(System.DefaultWorkingDirectory)/.pnpmrc" | sed -E 's#(:_authToken=).*#\1****#'
 
             echo -e "\n🔍 Verificando identidad AWS..."
             aws sts get-caller-identity
@@ -372,6 +376,10 @@ jobs:
             npm config set "//$repoDomain/$repoPath/:_authToken" $token
             npm config set registry $repoUrl
 
+            Write-Host "Configurando npm INVICTUS..."
+            npm config set "//$repoDomain/$repoPath/:_authToken" $token
+            npm config set "@invictus:registry" $repoUrl
+
             Write-Host "Verificando identidad de AWS..."
             aws sts get-caller-identity
 
@@ -379,6 +387,7 @@ jobs:
             $npmrcPath = Join-Path "$(System.DefaultWorkingDirectory)" ".npmrc"
             @"
             registry=$repoUrl
+            @invictus:registry=$repoUrl
             //$repoDomain/$repoPath/:_authToken=$token
             "@ | Set-Content -Encoding UTF8 -Path $npmrcPath
 
