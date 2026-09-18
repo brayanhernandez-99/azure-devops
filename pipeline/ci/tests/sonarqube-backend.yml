@@ -82,8 +82,13 @@ jobs:
             npm config set "//$REPO_DOMAIN_UX/$REPO_PATH_UX/:_authToken" "$token_ux"
             npm config set "@ux:registry" "$REPO_URL_UX"
 
+            echo "⚙️ Configurando npm INVICTUS..."
+            npm config set "//$REPO_DOMAIN_MATRIX/$REPO_PATH_MATRIX/:_authToken" "$token_matrix"
+            npm config set "@invictus:registry" "$REPO_URL_MATRIX"
+
             echo -e "\n✅ ~/.npmrc generado"
-            cat ~/.npmrc | sed -E 's#(:_authToken=).*#\1****#'
+            cp ~/.npmrc "$(System.DefaultWorkingDirectory)/.pnpmrc"
+            cat "$(System.DefaultWorkingDirectory)/.pnpmrc" | sed -E 's#(:_authToken=).*#\1****#'
 
             echo -e "\n🔍 Verificando identidad AWS..."
             aws sts get-caller-identity
