@@ -1,0 +1,129 @@
+jobs:
+  #
+  # Playwright Linux
+  #
+  - job: playwright_automation
+    displayName: "🎭 playwright automation"
+    pool:
+      name: "Azure Pipelines"
+      vmImage: ubuntu-latest
+
+    variables:
+      - template: ../../variables/groups-variables-playwright.yml
+
+    steps:
+      - task: DownloadBuildArtifacts@0
+        inputs:
+          artifactName: "version"
+          downloadPath: "$(Pipeline.Workspace)"
+        displayName: "📥 Download Version"
+        condition: succeeded()
+
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            set -euo pipefail
+            VERSION_FILE="$(Pipeline.Workspace)/version/version.json"
+            echo -e "\n📁 File: version.json"
+            ls -la "$VERSION_FILE"
+            jq . "$VERSION_FILE"
+
+            if [[ -f "$VERSION_FILE" ]]; then
+              VERSION=$(jq -r '.version' $VERSION_FILE)
+              echo -e "\n🚀 Versión detectada para $(Build.Repository.Name): $VERSION"
+              echo "##vso[task.setvariable variable=version]$VERSION"
+            else
+              echo -e "\n##vso[task.logissue type=error]⚠️ No se encontro archivo de versión para $(Build.Repository.Name)"
+              exit 99
+            fi
+        displayName: "📚 Read Version"
+        condition: succeeded()
+
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            set -euo pipefail
+            mkdir -p "release/linux"
+            mkdir -p "release/windows"
+
+            aws s3 cp "s3://download-$(ACCOUNT_ID_INVICTUS)/app/linux/InvictusUX-$(version).AppImage" "release/linux/InvictusUX-$(version).AppImage"
+            aws s3 cp "s3://download-$(ACCOUNT_ID_INVICTUS)/app/windows/InvictusUX Setup $(version).exe" "release/windows/InvictusUX Setup $(version).exe"
+
+            echo -e "\n📦 Archivos descargados:"
+            ls -laR "release"
+        displayName: "📥 Download Electron Artifacts"
+        condition: succeeded()
+        env:
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
+          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
+
+      - task: UseNode@1
+        inputs:
+          version: "24.x"
+        displayName: "🔧 Install Nodejs 24.x"
+        condition: succeeded()
+
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            set -euo pipefail
+            CURRENT_BRANCH="$(Build.SourceBranchName)"
+            case "$CURRENT_BRANCH" in 
+              staging) environment="staging" ;;
+              master) environment="master" ;;
+              *) environment="develop" ;;
+            esac
+
+            cat > .env <<EOF
+            DB_HOST="$(DB_HOST)"
+            DB_PORT="$(DB_PORT)"
+            DB_PASS="$(DB_PASS)"
+            DB_USER="$(DB_USER)"
+            EQUIPMENT_ID="$(EQUIPMENT_ID)"
+            HEADLESS="$(HEADLESS)"
+            ENVIRONMENT="${environment}"
+            INVICTUS_APP_PATH="release/linux/InvictusUX-$(version).AppImage"
+            EOF
+
+            echo -e "\n📁 File: .env"
+            ls -la .env
+            cat .env
+        displayName: "⚙️ Generate .env"
+        condition: succeeded()
+
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            set -euo pipefail
+            echo -e "\n⚙️ Instalando dependencias node..."
+            npm install
+
+            if [[ ! -d "node_modules" ]] || [[ -z "$(find node_modules -mindepth 1 -maxdepth 1 -print -quit)" ]]; then
+              echo -e "\n##vso[task.logissue type=error]⚠️ No se instalaron las dependencias."
+              exit 99
+            fi
+            echo -e "\n✅ Dependencias Instaladas:"
+        displayName: "⚙️ Install Dependencies"
+        condition: succeeded()
+
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            set -euo pipefail
+            echo "🎭 Ejecutando TAGS:"
+
+            IFS='|' read -ra TAG_LIST <<< "$(TAGS)"
+            for TAG in "${TAG_LIST[@]}"; do
+              printf '📌 %s\n' "$TAG"
+            done
+            printf '\n'
+
+            npx playwright test --grep "$(TAGS)"
+        displayName: "🎭 Run Playwright Automation"
+        condition: succeeded()
