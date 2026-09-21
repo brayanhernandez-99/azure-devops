@@ -9,6 +9,7 @@ stages:
   - stage: scan_microservice
     displayName: "🛡️ Scan MicroService"
     dependsOn: semantic_version_microservice
+    condition: and(succeeded(), ne(variables['Build.Repository.Name'], 'microservice-trino-invictus'))
     jobs:
       - template: ../ci/tests/sonarqube-backend.yml
       - template: ../ci/tests/gitleaks.yml
@@ -16,6 +17,7 @@ stages:
   - stage: build_microservice
     displayName: "📦 Build MicroService"
     dependsOn: scan_microservice
+    condition: in(dependencies.scan_microservice.result, 'Succeeded', 'Skipped')
     jobs:
       - template: ../ci/build/build-backend.yml
 
