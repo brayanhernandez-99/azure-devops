@@ -183,10 +183,7 @@ jobs:
             ls -la $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.env
             cat $(System.DefaultWorkingDirectory)/$(file)/$(msName)/.env
         displayName: "⚙️ Generate $(msName) .env"
-        condition: and(succeeded(),
-          ne(variables['msName'], 'app-administration-vue2'),
-          ne(variables['msName'], 'app-sellers-vue2'),
-          ne(variables['msName'], 'invictus'))
+        condition: and(succeeded(), ne(variables['msName'], 'app-administration-vue2'), ne(variables['msName'], 'app-sellers-vue2'), ne(variables['msName'], 'invictus'))
 
       - task: Bash@3
         inputs:
