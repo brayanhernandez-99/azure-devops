@@ -110,3 +110,11 @@ stages:
           red: ${{ parameters.red }}
           release: ${{ parameters.release }}
           environments_staging: ${{ parameters.environments_staging }}
+
+  #
+  # Playwright
+  #
+  - ${{ if and(eq(parameters.release, 'playwright'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), in(variables['Build.SourceBranchName'], 'develop', 'staging', 'master'))) }}:
+      - template: ./pipelines/pipeline-playwright.yml
+        parameters:
+          release: ${{ parameters.release }}

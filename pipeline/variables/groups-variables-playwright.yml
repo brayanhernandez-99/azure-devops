@@ -1,0 +1,18 @@
+variables:
+  - group: trasversal-azure-devops
+  - group: trasversal-versions-invictus
+
+  # Develop - Feature - Hotfix branch
+  - ${{ if or(eq(variables['Build.SourceBranchName'], 'develop'), startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')) }}:
+      - group: trasversal-aws-develop
+      - group: variables-playwright-develop
+
+  # Staging branch
+  - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
+      - group: trasversal-aws-staging
+      - group: variables-playwright-staging
+
+  # Cap branch
+  - ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
+      - group: trasversal-aws-antioquia-cap
+      - group: variables-playwright-master

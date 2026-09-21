@@ -1,0 +1,13 @@
+stages:
+  - stage: semantic_version_playwright
+    displayName: "🏷️ Semantic Version Playwright"
+    jobs:
+      - template: ../ci/semantic-version-integration.yml
+        parameters:
+          release: ${{ parameters.release }}
+
+  - stage: playwright_automation
+    displayName: "🎭 Playwright Automation"
+    dependsOn: semantic_version_playwright
+    jobs:
+      - template: ../ci/build/build-playwright.yml
