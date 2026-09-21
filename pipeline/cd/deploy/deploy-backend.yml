@@ -71,8 +71,8 @@ jobs:
             ECR_REPOSITORY="${ECR_REPOSITORY%-invictus}-$environment"
 
             echo -e "ℹ️ Configurando... \n"
-            echo "Environment:    $environment"
-            echo "Micro service:  $msName"
+            echo "Environment   : $environment"
+            echo "Micro service : $msName"
             echo "ECR Repository: $ECR_REPOSITORY"
 
             echo "##vso[task.setvariable variable=ecr_repository]$ECR_REPOSITORY"
@@ -89,8 +89,8 @@ jobs:
           script: |
             set -euo pipefail
             echo "🔍 Verificando imagen..."
+            echo "Imagen     : (version)"
             echo "Repositorio: $(ecr_repository)"
-            echo "Imagen:      $(version)"
 
             if aws ecr describe-images --repository-name "$(ecr_repository)" --image-ids imageTag=$(version) > /dev/null 2>&1; then
               echo -e "\n✅ Imagen encontrada en ECR."

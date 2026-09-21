@@ -16,5 +16,8 @@ jobs:
   - ${{ if eq(parameters.release, 'rpc') }}:
       - template: ./general/semantic-version-repository-configuration.yml
 
+  - ${{ if eq(parameters.release, 'trino') }}:
+      - template: ./general/semantic-version-trino.yml
+
   - ${{ if eq(parameters.release, 'playwright') }}:
       - template: ./general/semantic-version-playwright.yml
