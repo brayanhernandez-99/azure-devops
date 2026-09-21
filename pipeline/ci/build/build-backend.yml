@@ -107,20 +107,6 @@ jobs:
           targetType: inline
           script: |
             set -euo pipefail
-            aws ecr get-login-password --region $AWS_DEFAULT_REGION | \
-            docker login --username AWS --password-stdin $ACCOUNT_ID_DEPLOY.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
-        displayName: "🔐 Login to AWS ECR"
-        condition: succeeded()
-        env:
-          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
-          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
-          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
-
-      - task: Bash@3
-        inputs:
-          targetType: inline
-          script: |
-            set -euo pipefail
             DOCKER_FILE="$(Build.Repository.Name)/Dockerfile"
             echo -e "\n🔎 Validando DockerFile en: $DOCKER_FILE"
 
@@ -173,6 +159,20 @@ jobs:
             echo "##vso[task.setvariable variable=ecr_repository]$ECR_REPOSITORY"
         displayName: "📛 Set ECR Repository Name"
         condition: succeeded()
+
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            set -euo pipefail
+            aws ecr get-login-password --region $AWS_DEFAULT_REGION | \
+            docker login --username AWS --password-stdin $ACCOUNT_ID_DEPLOY.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+        displayName: "🔐 Login to AWS ECR"
+        condition: succeeded()
+        env:
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
+          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
 
       - task: Docker@2
         inputs:
