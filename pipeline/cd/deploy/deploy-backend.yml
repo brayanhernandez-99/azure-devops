@@ -119,9 +119,9 @@ jobs:
             clusters=("invictus")
             services=("$MS_NAME")
 
-            echo "📦 Repository:    $(Build.Repository.Name)"
-            echo "🧩 Microservice:  $MS_NAME"
-            echo "🏠 Region:        $REGION"
+            echo "📦 Repository  : $(Build.Repository.Name)"
+            echo "🧩 Microservice: $MS_NAME"
+            echo "🏠 Region      : $REGION"
 
             get_task_definition() {
               local cluster=$1
