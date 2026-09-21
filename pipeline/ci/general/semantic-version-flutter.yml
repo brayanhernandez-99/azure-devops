@@ -357,7 +357,7 @@ jobs:
 
               mkdir -p $(Build.ArtifactStagingDirectory)/flutter
               touch $(Build.ArtifactStagingDirectory)/flutter/version.json
-              echo "{ \"release\": \"flutter\", \"version\": \"$NEXT_VERSION\" }" > $(Build.ArtifactStagingDirectory)/flutter/version.json
+              echo "{ \"release\": \"apk\", \"version\": \"$NEXT_VERSION\" }" > $(Build.ArtifactStagingDirectory)/flutter/version.json
 
               echo "##vso[task.setvariable variable=cleanNEXT_VERSION]$NEXT_VERSION"
             fi
@@ -412,7 +412,7 @@ jobs:
 
               mkdir -p $(Build.ArtifactStagingDirectory)/pubspec
               touch $(Build.ArtifactStagingDirectory)/pubspec/version.json
-              echo "{ \"ms\": \"pubspec\", \"version\": \"$NEW_BUILD_NUMBER\" }" > $(Build.ArtifactStagingDirectory)/pubspec/version.json
+              echo "{ \"release\": \"apk\", \"version\": \"$NEW_BUILD_NUMBER\" }" > $(Build.ArtifactStagingDirectory)/pubspec/version.json
 
               echo "##vso[task.setvariable variable=NEXT_VERSION_PUB]$NEW_BUILD_NUMBER"
             fi
