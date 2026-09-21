@@ -200,9 +200,7 @@ jobs:
             echo -e "\n⚙️ Configuración SONARQUBE_SCANNER_PARAMS:"
             echo "$SONARQUBE_SCANNER_PARAMS" | jq '."sonar.token" = "***"'
         displayName: "🔎 View SonarQube Parameters"
-        condition: and(succeeded(),
-          ne(variables['msName'], 'app-administration-vue2'),
-          ne(variables['msName'], 'app-sellers-vue2'))
+        condition: and(succeeded(), ne(variables['msName'], 'app-administration-vue2'), ne(variables['msName'], 'app-sellers-vue2'))
 
       - task: Bash@3
         inputs:

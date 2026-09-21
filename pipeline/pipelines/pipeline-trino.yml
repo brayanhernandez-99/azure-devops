@@ -1,0 +1,50 @@
+stages:
+  - stage: semantic_version_microservice
+    displayName: "🏷️ Semantic Version MicroService"
+    jobs:
+      - template: ../ci/semantic-version-integration.yml
+        parameters:
+          release: ${{ parameters.release }}
+
+  - stage: build_microservice
+    displayName: "📦 Build MicroService"
+    dependsOn: semantic_version_microservice
+    jobs:
+      - template: ../ci/build/build-trino.yml
+
+  #####################################################################
+
+  - ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}:
+      - stage: deploy_microservice_develop
+        displayName: "🚀 Deploy MicroService develop"
+        dependsOn: build_microservice
+        jobs:
+          - template: ../cd/deployment.yml
+            parameters:
+              release: ${{ parameters.release }}
+
+  #####################################################################
+
+  - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
+      - ${{ each environment_staging in parameters.environments_staging }}:
+          - stage: deploy_microservice_${{ environment_staging }}
+            displayName: "🚀 Deploy MicroService ${{ environment_staging }}"
+            dependsOn: build_microservice
+            jobs:
+              - template: ../cd/deployment.yml
+                parameters:
+                  release: ${{ parameters.release }}
+                  environment_staging: ${{ environment_staging }}
+
+  #####################################################################
+
+  - ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
+      - ${{ each region in parameters.red }}:
+          - stage: deploy_microservice_${{ region }}
+            displayName: "🚀 Deploy MicroService ${{ region }}"
+            dependsOn: build_microservice
+            jobs:
+              - template: ../cd/deployment.yml
+                parameters:
+                  region: ${{ region }}
+                  release: ${{ parameters.release }}

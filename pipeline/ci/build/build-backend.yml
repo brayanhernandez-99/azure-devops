@@ -96,7 +96,7 @@ jobs:
             echo -e "\n🔍 Verificando identidad AWS..."
             aws sts get-caller-identity
         displayName: "🔐 Setup CodeArtifact & npm config"
-        condition: succeeded()
+        condition: and(succeeded(), ne(variables['Build.Repository.Name'], 'microservice-trino-invictus'))
         env:
           AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
@@ -141,7 +141,7 @@ jobs:
             echo -e "\n📁 File: $DOCKER_FILE"
             cat $DOCKER_FILE
         displayName: "🔎 Validate Dockerfile"
-        condition: succeeded()
+        condition: and(succeeded(), ne(variables['Build.Repository.Name'], 'microservice-trino-invictus'))
 
       - task: Bash@3
         inputs:
@@ -166,8 +166,8 @@ jobs:
             ECR_REPOSITORY="${ECR_REPOSITORY%-invictus}-$environment"
 
             echo -e "ℹ️ Configurando... \n"
-            echo "Environment:    $environment"
-            echo "Microservice:   $msName"
+            echo "Environment   : $environment"
+            echo "Microservice  : $msName"
             echo "ECR Repository: $ECR_REPOSITORY"
 
             echo "##vso[task.setvariable variable=ecr_repository]$ECR_REPOSITORY"
@@ -208,7 +208,7 @@ jobs:
           script: |
             set -euo pipefail
             echo -e "\nℹ️ Verificando..."
-            echo "Id Cuenta:   $(ACCOUNT_ID_DEPLOY)"
+            echo "Id Cuenta  : $(ACCOUNT_ID_DEPLOY)"
             echo "Repositorio: $(ecr_repository)"
 
             if aws ecr describe-repositories --repository-names "$(ecr_repository)" > /dev/null 2>&1; then
