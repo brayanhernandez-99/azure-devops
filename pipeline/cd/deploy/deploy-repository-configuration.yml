@@ -34,7 +34,7 @@ jobs:
         displayName: "📤 Upload Configuration to S3"
         condition: succeeded()
         env:
-          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION_INVICTUS)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
 
@@ -84,7 +84,7 @@ jobs:
         displayName: "🔎 Verify Changes in reports/"
         condition: and(succeeded(), ne(variables['Build.SourceBranchName'], 'develop'))
         env:
-          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION_INVICTUS)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
 

@@ -51,7 +51,7 @@ jobs:
         displayName: "🔐 Login to AWS ECR"
         condition: succeeded()
         env:
-          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION_DEPLOY)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
 
@@ -101,7 +101,7 @@ jobs:
         displayName: "🔍 Verify Image Exists in ECR"
         condition: succeeded()
         env:
-          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION_DEPLOY)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
 
@@ -214,7 +214,7 @@ jobs:
         displayName: "🔗 Get Task Definition ARN"
         env:
           region: ${{ parameters.region }}
-          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION_INVICTUS)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
 
@@ -268,7 +268,7 @@ jobs:
         displayName: "📄 Get & Update Task Definitions"
         condition: succeeded()
         env:
-          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION_INVICTUS)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
 
@@ -304,7 +304,7 @@ jobs:
         displayName: "🚀 Deploy microservice"
         condition: succeeded()
         env:
-          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION_INVICTUS)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
 

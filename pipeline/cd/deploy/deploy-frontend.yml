@@ -113,7 +113,7 @@ jobs:
         condition: succeeded()
         env:
           region: ${{ parameters.region }}
-          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION_INVICTUS)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
 
@@ -154,7 +154,7 @@ jobs:
         displayName: "📡 Get CloudFront Distribution"
         condition: succeeded()
         env:
-          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION_INVICTUS)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
 
@@ -190,7 +190,7 @@ jobs:
         displayName: "🔄 Update CloudFront Distribution"
         condition: succeeded()
         env:
-          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION_INVICTUS)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
 
@@ -212,7 +212,7 @@ jobs:
         displayName: "⏳ Waiting for CloudFront propagation"
         condition: succeeded()
         env:
-          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION_INVICTUS)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
 
@@ -239,7 +239,7 @@ jobs:
         displayName: "⏳ Waiting for invalidation Cache"
         condition: succeeded()
         env:
-          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION_INVICTUS)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
 
