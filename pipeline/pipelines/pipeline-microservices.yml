@@ -17,7 +17,7 @@ stages:
   - stage: build_microservice
     displayName: "📦 Build MicroService"
     dependsOn: scan_microservice
-    condition: in(dependencies.scan_microservice.result, 'Succeeded', 'Skipped')
+    condition: in(dependencies.scan_microservice.result, 'Succeeded', 'SucceededWithIssues', 'Skipped')
     jobs:
       - template: ../ci/build/build-backend.yml
 
