@@ -6,20 +6,26 @@ stages:
         parameters:
           release: ${{ parameters.release }}
 
-  - stage: scan_microservice
-    displayName: "🛡️ Scan MicroService"
-    dependsOn: semantic_version_microservice
-    condition: and(succeeded(), ne(variables['Build.Repository.Name'], 'microservice-trino-invictus'))
-    jobs:
-      - template: ../ci/tests/sonarqube-backend.yml
-      - template: ../ci/tests/gitleaks.yml
+  - ${{ if ne(variables['Build.Repository.Name'], 'microservice-trino-invictus') }}:
+      - stage: scan_microservice
+        displayName: "🛡️ Scan MicroService"
+        dependsOn: semantic_version_microservice
+        jobs:
+          - template: ../ci/tests/sonarqube-backend.yml
+          - template: ../ci/tests/gitleaks.yml
 
-  - stage: build_microservice
-    displayName: "📦 Build MicroService"
-    dependsOn: scan_microservice
-    condition: in(dependencies.scan_microservice.result, 'Succeeded', 'SucceededWithIssues', 'Skipped')
-    jobs:
-      - template: ../ci/build/build-backend.yml
+      - stage: build_microservice
+        displayName: "📦 Build MicroService"
+        dependsOn: scan_microservice
+        jobs:
+          - template: ../ci/build/build-backend.yml
+
+  - ${{ if eq(variables['Build.Repository.Name'], 'microservice-trino-invictus') }}:
+      - stage: build_microservice
+        displayName: "📦 Build MicroService"
+        dependsOn: semantic_version_microservice
+        jobs:
+          - template: ../ci/build/build-backend.yml
 
   #####################################################################
 
