@@ -98,7 +98,7 @@ jobs:
         displayName: "🔐 Setup CodeArtifact & npm config"
         condition: and(succeeded(), ne(variables['Build.Repository.Name'], 'microservice-trino-invictus'))
         env:
-          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION_DEPLOY)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
 
@@ -170,7 +170,7 @@ jobs:
         displayName: "🔐 Login to AWS ECR"
         condition: succeeded()
         env:
-          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION_DEPLOY)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
 
@@ -220,7 +220,7 @@ jobs:
         displayName: "🔎 Verify ECR Repository Exists"
         condition: and(succeeded(), in(variables['Build.SourceBranchName'], 'develop', 'staging', 'master'))
         env:
-          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION_DEPLOY)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
 
