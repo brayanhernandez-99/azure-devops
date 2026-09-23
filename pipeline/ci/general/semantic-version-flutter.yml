@@ -71,7 +71,7 @@ jobs:
               echo "$CHANGED_FILES"
 
               # Filtrar cambios relevantes (ignorar carpeta pipeline/)
-              RELEVANT_CHANGES=$(echo "$CHANGED_FILES" | grep -vE '^pipeline/')
+              RELEVANT_CHANGES=$(grep -vE '^pipeline/' <<< "$CHANGED_FILES")
 
               if [[ -z "$RELEVANT_CHANGES" ]]; then
                 echo -e "\nℹ️ Solo hay cambios en archivos ignorados (pipeline/). Continuando..."
@@ -101,7 +101,7 @@ jobs:
             diff=$(git --no-pager diff "origin/master...HEAD")
             pattern='console[.](log|error|warn|info|debug)'
 
-            console_logs=$(echo "$diff" | awk -v pat="$pattern" '
+            console_logs=$(awk -v pat="$pattern" '
               /^\+\+\+ b\// {
                 file=$0
                 sub(/^\+\+\+ b\//,"",file)
@@ -120,7 +120,7 @@ jobs:
                 line++
               }
               /^ / { line++ }
-            ')
+            ' <<< "$diff")
 
             if [[ -n "$console_logs" ]]; then
               echo -e "$\n🧨 Archivos detectados con console.* en el código 🧨"
@@ -140,7 +140,7 @@ jobs:
             set -euo pipefail
             REPO_NAME="$(Build.Repository.Name)"          
             RESPONSE=$(curl -s -u ":$AZURE_DEVOPS_CLI_PAT" "https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories?api-version=5.0")
-            REPO_ID=$(echo "$RESPONSE" | jq -r --arg repo "$REPO_NAME" '.value[] | select(.name == $repo).id')
+            REPO_ID=$(jq -r --arg repo "$REPO_NAME" '.value[] | select(.name == $repo).id' <<< "$RESPONSE")
 
             echo "##vso[task.setvariable variable=repoID]$REPO_ID"
             echo "ℹ️ id del repositorio $REPO_NAME: $REPO_ID"
@@ -160,8 +160,8 @@ jobs:
 
             URL="https://dev.azure.com/ux-technology/Invictus/_apis/git/repositories/$(repoID)/pullrequests?searchCriteria.status=completed&searchCriteria.targetRefName=$CURRENT_BRANCH&api-version=5.0"
             response=$(curl -s -u ":$AZURE_DEVOPS_CLI_PAT" "$URL")
-            echo "$response" | jq '.value[0]'
-            PR_ID=$(echo "$response" | jq -r '.value[0].pullRequestId')
+            jq '.value[0]' <<< "$response"
+            PR_ID=$(jq -r '.value[0].pullRequestId' <<< "$response")
 
             echo -e "\nℹ️ id del pr $PR_ID"
             echo "##vso[task.setvariable variable=ultimoPR]$PR_ID"
@@ -225,7 +225,7 @@ jobs:
 
               if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|staging|master)$ ]]; then
                 raw_branch="$CURRENT_BRANCH"
-                clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
+                clean_branch=$(sed 's#refs/heads/##' <<< "$raw_branch")
                 echo "Branch: $clean_branch"
               fi
 
@@ -307,10 +307,10 @@ jobs:
               if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|staging|feature/.+)$ ]]; then
                 git checkout version/$clean_branch
                 VERSION_ACTUAL=$(jq -r .VERSION  env.json)
-                BASE_VERSION_BRANCH=$(echo "$VERSION_ACTUAL" | sed -E "s/-${clean_branch}\.[0-9]+//")
+                BASE_VERSION_BRANCH=$(sed -E "s/-${clean_branch}\.[0-9]+//" <<< "$VERSION_ACTUAL")
                 echo "versión base actual: $BASE_VERSION_BRANCH"
 
-                CURRENT_PRERELEASE=$(echo "$VERSION_ACTUAL" | sed -n "s/.*-${clean_branch}\.\([0-9]\+\)/\1/p")
+                CURRENT_PRERELEASE=$(sed -n "s/.*-${clean_branch}\.\([0-9]\+\)/\1/p" <<< "$VERSION_ACTUAL")
 
                 git checkout version/master
                 VERSION_ACTUAL_MASTER=$(jq -r .VERSION env.json)
@@ -385,7 +385,7 @@ jobs:
 
               if [[ "$CURRENT_BRANCH" =~ ^refs/heads/(develop|staging|master)$ ]]; then
                 raw_branch="$CURRENT_BRANCH"
-                clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
+                clean_branch=$(sed 's#refs/heads/##' <<< "$raw_branch")
                 echo $clean_branch
               fi
 
@@ -419,7 +419,7 @@ jobs:
           script: |
             set -euo pipefail
             raw_branch=$(Build.SourceBranch)
-            clean_branch=$(echo "$raw_branch" | sed 's#refs/heads/##')
+            clean_branch=$(sed 's#refs/heads/##' <<< "$raw_branch")
 
             git config user.name "pipeline"
             git config user.email "pipelineUX@ux.technology"

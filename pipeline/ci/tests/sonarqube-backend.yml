@@ -147,7 +147,7 @@ jobs:
             REPORT=$(npx npm-check-updates)
 
             echo "$REPORT"
-            if echo "$REPORT" | grep -q "→"; then
+            if grep -q "→" <<< "$REPORT"; then
               echo -e "\n##vso[task.logissue type=error]⚠️ Outdated npm dependencies detected. Please update them."
             else
               echo "✅ All npm dependencies are up to date"
@@ -198,7 +198,7 @@ jobs:
           script: |
             set -euo pipefail
             echo -e "\n⚙️ Configuración SONARQUBE_SCANNER_PARAMS:"
-            echo "$SONARQUBE_SCANNER_PARAMS" | jq '."sonar.token" = "***"'
+            jq '."sonar.token" = "***"' <<< "$SONARQUBE_SCANNER_PARAMS"
         displayName: "🔎 View SonarQube Parameters"
         condition: and(succeeded(), ne(variables['msName'], 'app-administration-vue2'), ne(variables['msName'], 'app-sellers-vue2'))
 
