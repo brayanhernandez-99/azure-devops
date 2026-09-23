@@ -66,7 +66,7 @@ jobs:
               *) environment="develop" ;;
             esac
 
-            msName=$(echo "$(Build.Repository.Name)" | sed -E 's/^microservice-//; s/-invictus$//')
+            msName=$(sed -E 's/^microservice-//; s/-invictus$//' <<< "$(Build.Repository.Name)")
             ECR_REPOSITORY="$(Build.Repository.Name)"
             ECR_REPOSITORY="${ECR_REPOSITORY%-invictus}-$environment"
 

@@ -404,7 +404,8 @@ jobs:
 
               mkdir -p $(Build.ArtifactStagingDirectory)/microservice
               touch $(Build.ArtifactStagingDirectory)/microservice/version.json
-              echo "{ \"release\": \"aws-ecs\", \"version\": \"$NEXT_VERSION\" }" > $(Build.ArtifactStagingDirectory)/microservice/version.json
+              msName=$(sed -E 's/^microservice-//; s/-invictus$//' <<< "$(Build.Repository.Name)")
+              echo "{ \"release\": \"aws-ecs\", \"ms\": \"$(msName)\", \"version\": \"$NEXT_VERSION\" }" > $(Build.ArtifactStagingDirectory)/microservice/version.json
 
               echo "##vso[task.setvariable variable=cleanNEXT_VERSION]$NEXT_VERSION"
             fi
