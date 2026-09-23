@@ -65,7 +65,7 @@ jobs:
               echo "$CHANGED_FILES"
 
               # Filtrar cambios relevantes (ignorar carpeta pipeline/)
-              RELEVANT_CHANGES=$(echo "$CHANGED_FILES" | grep -vE '^pipeline/')
+              RELEVANT_CHANGES=$(grep -vE '^pipeline/' <<< "$CHANGED_FILES")
 
               if [[ -z "$RELEVANT_CHANGES" ]]; then
                 echo -e "\nℹ️ Solo hay cambios en archivos ignorados (pipeline/). Continuando..."

@@ -24,13 +24,13 @@ jobs:
             case "$(Build.Reason)" in
               "PullRequest")
                 echo -e "\nℹ️ Ejecucion Valida por: PullRequest"
-                echo "Branch: $(echo "$(System.PullRequest.SourceBranch)" | sed 's#refs/heads/##')"
+                echo "Branch: $(sed 's#refs/heads/##' <<< "$(System.PullRequest.SourceBranch)")"
                 echo "Build Reason: $(Build.Reason)"
                 echo "Pull Request: $(System.PullRequest.PullRequestId)"
                 ;;
               "IndividualCI")
                 echo -e "\nℹ️ Ejecucion Valida por: IndividualCI"
-                echo "Branch: $(echo "$(Build.SourceBranch)" | sed 's#refs/heads/##')"
+                echo "Branch: $(sed 's#refs/heads/##' <<< "$(Build.SourceBranch)")"
                 echo "Build Reason: $(Build.Reason)"
                 ;;
               *)
@@ -99,7 +99,7 @@ jobs:
               echo "$CHANGED_FILES"
 
               # Filtrar cambios relevantes (ignorar carpeta pipeline/)
-              RELEVANT_CHANGES=$(echo "$CHANGED_FILES" | grep -vE '^pipeline/')
+              RELEVANT_CHANGES=$(grep -vE '^pipeline/' <<< "$CHANGED_FILES")
 
               if [[ -z "$RELEVANT_CHANGES" ]]; then
                 echo -e "\nℹ️ Solo hay cambios en archivos ignorados (pipeline/). Continuando..."
@@ -129,7 +129,7 @@ jobs:
             diff=$(git --no-pager diff "origin/master...HEAD")
             pattern='console[.](log|error|warn|info|debug)'
 
-            console_logs=$(echo "$diff" | awk -v pat="$pattern" '
+            console_logs=$(awk -v pat="$pattern" '
               /^\+\+\+ b\// {
                 file=$0
                 sub(/^\+\+\+ b\//,"",file)
@@ -148,7 +148,7 @@ jobs:
                 line++
               }
               /^ / { line++ }
-            ')
+            ' <<< "$diff")
 
             if [[ -n "$console_logs" ]]; then
               echo -e "$\n🧨 Archivos detectados con console.* en el código 🧨"
@@ -179,7 +179,7 @@ jobs:
             diff=$(git --no-pager diff "origin/master...HEAD")
             pattern='(describe|it|test|suite|specify)[.](only|fdescribe|fit|ftest)'
 
-            invalid_test_found=$(echo "$diff" | awk -v pat="$pattern" '
+            invalid_test_found=$(awk -v pat="$pattern" '
               /^\+\+\+ b\// {
                 file=$0
                 sub(/^\+\+\+ b\//,"",file)
@@ -200,7 +200,7 @@ jobs:
               /^ / {
                 line++
               }
-            ')
+            ' <<< "$diff")
 
             if [[ -n "$invalid_test_found" ]]; then
               echo -e "\n🧨 Archivos detectados con describe.* en el código 🧨"
@@ -232,12 +232,12 @@ jobs:
 
             case "$(Build.Reason)" in
               "PullRequest")
-                SOURCE_BRANCH=$(echo "$(System.PullRequest.SourceBranch)" | sed 's#refs/heads/##')
-                TARGET_BRANCH=$(echo "$(System.PullRequest.TargetBranch)" | sed 's#refs/heads/##')
+                SOURCE_BRANCH=$(sed 's#refs/heads/##' <<< "$(System.PullRequest.SourceBranch)")
+                TARGET_BRANCH=$(sed 's#refs/heads/##' <<< "$(System.PullRequest.TargetBranch)")
                 CURRENT_BRANCH=$SOURCE_BRANCH
 
                 cd $(Build.SourcesDirectory)
-                clean_branch=$(echo "$(System.PullRequest.SourceBranch)" | sed 's#refs/heads/##')
+                clean_branch=$(sed 's#refs/heads/##' <<< "$(System.PullRequest.SourceBranch)")
                 git checkout $clean_branch
                 git reset --hard HEAD
 
@@ -248,9 +248,9 @@ jobs:
                 echo "📌 Merge base detectado: $BASE"
 
                 changed_files=$(git diff --name-only $BASE HEAD)
-                packages_changed=$(echo "$changed_files" | grep "^packages/" || true)
+                packages_changed=$(grep "^packages/" <<< "$changed_files" || true)
 
-                apps=$(echo "$changed_files" | grep -E "^apps/|^app-legacy/" | cut -d '/' -f1,2 | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u || true)
+                apps=$(grep -E "^apps/|^app-legacy/" <<< "$changed_files" | cut -d '/' -f1,2 | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u || true)
 
                 if [[ -n "$packages_changed" ]]; then
                   apps=$(printf "%s\ninvictus\n" "$apps" | grep -v '^$' | sort -u)
@@ -276,9 +276,9 @@ jobs:
                       pr_target_branch="$TARGET_BRANCH" \
                       apps="$apps_json" \
                     --output json)
-                  echo "$pipeline_output" | jq
+                  jq <<< "$pipeline_output"
 
-                  run_id=$(echo "$pipeline_output" | jq -r '.id')
+                  run_id=$(jq -r '.id' <<< "$pipeline_output")
                   echo -e "\n##[command]🌐 Build Results: https://dev.azure.com/ux-technology/Invictus/_build/results?buildId=$run_id"
                 fi
 
@@ -318,14 +318,14 @@ jobs:
                 ;;
               "IndividualCI")
                 cd $(Build.SourcesDirectory)
-                CURRENT_BRANCH="$(echo "$(Build.SourceBranch)" | sed 's#refs/heads/##')"
+                CURRENT_BRANCH="$(sed 's#refs/heads/##' <<< "$(Build.SourceBranch)")"
                 git checkout $CURRENT_BRANCH
                 git reset --hard HEAD
 
                 echo "🔎 Comparando cambios entre: $CURRENT_BRANCH ... $CURRENT_BRANCH"
                 changed_files=$(git diff --name-only HEAD~1 HEAD)
-                packages_changed=$(echo "$changed_files" | grep "^packages/" || true)
-                apps=$(echo "$changed_files" | grep -E "^apps/|^app-legacy/" | cut -d '/' -f1,2 | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u || true)
+                packages_changed=$(grep "^packages/" <<< "$changed_files" || true)
+                apps=$(grep -E "^apps/|^app-legacy/" <<< "$changed_files" | cut -d '/' -f1,2 | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u || true)
 
                 if [[ -n "$packages_changed" ]]; then
                   apps=$(printf "%s\ninvictus\n" "$apps" | grep -v '^$' | sort -u)
@@ -350,9 +350,9 @@ jobs:
                     pr_target_branch="..." \
                     apps="$apps_json" \
                   --output json)
-                echo "$pipeline_output" | jq
+                jq <<< "$pipeline_output"
 
-                run_id=$(echo "$pipeline_output" | jq -r '.id')
+                run_id=$(jq -r '.id' <<< "$pipeline_output")
                 echo -e "\n##[command]🌐 Build Results: https://dev.azure.com/ux-technology/Invictus/_build/results?buildId=$run_id"
                 ;;
               *)
