@@ -248,17 +248,17 @@ jobs:
               TASKDEF_JSON=$(aws ecs describe-task-definition --task-definition "$TASK_DEF_ARN" --query "taskDefinition" --output json)
 
               # Limpiar campos innecesarios
-              TASKDEF_CLEAN=$(echo "$TASKDEF_JSON" | jq 'del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .registeredBy)')
+              TASKDEF_CLEAN=$(jq 'del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .registeredBy)' <<< "$TASKDEF_JSON")
 
               # Obtener nombre del contenedor
-              CONTAINER_NAME=$(echo "$TASKDEF_JSON" | jq -r '.containerDefinitions[0].name')
+              CONTAINER_NAME=$(jq -r '.containerDefinitions[0].name' <<< "$TASKDEF_JSON")
 
               # Actualizar imagen
-              NEW_TASKDEF=$(echo "$TASKDEF_CLEAN" | jq -c --arg img "$ACCOUNT_ID_DEPLOY.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$(ecr_repository):$NEW_VERSION" --arg container "$CONTAINER_NAME" '.containerDefinitions |= map(if .name == $container then .image = $img else . end)')
+              NEW_TASKDEF=$(jq -c --arg img "$ACCOUNT_ID_DEPLOY.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$(ecr_repository):$NEW_VERSION" --arg container "$CONTAINER_NAME" '.containerDefinitions |= map(if .name == $container then .image = $img else . end)' <<< "$TASKDEF_CLEAN")
 
               # Registrar nueva task definition
               REGISTERED_OUTPUT=$(aws ecs register-task-definition --cli-input-json "$NEW_TASKDEF" --region "$AWS_DEFAULT_REGION")
-              NEW_TASKDEF_ARN=$(echo "$REGISTERED_OUTPUT" | jq -r '.taskDefinition.taskDefinitionArn')
+              NEW_TASKDEF_ARN=$(jq -r '.taskDefinition.taskDefinitionArn' <<< "$REGISTERED_OUTPUT")
 
               echo "✅ New ARN: $NEW_TASKDEF_ARN"
               new_taskdef_arns_array+=("$NEW_TASKDEF_ARN")

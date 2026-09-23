@@ -250,10 +250,10 @@ jobs:
               script: |
                 set -euo pipefail
                 echo -e "\n🔎 Eliminando sonar.branch.name de SONARQUBE_SCANNER_PARAMS..."
-                CLEAN_PARAMS=$(echo "$SONARQUBE_SCANNER_PARAMS" | jq -c 'del(.["sonar.branch.name"])')
+                CLEAN_PARAMS=$(jq -c 'del(.["sonar.branch.name"])' <<< "$SONARQUBE_SCANNER_PARAMS")
 
                 echo -e "\n⚙️ Configuración SONARQUBE_SCANNER_PARAMS:"
-                echo "$CLEAN_PARAMS" | jq '."sonar.token" = "***"'
+                jq '."sonar.token" = "***"' <<< "$CLEAN_PARAMS"
 
                 # Escapar caracteres especiales para Azure DevOps logging command
                 CLEAN_PARAMS="${CLEAN_PARAMS//'%'/'%AZP25'}"
@@ -288,7 +288,7 @@ jobs:
               script: |
                 set -euo pipefail
                 echo -e "\n⚙️ Configuración SONARQUBE_SCANNER_PARAMS:"
-                echo "$SONARQUBE_SCANNER_PARAMS" | jq '."sonar.token" = "***"'
+                jq '."sonar.token" = "***"' <<< "$SONARQUBE_SCANNER_PARAMS"
             displayName: "🔎 View SonarQube Parameters"
             condition: and(succeeded(), ne(variables['msName'], 'app-administration-vue2'), ne(variables['msName'], 'app-sellers-vue2'))
 
