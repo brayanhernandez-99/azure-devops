@@ -317,43 +317,43 @@ jobs:
                 fi
                 ;;
               "IndividualCI")
-                  cd $(Build.SourcesDirectory)
-                  CURRENT_BRANCH="$(echo "$(Build.SourceBranch)" | sed 's#refs/heads/##')"
-                  git checkout $CURRENT_BRANCH
-                  git reset --hard HEAD
+                cd $(Build.SourcesDirectory)
+                CURRENT_BRANCH="$(echo "$(Build.SourceBranch)" | sed 's#refs/heads/##')"
+                git checkout $CURRENT_BRANCH
+                git reset --hard HEAD
 
-                  echo "🔎 Comparando cambios entre: $CURRENT_BRANCH ... $CURRENT_BRANCH"
-                  changed_files=$(git diff --name-only HEAD~1 HEAD)
-                  packages_changed=$(echo "$changed_files" | grep "^packages/" || true)
-                  apps=$(echo "$changed_files" | grep -E "^apps/|^app-legacy/" | cut -d '/' -f1,2 | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u || true)
+                echo "🔎 Comparando cambios entre: $CURRENT_BRANCH ... $CURRENT_BRANCH"
+                changed_files=$(git diff --name-only HEAD~1 HEAD)
+                packages_changed=$(echo "$changed_files" | grep "^packages/" || true)
+                apps=$(echo "$changed_files" | grep -E "^apps/|^app-legacy/" | cut -d '/' -f1,2 | sed -E 's|^app[-]?legacy/||; s|^apps/||' | sort -u || true)
 
-                  if [[ -n "$packages_changed" ]]; then
-                    apps=$(printf "%s\ninvictus\n" "$apps" | grep -v '^$' | sort -u)
-                  fi
+                if [[ -n "$packages_changed" ]]; then
+                  apps=$(printf "%s\ninvictus\n" "$apps" | grep -v '^$' | sort -u)
+                fi
 
-                  if [[ -z "$apps" ]]; then
-                    echo -e "\n##vso[task.logissue type=error]⚠️ No se detectaron cambios en apps. Cancelando ejecución del pipeline."
-                    exit 99
-                  fi
+                if [[ -z "$apps" ]]; then
+                  echo -e "\n##vso[task.logissue type=error]⚠️ No se detectaron cambios en apps. Cancelando ejecución del pipeline."
+                  exit 99
+                fi
 
-                  echo "🔎 Apps modificadas detectadas:"
-                  echo "${apps[@]}"
-                  apps_json=$(printf '%s\n' "${apps[@]}" | jq -R . | jq -s .)
+                echo "🔎 Apps modificadas detectadas:"
+                echo "${apps[@]}"
+                apps_json=$(printf '%s\n' "${apps[@]}" | jq -R . | jq -s .)
 
-                  echo -e "\n🔗 Creando ejecucion pipeline"
-                  pipeline_output=$(az pipelines run \
-                    --name "$(Build.Repository.Name)" \
-                    --branch "$CURRENT_BRANCH" \
-                    --parameters \
-                      pr_id="0" \
-                      pr_source_branch="..." \
-                      pr_target_branch="..." \
-                      apps="$apps_json" \
-                    --output json)
-                  echo "$pipeline_output" | jq
+                echo -e "\n🔗 Creando ejecucion pipeline"
+                pipeline_output=$(az pipelines run \
+                  --name "$(Build.Repository.Name)" \
+                  --branch "$CURRENT_BRANCH" \
+                  --parameters \
+                    pr_id="0" \
+                    pr_source_branch="..." \
+                    pr_target_branch="..." \
+                    apps="$apps_json" \
+                  --output json)
+                echo "$pipeline_output" | jq
 
-                  run_id=$(echo "$pipeline_output" | jq -r '.id')
-                  echo -e "\n##[command]🌐 Build Results: https://dev.azure.com/ux-technology/Invictus/_build/results?buildId=$run_id"
+                run_id=$(echo "$pipeline_output" | jq -r '.id')
+                echo -e "\n##[command]🌐 Build Results: https://dev.azure.com/ux-technology/Invictus/_build/results?buildId=$run_id"
                 ;;
               *)
                 echo -e "\n##vso[task.logissue type=error]⚠️ Ejecucion [$(Build.Reason)] no valida."
