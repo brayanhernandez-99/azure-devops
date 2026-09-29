@@ -173,8 +173,8 @@ jobs:
 
       - task: UseNode@1
         inputs:
-          version: "$(node-18.20)"
-        displayName: "🔧 Install Nodejs $(node-18.20)"
+          version: "$(node-22.21.0)"
+        displayName: "🔧 Install Nodejs $(node-22.21.0)"
         condition: succeeded()
 
       - task: Bash@3
@@ -218,7 +218,7 @@ jobs:
 
             echo -e "\n⚙️ Instalando dependencias ubuntu..."
             sudo apt-get update
-            sudo apt-get install -y libcups2-dev build-essential python3 make g++ gcc
+            sudo apt-get install -y libcups2-dev libpcsclite-dev build-essential python3 make g++ gcc
 
             echo -e "\n📌 Versiones:"
             npm install -g pnpm
@@ -456,8 +456,8 @@ jobs:
 
       - task: UseNode@1
         inputs:
-          version: "$(node-18.20)"
-        displayName: "🔧 Install Nodejs $(node-18.20)"
+          version: "$(node-22.21.0)"
+        displayName: "🔧 Install Nodejs $(node-22.21.0)"
         condition: succeeded()
 
       - task: PowerShell@2
