@@ -230,7 +230,7 @@ jobs:
 
             OUTPUT=$(pnpm ls --depth=0 || true)
             if [[ -z "$OUTPUT" ]]; then
-              echo -e "\n##vso[task.logissue type=error]⚠️ No se instalaron dependencias, esperar que se actualicen las dependencias a nivel global"
+              echo -e "\n##vso[task.logissue type=error]⚠️ No se instalaron dependencias"
               exit 99
             else
               echo -e "\n✅ Dependencias Instaladas:"
@@ -534,7 +534,7 @@ jobs:
 
             $output = pnpm ls --depth=0
             if (-not $output) {
-              Write-Output "`n##vso[task.logissue type=error]⚠️ No se instalaron dependencias, esperar que se actualicen las dependencias a nivel global"
+              Write-Output "`n##vso[task.logissue type=error]⚠️ No se instalaron dependencias"
               exit 99
             } else {
               Write-Host "`n✅ Dependencias Instaladas:"
