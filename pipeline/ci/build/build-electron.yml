@@ -227,7 +227,6 @@ jobs:
 
             echo -e "\n⚙️ Instalando dependencias node..."
             pnpm install
-            pnpm exec electron-builder install-app-deps
 
             OUTPUT=$(pnpm ls --depth=0 || true)
             if [[ -z "$OUTPUT" ]]; then
@@ -532,7 +531,6 @@ jobs:
 
             Write-Host "`n⚙️ Instalando dependencias node..."
             pnpm install
-            pnpm exec electron-builder install-app-deps
 
             $output = pnpm ls --depth=0
             if (-not $output) {
