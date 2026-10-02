@@ -173,8 +173,8 @@ jobs:
 
       - task: UseNode@1
         inputs:
-          version: "$(node-22.21.0)"
-        displayName: "🔧 Install Nodejs $(node-22.21.0)"
+          version: "$(node-18.20)"
+        displayName: "🔧 Install Nodejs $(node-18.20)"
         condition: succeeded()
 
       - task: Bash@3
@@ -455,8 +455,8 @@ jobs:
 
       - task: UseNode@1
         inputs:
-          version: "$(node-22.21.0)"
-        displayName: "🔧 Install Nodejs $(node-22.21.0)"
+          version: "$(node-18.20)"
+        displayName: "🔧 Install Nodejs $(node-18.20)"
         condition: succeeded()
 
       - task: PowerShell@2
