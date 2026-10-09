@@ -89,7 +89,7 @@ jobs:
           script: |
             set -euo pipefail
             echo "🔍 Verificando imagen..."
-            echo "Imagen     : (version)"
+            echo "Imagen     : $(version)"
             echo "Repositorio: $(ecr_repository)"
 
             if aws ecr describe-images --repository-name "$(ecr_repository)" --image-ids imageTag=$(version) > /dev/null 2>&1; then
