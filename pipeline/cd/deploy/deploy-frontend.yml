@@ -127,9 +127,9 @@ jobs:
             CLOUDFRONT_ID="${!CLOUDFRONT_VAR_NAME}"
 
             echo
-            echo "📌 CLOUDFRONT: $(msName)"
-            echo "📌CLOUDFRONT_ID: $CLOUDFRONT_ID"
-            echo "📌CLOUDFRONT_VAR_NAME: $CLOUDFRONT_VAR_NAME"
+            echo "📌 CLOUDFRONT         : $(msName)"
+            echo "📌 CLOUDFRONT_ID      : $CLOUDFRONT_ID"
+            echo "📌 CLOUDFRONT_VAR_NAME: $CLOUDFRONT_VAR_NAME"
 
             if [[ -z "$CLOUDFRONT_ID" ]] || [[ -z "$CLOUDFRONT_VAR_NAME" ]]; then
               echo -e "\n##vso[task.logissue type=error]⚠️ CLOUDFRONT_ID o CLOUDFRONT_VAR_NAME no reconocidos"
