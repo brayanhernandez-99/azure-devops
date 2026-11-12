@@ -54,23 +54,23 @@ jobs:
 
             token_matrix=$(aws codeartifact get-authorization-token \
               --domain matrixtech-npm-repository \
-              --domain-owner "$ACCOUNT_ID_DEPLOY" \
+              --domain-owner "$(ACCOUNT_ID_DEPLOY)" \
               --region "$AWS_DEFAULT_REGION" \
               --query authorizationToken \
               --output text)
 
             token_ux=$(aws codeartifact get-authorization-token \
               --domain ux \
-              --domain-owner "$ACCOUNT_ID_DEPLOY" \
+              --domain-owner "$(ACCOUNT_ID_DEPLOY)" \
               --region "$AWS_DEFAULT_REGION" \
               --query authorizationToken \
               --output text)
 
-            REPO_DOMAIN_MATRIX="matrixtech-npm-repository-$ACCOUNT_ID_DEPLOY.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com"
+            REPO_DOMAIN_MATRIX="matrixtech-npm-repository-$(ACCOUNT_ID_DEPLOY).d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com"
             REPO_PATH_MATRIX="npm/matrixtech-npm-repository"
             REPO_URL_MATRIX="https://$REPO_DOMAIN_MATRIX/$REPO_PATH_MATRIX"
 
-            REPO_DOMAIN_UX="ux-$ACCOUNT_ID_DEPLOY.d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com"
+            REPO_DOMAIN_UX="ux-$(ACCOUNT_ID_DEPLOY).d.codeartifact.$AWS_DEFAULT_REGION.amazonaws.com"
             REPO_PATH_UX="npm/ux"
             REPO_URL_UX="https://$REPO_DOMAIN_UX/$REPO_PATH_UX"
 
@@ -141,15 +141,14 @@ jobs:
               CURRENT_BRANCH="${BUILD_SOURCEBRANCH/refs\/heads\//}"
             fi
 
-            case "$CURRENT_BRANCH" in 
-              staging) environment="qa" ;;
-              master) environment="prd" ;;
+            case "CURRENT_BRANCH" in
+              staging) environment="$environment_staging" ;;
+              master) environment="$region" ;;
               *) environment="develop" ;;
             esac
 
             msName=$(sed -E 's/^microservice-//; s/-invictus$//' <<< "$(Build.Repository.Name)")
             ECR_REPOSITORY="$(Build.Repository.Name)"
-            ECR_REPOSITORY="${ECR_REPOSITORY%-invictus}-$environment"
 
             echo -e "\nℹ️ Configurando..."
             echo "Microservice: $msName"
@@ -166,25 +165,29 @@ jobs:
           script: |
             set -euo pipefail
             aws ecr get-login-password --region $AWS_DEFAULT_REGION | \
-            docker login --username AWS --password-stdin $ACCOUNT_ID_DEPLOY.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+            docker login --username AWS --password-stdin "$(ACCOUNT_ID_INVICTUS).dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com"
         displayName: "🔐 Login to AWS ECR"
         condition: succeeded()
         env:
-          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION_DEPLOY)
-          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
-          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
+          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
 
       - task: Docker@2
         inputs:
           command: "build"
           Dockerfile: "$(Build.Repository.Name)/Dockerfile"
           buildContext: "$(Build.Repository.Name)"
-          repository: "$(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/$(ecr_repository)"
+          repository: "$(ACCOUNT_ID_INVICTUS).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/$(ecr_repository)"
           tags: |
             latest
             $(version)
         displayName: "📦 Build Docker Image: $(Build.Repository.Name)"
         condition: succeeded()
+        env:
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
+          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
 
       # - task: Bash@3
       #   inputs:
@@ -197,10 +200,13 @@ jobs:
       #         image \
       #         --severity CRITICAL,HIGH \
       #         --exit-code 1 \
-      #         $(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/$(ecr_repository):$(version)
+      #         $(ACCOUNT_ID_INVICTUS).dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$(ecr_repository):$(version)
       #   continueOnError: true
       #   displayName: "🛡️ Trivy scan Docker image"
-      #   condition: and(succeeded(), ne(variables['Build.SourceBranchName'], 'master'))
+      #   env:
+      #     AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+      #     AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
+      #     AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
 
       - task: Bash@3
         inputs:
@@ -208,7 +214,7 @@ jobs:
           script: |
             set -euo pipefail
             echo -e "\nℹ️ Verificando..."
-            echo "Id Cuenta  : $(ACCOUNT_ID_DEPLOY)"
+            echo "Id Cuenta  : $(ACCOUNT_ID_INVICTUS)"
             echo "Repositorio: $(ecr_repository)"
 
             if aws ecr describe-repositories --repository-names "$(ecr_repository)" > /dev/null 2>&1; then
@@ -220,16 +226,20 @@ jobs:
         displayName: "🔎 Verify ECR Repository Exists"
         condition: and(succeeded(), in(variables['Build.SourceBranchName'], 'develop', 'staging', 'master'))
         env:
-          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION_DEPLOY)
-          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
-          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
+          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
 
       - task: Docker@2
         inputs:
           command: "Push"
-          repository: "$(ACCOUNT_ID_DEPLOY).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/$(ecr_repository)"
+          repository: "$(ACCOUNT_ID_INVICTUS).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/$(ecr_repository)"
           tags: |
             latest
             $(version)
         displayName: "🚀 Push Docker Image $(Build.Repository.Name)"
         condition: and(succeeded(), in(variables['Build.SourceBranchName'], 'develop', 'staging', 'master'))
+        env:
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
+          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)

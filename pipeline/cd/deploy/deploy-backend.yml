@@ -47,28 +47,27 @@ jobs:
             set -euo pipefail
             echo -e "\n🔐 Logging in to ECR..."
             aws ecr get-login-password --region $AWS_DEFAULT_REGION | \
-            docker login --username AWS --password-stdin $ACCOUNT_ID_DEPLOY.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+            docker login --username AWS --password-stdin "$(ACCOUNT_ID_INVICTUS).dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com"
         displayName: "🔐 Login to AWS ECR"
         condition: succeeded()
         env:
-          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION_DEPLOY)
-          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
-          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
+          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
 
       - task: Bash@3
         inputs:
           targetType: inline
           script: |
             set -euo pipefail
-            case "$(Build.SourceBranchName)" in 
-              staging) environment="qa" ;;
-              master) environment="prd" ;;
+            case "$(Build.SourceBranchName)" in
+              staging) environment="$environment_staging" ;;
+              master) environment="$region" ;;
               *) environment="develop" ;;
             esac
 
             msName=$(sed -E 's/^microservice-//; s/-invictus$//' <<< "$(Build.Repository.Name)")
             ECR_REPOSITORY="$(Build.Repository.Name)"
-            ECR_REPOSITORY="${ECR_REPOSITORY%-invictus}-$environment"
 
             echo -e "\nℹ️ Configurando..."
             echo "Microservice: $msName"
@@ -82,6 +81,7 @@ jobs:
         condition: succeeded()
         env:
           region: ${{ parameters.region }}
+          environment_staging: ${{ parameters.environment_staging }}
 
       - task: Bash@3
         inputs:
@@ -89,7 +89,6 @@ jobs:
           script: |
             set -euo pipefail
             echo "🔍 Verificando imagen..."
-            echo "Imagen     : $(version)"
             echo "Repositorio: $(ecr_repository)"
 
             if aws ecr describe-images --repository-name "$(ecr_repository)" --image-ids imageTag=$(version) > /dev/null 2>&1; then
@@ -101,9 +100,9 @@ jobs:
         displayName: "🔍 Verify Image Exists in ECR"
         condition: succeeded()
         env:
-          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION_DEPLOY)
-          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_DEPLOY)
-          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_DEPLOY)
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+          AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
+          AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
 
       - task: Bash@3
         inputs:
@@ -214,7 +213,7 @@ jobs:
         displayName: "🔗 Get Task Definition ARN"
         env:
           region: ${{ parameters.region }}
-          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION_INVICTUS)
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
 
@@ -254,7 +253,7 @@ jobs:
               CONTAINER_NAME=$(jq -r '.containerDefinitions[0].name' <<< "$TASKDEF_JSON")
 
               # Actualizar imagen
-              NEW_TASKDEF=$(jq -c --arg img "$ACCOUNT_ID_DEPLOY.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$(ecr_repository):$NEW_VERSION" --arg container "$CONTAINER_NAME" '.containerDefinitions |= map(if .name == $container then .image = $img else . end)' <<< "$TASKDEF_CLEAN")
+              NEW_TASKDEF=$(echo "$TASKDEF_CLEAN" | jq -c --arg img "$(ACCOUNT_ID_INVICTUS).dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$(ecr_repository):$NEW_VERSION" --arg container "$CONTAINER_NAME" '.containerDefinitions |= map(if .name == $container then .image = $img else . end)')
 
               # Registrar nueva task definition
               REGISTERED_OUTPUT=$(aws ecs register-task-definition --cli-input-json "$NEW_TASKDEF" --region "$AWS_DEFAULT_REGION")
@@ -268,7 +267,7 @@ jobs:
         displayName: "📄 Get & Update Task Definitions"
         condition: succeeded()
         env:
-          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION_INVICTUS)
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
 
@@ -296,7 +295,7 @@ jobs:
               echo "📝 New ARN: $NEW_TASKDEF_ARN"
 
               UPDATED_OUTPUT=$(aws ecs update-service --cluster "$CLUSTER" --service "$SERVICE" --task-definition "$NEW_TASKDEF_ARN" --force-new-deployment)
-              IMAGE=$(aws ecs describe-task-definition --task-definition "$NEW_TASKDEF_ARN" --query "taskDefinition.containerDefinitions[0].image" --output text)
+              IMAGE=$(aws ecs describe-task-definition --task-definition "$NEW_TASKDEF_ARN" --|query "taskDefinition.containerDefinitions[0].image" --output text)
 
               echo -e "🖼️ Image: $IMAGE"
               echo "✅ ECS Service Actualizado"
@@ -304,7 +303,7 @@ jobs:
         displayName: "🚀 Deploy microservice"
         condition: succeeded()
         env:
-          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION_INVICTUS)
+          AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
           AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID_INVICTUS)
           AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY_INVICTUS)
 

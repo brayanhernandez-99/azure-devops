@@ -6,7 +6,9 @@ stages:
         parameters:
           release: ${{ parameters.release }}
 
-  - ${{ if ne(variables['Build.Repository.Name'], 'microservice-trino-invictus') }}:
+  #####################################################################
+
+  - ${{ if and(ne(variables['Build.Repository.Name'], 'microservice-trino-invictus'), or(eq(variables['Build.Reason'], 'PullRequest'), startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'))) }}:
       - stage: scan_microservice
         displayName: "🛡️ Scan MicroService"
         dependsOn: semantic_version_microservice
@@ -19,6 +21,8 @@ stages:
         dependsOn: scan_microservice
         jobs:
           - template: ../ci/build/build-backend.yml
+
+  #####################################################################
 
   - ${{ if eq(variables['Build.Repository.Name'], 'microservice-trino-invictus') }}:
       - stage: build_microservice
