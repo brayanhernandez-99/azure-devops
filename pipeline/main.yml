@@ -80,6 +80,16 @@ stages:
           environments_staging: ${{ parameters.environments_staging }}
 
   #
+  # Trino
+  #
+  - ${{ if and(eq(variables['Build.Repository.Name'], 'microservice-trino-invictus'), eq(parameters.release, 'aws-ecs'), or(eq(variables['Build.Reason'], 'PullRequest'), startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), in(variables['Build.SourceBranchName'], 'develop', 'staging', 'master'))) }}:
+      - template: ./pipelines/pipeline-trino.yml
+        parameters:
+          red: ${{ parameters.red }}
+          release: ${{ parameters.release }}
+          environments_staging: ${{ parameters.environments_staging }}
+
+  #
   # Flutter
   #
   - ${{ if and(eq(parameters.release, 'apk'), or(eq(variables['Build.Reason'], 'PullRequest'), startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'), in(variables['Build.SourceBranchName'], 'develop', 'staging', 'master'))) }}:
